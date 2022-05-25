@@ -1,0 +1,2 @@
+here is interface
+impl per graphics API is in Platform folder

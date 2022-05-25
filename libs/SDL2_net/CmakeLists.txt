@@ -1,0 +1,8 @@
+cmake_minimum_required(VERSION 3.10)
+
+include_directories(../SDL2/include)
+
+add_library(SDL2_net-static STATIC    SDLnet.c
+                                      SDLnetselect.c
+                                      SDLnetTCP.c
+                                      SDLnetUDP.c)

@@ -1,0 +1,11 @@
+SDL2
+SDL2 mixer
+SDL2 image
+SDL2 net / boost asio
+SDL2 ttf ?
+ImGUI
+glm
+assimp
+bullet
+sqlite
+spd log
