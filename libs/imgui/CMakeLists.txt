@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 
+add_definitions(-DIMGUI_DISABLE_OBSOLETE_FUNCTIONS)
+
 add_library(ImGUI-static STATIC imgui.cpp
                                 imgui_demo.cpp
                                 imgui_draw.cpp

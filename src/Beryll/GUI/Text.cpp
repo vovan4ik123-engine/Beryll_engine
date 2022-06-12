@@ -23,7 +23,7 @@ namespace Beryll
 
     uint32_t Text::m_allTextsCount = 0;
     ImFont* Text::font = nullptr;
-    std::string Text::fontPath = std::string();
+    std::string Text::fontPath;
     float Text::fontHeight = 0.0f;
 
     void Text::updateBeforePhysics()

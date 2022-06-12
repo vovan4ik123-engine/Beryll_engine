@@ -9,7 +9,7 @@ namespace Beryll
     {
     public:
         // position and size in percent 0...100% of screen
-        Button(const char* text, float left, float top, float width, float height, bool actRepeat = false);
+        Button(std::string text, float left, float top, float width, float height, bool actRepeat = false);
         ~Button() override;
 
         void updateBeforePhysics() override;

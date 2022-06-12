@@ -6,8 +6,8 @@
 
 namespace Beryll
 {
-    Button::Button(const char* text, float left, float top, float width, float height, bool actRepeat)
-        : m_text(text), m_leftPos(left / 100.0f), m_topPos(top / 100.0f), m_width(width / 100.0f), m_height(height / 100.0f)
+    Button::Button(std::string text, float left, float top, float width, float height, bool actRepeat)
+        : m_text(std::move(text)), m_leftPos(left / 100.0f), m_topPos(top / 100.0f), m_width(width / 100.0f), m_height(height / 100.0f)
     {
         BR_ASSERT((left >= 0.0f && left <= 100.0f) && (top >= 0.0f && top <= 100.0f)
                 &&(width >= 0.0f && width <= 100.0f) && (height >= 0.0f && height <= 100.0f), "Wrong button size or position")
@@ -25,7 +25,7 @@ namespace Beryll
 
     uint32_t Button::m_allButtonsCount = 0;
     ImFont* Button::font = nullptr;
-    std::string Button::fontPath = std::string();
+    std::string Button::fontPath;
     float Button::fontHeight = 0.0f;
 
     void Button::updateBeforePhysics()

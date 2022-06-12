@@ -20,7 +20,7 @@ namespace Beryll
 
     uint32_t CheckBox::m_allCheckBoxCount = 0;
     ImFont* CheckBox::font = nullptr;
-    std::string CheckBox::fontPath = std::string();
+    std::string CheckBox::fontPath;
     float CheckBox::fontHeight = 0.0f;
 
     void CheckBox::updateBeforePhysics()
@@ -52,7 +52,7 @@ namespace Beryll
         if(font)
         {
             ImGui::PushFont(font);
-            if(ImGui::Checkbox(m_text.c_str(), &m_checked) && m_checked) // true only if mark. false if unmark
+            if(ImGui::Checkbox(m_text.c_str(), &m_checked) && m_checked) // true only if marked. false if unmarked
             {
                 m_checking = true;
                 m_needPlaySound = true;
@@ -61,7 +61,7 @@ namespace Beryll
         }
         else
         {
-            if(ImGui::Checkbox(m_text.c_str(), &m_checked) && m_checked) // true only if mark. false if unmark
+            if(ImGui::Checkbox(m_text.c_str(), &m_checked) && m_checked) // true only if marked. false if unmarked
             {
                 m_checking = true;
                 m_needPlaySound = true;
