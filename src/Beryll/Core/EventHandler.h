@@ -27,7 +27,7 @@ namespace Beryll
         // range 0...1
         glm::vec2 normalizedPos;
         // ImGUI recognize screen size different than SDL2 window size
-        // use it for possitioning ImGUI elements
+        // use it for positioning ImGUI elements
         glm::vec2 ImGuiScreenPos;
         // use it for 3D/2D scene actions
         glm::vec2 SDL2ScreenPos;

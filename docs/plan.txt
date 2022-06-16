@@ -1,6 +1,4 @@
-add slider
-update IMGui
-update Log.h     getAndroidLogger()
+update IMGui to 1.88
+update assimp
+update Log.h     getAndroidLogger()  -> getLogger() + check platform
 add player
-
-

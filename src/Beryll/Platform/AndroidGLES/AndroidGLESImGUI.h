@@ -26,9 +26,11 @@ namespace Beryll
         * heightPercent - font height in percent 0%...100% of screen
         */
         void setDefaultFont(const char* path, float heightInPercent) override;
+        void setDefaultFontHeight(float heightInPercent) override;
         void setButtonsFont(const char* path, float heightInPercent) override;
         void setCheckBoxesFont(const char* path, float heightInPercent) override;
         void setTextsFont(const char* path, float heightInPercent) override;
+        void setSlidersFont(const char* path, float heightInPercent) override;
 
     private:
         friend class MainImGUI;
@@ -36,8 +38,5 @@ namespace Beryll
 
         void init();
         void destroy();
-
-        std::string m_defaultFontPath;
-        float m_defaultFontHeight = 0.0f; // in range 0 = 0%...1 = 100% of screen size
     };
 }

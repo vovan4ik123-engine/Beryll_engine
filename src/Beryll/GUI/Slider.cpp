@@ -35,7 +35,8 @@ namespace Beryll
         for(Finger& f : fingers)
         {
             if(f.normalizedPos.x > m_leftPos && f.normalizedPos.x < m_leftPos + m_width
-               && f.normalizedPos.y > m_topPos && f.normalizedPos.y < m_topPos + m_height)
+                // add 1% of screen to slider bottom because for any reason ImGUI handle a bit more area as slider than slider has
+               && f.normalizedPos.y > m_topPos && f.normalizedPos.y < m_topPos + m_height + 0.01f)
             {
                 // if any finger in slider area
                 if(f.downEvent && !f.handled)
@@ -55,25 +56,40 @@ namespace Beryll
     {
         ImGui::PushStyleColor(ImGuiCol_Text, m_fontColor);
 
+        ImGui::PushStyleColor(ImGuiCol_SliderGrab, m_sliderGrabColor);
+        ImGui::PushStyleColor(ImGuiCol_SliderGrabActive, m_sliderGrabColor);
+
+        ImGui::PushStyleColor(ImGuiCol_WindowBg, m_textBackGroundColor);
+
+        ImGui::PushStyleColor(ImGuiCol_FrameBg, m_dragAreaColor);
+        ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, m_dragAreaColor);
+        ImGui::PushStyleColor(ImGuiCol_FrameBgActive, m_dragAreaColor);
+
         ImGui::SetNextWindowPos(ImVec2(m_leftPos * MainImGUI::getInstance()->getGUIWidth(), m_topPos * MainImGUI::getInstance()->getGUIHeight()));
         ImGui::Begin(m_ID.c_str(), nullptr, m_flags);
 
         if(font)
         {
             ImGui::PushFont(font);
-            //ImGui::SliderFloat(m_text.c_str(),
-            //                    ImVec2(m_width * MainImGUI::getInstance()->getGUIWidth(), m_height * MainImGUI::getInstance()->getGUIHeight()),
-            //                    &m_sliderValue, 0.0f, 1.0f);
+            ImGui::SliderFloat(m_text.c_str(),
+                               ImVec2(m_width * MainImGUI::getInstance()->getGUIWidth(), m_height * MainImGUI::getInstance()->getGUIHeight()),
+                               &m_sliderValue,
+                               0.0f,
+                               1.0f);
             ImGui::PopFont();
         }
         else
         {
-
+            ImGui::SliderFloat(m_text.c_str(),
+                               ImVec2(m_width * MainImGUI::getInstance()->getGUIWidth(), m_height * MainImGUI::getInstance()->getGUIHeight()),
+                               &m_sliderValue,
+                               0.0f,
+                               1.0f);
         }
 
         ImGui::End();
 
-        ImGui::PopStyleColor(1);
+        ImGui::PopStyleColor(7);
     }
 
     void Slider::playSound()

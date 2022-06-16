@@ -26,7 +26,7 @@ namespace Beryll
 
         static std::unique_ptr<MainImGUI>& getInstance()
         {
-            BR_ASSERT((m_imGUI != nullptr), "Window is not created. Use Window::create() first");
+            BR_ASSERT((m_imGUI != nullptr), "MainImGUI is not created. Use MainImGUI::create() first");
             return m_imGUI;
         }
 
@@ -43,9 +43,15 @@ namespace Beryll
         * heightPercent - font height in percent 0%...100% of screen
         */
         virtual void setDefaultFont(const char* path, float heightInPercent) = 0;
+        virtual void setDefaultFontHeight(float heightInPercent) = 0;
         virtual void setButtonsFont(const char* path, float heightInPercent) = 0;
         virtual void setCheckBoxesFont(const char* path, float heightInPercent) = 0;
         virtual void setTextsFont(const char* path, float heightInPercent) = 0;
+        virtual void setSlidersFont(const char* path, float heightInPercent) = 0;
+
+    protected:
+        std::string m_defaultFontPath;
+        float m_defaultFontHeight = 0.03f; // in range 0...1 (0%...100% of screen size). 0.03f = 3% of screen
 
     private:
         friend class GameLoop;

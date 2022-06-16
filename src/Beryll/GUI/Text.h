@@ -22,20 +22,22 @@ namespace Beryll
         void setFontColor(float r, float g, float b, float a) { m_fontColor = ImVec4{ r, g, b, a }; }
         void setBackgroundColor(float r, float g, float b, float a) { m_backgroundColor = ImVec4{ r, g, b, a }; }
 
+    private:
+        friend class AndroidGLESImGUI;
+
         static ImFont* font; // one font for all texts
         static std::string fontPath;
         static float fontHeight; // in range 0 = 0%...1 = 100% of screen size
 
-    private:
         int32_t m_flags = 0;
 
         std::string m_text;
         float m_leftPos; // in range 0 = 0%...1 = 100% of screen size
         float m_topPos;
 
-        // collor can be different for each text
-        ImVec4 m_fontColor = ImVec4{ 0.0f, 0.0f, 0.0f, 1.0f }; // 0.0f - 1.0f range
-        ImVec4 m_backgroundColor = ImVec4{ 1.0f, 1.0f, 1.0f, 1.0f };
+        // color can be different for each text
+        ImVec4 m_fontColor { 0.0f, 0.0f, 0.0f, 1.0f }; // 0.0f - 1.0f range
+        ImVec4 m_backgroundColor { 1.0f, 1.0f, 1.0f, 1.0f };
 
         static uint32_t m_allTextsCount;
     };

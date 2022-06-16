@@ -4,6 +4,7 @@
 #include "Beryll/GUI/Button.h"
 #include "Beryll/GUI/CheckBox.h"
 #include "Beryll/GUI/Text.h"
+#include "Beryll/GUI/Slider.h"
 
 namespace Beryll
 {
@@ -45,7 +46,7 @@ namespace Beryll
         uint32_t bufferSize = 0;
         char* buffer = nullptr;
 
-        if(!m_defaultFontPath.empty() && m_defaultFontHeight != 0.0f)
+        if(!m_defaultFontPath.empty())
         {
             buffer = File::readToBuffer(m_defaultFontPath.c_str(), &bufferSize);
             ImFont* fontDefault = io.Fonts->AddFontFromMemoryTTF(buffer, bufferSize, m_defaultFontHeight  * ImGui::GetIO().DisplaySize.y);
@@ -55,8 +56,8 @@ namespace Beryll
         }
         else
         {
-            buffer = File::readToBuffer("fonts/roboto.ttf", &bufferSize); // load from ...../aseets/fonts/ folder
-            ImFont* fontDefault = io.Fonts->AddFontFromMemoryTTF(buffer, bufferSize, 60);
+            buffer = File::readToBuffer("fonts/roboto.ttf", &bufferSize); // load from ...../aseets/fonts/roboto.ttf
+            ImFont* fontDefault = io.Fonts->AddFontFromMemoryTTF(buffer, bufferSize, m_defaultFontHeight  * ImGui::GetIO().DisplaySize.y);
             BR_ASSERT((fontDefault != nullptr), "font nullptr");
             ImGui_ImplOpenGL3_CreateFontsTexture();
             io.FontDefault = fontDefault;
@@ -100,10 +101,30 @@ namespace Beryll
         {
             Text::font = nullptr;
         }
+
+        if(!Slider::fontPath.empty() && Slider::fontHeight != 0.0f)
+        {
+            buffer = File::readToBuffer(Slider::fontPath.c_str(), &bufferSize);
+            ImFont* f = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(buffer, bufferSize, Slider::fontHeight * ImGui::GetIO().DisplaySize.y);
+            BR_ASSERT((f != nullptr), "font nullptr");
+            ImGui_ImplOpenGL3_CreateFontsTexture();
+            Slider::font = f;
+        }
+        else
+        {
+            Slider::font = nullptr;
+        }
     }
 
     void AndroidGLESImGUI::destroy()
     {
+        Button::font = nullptr;
+        CheckBox::font = nullptr;
+        Text::font = nullptr;
+        Slider::font = nullptr;
+
+        ImGui::GetIO().Fonts->Clear();
+
         ImGui_ImplOpenGL3_Shutdown();
         ImGui_ImplSDL2_Shutdown();
         ImGui::DestroyContext();
@@ -147,7 +168,19 @@ namespace Beryll
 
         uint32_t bufferSize = 0;
         char *buffer = File::readToBuffer(m_defaultFontPath.c_str(), &bufferSize);
-        ImFont* fontDefault = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(buffer, bufferSize, m_defaultFontHeight);
+        ImFont* fontDefault = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(buffer, bufferSize, m_defaultFontHeight  * ImGui::GetIO().DisplaySize.y);
+        BR_ASSERT((fontDefault != nullptr), "font nullptr");
+        ImGui_ImplOpenGL3_CreateFontsTexture();
+        ImGui::GetIO().FontDefault = fontDefault;
+    }
+
+    void AndroidGLESImGUI::setDefaultFontHeight(float heightInPercent)
+    {
+        m_defaultFontHeight = heightInPercent / 100.0f;
+
+        uint32_t bufferSize = 0;
+        char* buffer = File::readToBuffer("fonts/roboto.ttf", &bufferSize); // load from ...../aseets/fonts/ folder
+        ImFont* fontDefault = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(buffer, bufferSize, m_defaultFontHeight  * ImGui::GetIO().DisplaySize.y);
         BR_ASSERT((fontDefault != nullptr), "font nullptr");
         ImGui_ImplOpenGL3_CreateFontsTexture();
         ImGui::GetIO().FontDefault = fontDefault;
@@ -190,5 +223,18 @@ namespace Beryll
         BR_ASSERT((f != nullptr), "font nullptr");
         ImGui_ImplOpenGL3_CreateFontsTexture();
         Text::font = f;
+    }
+
+    void AndroidGLESImGUI::setSlidersFont(const char* path, float heightInPercent)
+    {
+        Slider::fontPath = path;
+        Slider::fontHeight = heightInPercent / 100.0f;
+
+        uint32_t bufferSize = 0;
+        char *buffer = File::readToBuffer(Slider::fontPath.c_str(), &bufferSize);
+        ImFont* f = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(buffer, bufferSize, Slider::fontHeight * ImGui::GetIO().DisplaySize.y);
+        BR_ASSERT((f != nullptr), "font nullptr");
+        ImGui_ImplOpenGL3_CreateFontsTexture();
+        Slider::font = f;
     }
 }
