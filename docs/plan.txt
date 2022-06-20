@@ -1,4 +1,5 @@
+update SDL2_image to 2.6.0
+update SDL2_mixer to 2.6.0
+update bullet
 update IMGui to 1.88
-update assimp
-update Log.h     getAndroidLogger()  -> getLogger() + check platform
 add player
