@@ -46,6 +46,9 @@ namespace Beryll
         for(int i = 0; i < m_scene->mNumMeshes; ++i)
         {
             std::string meshName = m_scene->mMeshes[i]->mName.C_Str();
+            // Imported Collada.dae from blender has -mesh at the end of aiMesh name, but has not -mesh at the end of aiNode name
+            // m_scene->mRootNode->FindNode(mesh->mName); will work only if aiMesh name is same as aiNode name
+            meshName = meshName.substr(0, meshName.find("-mesh"));
 
             if(meshName.find("Collision") != std::string::npos)
             {
@@ -224,7 +227,7 @@ namespace Beryll
     {
         glm::mat4 collisionTransforms{1.0f};
 
-        aiNode* collisionNode = m_scene->mRootNode->FindNode(mesh->mName);
+        aiNode* collisionNode = m_scene->mRootNode->FindNode(meshName.c_str());
         if(collisionNode)
         {
             collisionTransforms = Matrix::aiToGlm(collisionNode->mTransformation);
