@@ -1,12 +1,12 @@
 cmake_minimum_required(VERSION 3.10)
 
-add_definitions(-DUSE_PTHREADS -DSCE_PFX_USE_SIMD_VECTORMATH)
+#add_definitions(-DUSE_PTHREADS -DSCE_PFX_USE_SIMD_VECTORMATH)
 
 set(Bullet3Common_SRCS
         Bullet3Common/b3AlignedAllocator.cpp
         Bullet3Common/b3Vector3.cpp
         Bullet3Common/b3Logging.cpp
-        )
+    )
 
 set(LinearMath_SRCS
         LinearMath/btAlignedAllocator.cpp
@@ -55,7 +55,7 @@ set(BulletCollision_SRCS
         BulletCollision/CollisionDispatch/btGhostObject.cpp
         BulletCollision/CollisionDispatch/btHashedSimplePairCache.cpp
         BulletCollision/CollisionDispatch/btInternalEdgeUtility.cpp
-        BulletCollision/CollisionDispatch/btInternalEdgeUtility.h    # ??????????
+        BulletCollision/CollisionDispatch/btInternalEdgeUtility.h
         BulletCollision/CollisionDispatch/btManifoldResult.cpp
         BulletCollision/CollisionDispatch/btSimulationIslandManager.cpp
         BulletCollision/CollisionDispatch/btSphereBoxCollisionAlgorithm.cpp
@@ -151,7 +151,7 @@ set(BulletDynamics_SRCS
         BulletDynamics/Dynamics/btSimulationIslandManagerMt.cpp
         BulletDynamics/Dynamics/btRigidBody.cpp
         BulletDynamics/Dynamics/btSimpleDynamicsWorld.cpp
-        #	BulletDynamics/Dynamics/Bullet-C-API.cpp
+    #	BulletDynamics/Dynamics/Bullet-C-API.cpp
         BulletDynamics/Vehicle/btRaycastVehicle.cpp
         BulletDynamics/Vehicle/btWheelInfo.cpp
         BulletDynamics/Featherstone/btMultiBody.cpp
@@ -166,6 +166,7 @@ set(BulletDynamics_SRCS
         BulletDynamics/Featherstone/btMultiBodyPoint2Point.cpp
         BulletDynamics/Featherstone/btMultiBodySliderConstraint.cpp
         BulletDynamics/Featherstone/btMultiBodySphericalJointMotor.cpp
+        BulletDynamics/Featherstone/btMultiBodySphericalJointLimit.cpp
         BulletDynamics/MLCPSolvers/btDantzigLCP.cpp
         BulletDynamics/MLCPSolvers/btMLCPSolver.cpp
         BulletDynamics/MLCPSolvers/btLemkeAlgorithm.cpp
@@ -189,6 +190,11 @@ set(BulletSoftBody_SRCS
         BulletSoftBody/btDeformableMultiBodyDynamicsWorld.cpp
         BulletSoftBody/btDeformableContactConstraint.cpp
         BulletSoftBody/poly34.cpp
+
+        BulletSoftBody/BulletReducedDeformableBody/btReducedDeformableBody.cpp
+        BulletSoftBody/BulletReducedDeformableBody/btReducedDeformableBodyHelpers.cpp
+        BulletSoftBody/BulletReducedDeformableBody/btReducedDeformableBodySolver.cpp
+        BulletSoftBody/BulletReducedDeformableBody/btReducedDeformableContactConstraint.cpp
         )
 
 set(BulletInverseDynamics_SRCS

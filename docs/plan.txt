@@ -1,5 +1,7 @@
+use multithreading in bullet
+add player
+
+
 update SDL2_image to 2.6.0
 update SDL2_mixer to 2.6.0
-update bullet
 update IMGui to 1.88
-add player
