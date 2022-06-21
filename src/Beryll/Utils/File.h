@@ -4,7 +4,7 @@
 #include "CppHeaders.h"
 #include "Beryll/Core/Log.h"
 
-namespace Beryll
+namespace Utils
 {
     class File
     {

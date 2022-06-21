@@ -2,6 +2,7 @@
 #include "Beryll/Utils/File.h"
 #include "Beryll/Utils/Matrix.h"
 #include "Beryll/Utils/Quaternion.h"
+#include "Beryll/Utils/CommonUtils.h"
 #include "Beryll/Renderer/Camera.h"
 #include "Beryll/Core/Window.h"
 #include "Beryll/Core/TimeStep.h"
@@ -18,7 +19,7 @@ namespace Beryll
     {
         BR_INFO("Loading animated object:{0}", modelPath);
         uint32_t bufferSize = 0;
-        char *buffer = File::readToBuffer(modelPath, &bufferSize);
+        char *buffer = Utils::File::readToBuffer(modelPath, &bufferSize);
 
         m_scene = m_importer.ReadFileFromMemory(buffer, bufferSize,
                                                 aiProcess_Triangulate |
@@ -191,13 +192,13 @@ namespace Beryll
             BR_INFO("Have animation {0} with name:{1}", i, m_scene->mAnimations[i]->mName.C_Str());
         }
 
-        aiNode* node = m_scene->mRootNode->FindNode(m_scene->mMeshes[0]->mName);
+        const aiNode* node = Utils::Common::findAinodeForAimesh(m_scene, m_scene->mRootNode, m_scene->mMeshes[0]->mName);
         if(node)
         {
-            m_modelMatrix = Matrix::aiToGlm(node->mTransformation);
+            m_modelMatrix = Utils::Matrix::aiToGlm(node->mTransformation);
         }
 
-        m_position = Matrix::getPositionFrom4x4Glm(m_modelMatrix);
+        m_position = Utils::Matrix::getPositionFrom4x4Glm(m_modelMatrix);
     }
 
     AnimatedObject::~AnimatedObject()
@@ -384,8 +385,8 @@ namespace Beryll
         aiQuaternion& start = nodeAnim->mRotationKeys[currentFrameIndex].mValue;
         aiQuaternion& end = nodeAnim->mRotationKeys[nextFrameIndex].mValue;
 
-        // Quaternion::nlerp() will normalize quaternions it takes by reference if they not
-        return aiMatrix4x4(Quaternion::nlerp(start, end, factor).GetMatrix());
+        // Utils::Quaternion::nlerp() will normalize quaternions it takes by reference if they not
+        return aiMatrix4x4(Utils::Quaternion::nlerp(start, end, factor).GetMatrix());
     }
 
     aiMatrix4x4 AnimatedObject::interpolateScaling(const float& animationTime, const aiNodeAnim* nodeAnim, const int& currentFrameIndex)

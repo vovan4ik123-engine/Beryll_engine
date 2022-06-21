@@ -48,7 +48,7 @@ namespace Beryll
 
         if(!m_defaultFontPath.empty())
         {
-            buffer = File::readToBuffer(m_defaultFontPath.c_str(), &bufferSize);
+            buffer = Utils::File::readToBuffer(m_defaultFontPath.c_str(), &bufferSize);
             ImFont* fontDefault = io.Fonts->AddFontFromMemoryTTF(buffer, bufferSize, m_defaultFontHeight  * ImGui::GetIO().DisplaySize.y);
             BR_ASSERT((fontDefault != nullptr), "font nullptr");
             ImGui_ImplOpenGL3_CreateFontsTexture();
@@ -56,7 +56,7 @@ namespace Beryll
         }
         else
         {
-            buffer = File::readToBuffer("fonts/roboto.ttf", &bufferSize); // load from ...../aseets/fonts/roboto.ttf
+            buffer = Utils::File::readToBuffer("fonts/roboto.ttf", &bufferSize); // load from ...../aseets/fonts/roboto.ttf
             ImFont* fontDefault = io.Fonts->AddFontFromMemoryTTF(buffer, bufferSize, m_defaultFontHeight  * ImGui::GetIO().DisplaySize.y);
             BR_ASSERT((fontDefault != nullptr), "font nullptr");
             ImGui_ImplOpenGL3_CreateFontsTexture();
@@ -65,7 +65,7 @@ namespace Beryll
 
         if(!Button::fontPath.empty() && Button::fontHeight != 0.0f)
         {
-            buffer = File::readToBuffer(Button::fontPath.c_str(), &bufferSize);
+            buffer = Utils::File::readToBuffer(Button::fontPath.c_str(), &bufferSize);
             ImFont* f = io.Fonts->AddFontFromMemoryTTF(buffer, bufferSize, Button::fontHeight * ImGui::GetIO().DisplaySize.y);
             BR_ASSERT((f != nullptr), "font nullptr");
             ImGui_ImplOpenGL3_CreateFontsTexture();
@@ -78,7 +78,7 @@ namespace Beryll
 
         if(!CheckBox::fontPath.empty() && CheckBox::fontHeight != 0.0f)
         {
-            buffer = File::readToBuffer(CheckBox::fontPath.c_str(), &bufferSize);
+            buffer = Utils::File::readToBuffer(CheckBox::fontPath.c_str(), &bufferSize);
             ImFont* f = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(buffer, bufferSize, CheckBox::fontHeight * ImGui::GetIO().DisplaySize.y);
             BR_ASSERT((f != nullptr), "font nullptr");
             ImGui_ImplOpenGL3_CreateFontsTexture();
@@ -91,7 +91,7 @@ namespace Beryll
 
         if(!Text::fontPath.empty() && Text::fontHeight != 0.0f)
         {
-            buffer = File::readToBuffer(Text::fontPath.c_str(), &bufferSize);
+            buffer = Utils::File::readToBuffer(Text::fontPath.c_str(), &bufferSize);
             ImFont* f = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(buffer, bufferSize, Text::fontHeight * ImGui::GetIO().DisplaySize.y);
             BR_ASSERT((f != nullptr), "font nullptr");
             ImGui_ImplOpenGL3_CreateFontsTexture();
@@ -104,7 +104,7 @@ namespace Beryll
 
         if(!Slider::fontPath.empty() && Slider::fontHeight != 0.0f)
         {
-            buffer = File::readToBuffer(Slider::fontPath.c_str(), &bufferSize);
+            buffer = Utils::File::readToBuffer(Slider::fontPath.c_str(), &bufferSize);
             ImFont* f = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(buffer, bufferSize, Slider::fontHeight * ImGui::GetIO().DisplaySize.y);
             BR_ASSERT((f != nullptr), "font nullptr");
             ImGui_ImplOpenGL3_CreateFontsTexture();
@@ -167,7 +167,7 @@ namespace Beryll
         m_defaultFontHeight = heightInPercent / 100.0f;
 
         uint32_t bufferSize = 0;
-        char *buffer = File::readToBuffer(m_defaultFontPath.c_str(), &bufferSize);
+        char *buffer = Utils::File::readToBuffer(m_defaultFontPath.c_str(), &bufferSize);
         ImFont* fontDefault = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(buffer, bufferSize, m_defaultFontHeight  * ImGui::GetIO().DisplaySize.y);
         BR_ASSERT((fontDefault != nullptr), "font nullptr");
         ImGui_ImplOpenGL3_CreateFontsTexture();
@@ -179,7 +179,7 @@ namespace Beryll
         m_defaultFontHeight = heightInPercent / 100.0f;
 
         uint32_t bufferSize = 0;
-        char* buffer = File::readToBuffer("fonts/roboto.ttf", &bufferSize); // load from ...../aseets/fonts/ folder
+        char* buffer = Utils::File::readToBuffer("fonts/roboto.ttf", &bufferSize); // load from ...../aseets/fonts/ folder
         ImFont* fontDefault = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(buffer, bufferSize, m_defaultFontHeight  * ImGui::GetIO().DisplaySize.y);
         BR_ASSERT((fontDefault != nullptr), "font nullptr");
         ImGui_ImplOpenGL3_CreateFontsTexture();
@@ -192,7 +192,7 @@ namespace Beryll
         Button::fontHeight = heightInPercent / 100.0f;
 
         uint32_t bufferSize = 0;
-        char *buffer = File::readToBuffer(Button::fontPath.c_str(), &bufferSize);
+        char *buffer = Utils::File::readToBuffer(Button::fontPath.c_str(), &bufferSize);
         ImFont* f = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(buffer, bufferSize, Button::fontHeight * ImGui::GetIO().DisplaySize.y);
         BR_ASSERT((f != nullptr), "font nullptr");
         ImGui_ImplOpenGL3_CreateFontsTexture();
@@ -205,7 +205,7 @@ namespace Beryll
         CheckBox::fontHeight = heightInPercent / 100.0f;
 
         uint32_t bufferSize = 0;
-        char *buffer = File::readToBuffer(CheckBox::fontPath.c_str(), &bufferSize);
+        char *buffer = Utils::File::readToBuffer(CheckBox::fontPath.c_str(), &bufferSize);
         ImFont* f = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(buffer, bufferSize, CheckBox::fontHeight * ImGui::GetIO().DisplaySize.y);
         BR_ASSERT((f != nullptr), "font nullptr");
         ImGui_ImplOpenGL3_CreateFontsTexture();
@@ -218,7 +218,7 @@ namespace Beryll
         Text::fontHeight = heightInPercent / 100.0f;
 
         uint32_t bufferSize = 0;
-        char *buffer = File::readToBuffer(Text::fontPath.c_str(), &bufferSize);
+        char *buffer = Utils::File::readToBuffer(Text::fontPath.c_str(), &bufferSize);
         ImFont* f = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(buffer, bufferSize, Text::fontHeight * ImGui::GetIO().DisplaySize.y);
         BR_ASSERT((f != nullptr), "font nullptr");
         ImGui_ImplOpenGL3_CreateFontsTexture();
@@ -231,7 +231,7 @@ namespace Beryll
         Slider::fontHeight = heightInPercent / 100.0f;
 
         uint32_t bufferSize = 0;
-        char *buffer = File::readToBuffer(Slider::fontPath.c_str(), &bufferSize);
+        char *buffer = Utils::File::readToBuffer(Slider::fontPath.c_str(), &bufferSize);
         ImFont* f = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(buffer, bufferSize, Slider::fontHeight * ImGui::GetIO().DisplaySize.y);
         BR_ASSERT((f != nullptr), "font nullptr");
         ImGui_ImplOpenGL3_CreateFontsTexture();

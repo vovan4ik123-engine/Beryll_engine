@@ -2,6 +2,7 @@
 #include "Beryll/Core/Log.h"
 #include "Beryll/Utils/File.h"
 #include "Beryll/Utils/Matrix.h"
+#include "Beryll/Utils/CommonUtils.h"
 #include "Beryll/Renderer/Camera.h"
 #include "Beryll/Core/Window.h"
 
@@ -17,7 +18,7 @@ namespace Beryll
         BR_INFO("Loading simple object:{0}", modelPath);
 
         uint32_t bufferSize = 0;
-        char* buffer = File::readToBuffer(modelPath, &bufferSize);
+        char* buffer = Utils::File::readToBuffer(modelPath, &bufferSize);
 
         m_scene = m_importer.ReadFileFromMemory(buffer, bufferSize,
                                                 aiProcess_Triangulate |
@@ -138,13 +139,13 @@ namespace Beryll
             }
         }
 
-        aiNode* node = m_scene->mRootNode->FindNode(m_scene->mMeshes[0]->mName);
+        const aiNode* node = Utils::Common::findAinodeForAimesh(m_scene, m_scene->mRootNode, m_scene->mMeshes[0]->mName);
         if(node)
         {
-            m_modelMatrix = Matrix::aiToGlm(node->mTransformation);
+            m_modelMatrix = Utils::Matrix::aiToGlm(node->mTransformation);
         }
 
-        m_position = Matrix::getPositionFrom4x4Glm(m_modelMatrix);
+        m_position = Utils::Matrix::getPositionFrom4x4Glm(m_modelMatrix);
     }
 
     SimpleObject::~SimpleObject()

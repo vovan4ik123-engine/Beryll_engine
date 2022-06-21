@@ -21,8 +21,8 @@ namespace Beryll
             return;
         }
 
-        const char* vertexShaderCode = File::readToBuffer(vertexPath);
-        const char* fragmentShaderCode = File::readToBuffer(fragmentPath);
+        const char* vertexShaderCode = Utils::File::readToBuffer(vertexPath);
+        const char* fragmentShaderCode = Utils::File::readToBuffer(fragmentPath);
 
         GLuint vertexShaderID = glCreateShader(GL_VERTEX_SHADER);
         GLuint fragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);

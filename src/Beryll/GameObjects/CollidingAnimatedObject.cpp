@@ -2,6 +2,7 @@
 #include "Beryll/Utils/File.h"
 #include "Beryll/Utils/Matrix.h"
 #include "Beryll/Utils/Quaternion.h"
+#include "Beryll/Utils/CommonUtils.h"
 #include "Beryll/Renderer/Camera.h"
 #include "Beryll/Core/Window.h"
 #include "Beryll/Core/TimeStep.h"
@@ -24,7 +25,7 @@ namespace Beryll
         BR_INFO("Loading colliding animated object:{0}", modelPath);
 
         uint32_t bufferSize = 0;
-        char *buffer = File::readToBuffer(modelPath, &bufferSize);
+        char *buffer = Utils::File::readToBuffer(modelPath, &bufferSize);
 
         m_scene = m_importer.ReadFileFromMemory(buffer, bufferSize,
                                                 aiProcess_Triangulate |
@@ -52,9 +53,6 @@ namespace Beryll
         for(int i = 0; i < m_scene->mNumMeshes; ++i)
         {
             std::string meshName = m_scene->mMeshes[i]->mName.C_Str();
-            // Imported Collada.dae from blender has -mesh at the end of aiMesh name, but has not -mesh at the end of aiNode name
-            // m_scene->mRootNode->FindNode(mesh->mName); will work only if aiMesh name is same as aiNode name
-            meshName = meshName.substr(0, meshName.find("-mesh"));
 
             if (meshName.find("Collision") != std::string::npos)
             {
@@ -217,14 +215,14 @@ namespace Beryll
                 BR_INFO("Have animation {0} with name:{1}", g, m_scene->mAnimations[g]->mName.C_Str());
             }
 
-            aiNode *node = m_scene->mRootNode->FindNode(m_scene->mMeshes[i]->mName);
+            const aiNode *node = Utils::Common::findAinodeForAimesh(m_scene, m_scene->mRootNode, m_scene->mMeshes[i]->mName);
             if (node)
             {
-                m_modelMatrix = Matrix::aiToGlm(node->mTransformation);
+                m_modelMatrix = Utils::Matrix::aiToGlm(node->mTransformation);
             }
 
-            m_scaleMatrix = glm::scale(glm::mat4x4{1.0f}, Matrix::getScaleFrom4x4Glm(m_modelMatrix));
-            m_position = Matrix::getPositionFrom4x4Glm(m_modelMatrix);
+            m_scaleMatrix = glm::scale(glm::mat4x4{1.0f}, Utils::Matrix::getScaleFrom4x4Glm(m_modelMatrix));
+            m_position = Utils::Matrix::getPositionFrom4x4Glm(m_modelMatrix);
         }
     }
 
@@ -419,8 +417,8 @@ namespace Beryll
         aiQuaternion& start = nodeAnim->mRotationKeys[currentFrameIndex].mValue;
         aiQuaternion& end = nodeAnim->mRotationKeys[nextFrameIndex].mValue;
 
-        // Quaternion::nlerp() will normalize quaternions it takes by reference if they not
-        return aiMatrix4x4(Quaternion::nlerp(start, end, factor).GetMatrix());
+        // Utils::Quaternion::nlerp() will normalize quaternions it takes by reference if they not
+        return aiMatrix4x4(Utils::Quaternion::nlerp(start, end, factor).GetMatrix());
     }
 
     aiMatrix4x4 CollidingAnimatedObject::interpolateScaling(const float& animationTime, const aiNodeAnim* nodeAnim, const int& currentFrameIndex)
@@ -480,10 +478,10 @@ namespace Beryll
     {
         glm::mat4 collisionTransforms{1.0f};
 
-        aiNode* collisionNode = m_scene->mRootNode->FindNode(meshName.c_str());
-        if(collisionNode)
+        const aiNode* node = Utils::Common::findAinodeForAimesh(m_scene, m_scene->mRootNode, mesh->mName);
+        if(node)
         {
-            collisionTransforms = Matrix::aiToGlm(collisionNode->mTransformation);
+            collisionTransforms = Utils::Matrix::aiToGlm(node->mTransformation);
         }
 
         std::vector<glm::vec3> vertices;

@@ -106,7 +106,7 @@ namespace Beryll
         glm::vec3 transl;
         glm::vec3 scale;
         glm::quat rot;
-        Matrix::decompose4x4Glm(transforms, scale, rot, transl);
+        Utils::Matrix::decompose4x4Glm(transforms, scale, rot, transl);
 
         // apply scale
         glm::vec3 vertex1;
@@ -177,7 +177,7 @@ namespace Beryll
         glm::vec3 transl;
         glm::vec3 scale;
         glm::quat rot;
-        Matrix::decompose4x4Glm(transforms, scale, rot, transl);
+        Utils::Matrix::decompose4x4Glm(transforms, scale, rot, transl);
 
         // btConvexHullShape should have less that 100 vertices for better performance
         std::shared_ptr<btConvexHullShape> shape = std::make_shared<btConvexHullShape>();

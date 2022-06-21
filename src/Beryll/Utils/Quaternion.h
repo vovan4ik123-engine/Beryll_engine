@@ -4,7 +4,7 @@
 #include "CppHeaders.h"
 #include "Beryll/Core/Log.h"
 
-namespace Beryll
+namespace Utils
 {
     // w=1 x=0 y=0 z=0 identity quaternion = no rotation
 
