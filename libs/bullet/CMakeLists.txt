@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-#add_definitions(-DUSE_PTHREADS -DSCE_PFX_USE_SIMD_VECTORMATH)
+add_definitions(-DBT_THREADSAFE)
 
 set(Bullet3Common_SRCS
         Bullet3Common/b3AlignedAllocator.cpp

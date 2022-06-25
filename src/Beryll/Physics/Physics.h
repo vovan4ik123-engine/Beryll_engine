@@ -137,7 +137,7 @@ namespace Beryll
                               CollisionGroups collGroup,
                               CollisionGroups collMask);
 
-        static void setTransforms(const std::string& ID, const glm::vec3& pos, const glm::quat& rot = glm::quat(1.0f, 0.0f, 0.0f, 0.0f), bool resetVelocities = true);
+        static void setPosition(const std::string& ID, const glm::vec3& pos, bool resetVelocities = true);
         static PhysicsTransforms getTransforms(const std::string& ID);
         // bullet physics dont store scale in transform. keep scale in model matrix/vector in model
 

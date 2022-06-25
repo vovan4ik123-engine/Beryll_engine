@@ -41,7 +41,6 @@ namespace Beryll
         m_ID = "CollidingSimpleObject_" + std::to_string(m_allCollidingSimpleObjectCount);
         ++m_allCollidingSimpleObjectCount;
 
-        m_hasCollisionObject = true;
         m_canBeDisabled = canBeDisabled;
 
         for(int i = 0; i < m_scene->mNumMeshes; ++i)
@@ -50,6 +49,7 @@ namespace Beryll
 
             if(meshName.find("Collision") != std::string::npos)
             {
+                m_hasCollisionObject = true;
                 processCollisionMesh(m_scene->mMeshes[i], meshName, collisionMass, wantCollisionCallBack, collFlag, collGroup, collMask);
                 continue;
             }

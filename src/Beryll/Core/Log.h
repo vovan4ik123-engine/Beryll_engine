@@ -14,16 +14,20 @@ namespace Beryll
             return &instance;
         }
 
+#if defined(ANDROID)
         std::shared_ptr<spdlog::logger> getAndroidLogger()
         {
             return m_androidLogger;
         }
+#endif
 
     private:
         Log() {};
         ~Log() {};
 
+#if defined(ANDROID)
         std::shared_ptr<spdlog::logger> m_androidLogger = spdlog::android_logger_mt("android", "spdlog-android");
+#endif
     };
 }
 

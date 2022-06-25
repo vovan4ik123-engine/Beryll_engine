@@ -234,14 +234,13 @@ namespace Beryll
         return false;
     }
 
-    void Physics::setTransforms(const std::string& ID, const glm::vec3& pos, const glm::quat& rot, bool resetVelocities)
+    void Physics::setPosition(const std::string& ID, const glm::vec3& pos, bool resetVelocities)
     {
         auto iter = m_rigidBodiesMap.find(ID);
         if(iter != m_rigidBodiesMap.end())
         {
             btTransform t;
             t.setOrigin(btVector3(pos.x, pos.y, pos.z));
-            t.setRotation(btQuaternion(rot.x, rot.y, rot.z, rot.w));
 
             iter->second->rb->setWorldTransform(t);
             iter->second->rb->getMotionState()->setWorldTransform(t);

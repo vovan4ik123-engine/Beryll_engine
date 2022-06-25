@@ -44,7 +44,6 @@ namespace Beryll
         m_ID = "CollidingAnimatedObject_" + std::to_string(m_allCollidingAnimatedObjectCount);
         ++m_allCollidingAnimatedObjectCount;
 
-        m_hasCollisionObject = true;
         m_canBeDisabled = canBeDisabled;
 
         m_globalInverseMatrix = m_scene->mRootNode->mTransformation;
@@ -54,8 +53,9 @@ namespace Beryll
         {
             std::string meshName = m_scene->mMeshes[i]->mName.C_Str();
 
-            if (meshName.find("Collision") != std::string::npos)
+            if(meshName.find("Collision") != std::string::npos)
             {
+                m_hasCollisionObject = true;
                 processCollisionMesh(m_scene->mMeshes[i], meshName, collisionMass, wantCollisionCallBack, collFlag, collGroup, collMask);
                 continue;
             }
