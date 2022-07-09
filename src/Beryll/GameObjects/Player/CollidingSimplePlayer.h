@@ -1,14 +1,13 @@
 #pragma once
 
-#include "SceneObject.h"
+#include "Beryll/GameObjects/CollidingSimpleObject.h"
 
 namespace Beryll
 {
-    // Not animated object, participates in physics simulation
-    class CollidingSimpleObject : public SceneObject
+    class CollidingSimplePlayer : public CollidingSimpleObject
     {
     public:
-        CollidingSimpleObject() = delete;
+        CollidingSimplePlayer() = delete;
         /*
          * modelPath - path to models file (.DAE or .FBX). start path from first folder inside assets/
          * canBeDisabled - true if object can be disabled from game (update/draw/playsound/simulate physics)
@@ -27,7 +26,7 @@ namespace Beryll
          * specSampler - name of sampler2D .... for specular texture in fragment shader
          *               sampler2D .... for specular texture MUST be second in shader
          */
-        CollidingSimpleObject(const char* modelPath,  // common params
+        CollidingSimplePlayer(const char* modelPath,  // common params
                               bool canBeDisabled,
                               float collisionMass,    // physics params
                               bool wantCollisionCallBack,
@@ -38,35 +37,28 @@ namespace Beryll
                               const char* fragmentPath,
                               const char* diffSampler,
                               const char* specSampler = nullptr);
-        ~CollidingSimpleObject() override;
+        ~CollidingSimplePlayer() override;
 
+        // methods from base class
         void updateBeforePhysics() override;
         void updateAfterPhysics() override;
         void draw() override;
         void playSound() override;
 
-    protected:
-        std::shared_ptr<VertexBuffer> m_vertexPosBuffer;
-        std::shared_ptr<VertexBuffer> m_vertexNormalsBuffer;
-        std::shared_ptr<VertexBuffer> m_textureCoordsBuffer;
-        std::shared_ptr<IndexBuffer> m_indexBuffer;
-        std::unique_ptr<VertexArray> m_vertexArray;
-        std::unique_ptr<Shader> m_shader;
-        std::unique_ptr<Texture> m_diffTexture;
-        const uint32_t m_diffSamplerIndexInShader = 0; // diffuse sampler MUST be first in fragment shader
-        std::unique_ptr<Texture> m_specTexture;
-        const uint32_t m_specSamplerIndexInShader = 1; // specular sampler MUST be second in fragment shader
-
-        Assimp::Importer m_importer;
-        const aiScene* m_scene = nullptr;
-
     private:
-        void processCollisionMesh(const aiMesh* mesh,
-                                  const std::string& meshName,
-                                  float mass,
-                                  bool wantCallBack,
-                                  CollisionFlags collFlag,
-                                  CollisionGroups collGroup,
-                                  CollisionGroups collMask);
+        float m_fromOriginToBottom = 0.0f; // distance between origin and player bottom
+        float m_fromOriginToTop = 0.0f; // distance between origin and player top
+        float m_XZradius = 0.0f; // radius on X/Z axis. from collision mesh origin
+
+        float m_playerHeight = 0.0f;
+
+        glm::vec3 m_eyeDirection_X_Y_Z{0.0f};
+        glm::vec3 m_eyeDirection_X_Z{0.0f};
+
+        glm::vec3 m_moveDirection_X_Y_Z{0.0f};
+        glm::vec3 m_moveDirection_X_Z{0.0f};
+
+        std::vector<int> m_collidingObjectsIDs; // prevent creation and deletion every frame!!!
+        std::vector<std::pair<glm::vec3, glm::vec3>> m_collidingPoints; // prevent creation and deletion every frame!!!
     };
 }

@@ -12,16 +12,32 @@ namespace Beryll
 
         void setPosition(const glm::vec3& pos, bool resetVelocities = true)
         {
-            m_position = pos;
+            m_origin = pos;
 
             m_translateMatrix = glm::translate(glm::mat4x4{1.0f}, pos);
 
             m_modelMatrix = m_translateMatrix * m_rotateMatrix * m_scaleMatrix;
 
             if(m_hasCollisionObject)
-            {
                 Beryll::Physics::setPosition(m_ID, pos, resetVelocities);
-            }
+        }
+
+        void setAngularFactor(const glm::vec3& angFactor)
+        {
+            if(m_hasCollisionObject)
+                Beryll::Physics::setAngularFactor(m_ID, angFactor);
+        }
+
+        void disableGravity()
+        {
+            if(m_hasCollisionObject)
+                Beryll::Physics::disableGravityForObject(m_ID);
+        }
+
+        void enableGravity()
+        {
+            if(m_hasCollisionObject)
+                Beryll::Physics::enableGravityForObject(m_ID);
         }
 
         // inherited pure virtual methods here

@@ -26,9 +26,10 @@ btScalar gDeactivationTime = btScalar(2.);
 bool gDisableDeactivation = false;
 static int uniqueId = 0;
 
-btRigidBody::btRigidBody(const btRigidBody::btRigidBodyConstructionInfo& constructionInfo)
+btRigidBody::btRigidBody(const btRigidBody::btRigidBodyConstructionInfo& constructionInfo, const int engineID)
 {
 	setupRigidBody(constructionInfo);
+	idForEngine = engineID;
 }
 
 btRigidBody::btRigidBody(btScalar mass, btMotionState* motionState, btCollisionShape* collisionShape, const btVector3& localInertia)

@@ -13,9 +13,6 @@ namespace Beryll
                 &&(width >= 0.0f && width <= 100.0f) && (height >= 0.0f && height <= 100.0f), "Wrong button size or position")
 
         m_actRepeat = actRepeat;
-
-        m_ID = "Button_" + std::to_string(m_allButtonsCount);
-        ++m_allButtonsCount;
     }
 
     Button::~Button()
@@ -23,7 +20,6 @@ namespace Beryll
 
     }
 
-    uint32_t Button::m_allButtonsCount = 0;
     ImFont* Button::font = nullptr;
     std::string Button::fontPath;
     float Button::fontHeight = 0.0f;
@@ -96,7 +92,7 @@ namespace Beryll
 
 
         ImGui::SetNextWindowPos(ImVec2(m_leftPos * MainImGUI::getInstance()->getGUIWidth(), m_topPos * MainImGUI::getInstance()->getGUIHeight()));
-        ImGui::Begin(m_ID.c_str(), nullptr, m_noBackgroundNoFrame);
+        ImGui::Begin(m_stringID.c_str(), nullptr, m_noBackgroundNoFrame);
 
         if(font)
         {

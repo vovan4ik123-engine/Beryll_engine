@@ -15,7 +15,7 @@ namespace Beryll
 
         static float getSecFromStart()
         {
-            return static_cast<float>(getMillisecFromStart()) / 1000.0f;
+            return static_cast<float>(getMillisecFromStart()) * 0.001f; // same as / 1000.0f;
         }
 
         static void sleep(uint32_t millisec)
@@ -26,7 +26,7 @@ namespace Beryll
         static void fixateTime()
         {
             m_timeStepMIlliSec = getMillisecFromStart() - m_currentStepStart;
-            m_timeStepSec = m_timeStepMIlliSec / 1000.0f;
+            m_timeStepSec = static_cast<float>(m_timeStepMIlliSec) * 0.001f; // same as / 1000.0f;
 
             m_currentStepStart = getMillisecFromStart();
         }

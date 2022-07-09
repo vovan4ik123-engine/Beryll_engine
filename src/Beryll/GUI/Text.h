@@ -38,7 +38,5 @@ namespace Beryll
         // color can be different for each text
         ImVec4 m_fontColor { 0.0f, 0.0f, 0.0f, 1.0f }; // 0.0f - 1.0f range
         ImVec4 m_backgroundColor { 1.0f, 1.0f, 1.0f, 1.0f };
-
-        static uint32_t m_allTextsCount;
     };
 }

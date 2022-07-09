@@ -45,7 +45,5 @@ namespace Beryll
         ImVec4 m_sliderGrabColor { 0.0f, 1.0f, 0.0f, 1.0f };
         ImVec4 m_textBackGroundColor { 0.4f, 0.4f, 0.4f, 1.0f };
         ImVec4 m_dragAreaColor { 0.0f, 0.0f, 1.0f, 1.0f };
-
-        static uint32_t m_allSliderCount;
     };
 }

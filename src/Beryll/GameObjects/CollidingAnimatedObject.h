@@ -63,11 +63,11 @@ namespace Beryll
         uint32_t m_currentAnimIndex = 0;
 
         void calculateTransforms();
-        void readNodeHierarchy(const float& animationTime, const aiNode* node, const aiMatrix4x4& parentTransform);
+        void readNodeHierarchy(const float animationTime, const aiNode* node, const aiMatrix4x4& parentTransform);
         const aiNodeAnim* findNodeAnim(const aiAnimation* animation, const aiString& nodeName);
-        aiMatrix4x4 interpolatePosition(const float& animationTime, const aiNodeAnim* nodeAnim, const int& currentFrameIndex);
-        aiMatrix4x4 interpolateRotation(const float& animationTime, const aiNodeAnim* nodeAnim, const int& currentFrameIndex);
-        aiMatrix4x4 interpolateScaling(const float& animationTime, const aiNodeAnim* nodeAnim, const int& currentFrameIndex);
+        aiMatrix4x4 interpolatePosition(const aiNodeAnim* nodeAnim, const int currentFrameIndex, const int nextFrameIndex, const float factor);
+        aiMatrix4x4 interpolateRotation(const aiNodeAnim* nodeAnim, const int currentFrameIndex, const int nextFrameIndex, const float factor);
+        aiMatrix4x4 interpolateScaling(const aiNodeAnim* nodeAnim, const int currentFrameIndex, const int nextFrameIndex, const float factor);
 
         aiMatrix4x4 m_globalInverseMatrix;
         // animation data end
@@ -89,8 +89,6 @@ namespace Beryll
 
         Assimp::Importer m_importer;
         const aiScene* m_scene = nullptr;
-
-        static uint32_t m_allCollidingAnimatedObjectCount;
 
     private:
         void processCollisionMesh(const aiMesh* mesh,

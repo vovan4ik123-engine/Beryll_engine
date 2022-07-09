@@ -38,9 +38,6 @@ namespace Beryll
         BR_ASSERT((m_scene->mNumMeshes == 2),
                   "Colliding simple object MUST contain 2 meshes {0}. For draw and physics simulation", modelPath);
 
-        m_ID = "CollidingSimpleObject_" + std::to_string(m_allCollidingSimpleObjectCount);
-        ++m_allCollidingSimpleObjectCount;
-
         m_canBeDisabled = canBeDisabled;
 
         for(int i = 0; i < m_scene->mNumMeshes; ++i)
@@ -162,7 +159,7 @@ namespace Beryll
             }
 
             m_scaleMatrix = glm::scale(glm::mat4x4{1.0f}, Utils::Matrix::getScaleFrom4x4Glm(m_modelMatrix));
-            m_position = Utils::Matrix::getPositionFrom4x4Glm(m_modelMatrix);
+            m_origin = Utils::Matrix::getPositionFrom4x4Glm(m_modelMatrix);
         }
     }
 
@@ -170,8 +167,6 @@ namespace Beryll
     {
 
     }
-
-    uint32_t CollidingSimpleObject::m_allCollidingSimpleObjectCount = 0;
 
     void CollidingSimpleObject::updateBeforePhysics()
     {
@@ -182,9 +177,9 @@ namespace Beryll
     {
         m_physicsTransforms = Physics::getTransforms(m_ID);
 
-        m_position = m_physicsTransforms.position;
+        m_origin = m_physicsTransforms.origin;
 
-        m_translateMatrix = glm::translate(glm::mat4x4{1.0f}, m_physicsTransforms.position);
+        m_translateMatrix = glm::translate(glm::mat4x4{1.0f}, m_physicsTransforms.origin);
         m_rotateMatrix = glm::toMat4(m_physicsTransforms.rotation);
 
         m_modelMatrix = m_translateMatrix * m_rotateMatrix * m_scaleMatrix;

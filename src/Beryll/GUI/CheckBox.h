@@ -46,8 +46,6 @@ namespace Beryll
         ImVec4 m_fontColor { 0.0f, 0.0f, 0.0f, 1.0f }; // 0.0f - 1.0f range
         ImVec4 m_checkMarkColor { 1.0f, 1.0f, 1.0f, 1.0f };
         ImVec4 m_checkSquareColor { 0.0f, 0.7f, 0.0f, 1.0f };
-
-        static uint32_t m_allCheckBoxCount;
     };
 }
 

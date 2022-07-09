@@ -13,9 +13,6 @@ namespace Beryll
 
         if(background) { m_flags = m_backgroundNoFrame; }
         else { m_flags = m_noBackgroundNoFrame; }
-
-        m_ID = "Slider_" + std::to_string(m_allSliderCount);
-        ++m_allSliderCount;
     }
 
     Slider::~Slider()
@@ -23,7 +20,6 @@ namespace Beryll
 
     }
 
-    uint32_t Slider::m_allSliderCount = 0;
     ImFont* Slider::font = nullptr;
     std::string Slider::fontPath;
     float Slider::fontHeight = 0.0f;
@@ -66,7 +62,7 @@ namespace Beryll
         ImGui::PushStyleColor(ImGuiCol_FrameBgActive, m_dragAreaColor);
 
         ImGui::SetNextWindowPos(ImVec2(m_leftPos * MainImGUI::getInstance()->getGUIWidth(), m_topPos * MainImGUI::getInstance()->getGUIHeight()));
-        ImGui::Begin(m_ID.c_str(), nullptr, m_flags);
+        ImGui::Begin(m_stringID.c_str(), nullptr, m_flags);
 
         if(font)
         {

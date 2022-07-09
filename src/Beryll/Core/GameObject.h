@@ -4,6 +4,7 @@
 #include "CppHeaders.h"
 
 #include "Beryll/Physics/Physics.h"
+#include "Beryll/Utils/CommonUtils.h"
 
 namespace Beryll
 {
@@ -19,7 +20,7 @@ namespace Beryll
         virtual void draw() = 0; // subclass graphics
         virtual void playSound() = 0; // subclass sounds
 
-        const std::string& getID() { return m_ID; }
+        int getID() { return m_ID; }
 
         bool getHasCollisionObject() { return m_hasCollisionObject; }
 
@@ -46,11 +47,12 @@ namespace Beryll
             }
         }
 
-        const glm::vec3& getPosition() { return m_position; }
+        const glm::vec3& getPosition() { return m_origin; }
 
     protected:
-        std::string m_ID; // initialize in subclass
-        glm::vec3 m_position{0.0f};
+        const int m_ID = Utils::Common::generateID(); // unique
+
+        glm::vec3 m_origin{0.0f};
 
         // set true for all collision objects
         bool m_hasCollisionObject = false;

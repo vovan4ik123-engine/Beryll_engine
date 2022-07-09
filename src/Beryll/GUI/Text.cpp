@@ -11,9 +11,6 @@ namespace Beryll
 
         if(background) { m_flags = m_backgroundNoFrame; }
         else { m_flags = m_noBackgroundNoFrame; }
-
-        m_ID = "Text_" + std::to_string(m_allTextsCount);
-        ++m_allTextsCount;
     }
 
     Text::~Text()
@@ -21,7 +18,6 @@ namespace Beryll
 
     }
 
-    uint32_t Text::m_allTextsCount = 0;
     ImFont* Text::font = nullptr;
     std::string Text::fontPath;
     float Text::fontHeight = 0.0f;
@@ -42,7 +38,7 @@ namespace Beryll
         ImGui::PushStyleColor(ImGuiCol_WindowBg, m_backgroundColor);
 
         ImGui::SetNextWindowPos(ImVec2(m_leftPos * MainImGUI::getInstance()->getGUIWidth(), m_topPos * MainImGUI::getInstance()->getGUIHeight()));
-        ImGui::Begin(m_ID.c_str(), nullptr, m_flags);
+        ImGui::Begin(m_stringID.c_str(), nullptr, m_flags);
 
         if(font)
         {
@@ -64,5 +60,4 @@ namespace Beryll
     {
 
     }
-
 }

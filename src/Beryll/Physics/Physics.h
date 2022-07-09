@@ -60,24 +60,24 @@ namespace Beryll
 
     struct RigidBodyData
     {
-        RigidBodyData(const std::string& id, const std::shared_ptr<btRigidBody>& b, const bool& exist)
+        RigidBodyData(int id, const std::shared_ptr<btRigidBody>& b, const bool& exist)
         : bodyID(id), rb(b), existInDynamicWorld(exist) {}
 
-        const std::string bodyID;
+        const int bodyID;
         const std::shared_ptr<btRigidBody> rb;
         bool existInDynamicWorld = false;
     };
 
     struct PhysicsTransforms
     {
-        glm::vec3 position{0.0f, 0.0f, 0.0f};
+        glm::vec3 origin{0.0f, 0.0f, 0.0f};
         glm::quat rotation{1.0f, 0.0f, 0.0f, 0.0f}; // identity quaternion = no rotation
     };
 
     struct RayClosestHit
     {
         bool hit = false;
-        std::string_view objectID; // if comething was hitted
+        const int objectID; // if something was hitted
         glm::vec3 hitPoint = glm::vec3(0.0f);
         glm::vec3 hitNormal = glm::vec3(0.0f);
         float hitFraction = 0.0f; // hit distance in range 0...1 between start and end points
@@ -87,7 +87,7 @@ namespace Beryll
     struct RayAllHits
     {
         bool hit = false;
-        std::vector<std::string_view> objectsID; // all hitted
+        std::vector<int> objectsID; // all hitted
         std::vector<glm::vec3> hitPoints;
         std::vector<glm::vec3> hitNormals;
         std::vector<float> hitFractions; // hit distances in range 0...1 between start and end points
@@ -130,41 +130,47 @@ namespace Beryll
                               const std::vector<uint32_t>& indices,
                               const glm::mat4& transforms,
                               const std::string& meshName,
-                              const std::string& objectID,
+                              const int objectID,
                               float mass,
                               bool wantCallBack,
                               CollisionFlags collFlag,
                               CollisionGroups collGroup,
                               CollisionGroups collMask);
 
-        static void setPosition(const std::string& ID, const glm::vec3& pos, bool resetVelocities = true);
-        static PhysicsTransforms getTransforms(const std::string& ID);
+        static void setPosition(const int ID, const glm::vec3& pos, bool resetVelocities = true);
+        static void setRotation(const int ID, const glm::quat& rot, bool resetVelocities = true);
+        static PhysicsTransforms getTransforms(const int ID);
         // bullet physics dont store scale in transform. keep scale in model matrix/vector in model
 
-        static void softRemoveObject(const std::string& ID); // remove from simulation but keep in m_rigidBodiesMap
-        static void restoreObject(const std::string& ID, bool resetVelocities = true); // restore from m_rigidBodiesMap to simulation
+        static void softRemoveObject(const int ID); // remove from simulation but keep in m_rigidBodiesMap
+        static void restoreObject(const int ID, bool resetVelocities = true); // restore from m_rigidBodiesMap to simulation
 
-        static void setAngularFactor(const std::string& ID, const glm::vec3& angFactor); // affect objects rotation speed during collisions
-        static void setLinearFactor(const std::string& ID, const glm::vec3& linFactor); // affect objects translation speed during collisions
-        static void setAngularVelocity(const std::string& ID, const glm::vec3& angVelocity); // set rotation velocity
-        static void setLinearVelocity(const std::string& ID, const glm::vec3& linVelocity); // set translation velocity
+        static void activateObject(const int ID); // awake object in physics world
+
+        static void setAngularFactor(const int ID, const glm::vec3& angFactor); // affect objects rotation speed during collisions
+        static void setLinearFactor(const int ID, const glm::vec3& linFactor); // affect objects translation speed during collisions
+        static void setAngularVelocity(const int ID, const glm::vec3& angVelocity); // set rotation velocity
+        static void setLinearVelocity(const int ID, const glm::vec3& linVelocity); // set translation velocity
 
         static void setDefaultGravity(const glm::vec3& gravity); // change gravity for whole physics world
-        static void setGravityForObject(const std::string& ID, const glm::vec3& gravity); // change gravity for object
-        static void disableGravityForObject(const std::string& ID);
-        static void setDefaultGravityForObject(const std::string& ID);
+        static void setGravityForObject(const int ID, const glm::vec3& gravity); // change gravity for object
+        static void disableGravityForObject(const int ID);
+        static void enableGravityForObject(const int ID);
 
-        static bool getIsCollision(std::string_view id1, std::string_view id2);
-        static const std::set<std::pair<std::string_view, std::string_view>>& getAllCollisions() { return m_collisionPairs; }
+        static bool getIsCollision(const int ID1, const int ID2);
+        static std::vector<int> getCollisionsWithGroup(const int id, const CollisionGroups group); // return IDs of all colliding objects in specific group
+        static const std::set<std::pair<const int, const int>>& getAllCollisions() { return m_collisionPairs; }
+        static std::vector<std::pair<glm::vec3, glm::vec3>> getAllCollisionPoints(const int ID1, const int ID2); // return point + his normal
+        static std::vector<std::pair<glm::vec3, glm::vec3>> getAllCollisionPoints(const int ID1, const std::vector<int>& IDs); // return point + his normal
 
         // Cast ray. Only objects in physics world can be hitted
         static RayClosestHit castRayClosestHit(const glm::vec3& from, const glm::vec3 to, CollisionGroups collGroup, CollisionGroups collMask);
         static RayAllHits castRayAllHits(const glm::vec3& from, const glm::vec3 to, CollisionGroups collGroup, CollisionGroups collMask);
 
     private:
-        static bool collisionsCallBack(btManifoldPoint& cp, const btCollisionObjectWrapper* ob1, int id1, int index1,
-                                                            const btCollisionObjectWrapper* ob2, int id2, int index2);
-        static std::set<std::pair<std::string_view, std::string_view>> m_collisionPairs;
+        static bool collisionsCallBack(btManifoldPoint& cp, const btCollisionObjectWrapper* ob1, int ID1, int index1,
+                                                            const btCollisionObjectWrapper* ob2, int ID2, int index2);
+        static std::set<std::pair<const int, const int>> m_collisionPairs;
 
         static btVector3 m_gravity;
         static Timer m_timer;
@@ -182,7 +188,7 @@ namespace Beryll
         static std::vector<std::shared_ptr<btCollisionShape>> m_collisionShapes;
         static std::vector<std::shared_ptr<btTriangleMesh>> m_triangleMeshes;
         static std::vector<std::shared_ptr<btDefaultMotionState>> m_motionStates;
-        static std::map<const std::string, std::shared_ptr<RigidBodyData>> m_rigidBodiesMap;
+        static std::map<const int, std::shared_ptr<RigidBodyData>> m_rigidBodiesMap;
 
         // increase resolution if your ball penetrate wall but you want collision
         // physics engine will do more small iteration during one simulation
@@ -194,7 +200,7 @@ namespace Beryll
         static void addConcaveMesh(const std::vector<glm::vec3>& vertices,
                                    const std::vector<uint32_t>& indices,
                                    const glm::mat4& transforms,
-                                   const std::string& objectID,
+                                   const int objectID,
                                    float mass,
                                    bool wantCallBack,
                                    CollisionFlags collFlag,
@@ -204,7 +210,7 @@ namespace Beryll
         static void addConvexMesh(const std::vector<glm::vec3>& vertices,
                                   const std::vector<uint32_t>& indices,
                                   const glm::mat4& transforms,
-                                  const std::string& objectID,
+                                  const int objectID,
                                   float mass,
                                   bool wantCallBack,
                                   CollisionFlags collFlag,

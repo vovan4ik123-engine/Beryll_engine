@@ -47,7 +47,5 @@ namespace Beryll
 
         Assimp::Importer m_importer;
         const aiScene* m_scene = nullptr;
-
-        static uint32_t m_allSimpleObjectCount;
     };
 }

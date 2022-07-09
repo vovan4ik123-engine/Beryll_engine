@@ -52,7 +52,5 @@ namespace Beryll
         ImVec4 m_fontColor { 0.0f, 0.0f, 0.0f, 1.0f }; // 0.0f - 1.0f range
         ImVec4 m_color { 0.4f, 0.4f, 0.4f, 1.0f };
         ImVec4 m_clickedColor { 0.5f, 0.5f, 0.5f, 1.0f };
-
-        static uint32_t m_allButtonsCount;
     };
 }

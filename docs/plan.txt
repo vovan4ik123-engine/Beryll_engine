@@ -1,7 +1,13 @@
-use multithreading in bullet
+---------------------plan:---------------------
+
 add player
 
+add thread pool(multithreading folder). probably better async tack pool for parallel calculations
++ task scheduler?
 
 update SDL2_image to 2.6.0
 update SDL2_mixer to 2.6.0
 update IMGui to 1.88
+
+---------------------problems:---------------------
+multithreading in bullet dont work in release mode

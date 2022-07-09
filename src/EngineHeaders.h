@@ -21,6 +21,8 @@
 #include "Beryll/GameObjects/AnimatedObject.h"
 #include "Beryll/GameObjects/CollidingAnimatedObject.h"
 
+#include "Beryll/GameObjects/Player/CollidingSimplePlayer.h"
+
 #include "Beryll/GUI/MainImGUI.h"
 #include "Beryll/GUI/DemoImGUI.h"
 #include "Beryll/GUI/Button.h"

@@ -33,9 +33,6 @@ namespace Beryll
         BR_ASSERT((m_scene->mNumMeshes == 1),
                 "Simple object MUST contain only 1 mesh {0}. Combine into one if you have many", modelPath);
 
-        m_ID = "SimpleObject_" + std::to_string(m_allSimpleObjectCount);
-        ++m_allSimpleObjectCount;
-
         m_canBeDisabled = canBeDisabled;
 
         // prepare vectors
@@ -145,15 +142,13 @@ namespace Beryll
             m_modelMatrix = Utils::Matrix::aiToGlm(node->mTransformation);
         }
 
-        m_position = Utils::Matrix::getPositionFrom4x4Glm(m_modelMatrix);
+        m_origin = Utils::Matrix::getPositionFrom4x4Glm(m_modelMatrix);
     }
 
     SimpleObject::~SimpleObject()
     {
 
     }
-
-    uint32_t SimpleObject::m_allSimpleObjectCount = 0;
 
     void SimpleObject::updateBeforePhysics()
     {

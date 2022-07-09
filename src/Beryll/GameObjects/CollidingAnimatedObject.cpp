@@ -41,9 +41,6 @@ namespace Beryll
         BR_ASSERT((m_scene->mNumMeshes == 2),
                   "Colliding animated object MUST contain 2 meshes {0}. For draw and physics simulation", modelPath);
 
-        m_ID = "CollidingAnimatedObject_" + std::to_string(m_allCollidingAnimatedObjectCount);
-        ++m_allCollidingAnimatedObjectCount;
-
         m_canBeDisabled = canBeDisabled;
 
         m_globalInverseMatrix = m_scene->mRootNode->mTransformation;
@@ -222,7 +219,7 @@ namespace Beryll
             }
 
             m_scaleMatrix = glm::scale(glm::mat4x4{1.0f}, Utils::Matrix::getScaleFrom4x4Glm(m_modelMatrix));
-            m_position = Utils::Matrix::getPositionFrom4x4Glm(m_modelMatrix);
+            m_origin = Utils::Matrix::getPositionFrom4x4Glm(m_modelMatrix);
         }
     }
 
@@ -230,8 +227,6 @@ namespace Beryll
     {
 
     }
-
-    uint32_t CollidingAnimatedObject::m_allCollidingAnimatedObjectCount = 0;
 
     void CollidingAnimatedObject::updateBeforePhysics()
     {
@@ -242,9 +237,9 @@ namespace Beryll
     {
         m_physicsTransforms = Physics::getTransforms(m_ID);
 
-        m_position = m_physicsTransforms.position;
+        m_origin = m_physicsTransforms.origin;
 
-        m_translateMatrix = glm::translate(glm::mat4x4{1.0f}, m_physicsTransforms.position);
+        m_translateMatrix = glm::translate(glm::mat4x4{1.0f}, m_physicsTransforms.origin);
         m_rotateMatrix = glm::toMat4(m_physicsTransforms.rotation);
 
         m_modelMatrix = m_translateMatrix * m_rotateMatrix * m_scaleMatrix;
@@ -295,7 +290,7 @@ namespace Beryll
         readNodeHierarchy(animTime, m_scene->mRootNode, identity);
     }
 
-    void CollidingAnimatedObject::readNodeHierarchy(const float& animationTime, const aiNode* node, const aiMatrix4x4& parentTransform)
+    void CollidingAnimatedObject::readNodeHierarchy(const float animationTime, const aiNode* node, const aiMatrix4x4& parentTransform)
     {
         const aiNodeAnim* nodeAnim = findNodeAnim(m_scene->mAnimations[m_currentAnimIndex], node->mName);
 
@@ -317,11 +312,20 @@ namespace Beryll
                 }
             }
 
-            aiMatrix4x4 scalingMatr = interpolateScaling(animationTime, nodeAnim, currentFrameIndex);
+            int nextFrameIndex = currentFrameIndex + 1;
+            BR_ASSERT((nextFrameIndex < nodeAnim->mNumPositionKeys), "nextFrameIndex ! < nodeAnim->mNumPositionKeys");
 
-            aiMatrix4x4 rotationMatr = interpolateRotation(animationTime, nodeAnim, currentFrameIndex);
+            float deltaTime = static_cast<float>(nodeAnim->mPositionKeys[nextFrameIndex].mTime) -
+                              static_cast<float>(nodeAnim->mPositionKeys[currentFrameIndex].mTime);
+            // factor = how much time passed between current and next frame in range 0...1
+            float factor = (animationTime - static_cast<float>(nodeAnim->mPositionKeys[currentFrameIndex].mTime)) / deltaTime;
+            BR_ASSERT((factor >= 0.0f && factor <= 1.0f),
+                      "Translation factor must be in range 0...1. Factor:{0}, mTime:{1}, currentFrameIndex:{2}",
+                      factor, nodeAnim->mPositionKeys[currentFrameIndex].mTime, currentFrameIndex);
 
-            aiMatrix4x4 translationMatr = interpolatePosition(animationTime, nodeAnim, currentFrameIndex);
+            aiMatrix4x4 scalingMatr = interpolateScaling(nodeAnim, currentFrameIndex, nextFrameIndex, factor);
+            aiMatrix4x4 rotationMatr = interpolateRotation(nodeAnim, currentFrameIndex, nextFrameIndex, factor);
+            aiMatrix4x4 translationMatr = interpolatePosition(nodeAnim, currentFrameIndex, nextFrameIndex, factor);
 
             nodeTransform = translationMatr * rotationMatr * scalingMatr;
         }
@@ -360,7 +364,7 @@ namespace Beryll
         return nullptr;
     }
 
-    aiMatrix4x4 CollidingAnimatedObject::interpolatePosition(const float& animationTime, const aiNodeAnim* nodeAnim, const int& currentFrameIndex)
+    aiMatrix4x4 CollidingAnimatedObject::interpolatePosition(const aiNodeAnim* nodeAnim, const int currentFrameIndex, const int nextFrameIndex, const float factor)
     {
         aiMatrix4x4 posMatr;
 
@@ -370,22 +374,13 @@ namespace Beryll
             return posMatr;
         }
 
-        int nextFrameIndex = currentFrameIndex + 1;
-        BR_ASSERT((nextFrameIndex < nodeAnim->mNumPositionKeys), "nextFrameIndex ! < nodeAnim->mNumPositionKeys");
-
         if(nodeAnim->mPositionKeys[currentFrameIndex].mValue == nodeAnim->mPositionKeys[nextFrameIndex].mValue)
-        {// dont need interpolate
+        {
+            // dont need interpolate
             aiMatrix4x4::Translation(nodeAnim->mPositionKeys[currentFrameIndex].mValue, posMatr);
             return posMatr;
         }
 
-        float deltaTime = static_cast<float>(nodeAnim->mPositionKeys[nextFrameIndex].mTime) -
-                          static_cast<float>(nodeAnim->mPositionKeys[currentFrameIndex].mTime);
-        // factor = how much time passed between current and next frame in range 0...1
-        float factor = (animationTime - static_cast<float>(nodeAnim->mPositionKeys[currentFrameIndex].mTime)) / deltaTime;
-        BR_ASSERT((factor >= 0.0f && factor <= 1.0f),
-                  "Translation factor must be in range 0...1. Factor:{0}, mTime:{1}, currentFrameIndex:{2}",
-                  factor, nodeAnim->mPositionKeys[currentFrameIndex].mTime, currentFrameIndex);
         const aiVector3D& start = nodeAnim->mPositionKeys[currentFrameIndex].mValue;
         const aiVector3D& end = nodeAnim->mPositionKeys[nextFrameIndex].mValue;
         const aiVector3D deltaVector = end - start;
@@ -394,26 +389,17 @@ namespace Beryll
         return posMatr;
     }
 
-    aiMatrix4x4 CollidingAnimatedObject::interpolateRotation(const float& animationTime, const aiNodeAnim* nodeAnim, const int& currentFrameIndex)
+    aiMatrix4x4 CollidingAnimatedObject::interpolateRotation(const aiNodeAnim* nodeAnim, const int currentFrameIndex, const int nextFrameIndex, const float factor)
     {
         if(nodeAnim->mNumRotationKeys == 1)
             return aiMatrix4x4(nodeAnim->mRotationKeys[0].mValue.GetMatrix());
 
-        int nextFrameIndex = currentFrameIndex + 1;
-        BR_ASSERT((nextFrameIndex < nodeAnim->mNumRotationKeys), "nextFrameIndex ! < nodeAnim->mNumRotationKeys");
-
         if(nodeAnim->mRotationKeys[currentFrameIndex].mValue == nodeAnim->mRotationKeys[nextFrameIndex].mValue)
-        {// dont need interpolate
+        {
+            // dont need interpolate
             return aiMatrix4x4(nodeAnim->mRotationKeys[currentFrameIndex].mValue.GetMatrix());
         }
 
-        float deltaTime = static_cast<float>(nodeAnim->mRotationKeys[nextFrameIndex].mTime) -
-                          static_cast<float>(nodeAnim->mRotationKeys[currentFrameIndex].mTime);
-        // factor = how much time passed between current and next frame in range 0...1
-        float factor = (animationTime - static_cast<float>(nodeAnim->mRotationKeys[currentFrameIndex].mTime)) / deltaTime;
-        BR_ASSERT((factor >= 0.0f && factor <= 1.0f),
-                  "Rotation factor must be in range 0...1. Factor:{0}, mTime:{1}, currentFrameIndex:{2}",
-                  factor, nodeAnim->mRotationKeys[currentFrameIndex].mTime, currentFrameIndex);
         aiQuaternion& start = nodeAnim->mRotationKeys[currentFrameIndex].mValue;
         aiQuaternion& end = nodeAnim->mRotationKeys[nextFrameIndex].mValue;
 
@@ -421,7 +407,7 @@ namespace Beryll
         return aiMatrix4x4(Utils::Quaternion::nlerp(start, end, factor).GetMatrix());
     }
 
-    aiMatrix4x4 CollidingAnimatedObject::interpolateScaling(const float& animationTime, const aiNodeAnim* nodeAnim, const int& currentFrameIndex)
+    aiMatrix4x4 CollidingAnimatedObject::interpolateScaling(const aiNodeAnim* nodeAnim, const int currentFrameIndex, const int nextFrameIndex, const float factor)
     {
         aiMatrix4x4 scaleMatrix;
 
@@ -431,22 +417,13 @@ namespace Beryll
             return scaleMatrix;
         }
 
-        int nextFrameIndex = currentFrameIndex + 1;
-        BR_ASSERT((nextFrameIndex < nodeAnim->mNumScalingKeys), "nextFrameIndex ! < nodeAnim->mNumScalingKeys");
-
         if(nodeAnim->mScalingKeys[currentFrameIndex].mValue == nodeAnim->mScalingKeys[nextFrameIndex].mValue)
-        {// dont need interpolate
+        {
+            // dont need interpolate
             aiMatrix4x4::Scaling(nodeAnim->mScalingKeys[currentFrameIndex].mValue, scaleMatrix);
             return scaleMatrix;
         }
 
-        float deltaTime = static_cast<float>(nodeAnim->mScalingKeys[nextFrameIndex].mTime) -
-                          static_cast<float>(nodeAnim->mScalingKeys[currentFrameIndex].mTime);
-        // factor = how much time passed between current and next frame in range 0...1
-        float factor = (animationTime - static_cast<float>(nodeAnim->mScalingKeys[currentFrameIndex].mTime)) / deltaTime;
-        BR_ASSERT((factor >= 0.0f && factor <= 1.0f),
-                  "Scalling factor must be in range 0...1. Factor:{0}, mTime:{1}, currentFrameIndex:{2}",
-                  factor, nodeAnim->mScalingKeys[currentFrameIndex].mTime, currentFrameIndex);
         const aiVector3D& start = nodeAnim->mScalingKeys[currentFrameIndex].mValue;
         const aiVector3D& end = nodeAnim->mScalingKeys[nextFrameIndex].mValue;
         aiVector3D deltaVector = end - start;

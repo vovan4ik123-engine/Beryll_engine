@@ -7,10 +7,7 @@ namespace Beryll
     CheckBox::CheckBox(std::string text, float left, float top)
         : m_text(std::move(text)), m_leftPos(left / 100.0f), m_topPos(top / 100.0f)
     {
-        BR_ASSERT((left >= 0 && left <= 100) && (top >= 0 && top <= 100), "Wrong Check box position")
-
-        m_ID = "CheckBox_" + std::to_string(m_allCheckBoxCount);
-        ++m_allCheckBoxCount;
+        BR_ASSERT((left >= 0 && left <= 100) && (top >= 0 && top <= 100), "Wrong Check box position");
     }
 
     CheckBox::~CheckBox()
@@ -18,7 +15,6 @@ namespace Beryll
 
     }
 
-    uint32_t CheckBox::m_allCheckBoxCount = 0;
     ImFont* CheckBox::font = nullptr;
     std::string CheckBox::fontPath;
     float CheckBox::fontHeight = 0.0f;
@@ -47,7 +43,7 @@ namespace Beryll
         ImGui::PushStyleColor(ImGuiCol_FrameBgActive, m_checkSquareColor);
 
         ImGui::SetNextWindowPos(ImVec2(m_leftPos * MainImGUI::getInstance()->getGUIWidth(), m_topPos * MainImGUI::getInstance()->getGUIHeight()));
-        ImGui::Begin(m_ID.c_str(), nullptr, m_noBackgroundNoFrame);
+        ImGui::Begin(m_stringID.c_str(), nullptr, m_noBackgroundNoFrame);
 
         if(font)
         {

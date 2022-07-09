@@ -237,37 +237,18 @@ void btCollisionWorld::performDiscreteCollisionDetection()
 
 void btCollisionWorld::removeCollisionObject(btCollisionObject* collisionObject)
 {
-	//bool removeFromBroadphase = false;
-
-	{
-		btBroadphaseProxy* bp = collisionObject->getBroadphaseHandle();
-		if (bp)
-		{
-			//
-			// only clear the cached algorithms
-			//
-			getBroadphase()->getOverlappingPairCache()->cleanProxyFromPairs(bp, m_dispatcher1);
-			getBroadphase()->destroyProxy(bp, m_dispatcher1);
-			collisionObject->setBroadphaseHandle(0);
-		}
-	}
-
 	int iObj = collisionObject->getWorldArrayIndex();
-	//    btAssert(iObj >= 0 && iObj < m_collisionObjects.size()); // trying to remove an object that was never added or already removed previously?
+
 	if (iObj >= 0 && iObj < m_collisionObjects.size())
 	{
 		btAssert(collisionObject == m_collisionObjects[iObj]);
 		m_collisionObjects.swap(iObj, m_collisionObjects.size() - 1);
 		m_collisionObjects.pop_back();
-		if (iObj < m_collisionObjects.size())
-		{
-			m_collisionObjects[iObj]->setWorldArrayIndex(iObj);
-		}
+
+		m_collisionObjects[iObj]->setWorldArrayIndex(iObj);
 	}
 	else
 	{
-		// slow linear search
-		//swapremove
 		m_collisionObjects.remove(collisionObject);
 	}
 	collisionObject->setWorldArrayIndex(-1);

@@ -164,7 +164,7 @@ public:
 	};
 
 	///btRigidBody constructor using construction info
-	btRigidBody(const btRigidBodyConstructionInfo& constructionInfo);
+	btRigidBody(const btRigidBodyConstructionInfo& constructionInfo, const int engineID);
 
 	///btRigidBody constructor for backwards compatibility.
 	///To specify friction (etc) during rigid body construction, please use the other constructor (using btRigidBodyConstructionInfo)

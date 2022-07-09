@@ -32,5 +32,14 @@ namespace Utils
 
             return nullptr;
         }
+
+        static int generateID()
+        {
+            ++m_id;
+            return m_id;
+        }
+
+    private:
+        static int m_id;
     };
 }

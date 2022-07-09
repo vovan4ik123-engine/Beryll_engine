@@ -53,10 +53,14 @@ set(Common_SRC
         src/Beryll/Core/TimeStep.cpp
         src/Beryll/Core/RandomGenerator.cpp
 
+        src/Beryll/Utils/CommonUtils.cpp
+
         src/Beryll/GameObjects/SimpleObject.cpp
         src/Beryll/GameObjects/AnimatedObject.cpp
         src/Beryll/GameObjects/CollidingSimpleObject.cpp
         src/Beryll/GameObjects/CollidingAnimatedObject.cpp
+
+        src/Beryll/GameObjects/Player/CollidingSimplePlayer.cpp
 
         src/Beryll/GUI/MainImGUI.cpp
         src/Beryll/GUI/DemoImGUI.cpp

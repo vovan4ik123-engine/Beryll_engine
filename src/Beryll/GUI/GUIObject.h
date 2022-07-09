@@ -22,5 +22,7 @@ namespace Beryll
 
         std::string m_soundID;
         bool m_needPlaySound = false;
+
+        const std::string m_stringID = std::to_string(m_ID); // only for GUI elements.
     };
 }

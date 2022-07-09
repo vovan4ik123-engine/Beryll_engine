@@ -9,11 +9,11 @@ namespace Beryll
     float Physics::m_timeStep = 0.0f;
     bool Physics::m_simulationEnabled = true;
     int Physics::m_resolutionFactor = 1;
-    std::set<std::pair<std::string_view, std::string_view>> Physics::m_collisionPairs;
+    std::set<std::pair<const int, const int>> Physics::m_collisionPairs;
     std::vector<std::shared_ptr<btCollisionShape>> Physics::m_collisionShapes;
     std::vector<std::shared_ptr<btTriangleMesh>> Physics::m_triangleMeshes;
     std::vector<std::shared_ptr<btDefaultMotionState>> Physics::m_motionStates;
-    std::map<const std::string, std::shared_ptr<RigidBodyData>> Physics::m_rigidBodiesMap;
+    std::map<const int, std::shared_ptr<RigidBodyData>> Physics::m_rigidBodiesMap;
 
     std::unique_ptr<btDefaultCollisionConfiguration> Physics::m_collisionConfiguration = nullptr;
     std::unique_ptr<btCollisionDispatcher> Physics::m_dispatcher = nullptr;
@@ -67,7 +67,7 @@ namespace Beryll
                             const std::vector<uint32_t>& indices,
                             const glm::mat4& transforms,
                             const std::string& meshName,
-                            const std::string& objectID,
+                            const int objectID,
                             float mass,
                             bool wantCallBack,
                             CollisionFlags collFlag,
@@ -93,7 +93,7 @@ namespace Beryll
     void Physics::addConcaveMesh(const std::vector<glm::vec3>& vertices,
                                  const std::vector<uint32_t>& indices,
                                  const glm::mat4& transforms,
-                                 const std::string& objectID,
+                                 const int objectID,
                                  float mass,
                                  bool wantCallBack,
                                  CollisionFlags collFlag,
@@ -145,7 +145,7 @@ namespace Beryll
         std::shared_ptr<btDefaultMotionState> motionState = std::make_shared<btDefaultMotionState>(startTransform);
         m_motionStates.push_back(motionState);
         btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState.get(), shape.get(), localInertia);
-        std::shared_ptr<btRigidBody> body = std::make_shared<btRigidBody>(rbInfo);
+        std::shared_ptr<btRigidBody> body = std::make_shared<btRigidBody>(rbInfo, objectID);
 
         std::shared_ptr<RigidBodyData> rigidBodyData = std::make_shared<RigidBodyData>(objectID, body, true);
         body->setUserPointer(rigidBodyData.get()); // then we can fetch this rigidBodyData in collision call back
@@ -164,7 +164,7 @@ namespace Beryll
     void Physics::addConvexMesh(const std::vector<glm::vec3>& vertices,
                                 const std::vector<uint32_t>& indices,
                                 const glm::mat4& transforms,
-                                const std::string& objectID,
+                                const int objectID,
                                 float mass,
                                 bool wantCallBack,
                                 CollisionFlags collFlag,
@@ -201,7 +201,7 @@ namespace Beryll
         std::shared_ptr<btDefaultMotionState> motionState = std::make_shared<btDefaultMotionState>(startTransform);
         m_motionStates.push_back(motionState);
         btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState.get(), shape.get(), localInertia);
-        std::shared_ptr<btRigidBody> body = std::make_shared<btRigidBody>(rbInfo);
+        std::shared_ptr<btRigidBody> body = std::make_shared<btRigidBody>(rbInfo, objectID);
 
         std::shared_ptr<RigidBodyData> rigidBodyData = std::make_shared<RigidBodyData>(objectID, body, true);
         body->setUserPointer(rigidBodyData.get()); // then we can fetch this rigidBodyData in collision call back
@@ -217,24 +217,117 @@ namespace Beryll
         m_dynamicsWorld->addRigidBody(body.get(), static_cast<int>(collGroup), static_cast<int>(collMask));
     }
 
-    bool Physics::collisionsCallBack(btManifoldPoint& cp, const btCollisionObjectWrapper* ob1, int id1, int index1,
-                                                          const btCollisionObjectWrapper* ob2, int id2, int index2)
+    bool Physics::collisionsCallBack(btManifoldPoint& cp, const btCollisionObjectWrapper* ob1, int ID1, int index1,
+                                                          const btCollisionObjectWrapper* ob2, int ID2, int index2)
     {
         m_collisionPairs.emplace(static_cast<RigidBodyData*>(ob1->getCollisionObject()->getUserPointer())->bodyID,
                                  static_cast<RigidBodyData*>(ob2->getCollisionObject()->getUserPointer())->bodyID);
         return false;
     }
 
-    bool Physics::getIsCollision(std::string_view id1, std::string_view id2)
+    bool Physics::getIsCollision(const int ID1, const int ID2)
     {
-        if(m_collisionPairs.find(std::make_pair(id1, id2)) != m_collisionPairs.end()) { return true; }
+        if(m_collisionPairs.find(std::make_pair(ID1, ID2)) != m_collisionPairs.end()) { return true; }
 
-        if(m_collisionPairs.find(std::make_pair(id2, id1)) != m_collisionPairs.end()) { return true; }
+        if(m_collisionPairs.find(std::make_pair(ID2, ID1)) != m_collisionPairs.end()) { return true; }
 
         return false;
     }
 
-    void Physics::setPosition(const std::string& ID, const glm::vec3& pos, bool resetVelocities)
+    std::vector<int> Physics::getCollisionsWithGroup(const int ID, const CollisionGroups group)
+    {
+        std::vector<int> ids;
+        for (int i = 0; i < m_dynamicsWorld->getNumCollisionObjects(); ++i)
+        {
+            if(m_dynamicsWorld->getCollisionObjectArray()[i]->getBroadphaseHandle()->m_collisionFilterGroup & static_cast<int>(group))
+            {
+                if(getIsCollision(ID, m_dynamicsWorld->getCollisionObjectArray()[i]->idForEngine))
+                {
+                    ids.push_back(m_dynamicsWorld->getCollisionObjectArray()[i]->idForEngine);
+                }
+            }
+        }
+
+        return std::move(ids);
+    }
+
+    std::vector<std::pair<glm::vec3, glm::vec3>> Physics::getAllCollisionPoints(const int ID1, const int ID2)
+    {
+        std::vector<std::pair<glm::vec3, glm::vec3>> points;
+
+        if(ID1 == ID2) {return std::move(points);}
+
+        points.reserve(3);
+
+        for(int i = 0; i < m_dynamicsWorld->getDispatcher()->getNumManifolds(); i++)
+        {
+            btPersistentManifold* contactManifold = m_dynamicsWorld->getDispatcher()->getManifoldByIndexInternal(i);
+            const btCollisionObject* obA = contactManifold->getBody0();
+            const btCollisionObject* obB = contactManifold->getBody1();
+
+            if((obA->idForEngine == ID1 && obB->idForEngine == ID2) ||
+               (obA->idForEngine == ID2 && obB->idForEngine == ID1))
+            {
+                // we found contact point between 2 objects
+                for (int j = 0; j < contactManifold->getNumContacts(); j++)
+                {
+                    btManifoldPoint& pt = contactManifold->getContactPoint(j);
+
+                    const btVector3& ptB = pt.getPositionWorldOnB();
+                    const btVector3& normalOnB = pt.m_normalWorldOnB;
+
+                    points.emplace_back(glm::vec3(ptB.getX(), ptB.getY(), ptB.getZ()), // point
+                                        glm::vec3(normalOnB.getX(), normalOnB.getY(), normalOnB.getZ())); // normal
+
+                }
+            }
+        }
+
+        return std::move(points);
+    }
+
+    std::vector<std::pair<glm::vec3, glm::vec3>> Physics::getAllCollisionPoints(const int ID1, const std::vector<int>& IDs)
+    {
+        std::vector<std::pair<glm::vec3, glm::vec3>> points;
+        points.reserve(5);
+
+        for(int i = 0; i < m_dynamicsWorld->getDispatcher()->getNumManifolds(); i++)
+        {
+            btPersistentManifold* contactManifold = m_dynamicsWorld->getDispatcher()->getManifoldByIndexInternal(i);
+            const btCollisionObject* obA = contactManifold->getBody0();
+            const btCollisionObject* obB = contactManifold->getBody1();
+
+            bool obA_ID_existInIDs = false;
+            bool obB_ID_existInIDs = false;
+            for(const int& id : IDs)
+            {
+                if(id == obA->idForEngine) {obA_ID_existInIDs = true;}
+                if(id == obB->idForEngine) {obB_ID_existInIDs = true;}
+            }
+
+            if((obA->idForEngine == ID1 && obB_ID_existInIDs) ||
+               (obB->idForEngine == ID1 && obA_ID_existInIDs))
+            {
+                // we found contact point between 2 objects
+                for (int j = 0; j < contactManifold->getNumContacts(); j++)
+                {
+                    btManifoldPoint& pt = contactManifold->getContactPoint(j);
+
+                    const btVector3& ptB = pt.getPositionWorldOnB();
+                    const btVector3& normalOnB = pt.m_normalWorldOnB;
+
+                    points.emplace_back(glm::vec3(ptB.getX(), ptB.getY(), ptB.getZ()), // point
+                                        glm::vec3(normalOnB.getX(), normalOnB.getY(), normalOnB.getZ())); // normal
+
+                    //const btVector3& normalOnB = pt.m_normalWorldOnB;
+                }
+            }
+        }
+
+        return std::move(points);
+    }
+
+    void Physics::setPosition(const int ID, const glm::vec3& pos, bool resetVelocities)
     {
         auto iter = m_rigidBodiesMap.find(ID);
         if(iter != m_rigidBodiesMap.end())
@@ -263,11 +356,37 @@ namespace Beryll
         }
         else
         {
-            BR_ASSERT(false, "Can not set transforms for {0}", ID);
+            BR_ASSERT(false, "Can not set position for {0}", ID);
         }
     }
 
-    PhysicsTransforms Physics::getTransforms(const std::string& ID)
+    void Physics::setRotation(const int ID, const glm::quat& rot, bool resetVelocities)
+    {
+        auto iter = m_rigidBodiesMap.find(ID);
+        if(iter != m_rigidBodiesMap.end())
+        {
+            btTransform t;
+            t.setRotation(btQuaternion(rot.x, rot.y, rot.z, rot.w));
+
+            iter->second->rb->setWorldTransform(t);
+            iter->second->rb->getMotionState()->setWorldTransform(t);
+
+            if(resetVelocities)
+            {
+                iter->second->rb->setLinearVelocity(btVector3(0.0f, 0.0f, 0.0f));
+                iter->second->rb->setAngularVelocity(btVector3(0.0f, 0.0f, 0.0f));
+                iter->second->rb->clearForces();
+            }
+
+            iter->second->rb->activate(true);
+        }
+        else
+        {
+            BR_ASSERT(false, "Can not set rotation for {0}", ID);
+        }
+    }
+
+    PhysicsTransforms Physics::getTransforms(const int ID)
     {
         PhysicsTransforms physicsTransforms;
 
@@ -279,7 +398,7 @@ namespace Beryll
             if(iter->second->rb->getMotionState()) iter->second->rb->getMotionState()->getWorldTransform(trans);
             else trans = iter->second->rb->getWorldTransform();
 
-            physicsTransforms.position = glm::vec3(trans.getOrigin().getX(), trans.getOrigin().getY(), trans.getOrigin().getZ());
+            physicsTransforms.origin = glm::vec3(trans.getOrigin().getX(), trans.getOrigin().getY(), trans.getOrigin().getZ());
             physicsTransforms.rotation = glm::quat(trans.getRotation().getW(), trans.getRotation().getX(), trans.getRotation().getY(), trans.getRotation().getZ());
         }
         else
@@ -290,17 +409,17 @@ namespace Beryll
         return physicsTransforms;
     }
 
-    void Physics::softRemoveObject(const std::string& ID)
+    void Physics::softRemoveObject(const int ID)
     {
         auto iter = m_rigidBodiesMap.find(ID);
-        if(iter != m_rigidBodiesMap.end() && iter->second->existInDynamicWorld) // found object by id and it exist in world
+        if(iter != m_rigidBodiesMap.end() && iter->second->existInDynamicWorld) // found object by ID and it exist in world
         {
             m_dynamicsWorld->removeRigidBody(iter->second->rb.get());
             iter->second->existInDynamicWorld = false;
         }
     }
 
-    void Physics::restoreObject(const std::string& ID, bool resetVelocities)
+    void Physics::restoreObject(const int ID, bool resetVelocities)
     {
         auto iter = m_rigidBodiesMap.find(ID);
         if(iter != m_rigidBodiesMap.end() && !iter->second->existInDynamicWorld)
@@ -313,12 +432,24 @@ namespace Beryll
             }
 
             iter->second->rb->activate(true);
-            m_dynamicsWorld->addRigidBody(iter->second->rb.get());
+
+            m_dynamicsWorld->addRigidBody(iter->second->rb.get(),
+                                          iter->second->rb->getBroadphaseHandle()->m_collisionFilterGroup,
+                                          iter->second->rb->getBroadphaseHandle()->m_collisionFilterMask);
             iter->second->existInDynamicWorld = true;
         }
     }
 
-    void Physics::setAngularFactor(const std::string& ID, const glm::vec3& angFactor)
+    void Physics::activateObject(const int ID)
+    {
+        auto iter = m_rigidBodiesMap.find(ID);
+        if(iter != m_rigidBodiesMap.end() && iter->second->existInDynamicWorld) // found object by ID and it exist in world
+        {
+            iter->second->rb->activate(true);
+        }
+    }
+
+    void Physics::setAngularFactor(const int ID, const glm::vec3& angFactor)
     {
         auto iter = m_rigidBodiesMap.find(ID);
         if(iter != m_rigidBodiesMap.end())
@@ -327,7 +458,7 @@ namespace Beryll
         }
     }
 
-    void Physics::setLinearFactor(const std::string& ID, const glm::vec3& linFactor)
+    void Physics::setLinearFactor(const int ID, const glm::vec3& linFactor)
     {
         auto iter = m_rigidBodiesMap.find(ID);
         if(iter != m_rigidBodiesMap.end())
@@ -336,7 +467,7 @@ namespace Beryll
         }
     }
 
-    void Physics::setAngularVelocity(const std::string& ID, const glm::vec3& angVelocity)
+    void Physics::setAngularVelocity(const int ID, const glm::vec3& angVelocity)
     {
         auto iter = m_rigidBodiesMap.find(ID);
         if(iter != m_rigidBodiesMap.end())
@@ -345,7 +476,7 @@ namespace Beryll
         }
     }
 
-    void Physics::setLinearVelocity(const std::string& ID, const glm::vec3& linVelocity)
+    void Physics::setLinearVelocity(const int ID, const glm::vec3& linVelocity)
     {
         auto iter = m_rigidBodiesMap.find(ID);
         if(iter != m_rigidBodiesMap.end())
@@ -361,7 +492,7 @@ namespace Beryll
             m_dynamicsWorld->setGravity(m_gravity);
     }
 
-    void Physics::setGravityForObject(const std::string& ID, const glm::vec3& gravity)
+    void Physics::setGravityForObject(const int ID, const glm::vec3& gravity)
     {
         auto iter = m_rigidBodiesMap.find(ID);
         if(iter != m_rigidBodiesMap.end())
@@ -370,7 +501,7 @@ namespace Beryll
         }
     }
 
-    void Physics::disableGravityForObject(const std::string& ID)
+    void Physics::disableGravityForObject(const int ID)
     {
         auto iter = m_rigidBodiesMap.find(ID);
         if(iter != m_rigidBodiesMap.end())
@@ -379,7 +510,7 @@ namespace Beryll
         }
     }
 
-    void Physics::setDefaultGravityForObject(const std::string& ID)
+    void Physics::enableGravityForObject(const int ID)
     {
         auto iter = m_rigidBodiesMap.find(ID);
         if(iter != m_rigidBodiesMap.end())
@@ -394,6 +525,7 @@ namespace Beryll
         btVector3 t(to.x, to.y, to.z);
         btCollisionWorld::ClosestRayResultCallback closestResults(fr, t);
         closestResults.m_flags |= btTriangleRaycastCallback::kF_FilterBackfaces;
+        closestResults.m_flags |= btTriangleRaycastCallback::kF_UseSubSimplexConvexCastRaytest;
         closestResults.m_collisionFilterGroup = static_cast<int>(collGroup);
         closestResults.m_collisionFilterMask = static_cast<int>(collMask);
 

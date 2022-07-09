@@ -126,6 +126,8 @@ protected:
 public:
 	BT_DECLARE_ALIGNED_ALLOCATOR();
 
+	int idForEngine = -1;
+
 	enum CollisionFlags
 	{
 		CF_DYNAMIC_OBJECT = 0,
