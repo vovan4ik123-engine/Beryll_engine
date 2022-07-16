@@ -433,7 +433,7 @@ void btDbvtBroadphase::performDeferredRemoval(btDispatcher* dispatcher)
 {
 	if (m_paircache->hasDeferredRemoval())
 	{
-		btBroadphasePairArray& overlappingPairArray = m_paircache->getOverlappingPairArray();
+		btAlignedObjectArray<btBroadphasePair>& overlappingPairArray = m_paircache->getOverlappingPairArray();
 
 		//perform a sort, to find duplicates and to sort 'invalid' pairs to the end
 		overlappingPairArray.quickSort(btBroadphasePairSortPredicate());
@@ -571,7 +571,7 @@ void btDbvtBroadphase::collide(btDispatcher* dispatcher)
 	if (m_needcleanup)
 	{
 		SPC(m_profiling.m_cleanup);
-		btBroadphasePairArray& pairs = m_paircache->getOverlappingPairArray();
+		btAlignedObjectArray<btBroadphasePair>& pairs = m_paircache->getOverlappingPairArray();
 		if (pairs.size() > 0)
 		{
 			int ni = btMin(pairs.size(), btMax<int>(m_newpairs, (pairs.size() * m_cupdates) / 100));

@@ -21,9 +21,8 @@ subject to the following restrictions:
 #include "btOverlappingPairCallback.h"
 
 #include "LinearMath/btAlignedObjectArray.h"
-class btDispatcher;
 
-typedef btAlignedObjectArray<btBroadphasePair> btBroadphasePairArray;
+class btDispatcher;
 
 struct btOverlapCallback
 {
@@ -56,7 +55,7 @@ public:
 
 	virtual const btBroadphasePair* getOverlappingPairArrayPtr() const = 0;
 
-	virtual btBroadphasePairArray& getOverlappingPairArray() = 0;
+	virtual btAlignedObjectArray<btBroadphasePair>& getOverlappingPairArray() = 0;
 
 	virtual void cleanOverlappingPair(btBroadphasePair& pair, btDispatcher* dispatcher) = 0;
 
@@ -87,7 +86,7 @@ public:
 ATTRIBUTE_ALIGNED16(class)
 btHashedOverlappingPairCache : public btOverlappingPairCache
 {
-	btBroadphasePairArray m_overlappingPairArray;
+	btAlignedObjectArray<btBroadphasePair> m_overlappingPairArray;
 	btOverlapFilterCallback* m_overlapFilterCallback;
 
 protected:
@@ -142,12 +141,12 @@ public:
 		return &m_overlappingPairArray[0];
 	}
 
-	btBroadphasePairArray& getOverlappingPairArray()
+	btAlignedObjectArray<btBroadphasePair>& getOverlappingPairArray()
 	{
 		return m_overlappingPairArray;
 	}
 
-	const btBroadphasePairArray& getOverlappingPairArray() const
+	const btAlignedObjectArray<btBroadphasePair>& getOverlappingPairArray() const
 	{
 		return m_overlappingPairArray;
 	}
@@ -259,7 +258,7 @@ class btSortedOverlappingPairCache : public btOverlappingPairCache
 {
 protected:
 	//avoid brute-force finding all the time
-	btBroadphasePairArray m_overlappingPairArray;
+	btAlignedObjectArray<btBroadphasePair> m_overlappingPairArray;
 
 	//during the dispatch, check that user doesn't destroy/create proxy
 	bool m_blockedForChanges;
@@ -301,12 +300,12 @@ public:
 		return collides;
 	}
 
-	btBroadphasePairArray& getOverlappingPairArray()
+	btAlignedObjectArray<btBroadphasePair>& getOverlappingPairArray()
 	{
 		return m_overlappingPairArray;
 	}
 
-	const btBroadphasePairArray& getOverlappingPairArray() const
+	const btAlignedObjectArray<btBroadphasePair>& getOverlappingPairArray() const
 	{
 		return m_overlappingPairArray;
 	}
@@ -352,7 +351,7 @@ public:
 ///btNullPairCache skips add/removal of overlapping pairs. Userful for benchmarking and unit testing.
 class btNullPairCache : public btOverlappingPairCache
 {
-	btBroadphasePairArray m_overlappingPairArray;
+	btAlignedObjectArray<btBroadphasePair> m_overlappingPairArray;
 
 public:
 	virtual btBroadphasePair* getOverlappingPairArrayPtr()
@@ -363,7 +362,7 @@ public:
 	{
 		return &m_overlappingPairArray[0];
 	}
-	btBroadphasePairArray& getOverlappingPairArray()
+	btAlignedObjectArray<btBroadphasePair>& getOverlappingPairArray()
 	{
 		return m_overlappingPairArray;
 	}

@@ -40,9 +40,24 @@ btPersistentManifold* btCollisionDispatcherMt::getNewManifold(const btCollisionO
 	//btScalar contactBreakingThreshold = (m_dispatcherFlags & btCollisionDispatcher::CD_USE_RELATIVE_CONTACT_BREAKING_THRESHOLD) ? btMin(body0->getCollisionShape()->getContactBreakingThreshold(gContactBreakingThreshold), body1->getCollisionShape()->getContactBreakingThreshold(gContactBreakingThreshold))
 	//																															: gContactBreakingThreshold;
 
-	btScalar contactProcessingThreshold = btMin(body0->getContactProcessingThreshold(), body1->getContactProcessingThreshold());
+    btScalar contactProcessingThreshold = btMin(body0->getContactProcessingThreshold(), body1->getContactProcessingThreshold());
 
-	btPersistentManifold* manifold = new btPersistentManifold(body0, body1, 0, gContactBreakingThreshold, contactProcessingThreshold);
+    void* mem = m_persistentManifoldPoolAllocator->allocate(sizeof(btPersistentManifold));
+    if (NULL == mem)
+    {
+        //we got a pool memory overflow, by default we fallback to dynamically allocate memory. If we require a contiguous contact pool then assert.
+        if ((m_dispatcherFlags & CD_DISABLE_CONTACTPOOL_DYNAMIC_ALLOCATION) == 0)
+        {
+            mem = btAlignedAlloc(sizeof(btPersistentManifold), 16);
+        }
+        else
+        {
+            assert(0);
+            //make sure to increase the m_defaultMaxPersistentManifoldPoolSize in the btDefaultCollisionConstructionInfo/btDefaultCollisionConfiguration
+            return 0;
+        }
+    }
+    btPersistentManifold* manifold = new (mem) btPersistentManifold(body0, body1, 0, gContactBreakingThreshold, contactProcessingThreshold);
 
 	{
 		std::scoped_lock<std::mutex> scopedLock(m_mutex);
@@ -70,32 +85,40 @@ void btCollisionDispatcherMt::releaseManifold(btPersistentManifold* manifold)
 		m_manifoldsPtr.pop_back();
 	}
 
-	delete manifold;
+    manifold->~btPersistentManifold();
+    if (m_persistentManifoldPoolAllocator->validPtr(manifold))
+    {
+        m_persistentManifoldPoolAllocator->freeMemory(manifold);
+    }
+    else
+    {
+        btAlignedFree(manifold);
+    }
 }
 
-struct CollisionDispatcherUpdater : public btIParallelForBody
-{
-	btBroadphasePair* mPairArray;
-	btNearCallback mCallback;
-	btCollisionDispatcher* mDispatcher;
-	const btDispatcherInfo* mInfo;
-
-	CollisionDispatcherUpdater()
-	{
-		mPairArray = NULL;
-		mCallback = NULL;
-		mDispatcher = NULL;
-		mInfo = NULL;
-	}
-	void forLoop(int iBegin, int iEnd) const
-	{
-		for (int i = iBegin; i < iEnd; ++i)
-		{
-			btBroadphasePair* pair = &mPairArray[i];
-			mCallback(*pair, *mDispatcher, *mInfo);
-		}
-	}
-};
+//struct CollisionDispatcherUpdater : public btIParallelForBody
+//{
+//	btBroadphasePair* mPairArray;
+//	btNearCallback mCallback;
+//	btCollisionDispatcher* mDispatcher;
+//	const btDispatcherInfo* mInfo;
+//
+//	CollisionDispatcherUpdater()
+//	{
+//		mPairArray = NULL;
+//		mCallback = NULL;
+//		mDispatcher = NULL;
+//		mInfo = NULL;
+//	}
+//	void forLoop(int iBegin, int iEnd) const
+//	{
+//		for (int i = iBegin; i < iEnd; ++i)
+//		{
+//			btBroadphasePair* pair = &mPairArray[i];
+//			mCallback(*pair, *mDispatcher, *mInfo);
+//		}
+//	}
+//};
 
 void btCollisionDispatcherMt::dispatchAllCollisionPairs(btOverlappingPairCache* pairCache, const btDispatcherInfo& info, btDispatcher* dispatcher)
 {
@@ -105,13 +128,12 @@ void btCollisionDispatcherMt::dispatchAllCollisionPairs(btOverlappingPairCache* 
 		return;
 	}
 
-	CollisionDispatcherUpdater updater;
-	updater.mCallback = getNearCallback();
-	updater.mPairArray = pairCache->getOverlappingPairArrayPtr();
-	updater.mDispatcher = this;
-	updater.mInfo = &info;
+	btBroadphasePair* pairArray = pairCache->getOverlappingPairArrayPtr();
 
-	btParallelFor(0, pairCount, m_grainSize, updater);
+	for (int i = 0; i < pairCount; ++i)
+	{
+		defaultNearCallback(pairArray[i], *this, info);
+	}
 
 	// update the indices (used when releasing manifolds)
 	for (int i = 0; i < m_manifoldsPtr.size(); ++i)

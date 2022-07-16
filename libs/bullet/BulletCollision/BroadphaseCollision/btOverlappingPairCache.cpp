@@ -373,7 +373,7 @@ void btHashedOverlappingPairCache::processAllOverlappingPairs(btOverlapCallback*
 {
 	if (dispatchInfo.m_deterministicOverlappingPairs)
 	{
-		btBroadphasePairArray& pa = getOverlappingPairArray();
+		btAlignedObjectArray<btBroadphasePair>& pa = getOverlappingPairArray();
 		btAlignedObjectArray<MyPairIndex> indices;
 		{
 			BT_PROFILE("sortOverlappingPairs");
@@ -416,7 +416,7 @@ void btHashedOverlappingPairCache::processAllOverlappingPairs(btOverlapCallback*
 void btHashedOverlappingPairCache::sortOverlappingPairs(btDispatcher* dispatcher)
 {
 	///need to keep hashmap in sync with pair address, so rebuild all
-	btBroadphasePairArray tmpPairs;
+	btAlignedObjectArray<btBroadphasePair> tmpPairs;
 	int i;
 	for (i = 0; i < m_overlappingPairArray.size(); i++)
 	{

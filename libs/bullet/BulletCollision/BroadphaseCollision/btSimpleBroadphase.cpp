@@ -242,7 +242,7 @@ void btSimpleBroadphase::calculateOverlappingPairs(btDispatcher* dispatcher)
 
 		if (m_ownsPairCache && m_pairCache->hasDeferredRemoval())
 		{
-			btBroadphasePairArray& overlappingPairArray = m_pairCache->getOverlappingPairArray();
+			btAlignedObjectArray<btBroadphasePair>& overlappingPairArray = m_pairCache->getOverlappingPairArray();
 
 			//perform a sort, to find duplicates and to sort 'invalid' pairs to the end
 			overlappingPairArray.quickSort(btBroadphasePairSortPredicate());

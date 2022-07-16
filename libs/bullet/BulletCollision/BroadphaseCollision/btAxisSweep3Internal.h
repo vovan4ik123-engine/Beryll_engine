@@ -596,7 +596,7 @@ void btAxisSweep3Internal<BP_FP_INT_TYPE>::calculateOverlappingPairs(btDispatche
 {
 	if (m_pairCache->hasDeferredRemoval())
 	{
-		btBroadphasePairArray& overlappingPairArray = m_pairCache->getOverlappingPairArray();
+		btAlignedObjectArray<btBroadphasePair>& overlappingPairArray = m_pairCache->getOverlappingPairArray();
 
 		//perform a sort, to find duplicates and to sort 'invalid' pairs to the end
 		overlappingPairArray.quickSort(btBroadphasePairSortPredicate());
