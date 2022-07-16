@@ -59,7 +59,7 @@ btMultiBodyJointMotor::btMultiBodyJointMotor(btMultiBody* body, int link, int li
 	  m_erp(1),
 	  m_rhsClamp(SIMD_INFINITY)
 {
-	btAssert(linkDoF < body->getLink(link).m_dofCount);
+	assert(linkDoF < body->getLink(link).m_dofCount);
 
 	m_maxAppliedImpulse = maxMotorImpulse;
 }
@@ -150,7 +150,7 @@ void btMultiBodyJointMotor::createConstraintRows(btMultiBodyConstraintArray& con
 		constraintRow.m_orgDofIndex = row;
 		{
 			//expect either prismatic or revolute joint type for now
-			btAssert((m_bodyA->getLink(m_linkA).m_jointType == btMultibodyLink::eRevolute) || (m_bodyA->getLink(m_linkA).m_jointType == btMultibodyLink::ePrismatic));
+			assert((m_bodyA->getLink(m_linkA).m_jointType == btMultibodyLink::eRevolute) || (m_bodyA->getLink(m_linkA).m_jointType == btMultibodyLink::ePrismatic));
 			switch (m_bodyA->getLink(m_linkA).m_jointType)
 			{
 				case btMultibodyLink::eRevolute:
@@ -175,7 +175,7 @@ void btMultiBodyJointMotor::createConstraintRows(btMultiBodyConstraintArray& con
 				}
 				default:
 				{
-					btAssert(0);
+					assert(0);
 				}
 			};
 		}

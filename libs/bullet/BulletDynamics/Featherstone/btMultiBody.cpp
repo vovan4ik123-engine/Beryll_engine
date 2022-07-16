@@ -469,8 +469,8 @@ const btQuaternion &btMultiBody::getInterpolateParentToLocalRot(int i) const
 
 btVector3 btMultiBody::localPosToWorld(int i, const btVector3 &local_pos) const
 {
-	btAssert(i >= -1);
-	btAssert(i < m_links.size());
+	assert(i >= -1);
+	assert(i < m_links.size());
 	if ((i < -1) || (i >= m_links.size()))
 	{
 		return btVector3(SIMD_INFINITY, SIMD_INFINITY, SIMD_INFINITY);
@@ -494,8 +494,8 @@ btVector3 btMultiBody::localPosToWorld(int i, const btVector3 &local_pos) const
 
 btVector3 btMultiBody::worldPosToLocal(int i, const btVector3 &world_pos) const
 {
-	btAssert(i >= -1);
-	btAssert(i < m_links.size());
+	assert(i >= -1);
+	assert(i < m_links.size());
 	if ((i < -1) || (i >= m_links.size()))
 	{
 		return btVector3(SIMD_INFINITY, SIMD_INFINITY, SIMD_INFINITY);
@@ -515,8 +515,8 @@ btVector3 btMultiBody::worldPosToLocal(int i, const btVector3 &world_pos) const
 
 btVector3 btMultiBody::localDirToWorld(int i, const btVector3 &local_dir) const
 {
-	btAssert(i >= -1);
-	btAssert(i < m_links.size());
+	assert(i >= -1);
+	assert(i < m_links.size());
 	if ((i < -1) || (i >= m_links.size()))
 	{
 		return btVector3(SIMD_INFINITY, SIMD_INFINITY, SIMD_INFINITY);
@@ -534,8 +534,8 @@ btVector3 btMultiBody::localDirToWorld(int i, const btVector3 &local_dir) const
 
 btVector3 btMultiBody::worldDirToLocal(int i, const btVector3 &world_dir) const
 {
-	btAssert(i >= -1);
-	btAssert(i < m_links.size());
+	assert(i >= -1);
+	assert(i < m_links.size());
 	if ((i < -1) || (i >= m_links.size()))
 	{
 		return btVector3(SIMD_INFINITY, SIMD_INFINITY, SIMD_INFINITY);
@@ -1956,7 +1956,7 @@ void btMultiBody::fillConstraintJacobianMultiDof(int link,
 	v_ptr += num_links + 1;
 	btVector3 *n_local_ang = v_ptr;
 	v_ptr += num_links + 1;
-	btAssert(v_ptr - &scratch_v[0] == scratch_v.size());
+	assert(v_ptr - &scratch_v[0] == scratch_v.size());
 
 	//scratch_r.resize(m_dofCount);
 	//btScalar *results = m_dofCount > 0 ? &scratch_r[0] : 0;
@@ -2204,7 +2204,7 @@ void btMultiBody::updateCollisionObjectWorldTransforms(btAlignedObjectArray<btQu
 		if (col)
 		{
 			int link = col->m_link;
-			btAssert(link == m);
+			assert(link == m);
 
 			int index = link + 1;
 
@@ -2263,7 +2263,7 @@ void btMultiBody::updateCollisionObjectInterpolationWorldTransforms(btAlignedObj
         if (col)
         {
             int link = col->m_link;
-            btAssert(link == m);
+            assert(link == m);
             
             int index = link + 1;
             
@@ -2337,7 +2337,7 @@ const char *btMultiBody::serialize(void *dataBuffer, class btSerializer *seriali
 			getLink(i).m_eVector.serialize(memPtr->m_parentComToThisPivotOffset);
 			getLink(i).m_dVector.serialize(memPtr->m_thisPivotToThisComOffset);
 			getLink(i).m_zeroRotParentToThis.serialize(memPtr->m_zeroRotParentToThis);
-			btAssert(memPtr->m_dofCount <= 3);
+			assert(memPtr->m_dofCount <= 3);
 			for (int dof = 0; dof < getLink(i).m_dofCount; dof++)
 			{
 				getLink(i).getAxisBottom(dof).serialize(memPtr->m_jointAxisBottom[dof]);

@@ -20,7 +20,7 @@ btReducedDeformableBody* btReducedDeformableBodyHelpers::createFromVtkFile(btSof
 {
 	std::ifstream fs;
 	fs.open(vtk_file);
-	btAssert(fs);
+	assert(fs);
 
 	typedef btAlignedObjectArray<int> Index;
 	std::string line;
@@ -161,7 +161,7 @@ void btReducedDeformableBodyHelpers::readBinaryVec(btReducedDeformableBody::tDen
 	// first get size
 	unsigned int size=0;
 	f_in.read((char*)&size, 4);//sizeof(unsigned int));
-	btAssert(size >= n_size); 	// make sure the #requested mode is smaller than the #available modes
+	assert(size >= n_size); 	// make sure the #requested mode is smaller than the #available modes
 
 	// read data
 	vec.resize(n_size);
@@ -184,7 +184,7 @@ void btReducedDeformableBodyHelpers::readBinaryMat(btReducedDeformableBody::tDen
 	// first get size
 	unsigned int v_size=0;
 	f_in.read((char*)&v_size, 4);//sizeof(unsigned int));
-	btAssert(v_size >= n_modes * n_full); 	// make sure the #requested mode is smaller than the #available modes
+	assert(v_size >= n_modes * n_full); 	// make sure the #requested mode is smaller than the #available modes
 
 	// read data
 	mat.resize(n_modes);

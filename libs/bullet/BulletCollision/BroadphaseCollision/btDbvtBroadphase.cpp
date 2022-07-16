@@ -245,19 +245,8 @@ void btDbvtBroadphase::rayTest(const btVector3& rayFrom, const btVector3& rayTo,
 	// for this function to be threadsafe, each thread must have a separate copy
 	// of this stack.  This could be thread-local static to avoid dynamic allocations,
 	// instead of just a local.
-	int threadIndex = btGetCurrentThreadIndex();
 	btAlignedObjectArray<const btDbvtNode*> localStack;
-	//todo(erwincoumans, "why do we get tsan issue here?")
-	if (0)//threadIndex < m_rayTestStacks.size())
-	//if (threadIndex < m_rayTestStacks.size())
-	{
-		// use per-thread preallocated stack if possible to avoid dynamic allocations
-		stack = &m_rayTestStacks[threadIndex];
-	}
-	else
-	{
-		stack = &localStack;
-	}
+	stack = &localStack;
 #endif
 
 	m_sets[0].rayTestInternal(m_sets[0].m_root,
@@ -489,7 +478,7 @@ void btDbvtBroadphase::performDeferredRemoval(btDispatcher* dispatcher)
 				//remove duplicate
 				needsRemoval = true;
 				//should have no algorithm
-				btAssert(!pair.m_algorithm);
+				assert(!pair.m_algorithm);
 			}
 
 			if (needsRemoval)

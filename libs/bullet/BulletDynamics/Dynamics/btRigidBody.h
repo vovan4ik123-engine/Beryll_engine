@@ -164,7 +164,7 @@ public:
 	};
 
 	///btRigidBody constructor using construction info
-	btRigidBody(const btRigidBodyConstructionInfo& constructionInfo, const int engineID);
+	btRigidBody(const btRigidBodyConstructionInfo& constructionInfo, int id);
 
 	///btRigidBody constructor for backwards compatibility.
 	///To specify friction (etc) during rigid body construction, please use the other constructor (using btRigidBodyConstructionInfo)
@@ -174,7 +174,7 @@ public:
 	{
 		//No constraints should point to this rigidbody
 		//Remove constraints from the dynamics world before you delete the related rigidbodies.
-		btAssert(m_constraintRefs.size() == 0);
+		assert(m_constraintRefs.size() == 0);
 	}
 
 protected:

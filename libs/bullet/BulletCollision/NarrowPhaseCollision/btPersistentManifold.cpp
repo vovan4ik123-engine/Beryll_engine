@@ -73,7 +73,7 @@ void btPersistentManifold::clearUserCache(btManifoldPoint& pt)
 					printf("error in clearUserCache\n");
 			}
 		}
-		btAssert(occurance <= 0);
+		assert(occurance <= 0);
 #endif  //DEBUG_PERSISTENCY
 
 		if (pt.m_userPersistentData && gContactDestroyedCallback)
@@ -213,7 +213,7 @@ int btPersistentManifold::addManifoldPoint(const btManifoldPoint& newPoint, bool
 {
 	if (!isPredictive)
 	{
-		btAssert(validContactDistance(newPoint));
+		assert(validContactDistance(newPoint));
 	}
 
 	int insertIndex = getNumContacts();
@@ -234,7 +234,7 @@ int btPersistentManifold::addManifoldPoint(const btManifoldPoint& newPoint, bool
 	if (insertIndex < 0)
 		insertIndex = 0;
 
-	btAssert(m_pointCache[insertIndex].m_userPersistentData == 0);
+	assert(m_pointCache[insertIndex].m_userPersistentData == 0);
 	m_pointCache[insertIndex] = newPoint;
 	return insertIndex;
 }

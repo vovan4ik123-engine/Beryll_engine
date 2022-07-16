@@ -153,7 +153,7 @@ public:
 
 	virtual void removeOverlappingPairsContainingProxy(btBroadphaseProxy* /*proxy0*/, btDispatcher* /*dispatcher*/)
 	{
-		btAssert(0);
+		assert(0);
 		//need to keep track of all ghost objects and call them here
 		//m_hashPairCache->removeOverlappingPairsContainingProxy(proxy0,dispatcher);
 	}

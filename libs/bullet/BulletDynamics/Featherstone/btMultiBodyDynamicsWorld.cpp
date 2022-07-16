@@ -414,7 +414,7 @@ void btMultiBodyDynamicsWorld::solveExternalForces(btContactSolverInfo& solverIn
                         pMem += numDofs;
                         btScalar* scratch_qdd3 = pMem;
                         pMem += numDofs;
-                        btAssert((pMem - (2 * numPosVars + 8 * numDofs)) == &scratch_r2[0]);
+                        assert((pMem - (2 * numPosVars + 8 * numDofs)) == &scratch_r2[0]);
                         
                         /////
                         //copy q0 to scratch_q0 and qd0 to scratch_qd0

@@ -62,7 +62,7 @@ public:
             return m_01;
         if (i == 1 && j == 1)
             return m_11;
-        btAssert(false);
+        assert(false);
         return m_00;
     }
     const btScalar& operator()(int i, int j) const
@@ -75,7 +75,7 @@ public:
             return m_01;
         if (i == 1 && j == 1)
             return m_11;
-        btAssert(false);
+        assert(false);
         return m_00;
     }
     void setIdentity()

@@ -237,7 +237,7 @@ unsigned long long int btClock::getTimeNanoseconds()
 		int err = mach_timebase_info(&info);
 		if (err)
 		{
-			btAssert(0);
+			assert(0);
 			conversion = 1.;
 		}
 		conversion = info.numer / info.denom;
@@ -737,32 +737,6 @@ void btLeaveProfileZoneDefault()
   #endif
 #endif  // defined(__ANDROID__) && defined(__clang__)
 // clang-format on
-
-unsigned int btQuickprofGetCurrentThreadIndex2()
-{
-	const unsigned int kNullIndex = ~0U;
-
-#if BT_THREADSAFE
-	return btGetCurrentThreadIndex();
-#else
-#if defined(BT_HAVE_TLS)
-	static __thread unsigned int sThreadIndex = kNullIndex;
-#elif defined(_WIN32)
-	__declspec(thread) static unsigned int sThreadIndex = kNullIndex;
-#else
-	unsigned int sThreadIndex = 0;
-	return -1;
-#endif
-
-	static int gThreadCounter = 0;
-
-	if (sThreadIndex == kNullIndex)
-	{
-		sThreadIndex = gThreadCounter++;
-	}
-	return sThreadIndex;
-#endif  //BT_THREADSAFE
-}
 
 static btEnterProfileZoneFunc* bts_enterFunc = btEnterProfileZoneDefault;
 static btLeaveProfileZoneFunc* bts_leaveFunc = btLeaveProfileZoneDefault;

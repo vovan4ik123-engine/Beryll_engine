@@ -176,13 +176,13 @@ namespace Beryll
         static Timer m_timer;
 
         static std::unique_ptr<btDefaultCollisionConfiguration> m_collisionConfiguration;
-        // use the default collision dispatcher. For parallel processing you can use a diffent dispatcher (see Extras/BulletMultiThreaded)
-        static std::unique_ptr<btCollisionDispatcher> m_dispatcher;
-        // btDbvtBroadphase is a good general purpose broadphase. You can also try out btAxis3Sweep.
-        static std::unique_ptr<btBroadphaseInterface> m_overlappingPairCache;
-        // the default constraint solver. For parallel processing you can use a different solver (see Extras/BulletMultiThreaded)
-        static std::unique_ptr<btSequentialImpulseConstraintSolver> m_solver;
-        static std::unique_ptr<btDiscreteDynamicsWorld> m_dynamicsWorld;
+        static std::unique_ptr<btCollisionDispatcherMt> m_dispatcherMT;
+        static std::unique_ptr<btDbvtBroadphase> m_broadPhase;
+        // pool solvers shouldn't be parallel solvers
+        static std::unique_ptr<btConstraintSolverPoolMt> m_solverPoolMT;
+        // single solver should be parallel solver
+        static std::unique_ptr<btSequentialImpulseConstraintSolverMt> m_constraintSolverMT;
+        static std::unique_ptr<btDiscreteDynamicsWorldMt> m_dynamicsWorldMT;
 
         // keep pointers from destroying
         static std::vector<std::shared_ptr<btCollisionShape>> m_collisionShapes;

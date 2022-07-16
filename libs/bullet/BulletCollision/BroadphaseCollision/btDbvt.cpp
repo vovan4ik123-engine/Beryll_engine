@@ -357,7 +357,7 @@ static btDbvtNode* topdown(btDbvt* pdbvt,
 	static const btVector3 axis[] = {btVector3(1, 0, 0),
 									 btVector3(0, 1, 0),
 									 btVector3(0, 0, 1)};
-	btAssert(bu_treshold > 2);
+	assert(bu_treshold > 2);
 	if (count > 1)
 	{
 		if (count > bu_treshold)
@@ -392,7 +392,7 @@ static btDbvtNode* topdown(btDbvt* pdbvt,
 			if (bestaxis >= 0)
 			{
 				partition = split(leaves, count, org, axis[bestaxis]);
-				btAssert(partition != 0 && partition != count);
+				assert(partition != 0 && partition != count);
 			}
 			else
 			{
@@ -418,14 +418,14 @@ static btDbvtNode* topdown(btDbvt* pdbvt,
 static DBVT_INLINE btDbvtNode* sort(btDbvtNode* n, btDbvtNode*& r)
 {
 	btDbvtNode* p = n->parent;
-	btAssert(n->isinternal());
+	assert(n->isinternal());
 	if (p > n)
 	{
 		const int i = indexof(n);
 		const int j = 1 - i;
 		btDbvtNode* s = p->childs[j];
 		btDbvtNode* q = p->parent;
-		btAssert(n == p->childs[i]);
+		assert(n == p->childs[i]);
 		if (q)
 			q->childs[indexof(p)] = n;
 		else

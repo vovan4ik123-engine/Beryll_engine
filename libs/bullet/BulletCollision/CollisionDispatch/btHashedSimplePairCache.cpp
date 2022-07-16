@@ -73,7 +73,7 @@ btSimplePair* btHashedSimplePairCache::findPair(int indexA, int indexB)
 		return NULL;
 	}
 
-	btAssert(index < m_overlappingPairArray.size());
+	assert(index < m_overlappingPairArray.size());
 
 	return &m_overlappingPairArray[index];
 }
@@ -169,11 +169,11 @@ void* btHashedSimplePairCache::removeOverlappingPair(int indexA, int indexB)
 	void* userData = pair->m_userPointer;
 
 	int pairIndex = int(pair - &m_overlappingPairArray[0]);
-	btAssert(pairIndex < m_overlappingPairArray.size());
+	assert(pairIndex < m_overlappingPairArray.size());
 
 	// Remove the pair from the hash table.
 	int index = m_hashTable[hash];
-	btAssert(index != BT_SIMPLE_NULL_PAIR);
+	assert(index != BT_SIMPLE_NULL_PAIR);
 
 	int previous = BT_SIMPLE_NULL_PAIR;
 	while (index != pairIndex)
@@ -184,7 +184,7 @@ void* btHashedSimplePairCache::removeOverlappingPair(int indexA, int indexB)
 
 	if (previous != BT_SIMPLE_NULL_PAIR)
 	{
-		btAssert(m_next[previous] == pairIndex);
+		assert(m_next[previous] == pairIndex);
 		m_next[previous] = m_next[pairIndex];
 	}
 	else
@@ -211,7 +211,7 @@ void* btHashedSimplePairCache::removeOverlappingPair(int indexA, int indexB)
 	int lastHash = static_cast<int>(getHash(static_cast<unsigned int>(last->m_indexA), static_cast<unsigned int>(last->m_indexB)) & (m_overlappingPairArray.capacity() - 1));
 
 	index = m_hashTable[lastHash];
-	btAssert(index != BT_SIMPLE_NULL_PAIR);
+	assert(index != BT_SIMPLE_NULL_PAIR);
 
 	previous = BT_SIMPLE_NULL_PAIR;
 	while (index != lastPairIndex)
@@ -222,7 +222,7 @@ void* btHashedSimplePairCache::removeOverlappingPair(int indexA, int indexB)
 
 	if (previous != BT_SIMPLE_NULL_PAIR)
 	{
-		btAssert(m_next[previous] == lastPairIndex);
+		assert(m_next[previous] == lastPairIndex);
 		m_next[previous] = m_next[lastPairIndex];
 	}
 	else

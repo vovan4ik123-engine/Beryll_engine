@@ -149,7 +149,7 @@ void btMultiBodyGearConstraint::createConstraintRows(btMultiBodyConstraintArray&
 		constraintRow.m_orgDofIndex = row;
 		{
 			//expect either prismatic or revolute joint type for now
-			btAssert((m_bodyA->getLink(m_linkA).m_jointType == btMultibodyLink::eRevolute) || (m_bodyA->getLink(m_linkA).m_jointType == btMultibodyLink::ePrismatic));
+			assert((m_bodyA->getLink(m_linkA).m_jointType == btMultibodyLink::eRevolute) || (m_bodyA->getLink(m_linkA).m_jointType == btMultibodyLink::ePrismatic));
 			switch (m_bodyA->getLink(m_linkA).m_jointType)
 			{
 				case btMultibodyLink::eRevolute:
@@ -173,7 +173,7 @@ void btMultiBodyGearConstraint::createConstraintRows(btMultiBodyConstraintArray&
 				}
 				default:
 				{
-					btAssert(0);
+					assert(0);
 				}
 			};
 		}

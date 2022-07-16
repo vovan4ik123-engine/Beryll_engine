@@ -145,7 +145,7 @@ int btBvhTree::_sort_and_calc_splitting_index(
 		splitIndex = startIndex + (numIndices >> 1);
 	}
 
-	btAssert(!((splitIndex == startIndex) || (splitIndex == (endIndex))));
+	assert(!((splitIndex == startIndex) || (splitIndex == (endIndex))));
 
 	return splitIndex;
 }
@@ -155,7 +155,7 @@ void btBvhTree::_build_sub_tree(GIM_BVH_DATA_ARRAY& primitive_boxes, int startIn
 	int curIndex = m_num_nodes;
 	m_num_nodes++;
 
-	btAssert((endIndex - startIndex) > 0);
+	assert((endIndex - startIndex) > 0);
 
 	if ((endIndex - startIndex) == 1)
 	{

@@ -67,10 +67,6 @@ void btSetCustomLeaveProfileZoneFunc(btLeaveProfileZoneFunc* leaveFunc);
 
 const unsigned int BT_QUICKPROF_MAX_THREAD_COUNT = 64;
 
-//btQuickprofGetCurrentThreadIndex will return -1 if thread index cannot be determined,
-//otherwise returns thread index in range [0..maxThreads]
-unsigned int btQuickprofGetCurrentThreadIndex2();
-
 #ifndef BT_NO_PROFILE
 
 

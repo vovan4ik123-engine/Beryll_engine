@@ -212,3 +212,4 @@ add_library(bullet-static STATIC ${Bullet3Common_SRCS}
                                  ${BulletInverseDynamics_SRCS})
 
 target_include_directories(bullet-static PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(bullet-static log)

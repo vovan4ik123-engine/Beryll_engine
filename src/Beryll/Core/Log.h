@@ -33,6 +33,8 @@ namespace Beryll
 
 #if defined(BR_DEBUG)
 
+    static std::mutex globalLogMutex;
+
     // pass __VA_ARGS__ here. return first argument from __VA_ARGS__
     #define FIND_FIRST_ARG(FIRST_ARG, ...) FIRST_ARG
     // pass __VA_ARGS__ here. returned __VA_ARGS__ = passed __VA_ARGS__ -1 first argument
@@ -61,8 +63,11 @@ namespace Beryll
             strForm += " : "; \
             strForm +=  std::to_string(__LINE__); \
             strForm +=  " | "; \
-            strForm += FIND_FIRST_ARG(__VA_ARGS__); \
-            Beryll::Log::inst()->getAndroidLogger()->info(strForm GET_ARGS(__VA_ARGS__) \
+            strForm += FIND_FIRST_ARG(__VA_ARGS__);   \
+            {                \
+                std::scoped_lock<std::mutex> logLock(globalLogMutex);                 \
+                Beryll::Log::inst()->getAndroidLogger()->info(strForm GET_ARGS(__VA_ARGS__) \
+            }                 \
         }
         #define BR_WARN(...) \
         { \
@@ -72,8 +77,11 @@ namespace Beryll
             strForm += " : "; \
             strForm +=  std::to_string(__LINE__); \
             strForm +=  " | "; \
-            strForm += FIND_FIRST_ARG(__VA_ARGS__); \
-            Beryll::Log::inst()->getAndroidLogger()->warn(strForm GET_ARGS(__VA_ARGS__) \
+            strForm += FIND_FIRST_ARG(__VA_ARGS__);   \
+            {                \
+                std::scoped_lock<std::mutex> logLock(globalLogMutex);                 \
+                Beryll::Log::inst()->getAndroidLogger()->warn(strForm GET_ARGS(__VA_ARGS__) \
+            }                  \
         }
         #define BR_ERROR(...) \
         { \
@@ -83,8 +91,11 @@ namespace Beryll
             strForm += " : "; \
             strForm +=  std::to_string(__LINE__); \
             strForm +=  " | "; \
-            strForm += FIND_FIRST_ARG(__VA_ARGS__); \
-            Beryll::Log::inst()->getAndroidLogger()->error(strForm GET_ARGS(__VA_ARGS__) \
+            strForm += FIND_FIRST_ARG(__VA_ARGS__);   \
+            {                \
+                std::scoped_lock<std::mutex> logLock(globalLogMutex);                 \
+                Beryll::Log::inst()->getAndroidLogger()->error(strForm GET_ARGS(__VA_ARGS__) \
+            }                   \
         }
 
         #define BR_ASSERT(condition, ...) { if(condition == false) { BR_ERROR(__VA_ARGS__); assert(condition); } }

@@ -26,10 +26,10 @@ btScalar gDeactivationTime = btScalar(2.);
 bool gDisableDeactivation = false;
 static int uniqueId = 0;
 
-btRigidBody::btRigidBody(const btRigidBody::btRigidBodyConstructionInfo& constructionInfo, const int engineID)
+btRigidBody::btRigidBody(const btRigidBody::btRigidBodyConstructionInfo& constructionInfo, int id)
 {
 	setupRigidBody(constructionInfo);
-	idForEngine = engineID;
+	idForEngine = id;
 }
 
 btRigidBody::btRigidBody(btScalar mass, btMotionState* motionState, btCollisionShape* collisionShape, const btVector3& localInertia)
@@ -419,7 +419,7 @@ void btRigidBody::addConstraintRef(btTypedConstraint* c)
 
 	int index = m_constraintRefs.findLinearSearch(c);
 	//don't add constraints that are already referenced
-	//btAssert(index == m_constraintRefs.size());
+	//assert(index == m_constraintRefs.size());
 	if (index == m_constraintRefs.size())
 	{
 		m_constraintRefs.push_back(c);

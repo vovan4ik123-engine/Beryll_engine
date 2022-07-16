@@ -144,13 +144,13 @@ inline int btIsDoublePrecision()
 	#ifdef BT_DEBUG
 		#ifdef _MSC_VER
 			#include <stdio.h>
-			#define btAssert(x) { if(!(x)){printf("Assert " __FILE__ ":%u (%s)\n", __LINE__, #x);__debugbreak();	}}
+			#define assert(x) { if(!(x)){printf("Assert " __FILE__ ":%u (%s)\n", __LINE__, #x);__debugbreak();	}}
 		#else//_MSC_VER
 			#include <assert.h>
-			#define btAssert assert
+			#define assert assert
 		#endif//_MSC_VER
 	#else
-		#define btAssert(x)
+		#define assert(x)
 	#endif
 		//btFullAssert is optional, slows down a lot
 		#define btFullAssert(x)
@@ -172,13 +172,13 @@ inline int btIsDoublePrecision()
 			#ifdef __SPU__
 				#include <spu_printf.h>
 				#define printf spu_printf
-				#define btAssert(x) {if(!(x)){printf("Assert " __FILE__ ":%u ("#x")\n", __LINE__);spu_hcmpeq(0,0);}}
+				#define assert(x) {if(!(x)){printf("Assert " __FILE__ ":%u ("#x")\n", __LINE__);spu_hcmpeq(0,0);}}
 			#else
-				#define btAssert assert
+				#define assert assert
 			#endif
 	
 		#else//BT_DEBUG
-				#define btAssert(x)
+				#define assert(x)
 		#endif//BT_DEBUG
 		//btFullAssert is optional, slows down a lot
 		#define btFullAssert(x)
@@ -198,9 +198,9 @@ inline int btIsDoublePrecision()
 			#include <assert.h>
 			#endif
 	#ifdef BT_DEBUG
-			#define btAssert assert
+			#define assert assert
 	#else
-			#define btAssert(x)
+			#define assert(x)
 	#endif
 			//btFullAssert is optional, slows down a lot
 			#define btFullAssert(x)
@@ -255,7 +255,7 @@ inline int btIsDoublePrecision()
 				#if defined(DEBUG) || defined (_DEBUG)
 				 #if defined (__i386__) || defined (__x86_64__)
 				#include <stdio.h>
-				 #define btAssert(x)\
+				 #define assert(x)\
 				{\
 				if(!(x))\
 				{\
@@ -264,10 +264,10 @@ inline int btIsDoublePrecision()
 				}\
 				}
 				#else//defined (__i386__) || defined (__x86_64__)
-					#define btAssert assert
+					#define assert assert
 				#endif//defined (__i386__) || defined (__x86_64__)
 				#else//defined(DEBUG) || defined (_DEBUG)
-					#define btAssert(x)
+					#define assert(x)
 				#endif//defined(DEBUG) || defined (_DEBUG)
 
 				//btFullAssert is optional, slows down a lot
@@ -290,9 +290,9 @@ inline int btIsDoublePrecision()
 				#endif
 
 				#if defined(DEBUG) || defined (_DEBUG)
-					#define btAssert assert
+					#define assert assert
 				#else
-					#define btAssert(x)
+					#define assert(x)
 				#endif
 
 				//btFullAssert is optional, slows down a lot

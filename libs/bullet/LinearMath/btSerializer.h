@@ -265,7 +265,7 @@ protected:
 			*/
 
 		intPtr = (int*)cp;
-		btAssert(strncmp(cp, "TYPE", 4) == 0);
+		assert(strncmp(cp, "TYPE", 4) == 0);
 		intPtr++;
 
 		if (!littleEndian)
@@ -292,7 +292,7 @@ protected:
 
 		// Parse type lens
 		intPtr = (int*)cp;
-		btAssert(strncmp(cp, "TLEN", 4) == 0);
+		assert(strncmp(cp, "TLEN", 4) == 0);
 		intPtr++;
 
 		dataLen = (int)mTypes.size();
@@ -320,7 +320,7 @@ protected:
 
 		intPtr = (int*)shtPtr;
 		cp = (char*)intPtr;
-		btAssert(strncmp(cp, "STRC", 4) == 0);
+		assert(strncmp(cp, "STRC", 4) == 0);
 		intPtr++;
 
 		if (!littleEndian)
@@ -392,7 +392,7 @@ public:
 #if _WIN64
 			initDNA((const char*)sBulletDNAstr64, sBulletDNAlen64);
 #else
-			btAssert(0);
+			assert(0);
 #endif
 		}
 		else
@@ -400,7 +400,7 @@ public:
 #ifndef _WIN64
 			initDNA((const char*)sBulletDNAstr, sBulletDNAlen);
 #else
-			btAssert(0);
+			assert(0);
 #endif
 		}
 
@@ -533,7 +533,7 @@ public:
 
 	virtual void* getUniquePointer(void* oldPtr)
 	{
-		btAssert(m_uniqueIdGenerator >= 0);
+		assert(m_uniqueIdGenerator >= 0);
 		if (!oldPtr)
 			return 0;
 
@@ -572,7 +572,7 @@ public:
 	{
 		if (!(m_serializationFlags & BT_SERIALIZE_NO_DUPLICATE_ASSERT))
 		{
-			btAssert(!findPointer(oldPtr));
+			assert(!findPointer(oldPtr));
 		}
 
 		chunk->m_dna_nr = getReverseType(structType);
@@ -593,7 +593,7 @@ public:
 		{
 			ptr = m_buffer + m_currentSize;
 			m_currentSize += int(size);
-			btAssert(m_currentSize < m_totalSize);
+			assert(m_currentSize < m_totalSize);
 		}
 		else
 		{
@@ -758,7 +758,7 @@ struct btInMemorySerializer : public btDefaultSerializer
 				{
 					//If this assert hit, serialization happened in the wrong order
 					// 'getUniquePointer'
-					btAssert(0);
+					assert(0);
 				}
 			}
 			return 0;
@@ -770,7 +770,7 @@ struct btInMemorySerializer : public btDefaultSerializer
 	{
 		if (!(m_serializationFlags & BT_SERIALIZE_NO_DUPLICATE_ASSERT))
 		{
-			btAssert(!findPointer(oldPtr));
+			assert(!findPointer(oldPtr));
 		}
 
 		chunk->m_dna_nr = getReverseType(structType);

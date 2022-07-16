@@ -53,7 +53,7 @@ btMultiBodySliderConstraint::btMultiBodySliderConstraint(btMultiBody* bodyA, int
 void btMultiBodySliderConstraint::finalizeMultiDof()
 {
 	//not implemented yet
-	btAssert(0);
+	assert(0);
 }
 
 btMultiBodySliderConstraint::~btMultiBodySliderConstraint()

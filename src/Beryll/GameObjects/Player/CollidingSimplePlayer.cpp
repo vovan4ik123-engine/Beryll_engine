@@ -88,7 +88,7 @@ namespace Beryll
         // call base class method first
         CollidingSimpleObject::updateBeforePhysics();
 
-        Beryll::Physics::activateObject(m_ID);
+        //Beryll::Physics::activateObject(m_ID);
 
 
     }
@@ -102,32 +102,26 @@ namespace Beryll
         m_collidingObjectsIDs = Physics::getCollisionsWithGroup(m_ID, CollisionGroups::GROUND);
         if(!m_collidingObjectsIDs.empty())
         {
-
-            BR_INFO("m_collidingObjectsIDs.size():{0}", m_collidingObjectsIDs.size());
-
+            //BR_INFO("m_collidingObjectsIDs.size():{0}", m_collidingObjectsIDs.size());
             m_collidingPoints = Physics::getAllCollisionPoints(m_ID, m_collidingObjectsIDs);
-            BR_INFO("m_collidingPoints.size():{0}", m_collidingPoints.size());
-            for(int i = 0; i < m_collidingPoints.size(); ++i)
-            {
-                BR_INFO("Point: X:{0}, Y:{1}, Z:{2}", m_collidingPoints[i].first.x, m_collidingPoints[i].first.y, m_collidingPoints[i].first.z);
-                BR_INFO("Normal: X:{0}, Y:{1}, Z:{2}", m_collidingPoints[i].second.x, m_collidingPoints[i].second.y, m_collidingPoints[i].second.z);
-            }
         }
 
     }
 
     void CollidingSimplePlayer::draw()
     {
-
         // call base class method
         CollidingSimpleObject::draw();
+
+
     }
 
     void CollidingSimplePlayer::playSound()
     {
-
         // call base class method
         CollidingSimpleObject::playSound();
+
+
     }
 
 }

@@ -144,12 +144,12 @@ int btConvexTriangleMeshShape::getNumEdges() const
 
 void btConvexTriangleMeshShape::getEdge(int, btVector3&, btVector3&) const
 {
-	btAssert(0);
+	assert(0);
 }
 
 void btConvexTriangleMeshShape::getVertex(int, btVector3&) const
 {
-	btAssert(0);
+	assert(0);
 }
 
 int btConvexTriangleMeshShape::getNumPlanes() const
@@ -159,13 +159,13 @@ int btConvexTriangleMeshShape::getNumPlanes() const
 
 void btConvexTriangleMeshShape::getPlane(btVector3&, btVector3&, int) const
 {
-	btAssert(0);
+	assert(0);
 }
 
 //not yet
 bool btConvexTriangleMeshShape::isInside(const btVector3&, btScalar) const
 {
-	btAssert(0);
+	assert(0);
 	return false;
 }
 

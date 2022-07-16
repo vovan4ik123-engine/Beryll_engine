@@ -477,7 +477,7 @@ btVector3 btDeformableFaceRigidContactConstraint::getDv(const btSoftBody::Node* 
 	{
 		return face_dv * contact->m_weights[1];
 	}
-	btAssert(node == m_face->m_n[2]);
+	assert(node == m_face->m_n[2]);
 	return face_dv * contact->m_weights[2];
 }
 
@@ -623,7 +623,7 @@ btVector3 btDeformableFaceNodeContactConstraint::getDv(const btSoftBody::Node* n
 	{
 		return dv * contact->m_weights[1];
 	}
-	btAssert(n == m_face->m_n[2]);
+	assert(n == m_face->m_n[2]);
 	return dv * contact->m_weights[2];
 }
 

@@ -73,8 +73,8 @@ public:
 		// release mode fix
 		(void)size;
 		btMutexLock(&m_mutex);
-		btAssert(!size || size <= m_elemSize);
-		//btAssert(m_freeCount>0);  // should return null if all full
+		assert(!size || size <= m_elemSize);
+		assert(m_freeCount>0);  // should return null if all full
 		void* result = m_firstFree;
 		if (NULL != m_firstFree)
 		{
@@ -101,7 +101,7 @@ public:
 	{
 		if (ptr)
 		{
-			btAssert((unsigned char*)ptr >= m_pool && (unsigned char*)ptr < m_pool + m_maxElements * m_elemSize);
+			assert((unsigned char*)ptr >= m_pool && (unsigned char*)ptr < m_pool + m_maxElements * m_elemSize);
 
 			btMutexLock(&m_mutex);
 			*(void**)ptr = m_firstFree;

@@ -123,11 +123,11 @@ void btCollisionWorld::refreshBroadphaseProxy(btCollisionObject* collisionObject
 
 void btCollisionWorld::addCollisionObject(btCollisionObject* collisionObject, int collisionFilterGroup, int collisionFilterMask)
 {
-	btAssert(collisionObject);
+	assert(collisionObject);
 
 	//check that the object isn't already added
-	btAssert(m_collisionObjects.findLinearSearch(collisionObject) == m_collisionObjects.size());
-	btAssert(collisionObject->getWorldArrayIndex() == -1);  // do not add the same object to more than one collision world
+	assert(m_collisionObjects.findLinearSearch(collisionObject) == m_collisionObjects.size());
+	assert(collisionObject->getWorldArrayIndex() == -1);  // do not add the same object to more than one collision world
 
 	collisionObject->setWorldArrayIndex(m_collisionObjects.size());
 	m_collisionObjects.push_back(collisionObject);
@@ -201,7 +201,7 @@ void btCollisionWorld::updateAabbs()
 	for (int i = 0; i < m_collisionObjects.size(); i++)
 	{
 		btCollisionObject* colObj = m_collisionObjects[i];
-		btAssert(colObj->getWorldArrayIndex() == i);
+		assert(colObj->getWorldArrayIndex() == i);
 
 		//only update aabb of active objects
 		if (m_forceUpdateAllAabbs || colObj->isActive())
@@ -241,16 +241,18 @@ void btCollisionWorld::removeCollisionObject(btCollisionObject* collisionObject)
 
 	if (iObj >= 0 && iObj < m_collisionObjects.size())
 	{
-		btAssert(collisionObject == m_collisionObjects[iObj]);
+		assert(collisionObject == m_collisionObjects[iObj]);
 		m_collisionObjects.swap(iObj, m_collisionObjects.size() - 1);
 		m_collisionObjects.pop_back();
 
 		m_collisionObjects[iObj]->setWorldArrayIndex(iObj);
+
 	}
 	else
 	{
 		m_collisionObjects.remove(collisionObject);
 	}
+
 	collisionObject->setWorldArrayIndex(-1);
 }
 

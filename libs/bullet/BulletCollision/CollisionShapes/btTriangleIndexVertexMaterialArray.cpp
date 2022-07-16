@@ -44,7 +44,7 @@ btTriangleIndexVertexMaterialArray::btTriangleIndexVertexMaterialArray(int numTr
 void btTriangleIndexVertexMaterialArray::getLockedMaterialBase(unsigned char** materialBase, int& numMaterials, PHY_ScalarType& materialType, int& materialStride,
 															   unsigned char** triangleMaterialBase, int& numTriangles, int& triangleMaterialStride, PHY_ScalarType& triangleType, int subpart)
 {
-	btAssert(subpart < getNumSubParts());
+	assert(subpart < getNumSubParts());
 
 	btMaterialProperties& mats = m_materials[subpart];
 

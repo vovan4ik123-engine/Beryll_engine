@@ -107,7 +107,7 @@ btScalar btMultiBodyConstraint::fillMultiBodyConstraint(btMultiBodySolverConstra
 		}
 		else
 		{
-			btAssert(data.m_deltaVelocities.size() >= solverConstraint.m_deltaVelAindex + ndofA);
+			assert(data.m_deltaVelocities.size() >= solverConstraint.m_deltaVelAindex + ndofA);
 		}
 
 		//determine jacobian of this 1D constraint in terms of multibodyA's degrees of freedom
@@ -130,7 +130,7 @@ btScalar btMultiBodyConstraint::fillMultiBodyConstraint(btMultiBodySolverConstra
 		//determine the velocity response of multibodyA to reaction impulses of this constraint (i.e. A[i,i] for i=1,...n_con: multibody's inverse inertia with respect to this 1D constraint)
 		//resize..
 		data.m_deltaVelocitiesUnitImpulse.resize(data.m_deltaVelocitiesUnitImpulse.size() + ndofA);  //=> each constraint row has the constrained tree dofs allocated in m_deltaVelocitiesUnitImpulse
-		btAssert(data.m_jacobians.size() == data.m_deltaVelocitiesUnitImpulse.size());
+		assert(data.m_jacobians.size() == data.m_deltaVelocitiesUnitImpulse.size());
 		btScalar* delta = &data.m_deltaVelocitiesUnitImpulse[solverConstraint.m_jacAindex];
 		//determine..
 		multiBodyA->calcAccelerationDeltasMultiDof(&data.m_jacobians[solverConstraint.m_jacAindex], delta, data.scratch_r, data.scratch_v);
@@ -203,7 +203,7 @@ btScalar btMultiBodyConstraint::fillMultiBodyConstraint(btMultiBodySolverConstra
 		//determine velocity response of multibodyB to reaction impulses of this constraint (i.e. A[i,i] for i=1,...n_con: multibody's inverse inertia with respect to this 1D constraint)
 		//resize..
 		data.m_deltaVelocitiesUnitImpulse.resize(data.m_deltaVelocitiesUnitImpulse.size() + ndofB);
-		btAssert(data.m_jacobians.size() == data.m_deltaVelocitiesUnitImpulse.size());
+		assert(data.m_jacobians.size() == data.m_deltaVelocitiesUnitImpulse.size());
 		btScalar* delta = &data.m_deltaVelocitiesUnitImpulse[solverConstraint.m_jacBindex];
 		//determine..
 		multiBodyB->calcAccelerationDeltasMultiDof(&data.m_jacobians[solverConstraint.m_jacBindex], delta, data.scratch_r, data.scratch_v);

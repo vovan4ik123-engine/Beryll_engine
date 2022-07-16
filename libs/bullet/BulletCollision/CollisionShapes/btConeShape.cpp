@@ -56,7 +56,7 @@ void btConeShape::setConeUpIndex(int upIndex)
 			m_coneIndices[2] = 1;
 			break;
 		default:
-			btAssert(0);
+			assert(0);
 	};
 
 	m_implicitShapeDimensions[m_coneIndices[0]] = m_radius;

@@ -140,7 +140,7 @@ private:
 			return NULL;
 		}
 
-		btAssert(index < m_overlappingPairArray.size());
+		assert(index < m_overlappingPairArray.size());
 
 		return &m_overlappingPairArray[index];
 	}

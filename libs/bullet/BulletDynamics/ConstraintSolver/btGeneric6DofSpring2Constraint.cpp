@@ -290,7 +290,7 @@ void btGeneric6DofSpring2Constraint::calculateAngleInfo()
 			matrixToEulerZYX(relative_frame, m_calculatedAxisAngleDiff);
 			break;
 		default:
-			btAssert(false);
+			assert(false);
 	}
 	// in euler angle mode we do not actually constrain the angular velocity
 	// along the axes axis[0] and axis[2] (although we do use axis[1]) :
@@ -400,7 +400,7 @@ void btGeneric6DofSpring2Constraint::calculateAngleInfo()
 			break;
 		}
 		default:
-			btAssert(false);
+			assert(false);
 	}
 
 	m_calculatedAxis[0].normalize();
@@ -582,7 +582,7 @@ int btGeneric6DofSpring2Constraint::setAngularLimits(btConstraintInfo2* info, in
 			cIdx[2] = 0;
 			break;
 		default:
-			btAssert(false);
+			assert(false);
 	}
 
 	for (int ii = 0; ii < 3; ii++)
@@ -1040,7 +1040,7 @@ void btGeneric6DofSpring2Constraint::setAxis(const btVector3& axis1, const btVec
 
 void btGeneric6DofSpring2Constraint::setBounce(int index, btScalar bounce)
 {
-	btAssert((index >= 0) && (index < 6));
+	assert((index >= 0) && (index < 6));
 	if (index < 3)
 		m_linearLimits.m_bounce[index] = bounce;
 	else
@@ -1049,7 +1049,7 @@ void btGeneric6DofSpring2Constraint::setBounce(int index, btScalar bounce)
 
 void btGeneric6DofSpring2Constraint::enableMotor(int index, bool onOff)
 {
-	btAssert((index >= 0) && (index < 6));
+	assert((index >= 0) && (index < 6));
 	if (index < 3)
 		m_linearLimits.m_enableMotor[index] = onOff;
 	else
@@ -1058,7 +1058,7 @@ void btGeneric6DofSpring2Constraint::enableMotor(int index, bool onOff)
 
 void btGeneric6DofSpring2Constraint::setServo(int index, bool onOff)
 {
-	btAssert((index >= 0) && (index < 6));
+	assert((index >= 0) && (index < 6));
 	if (index < 3)
 		m_linearLimits.m_servoMotor[index] = onOff;
 	else
@@ -1067,7 +1067,7 @@ void btGeneric6DofSpring2Constraint::setServo(int index, bool onOff)
 
 void btGeneric6DofSpring2Constraint::setTargetVelocity(int index, btScalar velocity)
 {
-	btAssert((index >= 0) && (index < 6));
+	assert((index >= 0) && (index < 6));
 	if (index < 3)
 		m_linearLimits.m_targetVelocity[index] = velocity;
 	else
@@ -1076,7 +1076,7 @@ void btGeneric6DofSpring2Constraint::setTargetVelocity(int index, btScalar veloc
 
 void btGeneric6DofSpring2Constraint::setServoTarget(int index, btScalar targetOrg)
 {
-	btAssert((index >= 0) && (index < 6));
+	assert((index >= 0) && (index < 6));
 	if (index < 3)
 	{
 		m_linearLimits.m_servoTarget[index] = targetOrg;
@@ -1120,7 +1120,7 @@ void btGeneric6DofSpring2Constraint::setServoTarget(int index, btScalar targetOr
 
 void btGeneric6DofSpring2Constraint::setMaxMotorForce(int index, btScalar force)
 {
-	btAssert((index >= 0) && (index < 6));
+	assert((index >= 0) && (index < 6));
 	if (index < 3)
 		m_linearLimits.m_maxMotorForce[index] = force;
 	else
@@ -1129,7 +1129,7 @@ void btGeneric6DofSpring2Constraint::setMaxMotorForce(int index, btScalar force)
 
 void btGeneric6DofSpring2Constraint::enableSpring(int index, bool onOff)
 {
-	btAssert((index >= 0) && (index < 6));
+	assert((index >= 0) && (index < 6));
 	if (index < 3)
 		m_linearLimits.m_enableSpring[index] = onOff;
 	else
@@ -1138,7 +1138,7 @@ void btGeneric6DofSpring2Constraint::enableSpring(int index, bool onOff)
 
 void btGeneric6DofSpring2Constraint::setStiffness(int index, btScalar stiffness, bool limitIfNeeded)
 {
-	btAssert((index >= 0) && (index < 6));
+	assert((index >= 0) && (index < 6));
 	if (index < 3)
 	{
 		m_linearLimits.m_springStiffness[index] = stiffness;
@@ -1153,7 +1153,7 @@ void btGeneric6DofSpring2Constraint::setStiffness(int index, btScalar stiffness,
 
 void btGeneric6DofSpring2Constraint::setDamping(int index, btScalar damping, bool limitIfNeeded)
 {
-	btAssert((index >= 0) && (index < 6));
+	assert((index >= 0) && (index < 6));
 	if (index < 3)
 	{
 		m_linearLimits.m_springDamping[index] = damping;
@@ -1178,7 +1178,7 @@ void btGeneric6DofSpring2Constraint::setEquilibriumPoint()
 
 void btGeneric6DofSpring2Constraint::setEquilibriumPoint(int index)
 {
-	btAssert((index >= 0) && (index < 6));
+	assert((index >= 0) && (index < 6));
 	calculateTransforms();
 	if (index < 3)
 		m_linearLimits.m_equilibriumPoint[index] = m_calculatedLinearDiff[index];
@@ -1188,7 +1188,7 @@ void btGeneric6DofSpring2Constraint::setEquilibriumPoint(int index)
 
 void btGeneric6DofSpring2Constraint::setEquilibriumPoint(int index, btScalar val)
 {
-	btAssert((index >= 0) && (index < 6));
+	assert((index >= 0) && (index < 6));
 	if (index < 3)
 		m_linearLimits.m_equilibriumPoint[index] = val;
 	else

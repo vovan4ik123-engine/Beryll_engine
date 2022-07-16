@@ -103,7 +103,7 @@ int btConvexPointCloudShape::getNumEdges() const
 
 void btConvexPointCloudShape::getEdge(int i, btVector3& pa, btVector3& pb) const
 {
-	btAssert(0);
+	assert(0);
 }
 
 void btConvexPointCloudShape::getVertex(int i, btVector3& vtx) const
@@ -118,12 +118,12 @@ int btConvexPointCloudShape::getNumPlanes() const
 
 void btConvexPointCloudShape::getPlane(btVector3&, btVector3&, int) const
 {
-	btAssert(0);
+	assert(0);
 }
 
 //not yet
 bool btConvexPointCloudShape::isInside(const btVector3&, btScalar) const
 {
-	btAssert(0);
+	assert(0);
 	return false;
 }

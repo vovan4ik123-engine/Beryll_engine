@@ -297,7 +297,7 @@ protected:
 
 	btGeneric6DofSpring2Constraint& operator=(const btGeneric6DofSpring2Constraint&)
 	{
-		btAssert(0);
+		assert(0);
 		return *this;
 	}
 

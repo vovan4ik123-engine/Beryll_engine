@@ -79,7 +79,7 @@ void btPoint2PointConstraint::getInfo2(btConstraintInfo2* info)
 
 void btPoint2PointConstraint::getInfo2NonVirtual(btConstraintInfo2* info, const btTransform& body0_trans, const btTransform& body1_trans)
 {
-	btAssert(!m_useSolveConstraintObsolete);
+	assert(!m_useSolveConstraintObsolete);
 
 	//retrieve matrices
 

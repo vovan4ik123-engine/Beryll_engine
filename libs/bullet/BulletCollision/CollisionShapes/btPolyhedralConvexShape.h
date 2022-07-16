@@ -80,7 +80,7 @@ protected:
 
 	inline void getCachedLocalAabb(btVector3& aabbMin, btVector3& aabbMax) const
 	{
-		btAssert(m_isLocalAabbValid);
+		assert(m_isLocalAabbValid);
 		aabbMin = m_localAabbMin;
 		aabbMax = m_localAabbMax;
 	}
@@ -92,7 +92,7 @@ public:
 	inline void getNonvirtualAabb(const btTransform& trans, btVector3& aabbMin, btVector3& aabbMax, btScalar margin) const
 	{
 		//lazy evaluation of local aabb
-		btAssert(m_isLocalAabbValid);
+		assert(m_isLocalAabbValid);
 		btTransformAabb(m_localAabbMin, m_localAabbMax, margin, trans, aabbMin, aabbMax);
 	}
 

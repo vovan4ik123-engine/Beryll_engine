@@ -104,7 +104,7 @@ public:
 
 	SIMD_FORCE_INLINE void refreshContactPoints()
 	{
-		btAssert(m_manifoldPtr);
+		assert(m_manifoldPtr);
 		if (!m_manifoldPtr->getNumContacts())
 			return;
 

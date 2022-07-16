@@ -1321,7 +1321,7 @@ inline void btDbvt::rayTest(const btDbvtNode* root,
 #ifdef COMPARE_BTRAY_AABB2
 			btScalar param = 1.f;
 			bool result2 = btRayAabb(rayFrom, rayTo, node->volume.Mins(), node->volume.Maxs(), param, resultNormal);
-			btAssert(result1 == result2);
+			assert(result1 == result2);
 #endif  //TEST_BTRAY_AABB2
 
 			if (result1)
@@ -1359,7 +1359,7 @@ inline void btDbvt::collideKDOP(const btDbvtNode* root,
 		const int inside = (1 << count) - 1;
 		btAlignedObjectArray<sStkNP> stack;
 		int signs[sizeof(unsigned) * 8];
-		btAssert(count < int(sizeof(signs) / sizeof(signs[0])));
+		assert(count < int(sizeof(signs) / sizeof(signs[0])));
 		for (int i = 0; i < count; ++i)
 		{
 			signs[i] = ((normals[i].x() >= 0) ? 1 : 0) +
@@ -1426,7 +1426,7 @@ inline void btDbvt::collideOCL(const btDbvtNode* root,
 		btAlignedObjectArray<int> ifree;
 		btAlignedObjectArray<int> stack;
 		int signs[sizeof(unsigned) * 8];
-		btAssert(count < int(sizeof(signs) / sizeof(signs[0])));
+		assert(count < int(sizeof(signs) / sizeof(signs[0])));
 		for (int i = 0; i < count; ++i)
 		{
 			signs[i] = ((normals[i].x() >= 0) ? 1 : 0) +

@@ -51,7 +51,7 @@ BT_QUANTIZED_BVH_NODE
 
 	SIMD_FORCE_INLINE int getEscapeIndex() const
 	{
-		//btAssert(m_escapeIndexOrDataIndex < 0);
+		//assert(m_escapeIndexOrDataIndex < 0);
 		return -m_escapeIndexOrDataIndex;
 	}
 
@@ -62,7 +62,7 @@ BT_QUANTIZED_BVH_NODE
 
 	SIMD_FORCE_INLINE int getDataIndex() const
 	{
-		//btAssert(m_escapeIndexOrDataIndex >= 0);
+		//assert(m_escapeIndexOrDataIndex >= 0);
 
 		return m_escapeIndexOrDataIndex;
 	}

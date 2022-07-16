@@ -182,7 +182,7 @@ public:
 				break;
 			
 			default:
-				btAssert(false);
+				assert(false);
 				break;
 		}
 	}

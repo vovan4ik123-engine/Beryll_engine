@@ -1,27 +1,23 @@
 cmake_minimum_required(VERSION 3.10)
 
-enable_language(C CXX ASM)
-
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
+
+enable_language(C CXX ASM)
+
+add_compile_options(-fexceptions -frtti -fPIC) # -fopenmp -pthread -fexceptions -frtti -fPIC
 
 # for info/warning/assert messages
 add_definitions(-DBR_DEBUG)
 
-# add flags for compiler
+# add flags for specyfic compiler
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-    # using Clang
     message(WARNING "Compiler = Clang")
-    add_compile_options(-fexceptions -frtti -pthread -fPIC)
 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    # using GCC
     message(WARNING "Compiler = GCC")
 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
-    # using Intel C++
     message(WARNING "Compiler = Intel")
 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    # using Visual Studio C++
     message(WARNING "Compiler = Visual Studio")
 endif()
 

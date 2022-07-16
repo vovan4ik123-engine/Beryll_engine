@@ -43,7 +43,7 @@ btSdfCollisionShape::~btSdfCollisionShape()
 
 void btSdfCollisionShape::getAabb(const btTransform& t, btVector3& aabbMin, btVector3& aabbMax) const
 {
-	btAssert(m_data->m_sdf.isValid());
+	assert(m_data->m_sdf.isValid());
 	btVector3 localAabbMin = m_data->m_sdf.m_domain.m_min;
 	btVector3 localAabbMax = m_data->m_sdf.m_domain.m_max;
 	btScalar margin(0);

@@ -1,5 +1,5 @@
 /*! \file btGImpactShape.h
-\author Francisco Len Nßjera
+\author Francisco Len Nï¿½jera
 */
 /*
 This source file is part of GIMPACT Library.
@@ -344,7 +344,7 @@ public:
 
 		virtual void get_primitive_triangle(int prim_index, btPrimitiveTriangle& triangle) const
 		{
-			btAssert(0);
+			assert(0);
 			(void)prim_index;
 			(void)triangle;
 		}
@@ -395,7 +395,7 @@ public:
 	//! Use this method for adding children. Only Convex shapes are allowed.
 	void addChildShape(const btTransform& localTransform, btCollisionShape* shape)
 	{
-		btAssert(shape->isConvex());
+		assert(shape->isConvex());
 		m_childTransforms.push_back(localTransform);
 		m_childShapes.push_back(shape);
 	}
@@ -403,7 +403,7 @@ public:
 	//! Use this method for adding children. Only Convex shapes are allowed.
 	void addChildShape(btCollisionShape* shape)
 	{
-		btAssert(shape->isConvex());
+		assert(shape->isConvex());
 		m_childShapes.push_back(shape);
 	}
 
@@ -437,7 +437,7 @@ public:
 	//! Gets the children transform
 	virtual btTransform getChildTransform(int index) const
 	{
-		btAssert(m_childTransforms.size() == m_childShapes.size());
+		assert(m_childTransforms.size() == m_childShapes.size());
 		return m_childTransforms[index];
 	}
 
@@ -447,7 +447,7 @@ public:
 	*/
 	virtual void setChildTransform(int index, const btTransform& transform)
 	{
-		btAssert(m_childTransforms.size() == m_childShapes.size());
+		assert(m_childTransforms.size() == m_childShapes.size());
 		m_childTransforms[index] = transform;
 		postUpdate();
 	}
@@ -468,14 +468,14 @@ public:
 	{
 		(void)prim_index;
 		(void)triangle;
-		btAssert(0);
+		assert(0);
 	}
 
 	virtual void getBulletTetrahedron(int prim_index, btTetrahedronShapeEx& tetrahedron) const
 	{
 		(void)prim_index;
 		(void)tetrahedron;
-		btAssert(0);
+		assert(0);
 	}
 
 	//! Calculates the exact inertia tensor for this shape
@@ -632,7 +632,7 @@ public:
 			}
 			else
 			{
-				btAssert(indicestype == PHY_UCHAR);
+				assert(indicestype == PHY_UCHAR);
 				unsigned char* i_indices = (unsigned char*)(indexbase + face_index * indexstride);
 				i0 = i_indices[0];
 				i1 = i_indices[1];
@@ -720,7 +720,7 @@ public:
 	virtual btCollisionShape* getChildShape(int index)
 	{
 		(void)index;
-		btAssert(0);
+		assert(0);
 		return NULL;
 	}
 
@@ -728,7 +728,7 @@ public:
 	virtual const btCollisionShape* getChildShape(int index) const
 	{
 		(void)index;
-		btAssert(0);
+		assert(0);
 		return NULL;
 	}
 
@@ -736,7 +736,7 @@ public:
 	virtual btTransform getChildTransform(int index) const
 	{
 		(void)index;
-		btAssert(0);
+		assert(0);
 		return btTransform();
 	}
 
@@ -748,7 +748,7 @@ public:
 	{
 		(void)index;
 		(void)transform;
-		btAssert(0);
+		assert(0);
 	}
 
 	//! Obtains the primitive manager
@@ -795,7 +795,7 @@ public:
 	{
 		(void)prim_index;
 		(void)tetrahedron;
-		btAssert(0);
+		assert(0);
 	}
 
 	SIMD_FORCE_INLINE int getVertexCount() const
@@ -963,35 +963,35 @@ public:
 	//! Obtains the primitive manager
 	virtual const btPrimitiveManagerBase* getPrimitiveManager() const
 	{
-		btAssert(0);
+		assert(0);
 		return NULL;
 	}
 
 	//! Gets the number of children
 	virtual int getNumChildShapes() const
 	{
-		btAssert(0);
+		assert(0);
 		return 0;
 	}
 
 	//! if true, then its children must get transforms.
 	virtual bool childrenHasTransform() const
 	{
-		btAssert(0);
+		assert(0);
 		return false;
 	}
 
 	//! Determines if this shape has triangles
 	virtual bool needsRetrieveTriangles() const
 	{
-		btAssert(0);
+		assert(0);
 		return false;
 	}
 
 	//! Determines if this shape has tetrahedrons
 	virtual bool needsRetrieveTetrahedrons() const
 	{
-		btAssert(0);
+		assert(0);
 		return false;
 	}
 
@@ -999,25 +999,25 @@ public:
 	{
 		(void)prim_index;
 		(void)triangle;
-		btAssert(0);
+		assert(0);
 	}
 
 	virtual void getBulletTetrahedron(int prim_index, btTetrahedronShapeEx& tetrahedron) const
 	{
 		(void)prim_index;
 		(void)tetrahedron;
-		btAssert(0);
+		assert(0);
 	}
 
 	//! call when reading child shapes
 	virtual void lockChildShapes() const
 	{
-		btAssert(0);
+		assert(0);
 	}
 
 	virtual void unlockChildShapes() const
 	{
-		btAssert(0);
+		assert(0);
 	}
 
 	//! Retrieves the bound from a child
@@ -1029,14 +1029,14 @@ public:
 		(void)t;
 		(void)aabbMin;
 		(void)aabbMax;
-		btAssert(0);
+		assert(0);
 	}
 
 	//! Gets the children
 	virtual btCollisionShape* getChildShape(int index)
 	{
 		(void)index;
-		btAssert(0);
+		assert(0);
 		return NULL;
 	}
 
@@ -1044,7 +1044,7 @@ public:
 	virtual const btCollisionShape* getChildShape(int index) const
 	{
 		(void)index;
-		btAssert(0);
+		assert(0);
 		return NULL;
 	}
 
@@ -1052,7 +1052,7 @@ public:
 	virtual btTransform getChildTransform(int index) const
 	{
 		(void)index;
-		btAssert(0);
+		assert(0);
 		return btTransform();
 	}
 
@@ -1064,7 +1064,7 @@ public:
 	{
 		(void)index;
 		(void)transform;
-		btAssert(0);
+		assert(0);
 	}
 
 	virtual eGIMPACT_SHAPE_TYPE getGImpactShapeType() const

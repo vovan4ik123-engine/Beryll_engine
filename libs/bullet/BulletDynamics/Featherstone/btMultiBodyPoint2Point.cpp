@@ -49,7 +49,7 @@ btMultiBodyPoint2Point::btMultiBodyPoint2Point(btMultiBody* bodyA, int linkA, bt
 void btMultiBodyPoint2Point::finalizeMultiDof()
 {
 	//not implemented yet
-	btAssert(0);
+	assert(0);
 }
 
 btMultiBodyPoint2Point::~btMultiBodyPoint2Point()
@@ -166,7 +166,7 @@ void btMultiBodyPoint2Point::createConstraintRows(btMultiBodyConstraintArray& co
 #else
 		const btVector3 dummy(0, 0, 0);
 
-		btAssert(m_bodyA->isMultiDof());
+		assert(m_bodyA->isMultiDof());
 
 		btScalar* jac1 = jacobianA(i);
 		const btVector3& normalAng = i >= 3 ? contactNormalOnB : dummy;

@@ -987,7 +987,7 @@ void btGjkPairDetector::getClosestPointsNonVirtual(const ClosestPointInput &inpu
 
 					btScalar s = btSqrt(squaredDistance);
 
-					btAssert(s > btScalar(0.0));
+					assert(s > btScalar(0.0));
 					pointOnA -= m_cachedSeparatingAxis * (marginA / s);
 					pointOnB += m_cachedSeparatingAxis * (marginB / s);
 					distance = ((btScalar(1.) / rlen) - margin);

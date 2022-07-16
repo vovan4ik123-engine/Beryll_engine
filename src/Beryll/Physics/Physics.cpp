@@ -16,32 +16,45 @@ namespace Beryll
     std::map<const int, std::shared_ptr<RigidBodyData>> Physics::m_rigidBodiesMap;
 
     std::unique_ptr<btDefaultCollisionConfiguration> Physics::m_collisionConfiguration = nullptr;
-    std::unique_ptr<btCollisionDispatcher> Physics::m_dispatcher = nullptr;
-    std::unique_ptr<btBroadphaseInterface> Physics::m_overlappingPairCache = nullptr;
-    std::unique_ptr<btSequentialImpulseConstraintSolver> Physics::m_solver = nullptr;
-    std::unique_ptr<btDiscreteDynamicsWorld> Physics::m_dynamicsWorld = nullptr;
+    std::unique_ptr<btCollisionDispatcherMt> Physics::m_dispatcherMT = nullptr;
+    std::unique_ptr<btDbvtBroadphase> Physics::m_broadPhase = nullptr;
+    std::unique_ptr<btConstraintSolverPoolMt> Physics::m_solverPoolMT = nullptr;
+    std::unique_ptr<btSequentialImpulseConstraintSolverMt> Physics::m_constraintSolverMT = nullptr;
+    std::unique_ptr<btDiscreteDynamicsWorldMt> Physics::m_dynamicsWorldMT = nullptr;
 
     void Physics::create()
     {
-        m_collisionConfiguration = std::make_unique<btDefaultCollisionConfiguration>();
-        m_dispatcher = std::make_unique<btCollisionDispatcher>(m_collisionConfiguration.get());
-        m_overlappingPairCache = std::make_unique<btDbvtBroadphase>(); // make from subclass
-        m_solver = std::make_unique<btSequentialImpulseConstraintSolver>();
-        m_dynamicsWorld = std::make_unique<btDiscreteDynamicsWorld>(m_dispatcher.get(), m_overlappingPairCache.get(), m_solver.get(), m_collisionConfiguration.get());
+        btSetTaskScheduler(btCreateTaskSchedulerForBeryll());
+        BR_INFO("Number of threads on device:{0}", btGetTaskScheduler()->getNumThreads());
 
-        m_dynamicsWorld->setGravity(m_gravity);
+        btDefaultCollisionConstructionInfo cci;
+        cci.m_defaultMaxPersistentManifoldPoolSize = 100000;
+        cci.m_defaultMaxCollisionAlgorithmPoolSize = 100000;
+        m_collisionConfiguration = std::make_unique<btDefaultCollisionConfiguration>(cci);
+        m_dispatcherMT = std::make_unique<btCollisionDispatcherMt>(m_collisionConfiguration.get());
+        m_broadPhase = std::make_unique<btDbvtBroadphase>();
+        // let pool of solvers be 2 times more than available threads on device
+        m_solverPoolMT = std::make_unique<btConstraintSolverPoolMt>(btGetTaskScheduler()->getNumThreads());
+        m_constraintSolverMT = std::make_unique<btSequentialImpulseConstraintSolverMt>();
+        m_dynamicsWorldMT = std::make_unique<btDiscreteDynamicsWorldMt>(m_dispatcherMT.get(),
+                                                                        m_broadPhase.get(),
+                                                                        m_solverPoolMT.get(),
+                                                                        m_constraintSolverMT.get(),
+                                                                        m_collisionConfiguration.get());
 
-        // collisions call backs
+        m_dynamicsWorldMT->setGravity(m_gravity);
+
+        // set collisions call backs to bullet
         gContactAddedCallback = collisionsCallBack;
     }
 
     void Physics::simulate()
     {
-        BR_ASSERT((m_dynamicsWorld != nullptr), "Create physics before simulate");
+        BR_ASSERT((m_dynamicsWorldMT != nullptr), "Create physics before simulate");
 
         // dont simulate if disabled or no objects
         // or time after m_timer.reset() is very short (for example we return from state (pause, ...) where simulation was disabled)
-        if(!m_simulationEnabled || m_timer.elapsedSec() < 0.003f || m_dynamicsWorld->getNumCollisionObjects() == 0)
+        if(!m_simulationEnabled || m_timer.elapsedSec() < 0.003f || m_dynamicsWorldMT->getNumCollisionObjects() == 0)
         {
             return;
         }
@@ -56,10 +69,10 @@ namespace Beryll
         //                If your balls penetrates your walls instead of colliding with them decrease it
         m_timeStep = m_timer.elapsedSec();
         m_timer.reset();
-        m_dynamicsWorld->stepSimulation(m_timeStep,
+        m_dynamicsWorldMT->stepSimulation(m_timeStep,
                                      m_resolutionFactor + 1,
                                      m_timeStep / m_resolutionFactor);
-        //BR_INFO("Simulation objects count:{0}", m_dynamicsWorld->getNumCollisionObjects());
+        //BR_INFO("Simulation objects count:{0}", m_dynamicsWorldMT->getNumCollisionObjects());
         //BR_INFO("Simulation time millisec:{0}", timer.elapsedMilliSec());
     }
 
@@ -158,7 +171,7 @@ namespace Beryll
 
         m_rigidBodiesMap.insert(std::make_pair(objectID, rigidBodyData));
 
-        m_dynamicsWorld->addRigidBody(body.get(), static_cast<int>(collGroup), static_cast<int>(collMask));
+        m_dynamicsWorldMT->addRigidBody(body.get(), static_cast<int>(collGroup), static_cast<int>(collMask));
     }
 
     void Physics::addConvexMesh(const std::vector<glm::vec3>& vertices,
@@ -214,7 +227,7 @@ namespace Beryll
         
         m_rigidBodiesMap.insert(std::make_pair(objectID, rigidBodyData));
 
-        m_dynamicsWorld->addRigidBody(body.get(), static_cast<int>(collGroup), static_cast<int>(collMask));
+        m_dynamicsWorldMT->addRigidBody(body.get(), static_cast<int>(collGroup), static_cast<int>(collMask));
     }
 
     bool Physics::collisionsCallBack(btManifoldPoint& cp, const btCollisionObjectWrapper* ob1, int ID1, int index1,
@@ -237,13 +250,13 @@ namespace Beryll
     std::vector<int> Physics::getCollisionsWithGroup(const int ID, const CollisionGroups group)
     {
         std::vector<int> ids;
-        for (int i = 0; i < m_dynamicsWorld->getNumCollisionObjects(); ++i)
+        for (int i = 0; i < m_dynamicsWorldMT->getNumCollisionObjects(); ++i)
         {
-            if(m_dynamicsWorld->getCollisionObjectArray()[i]->getBroadphaseHandle()->m_collisionFilterGroup & static_cast<int>(group))
+            if(m_dynamicsWorldMT->getCollisionObjectArray()[i]->getBroadphaseHandle()->m_collisionFilterGroup & static_cast<int>(group))
             {
-                if(getIsCollision(ID, m_dynamicsWorld->getCollisionObjectArray()[i]->idForEngine))
+                if(getIsCollision(ID, m_dynamicsWorldMT->getCollisionObjectArray()[i]->idForEngine))
                 {
-                    ids.push_back(m_dynamicsWorld->getCollisionObjectArray()[i]->idForEngine);
+                    ids.push_back(m_dynamicsWorldMT->getCollisionObjectArray()[i]->idForEngine);
                 }
             }
         }
@@ -259,9 +272,9 @@ namespace Beryll
 
         points.reserve(3);
 
-        for(int i = 0; i < m_dynamicsWorld->getDispatcher()->getNumManifolds(); i++)
+        for(int i = 0; i < m_dynamicsWorldMT->getDispatcher()->getNumManifolds(); i++)
         {
-            btPersistentManifold* contactManifold = m_dynamicsWorld->getDispatcher()->getManifoldByIndexInternal(i);
+            btPersistentManifold* contactManifold = m_dynamicsWorldMT->getDispatcher()->getManifoldByIndexInternal(i);
             const btCollisionObject* obA = contactManifold->getBody0();
             const btCollisionObject* obB = contactManifold->getBody1();
 
@@ -291,9 +304,9 @@ namespace Beryll
         std::vector<std::pair<glm::vec3, glm::vec3>> points;
         points.reserve(5);
 
-        for(int i = 0; i < m_dynamicsWorld->getDispatcher()->getNumManifolds(); i++)
+        for(int i = 0; i < m_dynamicsWorldMT->getDispatcher()->getNumManifolds(); i++)
         {
-            btPersistentManifold* contactManifold = m_dynamicsWorld->getDispatcher()->getManifoldByIndexInternal(i);
+            btPersistentManifold* contactManifold = m_dynamicsWorldMT->getDispatcher()->getManifoldByIndexInternal(i);
             const btCollisionObject* obA = contactManifold->getBody0();
             const btCollisionObject* obB = contactManifold->getBody1();
 
@@ -347,9 +360,9 @@ namespace Beryll
 
             iter->second->rb->activate(true);
 
-            //for (int i = m_dynamicsWorld->getNumCollisionObjects() - 1; i >= 0; --i)
+            //for (int i = m_dynamicsWorldMT->getNumCollisionObjects() - 1; i >= 0; --i)
             //{
-            //    btRigidBody* body = btRigidBody::upcast(m_dynamicsWorld->getCollisionObjectArray()[i]);
+            //    btRigidBody* body = btRigidBody::upcast(m_dynamicsWorldMT->getCollisionObjectArray()[i]);
             //    if (body && body->getActivationState() != ACTIVE_TAG)
             //        body->activate(true);
             //}
@@ -414,7 +427,7 @@ namespace Beryll
         auto iter = m_rigidBodiesMap.find(ID);
         if(iter != m_rigidBodiesMap.end() && iter->second->existInDynamicWorld) // found object by ID and it exist in world
         {
-            m_dynamicsWorld->removeRigidBody(iter->second->rb.get());
+            m_dynamicsWorldMT->removeRigidBody(iter->second->rb.get());
             iter->second->existInDynamicWorld = false;
         }
     }
@@ -433,9 +446,9 @@ namespace Beryll
 
             iter->second->rb->activate(true);
 
-            m_dynamicsWorld->addRigidBody(iter->second->rb.get(),
-                                          iter->second->rb->getBroadphaseHandle()->m_collisionFilterGroup,
-                                          iter->second->rb->getBroadphaseHandle()->m_collisionFilterMask);
+            m_dynamicsWorldMT->addRigidBody(iter->second->rb.get(),
+                                            iter->second->rb->getBroadphaseHandle()->m_collisionFilterGroup,
+                                            iter->second->rb->getBroadphaseHandle()->m_collisionFilterMask);
             iter->second->existInDynamicWorld = true;
         }
     }
@@ -488,8 +501,8 @@ namespace Beryll
     void Physics::setDefaultGravity(const glm::vec3& gravity)
     {
         m_gravity = btVector3(gravity.x, gravity.y, gravity.z);
-        if(m_dynamicsWorld)
-            m_dynamicsWorld->setGravity(m_gravity);
+        if(m_dynamicsWorldMT)
+            m_dynamicsWorldMT->setGravity(m_gravity);
     }
 
     void Physics::setGravityForObject(const int ID, const glm::vec3& gravity)
@@ -529,7 +542,7 @@ namespace Beryll
         closestResults.m_collisionFilterGroup = static_cast<int>(collGroup);
         closestResults.m_collisionFilterMask = static_cast<int>(collMask);
 
-        m_dynamicsWorld->rayTest(fr, t, closestResults);
+        m_dynamicsWorldMT->rayTest(fr, t, closestResults);
 
         if(closestResults.hasHit())
         {
@@ -554,7 +567,7 @@ namespace Beryll
         allResults.m_collisionFilterGroup = static_cast<int>(collGroup);
         allResults.m_collisionFilterMask = static_cast<int>(collMask);
 
-        m_dynamicsWorld->rayTest(fr, t, allResults);
+        m_dynamicsWorldMT->rayTest(fr, t, allResults);
 
         if(allResults.hasHit())
         {

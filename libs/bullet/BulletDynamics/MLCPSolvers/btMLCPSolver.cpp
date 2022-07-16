@@ -44,7 +44,7 @@ btScalar btMLCPSolver::solveGroupCacheFriendlySetup(btCollisionObject** bodies, 
 		//	int numBodies = m_tmpSolverBodyPool.size();
 		m_allConstraintPtrArray.resize(0);
 		m_limitDependencies.resize(m_tmpSolverNonContactConstraintPool.size() + m_tmpSolverContactConstraintPool.size() + m_tmpSolverContactFrictionConstraintPool.size());
-		btAssert(m_limitDependencies.size() == m_tmpSolverNonContactConstraintPool.size() + m_tmpSolverContactConstraintPool.size() + m_tmpSolverContactFrictionConstraintPool.size());
+		assert(m_limitDependencies.size() == m_tmpSolverNonContactConstraintPool.size() + m_tmpSolverContactConstraintPool.size() + m_tmpSolverContactFrictionConstraintPool.size());
 		//	printf("m_limitDependencies.size() = %d\n",m_limitDependencies.size());
 
 		int dindex = 0;

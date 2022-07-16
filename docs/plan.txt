@@ -1,6 +1,8 @@
 ---------------------plan:---------------------
 
-add player
+#include <android/log.h>
+use __android_log_print(ANDROID_LOG_DEBUG, "TAG", "message");
+not spdlog
 
 add thread pool(multithreading folder). probably better async tack pool for parallel calculations
 + task scheduler?

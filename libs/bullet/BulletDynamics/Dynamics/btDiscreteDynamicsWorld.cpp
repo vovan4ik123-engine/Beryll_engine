@@ -103,14 +103,14 @@ struct InplaceSolverIslandCallback : public btSimulationIslandManager::IslandCal
 
 	InplaceSolverIslandCallback& operator=(InplaceSolverIslandCallback& other)
 	{
-		btAssert(0);
+		assert(0);
 		(void)other;
 		return *this;
 	}
 
 	SIMD_FORCE_INLINE void setup(btContactSolverInfo* solverInfo, btTypedConstraint** sortedConstraints, int numConstraints, btIDebugDraw* debugDrawer)
 	{
-		btAssert(solverInfo);
+		assert(solverInfo);
 		m_solverInfo = solverInfo;
 		m_sortedConstraints = sortedConstraints;
 		m_numConstraints = numConstraints;
@@ -334,7 +334,7 @@ void btDiscreteDynamicsWorld::applyGravity()
 
 void btDiscreteDynamicsWorld::synchronizeSingleMotionState(btRigidBody* body)
 {
-	btAssert(body);
+	assert(body);
 
 	if (body->getMotionState() && !body->isStaticOrKinematicObject())
 	{
@@ -632,7 +632,7 @@ void btDiscreteDynamicsWorld::addConstraint(btTypedConstraint* constraint, bool 
 {
 	m_constraints.push_back(constraint);
 	//Make sure the two bodies of a type constraint are different (possibly add this to the btTypedConstraint constructor?)
-	btAssert(&constraint->getRigidBodyA() != &constraint->getRigidBodyB());
+	assert(&constraint->getRigidBodyA() != &constraint->getRigidBodyB());
 
 	if (disableCollisionsBetweenLinkedBodies)
 	{
@@ -689,7 +689,7 @@ void btDiscreteDynamicsWorld::solveConstraints(btContactSolverInfo& solverInfo)
 		m_sortedConstraints[i] = m_constraints[i];
 	}
 
-	//	btAssert(0);
+	//	assert(0);
 
 	m_sortedConstraints.quickSort(btSortConstraintOnIslandPredicate());
 

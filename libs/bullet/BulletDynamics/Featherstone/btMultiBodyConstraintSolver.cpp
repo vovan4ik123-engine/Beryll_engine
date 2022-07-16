@@ -147,7 +147,7 @@ btScalar btMultiBodyConstraintSolver::solveSingleIteration(int iteration, btColl
 				j1++;
 				int index2 = j1;  //iteration&1? j1 : m_multiBodyFrictionContactConstraints.size()-1-j1;
 				btMultiBodySolverConstraint& frictionConstraintB = m_multiBodyFrictionContactConstraints[index2];
-				btAssert(frictionConstraint.m_frictionIndex == frictionConstraintB.m_frictionIndex);
+				assert(frictionConstraint.m_frictionIndex == frictionConstraintB.m_frictionIndex);
 
 				if (frictionConstraint.m_frictionIndex == frictionConstraintB.m_frictionIndex)
 				{
@@ -586,13 +586,13 @@ void btMultiBodyConstraintSolver::setupMultiBodyContactConstraint(btMultiBodySol
 		}
 		else
 		{
-			btAssert(m_data.m_deltaVelocities.size() >= solverConstraint.m_deltaVelAindex + ndofA);
+			assert(m_data.m_deltaVelocities.size() >= solverConstraint.m_deltaVelAindex + ndofA);
 		}
 
 		solverConstraint.m_jacAindex = m_data.m_jacobians.size();
 		m_data.m_jacobians.resize(m_data.m_jacobians.size() + ndofA);
 		m_data.m_deltaVelocitiesUnitImpulse.resize(m_data.m_deltaVelocitiesUnitImpulse.size() + ndofA);
-		btAssert(m_data.m_jacobians.size() == m_data.m_deltaVelocitiesUnitImpulse.size());
+		assert(m_data.m_jacobians.size() == m_data.m_deltaVelocitiesUnitImpulse.size());
 
 		btScalar* jac1 = &m_data.m_jacobians[solverConstraint.m_jacAindex];
 		multiBodyA->fillContactJacobianMultiDof(solverConstraint.m_linkA, cp.getPositionWorldOnA(), contactNormal, jac1, m_data.scratch_r, m_data.scratch_v, m_data.scratch_m);
@@ -636,7 +636,7 @@ void btMultiBodyConstraintSolver::setupMultiBodyContactConstraint(btMultiBodySol
 
 		m_data.m_jacobians.resize(m_data.m_jacobians.size() + ndofB);
 		m_data.m_deltaVelocitiesUnitImpulse.resize(m_data.m_deltaVelocitiesUnitImpulse.size() + ndofB);
-		btAssert(m_data.m_jacobians.size() == m_data.m_deltaVelocitiesUnitImpulse.size());
+		assert(m_data.m_jacobians.size() == m_data.m_deltaVelocitiesUnitImpulse.size());
 
 		multiBodyB->fillContactJacobianMultiDof(solverConstraint.m_linkB, cp.getPositionWorldOnB(), -contactNormal, &m_data.m_jacobians[solverConstraint.m_jacBindex], m_data.scratch_r, m_data.scratch_v, m_data.scratch_m);
 		multiBodyB->calcAccelerationDeltasMultiDof(&m_data.m_jacobians[solverConstraint.m_jacBindex], &m_data.m_deltaVelocitiesUnitImpulse[solverConstraint.m_jacBindex], m_data.scratch_r, m_data.scratch_v);
@@ -940,13 +940,13 @@ void btMultiBodyConstraintSolver::setupMultiBodyTorsionalFrictionConstraint(btMu
 		}
 		else
 		{
-			btAssert(m_data.m_deltaVelocities.size() >= solverConstraint.m_deltaVelAindex + ndofA);
+			assert(m_data.m_deltaVelocities.size() >= solverConstraint.m_deltaVelAindex + ndofA);
 		}
 
 		solverConstraint.m_jacAindex = m_data.m_jacobians.size();
 		m_data.m_jacobians.resize(m_data.m_jacobians.size() + ndofA);
 		m_data.m_deltaVelocitiesUnitImpulse.resize(m_data.m_deltaVelocitiesUnitImpulse.size() + ndofA);
-		btAssert(m_data.m_jacobians.size() == m_data.m_deltaVelocitiesUnitImpulse.size());
+		assert(m_data.m_jacobians.size() == m_data.m_deltaVelocitiesUnitImpulse.size());
 
 		btScalar* jac1 = &m_data.m_jacobians[solverConstraint.m_jacAindex];
 		multiBodyA->fillConstraintJacobianMultiDof(solverConstraint.m_linkA, cp.getPositionWorldOnA(), constraintNormal, btVector3(0, 0, 0), jac1, m_data.scratch_r, m_data.scratch_v, m_data.scratch_m);
@@ -990,7 +990,7 @@ void btMultiBodyConstraintSolver::setupMultiBodyTorsionalFrictionConstraint(btMu
 
 		m_data.m_jacobians.resize(m_data.m_jacobians.size() + ndofB);
 		m_data.m_deltaVelocitiesUnitImpulse.resize(m_data.m_deltaVelocitiesUnitImpulse.size() + ndofB);
-		btAssert(m_data.m_jacobians.size() == m_data.m_deltaVelocitiesUnitImpulse.size());
+		assert(m_data.m_jacobians.size() == m_data.m_deltaVelocitiesUnitImpulse.size());
 
 		multiBodyB->fillConstraintJacobianMultiDof(solverConstraint.m_linkB, cp.getPositionWorldOnB(), -constraintNormal, btVector3(0, 0, 0), &m_data.m_jacobians[solverConstraint.m_jacBindex], m_data.scratch_r, m_data.scratch_v, m_data.scratch_m);
 		multiBodyB->calcAccelerationDeltasMultiDof(&m_data.m_jacobians[solverConstraint.m_jacBindex], &m_data.m_deltaVelocitiesUnitImpulse[solverConstraint.m_jacBindex], m_data.scratch_r, m_data.scratch_v);
@@ -1618,7 +1618,7 @@ btScalar btMultiBodyConstraintSolver::solveGroupCacheFriendlyFinish(btCollisionO
 		{
 			const btMultiBodySolverConstraint& solverConstraint = m_multiBodyNormalContactConstraints[j];
 			btManifoldPoint* pt = (btManifoldPoint*)solverConstraint.m_originalContactPoint;
-			btAssert(pt);
+			assert(pt);
 			pt->m_appliedImpulse = solverConstraint.m_appliedImpulse;
  		  pt->m_prevRHS = solverConstraint.m_rhs;
 			pt->m_appliedImpulseLateral1 = m_multiBodyFrictionContactConstraints[solverConstraint.m_frictionIndex].m_appliedImpulse;

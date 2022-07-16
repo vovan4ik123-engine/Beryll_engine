@@ -212,7 +212,7 @@ void btMultiBodySphericalJointLimit::createConstraintRows(btMultiBodyConstraintA
 		frameAworld = m_bodyA->localFrameToWorld(m_linkA, frameAworld);
 		btScalar posError = 0;
 		{
-			btAssert(m_bodyA->getLink(m_linkA).m_jointType == btMultibodyLink::eSpherical);
+			assert(m_bodyA->getLink(m_linkA).m_jointType == btMultibodyLink::eSpherical);
 			switch (m_bodyA->getLink(m_linkA).m_jointType)
 			{
 				case btMultibodyLink::eSpherical:
@@ -249,7 +249,7 @@ void btMultiBodySphericalJointLimit::createConstraintRows(btMultiBodyConstraintA
 				}
 				default:
 				{
-					btAssert(0);
+					assert(0);
 				}
 			};
 		}

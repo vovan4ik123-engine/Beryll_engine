@@ -538,7 +538,7 @@ void btDeformableMultiBodyDynamicsWorld::applyRigidBodyGravity(btScalar timeStep
 						}
 						else
 						{
-							btAssert(" RK4Integration is not supported");
+							assert(" RK4Integration is not supported");
 						}
 					}
 				}

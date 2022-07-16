@@ -30,7 +30,7 @@ namespace Beryll
 
         // fill native display resolution
         //SDL_GetDesktopDisplayMode(0, &m_DM);
-        // fill new resolution if resolution was changed in fulscreen mode
+        // fill new resolution if resolution was changed in fullscreen mode
         SDL_GetCurrentDisplayMode(0, &m_DM);
         m_screenWidth = m_DM.w;
         m_screenHeight = m_DM.h;

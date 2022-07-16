@@ -82,7 +82,7 @@ void btSoftMultiBodyDynamicsWorld::internalSingleStepSimulation(btScalar timeSte
 
 	if (!m_softBodySolver->checkInitialized())
 	{
-		btAssert("Solver initialization failed\n");
+		assert("Solver initialization failed\n");
 	}
 
 	btDiscreteDynamicsWorld::internalSingleStepSimulation(timeStep);

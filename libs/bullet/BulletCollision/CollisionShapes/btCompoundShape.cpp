@@ -32,7 +32,7 @@ btCompoundShape::btCompoundShape(bool enableDynamicAabbTree, const int initialCh
 	{
 		void* mem = btAlignedAlloc(sizeof(btDbvt), 16);
 		m_dynamicAabbTree = new (mem) btDbvt();
-		btAssert(mem == m_dynamicAabbTree);
+		assert(mem == m_dynamicAabbTree);
 	}
 
 	m_children.reserve(initialChildCapacity);
@@ -107,7 +107,7 @@ void btCompoundShape::updateChildTransform(int childIndex, const btTransform& ne
 void btCompoundShape::removeChildShapeByIndex(int childShapeIndex)
 {
 	m_updateRevision++;
-	btAssert(childShapeIndex >= 0 && childShapeIndex < m_children.size());
+	assert(childShapeIndex >= 0 && childShapeIndex < m_children.size());
 	if (m_dynamicAabbTree)
 	{
 		m_dynamicAabbTree->remove(m_children[childShapeIndex].m_node);
@@ -209,12 +209,12 @@ void btCompoundShape::calculatePrincipalAxisTransform(const btScalar* masses, bt
 
 	for (k = 0; k < n; k++)
 	{
-		btAssert(masses[k] > 0);
+		assert(masses[k] > 0);
 		center += m_children[k].m_transform.getOrigin() * masses[k];
 		totalMass += masses[k];
 	}
 
-	btAssert(totalMass > 0);
+	assert(totalMass > 0);
 
 	center /= totalMass;
 	principal.setOrigin(center);
@@ -282,7 +282,7 @@ void btCompoundShape::createAabbTreeFromChildren()
 	{
 		void* mem = btAlignedAlloc(sizeof(btDbvt), 16);
 		m_dynamicAabbTree = new (mem) btDbvt();
-		btAssert(mem == m_dynamicAabbTree);
+		assert(mem == m_dynamicAabbTree);
 
 		for (int index = 0; index < m_children.size(); index++)
 		{

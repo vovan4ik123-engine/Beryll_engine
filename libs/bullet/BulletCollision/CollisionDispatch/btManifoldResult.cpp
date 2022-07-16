@@ -102,7 +102,7 @@ btManifoldResult::btManifoldResult(const btCollisionObjectWrapper* body0Wrap, co
 
 void btManifoldResult::addContactPoint(const btVector3& normalOnBInWorld, const btVector3& pointInWorld, btScalar depth)
 {
-	btAssert(m_manifoldPtr);
+	assert(m_manifoldPtr);
 	//order in manifold needs to match
 
 	if (depth > m_manifoldPtr->getContactBreakingThreshold())

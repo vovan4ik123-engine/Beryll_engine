@@ -6,6 +6,10 @@
 #include <stdio.h>
 #include <algorithm>
 
+#include <vector>
+#include <future>
+#include <thread>
+
 #if BT_THREADSAFE
 
 #include "btThreadSupportInterface.h"
@@ -64,14 +68,14 @@ public:
 
 	Type getDirective(int threadId)
 	{
-		btAssert(threadId < kMaxThreadCount);
+		assert(threadId < kMaxThreadCount);
 		return static_cast<Type>(m_threadDirs[threadId]);
 	}
 
 	void setDirectiveByRange(int threadBegin, int threadEnd, Type dir)
 	{
-		btAssert(threadBegin < threadEnd);
-		btAssert(threadEnd <= kMaxThreadCount);
+		assert(threadBegin < threadEnd);
+		assert(threadEnd <= kMaxThreadCount);
 		char dirChar = static_cast<char>(dir);
 		for (int i = threadBegin; i < threadEnd; ++i)
 		{
@@ -298,14 +302,14 @@ public:
 	}
 	void* allocJobMem(int jobSize)
 	{
-		btAssert(m_jobMemSize >= (m_allocSize + jobSize));
+		assert(m_jobMemSize >= (m_allocSize + jobSize));
 		void* jobMem = &m_jobMem[m_allocSize];
 		m_allocSize += jobSize;
 		return jobMem;
 	}
 	void submitJob(IJob * job)
 	{
-		btAssert(reinterpret_cast<char*>(job) >= &m_jobMem[0] && reinterpret_cast<char*>(job) < &m_jobMem[0] + m_allocSize);
+		assert(reinterpret_cast<char*>(job) >= &m_jobMem[0] && reinterpret_cast<char*>(job) < &m_jobMem[0] + m_allocSize);
 		m_jobQueue.push_back(job);
 		lockQueue();
 		m_tailIndex++;
@@ -324,7 +328,7 @@ public:
 		if (!m_queueIsEmpty)
 		{
 			job = m_jobQueue[m_headIndex++];
-			btAssert(reinterpret_cast<char*>(job) >= &m_jobMem[0] && reinterpret_cast<char*>(job) < &m_jobMem[0] + m_allocSize);
+			assert(reinterpret_cast<char*>(job) >= &m_jobMem[0] && reinterpret_cast<char*>(job) < &m_jobMem[0] + m_allocSize);
 			if (m_headIndex == m_tailIndex)
 			{
 				m_queueIsEmpty = true;
@@ -418,6 +422,107 @@ static void WorkerThreadFunc(void* userPtr)
 		localStorage->m_status = WorkerThreadStatus::kSleeping;
 		localStorage->m_mutex.unlock();
 	}
+}
+
+class btTaskSchedulerForBeryll : public btITaskScheduler
+{
+public:
+	btTaskSchedulerForBeryll() : btITaskScheduler("TaskSchedulerForBeryll")
+	{
+		// all available threads -1
+		m_numThreads = std::max(std::thread::hardware_concurrency() - 1, 1u);
+
+		m_futuresVoid.reserve(m_numThreads);
+		m_futuresFloat.reserve(m_numThreads);
+	}
+
+	~btTaskSchedulerForBeryll() override
+	{
+		m_futuresVoid.clear();
+		m_futuresFloat.clear();
+	}
+
+	int getMaxNumThreads() const override { return m_numThreads; }
+
+	int getNumThreads() const override { return m_numThreads; }
+
+	void setNumThreads(int numThreads) override { /* dont set anything*/ }
+
+	void parallelFor(int iBegin, int iEnd, int grainSize, const btIParallelForBody& body) override
+	{
+		int numberElements = iEnd - iBegin;
+
+		if(numberElements <= 10 || m_numThreads == 1)
+		{
+			// 10 or less elements are handled by main thread
+			body.forLoop(iBegin, iEnd);
+		}
+		else
+		{
+			m_futuresVoid.clear();
+
+			int oneChunkSize = numberElements / m_numThreads;
+			oneChunkSize++; // make sure (oneChunkSize * m_numThreads) > numberElements
+
+			for(int i = 0; i < iEnd; i += oneChunkSize)
+			{
+				int chunkEnd = std::min(i + oneChunkSize, iEnd);
+
+				m_futuresVoid.emplace_back(std::async(std::launch::async, &btIParallelForBody::forLoop, &body, i, chunkEnd));
+			}
+
+			// wait all threads
+			for(const std::future<void>& ft : m_futuresVoid)
+			{
+				ft.wait();
+			}
+		}
+	}
+
+	btScalar parallelSum(int iBegin, int iEnd, int grainSize, const btIParallelSumBody& body) override
+	{
+		btScalar result = 0.0f;
+		int numberElements = iEnd - iBegin;
+
+		if(numberElements <= 10 || m_numThreads == 1)
+		{
+			// 10 or less elements are handled by main thread
+			return body.sumLoop(iBegin, iEnd);
+		}
+		else
+		{
+			m_futuresFloat.clear();
+
+			int oneChunkSize = numberElements / m_numThreads;
+			oneChunkSize++; // make sure (oneChunkSize * m_numThreads) > numberElements
+
+			for(int i = 0; i < iEnd; i += oneChunkSize)
+			{
+				int chunkEnd = std::min(i + oneChunkSize, iEnd);
+
+				m_futuresFloat.emplace_back(std::async(std::launch::async, &btIParallelSumBody::sumLoop, &body, i, chunkEnd));
+			}
+
+			// wait all threads
+			for(std::future<btScalar>& ft : m_futuresFloat)
+			{
+				result += ft.get();
+			}
+		}
+
+		return result;
+	}
+
+private:
+	int m_numThreads = 1;
+	std::vector<std::future<void>> m_futuresVoid;
+	std::vector<std::future<btScalar>> m_futuresFloat;
+};
+
+btITaskScheduler* btCreateTaskSchedulerForBeryll()
+{
+	btTaskSchedulerForBeryll* ts = new btTaskSchedulerForBeryll();
+	return ts;
 }
 
 class btTaskSchedulerDefault : public btITaskScheduler
@@ -586,7 +691,7 @@ public:
 				break;
 			}
 			btU64 timeElapsed = m_clock.getTimeMicroseconds() - clockStart;
-			btAssert(timeElapsed < 1000);
+			assert(timeElapsed < 1000);
 			if (timeElapsed > 100000)
 			{
 				break;
@@ -598,7 +703,7 @@ public:
 	void wakeWorkers(int numWorkersToWake)
 	{
 		BT_PROFILE("wakeWorkers");
-		btAssert(m_workerDirective->getDirective(1) == WorkerThreadDirectives::kScanForJobs);
+		assert(m_workerDirective->getDirective(1) == WorkerThreadDirectives::kScanForJobs);
 		int numDesiredWorkers = btMin(numWorkersToWake, m_numWorkerThreads);
 		int numActiveWorkers = 0;
 		for (int iWorker = 0; iWorker < m_numWorkerThreads; ++iWorker)
@@ -630,7 +735,7 @@ public:
 		for (int i = kFirstWorkerThreadId; i < m_numThreads; i++)
 		{
 			ThreadLocalStorage& storage = m_threadLocalStorage[i];
-			btAssert(storage.m_status == WorkerThreadStatus::kSleeping);
+			assert(storage.m_status == WorkerThreadStatus::kSleeping);
 		}
 	}
 
@@ -656,15 +761,15 @@ public:
 	virtual void parallelFor(int iBegin, int iEnd, int grainSize, const btIParallelForBody& body) BT_OVERRIDE
 	{
 		BT_PROFILE("parallelFor_ThreadSupport");
-		btAssert(iEnd >= iBegin);
-		btAssert(grainSize >= 1);
+		assert(iEnd >= iBegin);
+		assert(grainSize >= 1);
 		int iterationCount = iEnd - iBegin;
 		if (iterationCount > grainSize && m_numWorkerThreads > 0 && m_antiNestingLock.tryLock())
 		{
 			typedef ParallelForJob JobType;
 			int jobCount = (iterationCount + grainSize - 1) / grainSize;
 			m_numJobs = jobCount;
-			btAssert(jobCount >= 2);  // need more than one job for multithreading
+			assert(jobCount >= 2);  // need more than one job for multithreading
 			int jobSize = sizeof(JobType);
 
 			for (int i = 0; i < m_numActiveJobQueues; ++i)
@@ -678,11 +783,11 @@ public:
 			int iThread = kFirstWorkerThreadId;  // first worker thread
 			for (int i = iBegin; i < iEnd; i += grainSize)
 			{
-				btAssert(iJob < jobCount);
+				assert(iJob < jobCount);
 				int iE = btMin(i + grainSize, iEnd);
 				JobQueue* jq = m_perThreadJobQueues[iThread];
-				btAssert(jq);
-				btAssert((jq - &m_jobQueues[0]) < m_numActiveJobQueues);
+				assert(jq);
+				assert((jq - &m_jobQueues[0]) < m_numActiveJobQueues);
 				void* jobMem = jq->allocJobMem(jobSize);
 				JobType* job = new (jobMem) ParallelForJob(i, iE, body);  // placement new
 				jq->submitJob(job);
@@ -709,15 +814,15 @@ public:
 	virtual btScalar parallelSum(int iBegin, int iEnd, int grainSize, const btIParallelSumBody& body) BT_OVERRIDE
 	{
 		BT_PROFILE("parallelSum_ThreadSupport");
-		btAssert(iEnd >= iBegin);
-		btAssert(grainSize >= 1);
+		assert(iEnd >= iBegin);
+		assert(grainSize >= 1);
 		int iterationCount = iEnd - iBegin;
 		if (iterationCount > grainSize && m_numWorkerThreads > 0 && m_antiNestingLock.tryLock())
 		{
 			typedef ParallelSumJob JobType;
 			int jobCount = (iterationCount + grainSize - 1) / grainSize;
 			m_numJobs = jobCount;
-			btAssert(jobCount >= 2);  // need more than one job for multithreading
+			assert(jobCount >= 2);  // need more than one job for multithreading
 			int jobSize = sizeof(JobType);
 			for (int i = 0; i < m_numActiveJobQueues; ++i)
 			{
@@ -737,11 +842,11 @@ public:
 			int iThread = kFirstWorkerThreadId;  // first worker thread
 			for (int i = iBegin; i < iEnd; i += grainSize)
 			{
-				btAssert(iJob < jobCount);
+				assert(iJob < jobCount);
 				int iE = btMin(i + grainSize, iEnd);
 				JobQueue* jq = m_perThreadJobQueues[iThread];
-				btAssert(jq);
-				btAssert((jq - &m_jobQueues[0]) < m_numActiveJobQueues);
+				assert(jq);
+				assert((jq - &m_jobQueues[0]) < m_numActiveJobQueues);
 				void* jobMem = jq->allocJobMem(jobSize);
 				JobType* job = new (jobMem) ParallelSumJob(i, iE, body, &m_threadLocalStorage[0]);  // placement new
 				jq->submitJob(job);

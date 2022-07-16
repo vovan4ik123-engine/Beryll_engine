@@ -24,7 +24,7 @@ subject to the following restrictions:
 #include "LinearMath/btPoolAllocator.h"
 #include "BulletCollision/CollisionDispatch/btCollisionConfiguration.h"
 #include "BulletCollision/CollisionDispatch/btCollisionObjectWrapper.h"
-
+#include <cassert>
 #ifdef BT_DEBUG
 #include <stdio.h>
 #endif
@@ -45,7 +45,7 @@ btCollisionDispatcher::btCollisionDispatcher(btCollisionConfiguration* collision
 		for (int j = 0; j < MAX_BROADPHASE_COLLISION_TYPES; j++)
 		{
 			m_doubleDispatchContactPoints[i][j] = m_collisionConfiguration->getCollisionAlgorithmCreateFunc(i, j);
-			btAssert(m_doubleDispatchContactPoints[i][j]);
+			assert(m_doubleDispatchContactPoints[i][j]);
 			m_doubleDispatchClosestPoints[i][j] = m_collisionConfiguration->getClosestPointsAlgorithmCreateFunc(i, j);
 		}
 	}
@@ -67,12 +67,12 @@ btCollisionDispatcher::~btCollisionDispatcher()
 
 btPersistentManifold* btCollisionDispatcher::getNewManifold(const btCollisionObject* body0, const btCollisionObject* body1)
 {
-	//btAssert(gNumManifold < 65535);
+	//assert(gNumManifold < 65535);
 
 	//optional relative contact breaking threshold, turned on by default (use setDispatcherFlags to switch off feature for improved performance)
 
-	btScalar contactBreakingThreshold = (m_dispatcherFlags & btCollisionDispatcher::CD_USE_RELATIVE_CONTACT_BREAKING_THRESHOLD) ? btMin(body0->getCollisionShape()->getContactBreakingThreshold(gContactBreakingThreshold), body1->getCollisionShape()->getContactBreakingThreshold(gContactBreakingThreshold))
-																																: gContactBreakingThreshold;
+	//btScalar contactBreakingThreshold = (m_dispatcherFlags & btCollisionDispatcher::CD_USE_RELATIVE_CONTACT_BREAKING_THRESHOLD) ? btMin(body0->getCollisionShape()->getContactBreakingThreshold(gContactBreakingThreshold), body1->getCollisionShape()->getContactBreakingThreshold(gContactBreakingThreshold))
+	//																															: gContactBreakingThreshold;
 
 	btScalar contactProcessingThreshold = btMin(body0->getContactProcessingThreshold(), body1->getContactProcessingThreshold());
 
@@ -86,12 +86,12 @@ btPersistentManifold* btCollisionDispatcher::getNewManifold(const btCollisionObj
 		}
 		else
 		{
-			btAssert(0);
+			assert(0);
 			//make sure to increase the m_defaultMaxPersistentManifoldPoolSize in the btDefaultCollisionConstructionInfo/btDefaultCollisionConfiguration
 			return 0;
 		}
 	}
-	btPersistentManifold* manifold = new (mem) btPersistentManifold(body0, body1, 0, contactBreakingThreshold, contactProcessingThreshold);
+	btPersistentManifold* manifold = new (mem) btPersistentManifold(body0, body1, 0, gContactBreakingThreshold, contactProcessingThreshold);
 	manifold->m_index1a = m_manifoldsPtr.size();
 	m_manifoldsPtr.push_back(manifold);
 
@@ -109,7 +109,7 @@ void btCollisionDispatcher::releaseManifold(btPersistentManifold* manifold)
 	clearManifold(manifold);
 
 	int findIndex = manifold->m_index1a;
-	btAssert(findIndex < m_manifoldsPtr.size());
+	assert(findIndex < m_manifoldsPtr.size());
 	m_manifoldsPtr.swap(findIndex, m_manifoldsPtr.size() - 1);
 	m_manifoldsPtr[findIndex]->m_index1a = findIndex;
 	m_manifoldsPtr.pop_back();
@@ -157,8 +157,8 @@ bool btCollisionDispatcher::needsResponse(const btCollisionObject* body0, const 
 
 bool btCollisionDispatcher::needsCollision(const btCollisionObject* body0, const btCollisionObject* body1)
 {
-	btAssert(body0);
-	btAssert(body1);
+	assert(body0);
+	assert(body1);
 
 	bool needsCollision = true;
 

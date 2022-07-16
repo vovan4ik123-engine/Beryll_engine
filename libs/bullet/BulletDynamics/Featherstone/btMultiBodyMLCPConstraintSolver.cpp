@@ -83,7 +83,7 @@ static btScalar computeConstraintMatrixDiagElementMultiBody(
 	else
 	{
 		const int solverBodyIdA = constraint.m_solverBodyIdA;
-		btAssert(solverBodyIdA != -1);
+		assert(solverBodyIdA != -1);
 		const btSolverBody* solverBodyA = &solverBodyPool[solverBodyIdA];
 		const btScalar invMassA = solverBodyA->m_originalBody ? solverBodyA->m_originalBody->getInvMass() : 0.0;
 		ret += computeDeltaVelocityInConstraintSpace(
@@ -102,7 +102,7 @@ static btScalar computeConstraintMatrixDiagElementMultiBody(
 	else
 	{
 		const int solverBodyIdB = constraint.m_solverBodyIdB;
-		btAssert(solverBodyIdB != -1);
+		assert(solverBodyIdB != -1);
 		const btSolverBody* solverBodyB = &solverBodyPool[solverBodyIdB];
 		const btScalar invMassB = solverBodyB->m_originalBody ? solverBodyB->m_originalBody->getInvMass() : 0.0;
 		ret += computeDeltaVelocityInConstraintSpace(
@@ -128,8 +128,8 @@ static btScalar computeConstraintMatrixOffDiagElementMultiBody(
 	const btMultiBody* offDiagMultiBodyB = offDiagConstraint.m_multiBodyB;
 
 	// Assumed at least one system is multibody
-	btAssert(multiBodyA || multiBodyB);
-	btAssert(offDiagMultiBodyA || offDiagMultiBodyB);
+	assert(multiBodyA || multiBodyB);
+	assert(offDiagMultiBodyA || offDiagMultiBodyB);
 
 	if (offDiagMultiBodyA)
 	{
@@ -154,11 +154,11 @@ static btScalar computeConstraintMatrixOffDiagElementMultiBody(
 		const int solverBodyIdB = constraint.m_solverBodyIdB;
 
 		const int offDiagSolverBodyIdA = offDiagConstraint.m_solverBodyIdA;
-		btAssert(offDiagSolverBodyIdA != -1);
+		assert(offDiagSolverBodyIdA != -1);
 
 		if (offDiagSolverBodyIdA == solverBodyIdA)
 		{
-			btAssert(solverBodyIdA != -1);
+			assert(solverBodyIdA != -1);
 			const btSolverBody* solverBodyA = &solverBodyPool[solverBodyIdA];
 			const btScalar invMassA = solverBodyA->m_originalBody ? solverBodyA->m_originalBody->getInvMass() : 0.0;
 			offDiagA += computeDeltaVelocityInConstraintSpace(
@@ -169,7 +169,7 @@ static btScalar computeConstraintMatrixOffDiagElementMultiBody(
 		}
 		else if (offDiagSolverBodyIdA == solverBodyIdB)
 		{
-			btAssert(solverBodyIdB != -1);
+			assert(solverBodyIdB != -1);
 			const btSolverBody* solverBodyB = &solverBodyPool[solverBodyIdB];
 			const btScalar invMassB = solverBodyB->m_originalBody ? solverBodyB->m_originalBody->getInvMass() : 0.0;
 			offDiagA += computeDeltaVelocityInConstraintSpace(
@@ -204,11 +204,11 @@ static btScalar computeConstraintMatrixOffDiagElementMultiBody(
 		const int solverBodyIdB = constraint.m_solverBodyIdB;
 
 		const int offDiagSolverBodyIdB = offDiagConstraint.m_solverBodyIdB;
-		btAssert(offDiagSolverBodyIdB != -1);
+		assert(offDiagSolverBodyIdB != -1);
 
 		if (offDiagSolverBodyIdB == solverBodyIdA)
 		{
-			btAssert(solverBodyIdA != -1);
+			assert(solverBodyIdA != -1);
 			const btSolverBody* solverBodyA = &solverBodyPool[solverBodyIdA];
 			const btScalar invMassA = solverBodyA->m_originalBody ? solverBodyA->m_originalBody->getInvMass() : 0.0;
 			offDiagA += computeDeltaVelocityInConstraintSpace(
@@ -219,7 +219,7 @@ static btScalar computeConstraintMatrixOffDiagElementMultiBody(
 		}
 		else if (offDiagSolverBodyIdB == solverBodyIdB)
 		{
-			btAssert(solverBodyIdB != -1);
+			assert(solverBodyIdB != -1);
 			const btSolverBody* solverBodyB = &solverBodyPool[solverBodyIdB];
 			const btScalar invMassB = solverBodyB->m_originalBody ? solverBodyB->m_originalBody->getInvMass() : 0.0;
 			offDiagA += computeDeltaVelocityInConstraintSpace(

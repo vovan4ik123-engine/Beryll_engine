@@ -455,7 +455,7 @@ void btReducedDeformableBody::transform(const btTransform& trs)
 void btReducedDeformableBody::scale(const btVector3& scl)
 {
   // Scaling the mesh after transform is applied is not allowed
-  btAssert(!m_transform_lock);
+  assert(!m_transform_lock);
 
   // scale the mesh
   {
@@ -494,7 +494,7 @@ void btReducedDeformableBody::scale(const btVector3& scl)
 void btReducedDeformableBody::setTotalMass(btScalar mass, bool fromfaces)
 {
   // Changing the total mass after transform is applied is not allowed
-  btAssert(!m_transform_lock);
+  assert(!m_transform_lock);
 
   btScalar scale_ratio = mass / m_mass;
 
@@ -614,7 +614,7 @@ void btReducedDeformableBody::internalApplyRigidImpulse(const btVector3& impulse
   if (m_inverseMass == btScalar(0.))
   {
     std::cout << "something went wrong...probably didn't initialize?\n";
-    btAssert(false);
+    assert(false);
   }
   // delta linear velocity
   m_internalDeltaLinearVelocity += impulse * m_linearFactor * m_inverseMass;

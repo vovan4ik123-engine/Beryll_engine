@@ -238,7 +238,7 @@ struct btMultibodyLink
 			default:
 			{
 				//invalid type
-				btAssert(0);
+				assert(0);
 			}
 		}
         m_cachedRotParentToThis_interpolate = m_cachedRotParentToThis;
@@ -291,7 +291,7 @@ struct btMultibodyLink
             default:
             {
                 //invalid type
-                btAssert(0);
+                assert(0);
             }
         }
     }

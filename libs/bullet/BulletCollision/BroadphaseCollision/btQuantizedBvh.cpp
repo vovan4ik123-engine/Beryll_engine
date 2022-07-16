@@ -130,7 +130,7 @@ void btQuantizedBvh::buildTree(int startIndex, int endIndex)
 	int numIndices = endIndex - startIndex;
 	int curIndex = m_curNodeIndex;
 
-	btAssert(numIndices > 0);
+	assert(numIndices > 0);
 
 	if (numIndices == 1)
 	{
@@ -199,7 +199,7 @@ void btQuantizedBvh::buildTree(int startIndex, int endIndex)
 
 void btQuantizedBvh::updateSubtreeHeaders(int leftChildNodexIndex, int rightChildNodexIndex)
 {
-	btAssert(m_useQuantization);
+	assert(m_useQuantization);
 
 	btQuantizedBvhNode& leftChildNode = m_quantizedContiguousNodes[leftChildNodexIndex];
 	int leftSubTreeSize = leftChildNode.isLeafNode() ? 1 : leftChildNode.getEscapeIndex();
@@ -277,7 +277,7 @@ int btQuantizedBvh::sortAndCalcSplittingIndex(int startIndex, int endIndex, int 
 
 	bool unbal = (splitIndex == startIndex) || (splitIndex == (endIndex));
 	(void)unbal;
-	btAssert(!unbal);
+	assert(!unbal);
 
 	return splitIndex;
 }
@@ -337,7 +337,7 @@ void btQuantizedBvh::reportAabbOverlappingNodex(btNodeOverlapCallback* nodeCallb
 			break;
 			default:
 				//unsupported
-				btAssert(0);
+				assert(0);
 		}
 	}
 	else
@@ -348,7 +348,7 @@ void btQuantizedBvh::reportAabbOverlappingNodex(btNodeOverlapCallback* nodeCallb
 
 void btQuantizedBvh::walkStacklessTree(btNodeOverlapCallback* nodeCallback, const btVector3& aabbMin, const btVector3& aabbMax) const
 {
-	btAssert(!m_useQuantization);
+	assert(!m_useQuantization);
 
 	const btOptimizedBvhNode* rootNode = &m_contiguousNodes[0];
 	int escapeIndex, curIndex = 0;
@@ -360,7 +360,7 @@ void btQuantizedBvh::walkStacklessTree(btNodeOverlapCallback* nodeCallback, cons
 	while (curIndex < m_curNodeIndex)
 	{
 		//catch bugs in tree data
-		btAssert(walkIterations < m_curNodeIndex);
+		assert(walkIterations < m_curNodeIndex);
 
 		walkIterations++;
 		aabbOverlap = TestAabbAgainstAabb2(aabbMin, aabbMax, rootNode->m_aabbMinOrg, rootNode->m_aabbMaxOrg);
@@ -410,7 +410,7 @@ void	btQuantizedBvh::walkTree(btOptimizedBvhNode* rootNode,btNodeOverlapCallback
 
 void btQuantizedBvh::walkRecursiveQuantizedTreeAgainstQueryAabb(const btQuantizedBvhNode* currentNode, btNodeOverlapCallback* nodeCallback, unsigned short int* quantizedQueryAabbMin, unsigned short int* quantizedQueryAabbMax) const
 {
-	btAssert(m_useQuantization);
+	assert(m_useQuantization);
 
 	bool isLeafNode;
 	//PCK: unsigned instead of bool
@@ -441,7 +441,7 @@ void btQuantizedBvh::walkRecursiveQuantizedTreeAgainstQueryAabb(const btQuantize
 
 void btQuantizedBvh::walkStacklessTreeAgainstRay(btNodeOverlapCallback* nodeCallback, const btVector3& raySource, const btVector3& rayTarget, const btVector3& aabbMin, const btVector3& aabbMax, int startNodeIndex, int endNodeIndex) const
 {
-	btAssert(!m_useQuantization);
+	assert(!m_useQuantization);
 
 	const btOptimizedBvhNode* rootNode = &m_contiguousNodes[0];
 	int escapeIndex, curIndex = 0;
@@ -480,7 +480,7 @@ void btQuantizedBvh::walkStacklessTreeAgainstRay(btNodeOverlapCallback* nodeCall
 	{
 		btScalar param = 1.0;
 		//catch bugs in tree data
-		btAssert(walkIterations < m_curNodeIndex);
+		assert(walkIterations < m_curNodeIndex);
 
 		walkIterations++;
 
@@ -529,7 +529,7 @@ void btQuantizedBvh::walkStacklessTreeAgainstRay(btNodeOverlapCallback* nodeCall
 
 void btQuantizedBvh::walkStacklessQuantizedTreeAgainstRay(btNodeOverlapCallback* nodeCallback, const btVector3& raySource, const btVector3& rayTarget, const btVector3& aabbMin, const btVector3& aabbMax, int startNodeIndex, int endNodeIndex) const
 {
-	btAssert(m_useQuantization);
+	assert(m_useQuantization);
 
 	int curIndex = startNodeIndex;
 	int walkIterations = 0;
@@ -591,7 +591,7 @@ void btQuantizedBvh::walkStacklessQuantizedTreeAgainstRay(btNodeOverlapCallback*
 #endif  //VISUALLY_ANALYZE_BVH
 
 		//catch bugs in tree data
-		btAssert(walkIterations < subTreeSize);
+		assert(walkIterations < subTreeSize);
 
 		walkIterations++;
 		//PCK: unsigned instead of bool
@@ -652,7 +652,7 @@ void btQuantizedBvh::walkStacklessQuantizedTreeAgainstRay(btNodeOverlapCallback*
 
 void btQuantizedBvh::walkStacklessQuantizedTree(btNodeOverlapCallback* nodeCallback, unsigned short int* quantizedQueryAabbMin, unsigned short int* quantizedQueryAabbMax, int startNodeIndex, int endNodeIndex) const
 {
-	btAssert(m_useQuantization);
+	assert(m_useQuantization);
 
 	int curIndex = startNodeIndex;
 	int walkIterations = 0;
@@ -685,7 +685,7 @@ void btQuantizedBvh::walkStacklessQuantizedTree(btNodeOverlapCallback* nodeCallb
 #endif  //VISUALLY_ANALYZE_BVH
 
 		//catch bugs in tree data
-		btAssert(walkIterations < subTreeSize);
+		assert(walkIterations < subTreeSize);
 
 		walkIterations++;
 		//PCK: unsigned instead of bool
@@ -715,7 +715,7 @@ void btQuantizedBvh::walkStacklessQuantizedTree(btNodeOverlapCallback* nodeCallb
 //This traversal can be called from Playstation 3 SPU
 void btQuantizedBvh::walkStacklessQuantizedTreeCacheFriendly(btNodeOverlapCallback* nodeCallback, unsigned short int* quantizedQueryAabbMin, unsigned short int* quantizedQueryAabbMax) const
 {
-	btAssert(m_useQuantization);
+	assert(m_useQuantization);
 
 	int i;
 
@@ -823,13 +823,13 @@ unsigned btQuantizedBvh::calculateSerializeBufferSize() const
 
 bool btQuantizedBvh::serialize(void* o_alignedDataBuffer, unsigned /*i_dataBufferSize */, bool i_swapEndian) const
 {
-	btAssert(m_subtreeHeaderCount == m_SubtreeHeaders.size());
+	assert(m_subtreeHeaderCount == m_SubtreeHeaders.size());
 	m_subtreeHeaderCount = m_SubtreeHeaders.size();
 
 	/*	if (i_dataBufferSize < calculateSerializeBufferSize() || o_alignedDataBuffer == NULL || (((unsigned)o_alignedDataBuffer & BVH_ALIGNMENT_MASK) != 0))
 	{
 		///check alignedment for buffer?
-		btAssert(0);
+		assert(0);
 		return false;
 	}
 */
@@ -1024,7 +1024,7 @@ btQuantizedBvh* btQuantizedBvh::deSerializeInPlace(void* i_alignedDataBuffer, un
 	}
 
 	unsigned int calculatedBufSize = bvh->calculateSerializeBufferSize();
-	btAssert(calculatedBufSize <= i_dataBufferSize);
+	assert(calculatedBufSize <= i_dataBufferSize);
 
 	if (calculatedBufSize > i_dataBufferSize)
 	{

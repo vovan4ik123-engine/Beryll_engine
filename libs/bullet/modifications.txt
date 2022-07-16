@@ -1,0 +1,117 @@
+idForEngine in btCollisionObject
+
+remove rigid body without broadphase
+
+synchronize with mutex.
+avoid [btGetCurrentThreadIndex()]
+
+btCollisionDispatcher::CD_USE_RELATIVE_CONTACT_BREAKING_THRESHOLD ???
+
+check btThreadsAreRunning()
+
+own task scheduler
+
+btITaskScheduler* btCreateTaskSchedulerForBeryll()
+{
+    btTaskSchedulerForBeryll* ts = new btTaskSchedulerForBeryll();
+    return ts;
+}
+
+#include <vector>
+#include <future>
+#include <thread>
+
+class btTaskSchedulerForBeryll : public btITaskScheduler
+{
+public:
+    btTaskSchedulerForBeryll() : btITaskScheduler("TaskSchedulerForBeryll")
+    {
+        // all available threads -1
+        m_numThreads = std::max(std::thread::hardware_concurrency() - 1, 1u);
+
+		m_futuresVoid.reserve(m_numThreads);
+		m_futuresFloat.reserve(m_numThreads);
+    }
+
+    ~btTaskSchedulerForBeryll() override
+    {
+		m_futuresVoid.clear();
+		m_futuresFloat.clear();
+    }
+
+    int getMaxNumThreads() const override { return m_numThreads; }
+
+    int getNumThreads() const override { return m_numThreads; }
+
+    void setNumThreads(int numThreads) override { /* dont set anything*/ }
+
+    void parallelFor(int iBegin, int iEnd, int grainSize, const btIParallelForBody& body) override
+    {
+        int numberElements = iEnd - iBegin;
+
+        if(numberElements <= 10 || m_numThreads == 1)
+        {
+            // 10 or less elements are handled by main thread
+            body.forLoop(iBegin, iEnd);
+        }
+        else
+        {
+            m_futuresVoid.clear();
+
+            int oneChunkSize = numberElements / m_numThreads;
+            oneChunkSize++; // make sure (oneChunkSize * m_numThreads) > numberElements
+
+            for(int i = 0; i < iEnd; i += oneChunkSize)
+            {
+                int chunkEnd = std::min(i + oneChunkSize, iEnd);
+
+				m_futuresVoid.emplace_back(std::async(std::launch::async, &btIParallelForBody::forLoop, &body, i, chunkEnd));
+            }
+
+			// wait all threads
+			for(const std::future<void>& ft : m_futuresVoid)
+			{
+				ft.wait();
+			}
+        }
+    }
+
+    btScalar parallelSum(int iBegin, int iEnd, int grainSize, const btIParallelSumBody& body) override
+    {
+		btScalar result = 0.0f;
+		int numberElements = iEnd - iBegin;
+
+		if(numberElements <= 10 || m_numThreads == 1)
+		{
+			// 10 or less elements are handled by main thread
+			return body.sumLoop(iBegin, iEnd);
+		}
+		else
+		{
+            m_futuresFloat.clear();
+
+			int oneChunkSize = numberElements / m_numThreads;
+			oneChunkSize++; // make sure (oneChunkSize * m_numThreads) > numberElements
+
+			for(int i = 0; i < iEnd; i += oneChunkSize)
+			{
+				int chunkEnd = std::min(i + oneChunkSize, iEnd);
+
+				m_futuresFloat.emplace_back(std::async(std::launch::async, &btIParallelSumBody::sumLoop, &body, i, chunkEnd));
+			}
+
+			// wait all threads
+			for(std::future<btScalar>& ft : m_futuresFloat)
+			{
+				result += ft.get();
+			}
+		}
+
+        return result;
+    }
+
+private:
+    int m_numThreads = 1;
+    std::vector<std::future<void>> m_futuresVoid;
+    std::vector<std::future<btScalar>> m_futuresFloat;
+};

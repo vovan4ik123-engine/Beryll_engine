@@ -1026,7 +1026,7 @@ void btSolveL1T(const btScalar *L, btScalar *B, int n, int lskip1)
 
 void btVectorScale(btScalar *a, const btScalar *d, int n)
 {
-	btAssert(a && d && n >= 0);
+	assert(a && d && n >= 0);
 	for (int i = 0; i < n; i++)
 	{
 		a[i] *= d[i];
@@ -1035,7 +1035,7 @@ void btVectorScale(btScalar *a, const btScalar *d, int n)
 
 void btSolveLDLT(const btScalar *L, const btScalar *d, btScalar *b, int n, int nskip)
 {
-	btAssert(L && d && b && n > 0 && nskip >= n);
+	assert(L && d && b && n > 0 && nskip >= n);
 	btSolveL1(L, b, n, nskip);
 	btVectorScale(b, d, n);
 	btSolveL1T(L, b, n, nskip);
@@ -1052,7 +1052,7 @@ void btSolveLDLT(const btScalar *L, const btScalar *d, btScalar *b, int n, int n
 static void btSwapRowsAndCols(BTATYPE A, int n, int i1, int i2, int nskip,
 							  int do_fast_row_swaps)
 {
-	btAssert(A && n > 0 && i1 >= 0 && i2 >= 0 && i1 < n && i2 < n &&
+	assert(A && n > 0 && i1 >= 0 && i2 >= 0 && i1 < n && i2 < n &&
 			 nskip >= n && i1 < i2);
 
 #ifdef BTROWPTRS
@@ -1132,7 +1132,7 @@ static void btSwapProblem(BTATYPE A, btScalar *x, btScalar *b, btScalar *w, btSc
 	btScalar tmpr;
 	int tmpi;
 	bool tmpb;
-	btAssert(n > 0 && i1 >= 0 && i2 >= 0 && i1 < n && i2 < n && nskip >= n && i1 <= i2);
+	assert(n > 0 && i1 >= 0 && i2 >= 0 && i1 < n && i2 < n && nskip >= n && i1 <= i2);
 	if (i1 == i2) return;
 
 	btSwapRowsAndCols(A, n, i1, i2, nskip, do_fast_row_swaps);
@@ -1463,7 +1463,7 @@ void btLCP::transfer_i_from_N_to_C(int i)
 
 void btRemoveRowCol(btScalar *A, int n, int nskip, int r)
 {
-	btAssert(A && n > 0 && nskip >= n && r >= 0 && r < n);
+	assert(A && n > 0 && nskip >= n && r >= 0 && r < n);
 	if (r >= n - 1) return;
 	if (r > 0)
 	{
@@ -1501,7 +1501,7 @@ void btRemoveRowCol(btScalar *A, int n, int nskip, int r)
 
 void btLDLTAddTL(btScalar *L, btScalar *d, const btScalar *a, int n, int nskip, btAlignedObjectArray<btScalar> &scratch)
 {
-	btAssert(L && d && a && n > 0 && nskip >= n);
+	assert(L && d && a && n > 0 && nskip >= n);
 
 	if (n < 2) return;
 	scratch.resize(2 * nskip);
@@ -1524,7 +1524,7 @@ void btLDLTAddTL(btScalar *L, btScalar *d, const btScalar *a, int n, int nskip, 
 	{
 		btScalar dee = d[0];
 		btScalar alphanew = alpha1 + (W11 * W11) * dee;
-		btAssert(alphanew != btScalar(0.0));
+		assert(alphanew != btScalar(0.0));
 		dee /= alphanew;
 		btScalar gamma1 = W11 * dee;
 		dee *= alpha1;
@@ -1553,7 +1553,7 @@ void btLDLTAddTL(btScalar *L, btScalar *d, const btScalar *a, int n, int nskip, 
 
 		btScalar dee = d[j];
 		btScalar alphanew = alpha1 + (k1 * k1) * dee;
-		btAssert(alphanew != btScalar(0.0));
+		assert(alphanew != btScalar(0.0));
 		dee /= alphanew;
 		btScalar gamma1 = k1 * dee;
 		dee *= alpha1;
@@ -1592,11 +1592,11 @@ inline size_t btEstimateLDLTAddTLTmpbufSize(int nskip)
 void btLDLTRemove(btScalar **A, const int *p, btScalar *L, btScalar *d,
 				  int n1, int n2, int r, int nskip, btAlignedObjectArray<btScalar> &scratch)
 {
-	btAssert(A && p && L && d && n1 > 0 && n2 > 0 && r >= 0 && r < n2 &&
+	assert(A && p && L && d && n1 > 0 && n2 > 0 && r >= 0 && r < n2 &&
 			 n1 >= n2 && nskip >= n1);
 #ifdef BT_DEBUG
 	for (int i = 0; i < n2; ++i)
-		btAssert(p[i] >= 0 && p[i] < n1);
+		assert(p[i] >= 0 && p[i] < n1);
 #endif
 
 	if (r == n2 - 1)
@@ -1606,7 +1606,7 @@ void btLDLTRemove(btScalar **A, const int *p, btScalar *L, btScalar *d,
 	else
 	{
 		size_t LDLTAddTL_size = btEstimateLDLTAddTLTmpbufSize(nskip);
-		btAssert(LDLTAddTL_size % sizeof(btScalar) == 0);
+		assert(LDLTAddTL_size % sizeof(btScalar) == 0);
 		scratch.resize(nskip * 2 + n2);
 		btScalar *tmp = &scratch[0];
 		if (r == 0)
@@ -1627,7 +1627,7 @@ void btLDLTRemove(btScalar **A, const int *p, btScalar *L, btScalar *d,
 				btScalar *Lcurr = L + r * nskip;
 				for (int i = 0; i < r; ++Lcurr, ++i)
 				{
-					btAssert(d[i] != btScalar(0.0));
+					assert(d[i] != btScalar(0.0));
 					t[i] = *Lcurr / d[i];
 				}
 			}
@@ -1679,7 +1679,7 @@ void btLCP::transfer_i_from_C_to_N(int i, btAlignedObjectArray<btScalar> &scratc
 							break;
 						}
 					}
-					btAssert(k < nC);
+					assert(k < nC);
 				}
 				else
 				{
@@ -1690,7 +1690,7 @@ void btLCP::transfer_i_from_C_to_N(int i, btAlignedObjectArray<btScalar> &scratc
 				break;
 			}
 		}
-		btAssert(j < nC);
+		assert(j < nC);
 
 		btSwapProblem(m_A, m_x, m_b, m_w, m_lo, m_hi, m_p, m_state, m_findex, m_n, i, nC - 1, m_nskip, 1);
 
@@ -1841,14 +1841,14 @@ bool btSolveDantzigLCP(int n, btScalar *A, btScalar *x, btScalar *b,
 	s_error = false;
 
 	//	printf("btSolveDantzigLCP n=%d\n",n);
-	btAssert(n > 0 && A && x && b && lo && hi && nub >= 0 && nub <= n);
-	btAssert(outer_w);
+	assert(n > 0 && A && x && b && lo && hi && nub >= 0 && nub <= n);
+	assert(outer_w);
 
 #ifdef BT_DEBUG
 	{
 		// check restrictions on lo and hi
 		for (int k = 0; k < n; ++k)
-			btAssert(lo[k] <= 0 && hi[k] >= 0);
+			assert(lo[k] <= 0 && hi[k] >= 0);
 	}
 #endif
 

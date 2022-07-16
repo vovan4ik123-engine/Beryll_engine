@@ -92,10 +92,10 @@ void btOptimizedBvh::build(btStridingMeshInterface* triangles, bool useQuantized
 		virtual void internalProcessTriangleIndex(btVector3* triangle, int partId, int triangleIndex)
 		{
 			// The partId and triangle index must fit in the same (positive) integer
-			btAssert(partId < (1 << MAX_NUM_PARTS_IN_BITS));
-			btAssert(triangleIndex < (1 << (31 - MAX_NUM_PARTS_IN_BITS)));
+			assert(partId < (1 << MAX_NUM_PARTS_IN_BITS));
+			assert(triangleIndex < (1 << (31 - MAX_NUM_PARTS_IN_BITS)));
 			//negative indices are reserved for escapeIndex
-			btAssert(triangleIndex >= 0);
+			assert(triangleIndex >= 0);
 
 			btQuantizedBvhNode node;
 			btVector3 aabbMin, aabbMax;
@@ -213,15 +213,15 @@ void btOptimizedBvh::refit(btStridingMeshInterface* meshInterface, const btVecto
 void btOptimizedBvh::refitPartial(btStridingMeshInterface* meshInterface, const btVector3& aabbMin, const btVector3& aabbMax)
 {
 	//incrementally initialize quantization values
-	btAssert(m_useQuantization);
+	assert(m_useQuantization);
 
-	btAssert(aabbMin.getX() > m_bvhAabbMin.getX());
-	btAssert(aabbMin.getY() > m_bvhAabbMin.getY());
-	btAssert(aabbMin.getZ() > m_bvhAabbMin.getZ());
+	assert(aabbMin.getX() > m_bvhAabbMin.getX());
+	assert(aabbMin.getY() > m_bvhAabbMin.getY());
+	assert(aabbMin.getZ() > m_bvhAabbMin.getZ());
 
-	btAssert(aabbMax.getX() < m_bvhAabbMax.getX());
-	btAssert(aabbMax.getY() < m_bvhAabbMax.getY());
-	btAssert(aabbMax.getZ() < m_bvhAabbMax.getZ());
+	assert(aabbMax.getX() < m_bvhAabbMax.getX());
+	assert(aabbMax.getY() < m_bvhAabbMax.getY());
+	assert(aabbMax.getZ() < m_bvhAabbMax.getZ());
 
 	///we should update all quantization values, using updateBvhNodes(meshInterface);
 	///but we only update chunks that overlap the given aabb
@@ -252,7 +252,7 @@ void btOptimizedBvh::updateBvhNodes(btStridingMeshInterface* meshInterface, int 
 {
 	(void)index;
 
-	btAssert(m_useQuantization);
+	assert(m_useQuantization);
 
 	int curNodeSubPart = -1;
 
@@ -298,7 +298,7 @@ void btOptimizedBvh::updateBvhNodes(btStridingMeshInterface* meshInterface, int 
                                         case PHY_INTEGER: graphicsindex = gfxbase[j]; break;
                                         case PHY_SHORT: graphicsindex = ((unsigned short*)gfxbase)[j]; break;
                                         case PHY_UCHAR: graphicsindex = ((unsigned char*)gfxbase)[j]; break;
-                                        default: btAssert(0);
+                                        default: assert(0);
                                 }
 				if (type == PHY_FLOAT)
 				{

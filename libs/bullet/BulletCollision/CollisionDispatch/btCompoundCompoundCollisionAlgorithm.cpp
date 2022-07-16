@@ -36,10 +36,10 @@ btCompoundCompoundCollisionAlgorithm::btCompoundCompoundCollisionAlgorithm(const
 	m_childCollisionAlgorithmCache = new (ptr) btHashedSimplePairCache();
 
 	const btCollisionObjectWrapper* col0ObjWrap = body0Wrap;
-	btAssert(col0ObjWrap->getCollisionShape()->isCompound());
+	assert(col0ObjWrap->getCollisionShape()->isCompound());
 
 	const btCollisionObjectWrapper* col1ObjWrap = body1Wrap;
-	btAssert(col1ObjWrap->getCollisionShape()->isCompound());
+	assert(col1ObjWrap->getCollisionShape()->isCompound());
 
 	const btCompoundShape* compoundShape0 = static_cast<const btCompoundShape*>(col0ObjWrap->getCollisionShape());
 	m_compoundShapeRevision0 = compoundShape0->getUpdateRevision();
@@ -119,14 +119,14 @@ struct btCompoundCompoundLeafCallback : btDbvt::ICollide
 		int childIndex0 = leaf0->dataAsInt;
 		int childIndex1 = leaf1->dataAsInt;
 
-		btAssert(childIndex0 >= 0);
-		btAssert(childIndex1 >= 0);
+		assert(childIndex0 >= 0);
+		assert(childIndex1 >= 0);
 
 		const btCompoundShape* compoundShape0 = static_cast<const btCompoundShape*>(m_compound0ColObjWrap->getCollisionShape());
-		btAssert(childIndex0 < compoundShape0->getNumChildShapes());
+		assert(childIndex0 < compoundShape0->getNumChildShapes());
 
 		const btCompoundShape* compoundShape1 = static_cast<const btCompoundShape*>(m_compound1ColObjWrap->getCollisionShape());
-		btAssert(childIndex1 < compoundShape1->getNumChildShapes());
+		assert(childIndex1 < compoundShape1->getNumChildShapes());
 
 		const btCollisionShape* childShape0 = compoundShape0->getChildShape(childIndex0);
 		const btCollisionShape* childShape1 = compoundShape1->getChildShape(childIndex1);
@@ -179,12 +179,12 @@ struct btCompoundCompoundLeafCallback : btDbvt::ICollide
 				{
 					colAlgo = m_dispatcher->findAlgorithm(&compoundWrap0, &compoundWrap1, m_sharedManifold, BT_CONTACT_POINT_ALGORITHMS);
 					pair = m_childCollisionAlgorithmCache->addOverlappingPair(childIndex0, childIndex1);
-					btAssert(pair);
+					assert(pair);
 					pair->m_userPointer = colAlgo;
 				}
 			}
 
-			btAssert(colAlgo);
+			assert(colAlgo);
 
 			const btCollisionObjectWrapper* tmpWrap0 = 0;
 			const btCollisionObjectWrapper* tmpWrap1 = 0;
@@ -287,8 +287,8 @@ void btCompoundCompoundCollisionAlgorithm::processCollision(const btCollisionObj
 	const btCollisionObjectWrapper* col0ObjWrap = body0Wrap;
 	const btCollisionObjectWrapper* col1ObjWrap = body1Wrap;
 
-	btAssert(col0ObjWrap->getCollisionShape()->isCompound());
-	btAssert(col1ObjWrap->getCollisionShape()->isCompound());
+	assert(col0ObjWrap->getCollisionShape()->isCompound());
+	assert(col1ObjWrap->getCollisionShape()->isCompound());
 	const btCompoundShape* compoundShape0 = static_cast<const btCompoundShape*>(col0ObjWrap->getCollisionShape());
 	const btCompoundShape* compoundShape1 = static_cast<const btCompoundShape*>(col1ObjWrap->getCollisionShape());
 
@@ -349,7 +349,7 @@ void btCompoundCompoundCollisionAlgorithm::processCollision(const btCollisionObj
 	//remove non-overlapping child pairs
 
 	{
-		btAssert(m_removePairs.size() == 0);
+		assert(m_removePairs.size() == 0);
 
 		//iterate over all children, perform an AABB check inside ProcessChildShape
 		btSimplePairArray& pairs = m_childCollisionAlgorithmCache->getOverlappingPairArray();
@@ -408,6 +408,6 @@ void btCompoundCompoundCollisionAlgorithm::processCollision(const btCollisionObj
 
 btScalar btCompoundCompoundCollisionAlgorithm::calculateTimeOfImpact(btCollisionObject* body0, btCollisionObject* body1, const btDispatcherInfo& dispatchInfo, btManifoldResult* resultOut)
 {
-	btAssert(0);
+	assert(0);
 	return 0.f;
 }

@@ -110,7 +110,7 @@ void btConeTwistConstraint::getInfo2NonVirtual(btConstraintInfo2* info, const bt
 {
 	calcAngleInfo2(transA, transB, invInertiaWorldA, invInertiaWorldB);
 
-	btAssert(!m_useSolveConstraintObsolete);
+	assert(!m_useSolveConstraintObsolete);
 	// set jacobian
 	info->m_J1linearAxis[0] = 1;
 	info->m_J1linearAxis[info->rowskip + 1] = 1;
@@ -502,7 +502,7 @@ void btConeTwistConstraint::solveConstraintObsolete(btSolverBody& bodyA, btSolve
 		}
 	}
 #else
-	btAssert(0);
+	assert(0);
 #endif  //__SPU__
 }
 
@@ -816,7 +816,7 @@ void btConeTwistConstraint::computeConeLimitInfo(const btQuaternion& qCone,
 		vSwingAxis.normalize();
 #if 0
         // non-zero twist?! this should never happen.
-       btAssert(fabs(vSwingAxis.x()) <= SIMD_EPSILON));
+       assert(fabs(vSwingAxis.x()) <= SIMD_EPSILON));
 #endif
 
 		// Compute limit for given swing. tricky:
@@ -863,7 +863,7 @@ void btConeTwistConstraint::computeConeLimitInfo(const btQuaternion& qCone,
 	{
 		// this should never happen!
 #if 0
-        btAssert(0);
+        assert(0);
 #endif
 	}
 }
@@ -917,7 +917,7 @@ void btConeTwistConstraint::computeTwistLimitInfo(const btQuaternion& qTwist,
 	{
 		// this should never happen
 #if 0
-        btAssert(0);
+        assert(0);
 #endif
 	}
 

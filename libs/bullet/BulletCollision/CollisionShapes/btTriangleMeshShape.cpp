@@ -156,7 +156,7 @@ void btTriangleMeshShape::calculateLocalInertia(btScalar mass, btVector3& inerti
 {
 	(void)mass;
 	//moving concave objects not supported
-	btAssert(0);
+	assert(0);
 	inertia.setValue(btScalar(0.), btScalar(0.), btScalar(0.));
 }
 

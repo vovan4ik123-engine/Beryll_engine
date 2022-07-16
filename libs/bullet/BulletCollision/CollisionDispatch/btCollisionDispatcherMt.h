@@ -18,6 +18,10 @@ subject to the following restrictions:
 
 #include "BulletCollision/CollisionDispatch/btCollisionDispatcher.h"
 #include "LinearMath/btThreads.h"
+#include <vector>
+#include <mutex>
+#include <cassert>
+#include <android/log.h>
 
 class btCollisionDispatcherMt : public btCollisionDispatcher
 {
@@ -29,11 +33,84 @@ public:
 
 	virtual void dispatchAllCollisionPairs(btOverlappingPairCache* pairCache, const btDispatcherInfo& info, btDispatcher* dispatcher) BT_OVERRIDE;
 
-protected:
-	btAlignedObjectArray<btAlignedObjectArray<btPersistentManifold*> > m_batchManifoldsPtr;
-	btAlignedObjectArray<btAlignedObjectArray<btPersistentManifold*> > m_batchReleasePtr;
-	bool m_batchUpdating;
+	int getNumManifolds() const
+	{
+        int i = 0;
+        {
+            std::scoped_lock<std::mutex> scopedLock(m_mutex);
+
+            i = m_manifoldsPtr.size();
+        }
+        return i;
+	}
+
+	int getNumManifolds()
+	{
+		int i = 0;
+		{
+			std::scoped_lock<std::mutex> scopedLock(m_mutex);
+
+			i = m_manifoldsPtr.size();
+		}
+		return i;
+	}
+
+	btPersistentManifold** getInternalManifoldPointer()
+	{
+		btPersistentManifold** ptr = nullptr;
+		{
+			std::scoped_lock<std::mutex> scopedLock(m_mutex);
+
+			ptr = m_manifoldsPtr.empty() ? nullptr : &m_manifoldsPtr[0];
+		}
+
+		if(!ptr)
+		{
+			__android_log_print(ANDROID_LOG_DEBUG, "TAG", "return nullptr");
+		}
+
+		return ptr;
+	}
+
+	btPersistentManifold** getInternalManifoldPointer() const
+	{
+		__android_log_print(ANDROID_LOG_DEBUG, "TAG", "assert getInternalManifoldPointer");
+		assert(false);
+
+		return nullptr;
+	}
+
+	btPersistentManifold* getManifoldByIndexInternal(int index)
+	{
+		btPersistentManifold* ptr = nullptr;
+		{
+			std::scoped_lock<std::mutex> scopedLock(m_mutex);
+
+			if(index >= 0 && index < m_manifoldsPtr.size())
+			{
+				ptr = m_manifoldsPtr[index];
+			}
+		}
+
+		if(!ptr)
+		{
+			__android_log_print(ANDROID_LOG_DEBUG, "TAG", "return nullptr");
+		}
+
+		return ptr;
+	}
+
+	btPersistentManifold* getManifoldByIndexInternal(int index) const
+	{
+		__android_log_print(ANDROID_LOG_DEBUG, "TAG", "assert getManifoldByIndexInternal const");
+		assert(false);
+		return nullptr;
+	}
+
+private:
 	int m_grainSize;
+	std::vector<btPersistentManifold*> m_manifoldsPtr;
+	mutable std::mutex m_mutex;
 };
 
 #endif  //BT_COLLISION_DISPATCHER_MT_H

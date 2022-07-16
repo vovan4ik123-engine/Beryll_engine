@@ -257,7 +257,7 @@ void cullPoints2(int n, btScalar p[], int m, int i0, int iret[])
 			}
 		}
 #if defined(DEBUG) || defined(_DEBUG)
-		btAssert(*iret != i0);  // ensure iret got set
+		assert(*iret != i0);  // ensure iret got set
 #endif
 		avail[*iret] = 0;
 		iret++;

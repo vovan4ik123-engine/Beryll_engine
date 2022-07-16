@@ -30,7 +30,7 @@ void btSimpleBroadphase::validate()
 	{
 		for (int j = i + 1; j < m_numHandles; j++)
 		{
-			btAssert(&m_pHandles[i] != &m_pHandles[j]);
+			assert(&m_pHandles[i] != &m_pHandles[j]);
 		}
 	}
 }
@@ -80,10 +80,10 @@ btBroadphaseProxy* btSimpleBroadphase::createProxy(const btVector3& aabbMin, con
 {
 	if (m_numHandles >= m_maxHandles)
 	{
-		btAssert(0);
+		assert(0);
 		return 0;  //should never happen, but don't let the game crash ;-)
 	}
-	btAssert(aabbMin[0] <= aabbMax[0] && aabbMin[1] <= aabbMax[1] && aabbMin[2] <= aabbMax[2]);
+	assert(aabbMin[0] <= aabbMax[0] && aabbMin[1] <= aabbMax[1] && aabbMin[2] <= aabbMax[2]);
 
 	int newHandleIndex = allocHandle();
 	btSimpleBroadphaseProxy* proxy = new (&m_pHandles[newHandleIndex]) btSimpleBroadphaseProxy(aabbMin, aabbMax, shapeType, userPtr, collisionFilterGroup, collisionFilterMask);
@@ -97,7 +97,7 @@ protected:
 	virtual bool processOverlap(btBroadphasePair& pair)
 	{
 		(void)pair;
-		btAssert(0);
+		assert(0);
 		return false;
 	}
 };
@@ -209,7 +209,7 @@ void btSimpleBroadphase::calculateOverlappingPairs(btDispatcher* dispatcher)
 			for (j = i + 1; j <= m_LastHandleIndex; j++)
 			{
 				btSimpleBroadphaseProxy* proxy1 = &m_pHandles[j];
-				btAssert(proxy0 != proxy1);
+				assert(proxy0 != proxy1);
 				if (!proxy1->m_clientObject)
 				{
 					continue;
@@ -283,7 +283,7 @@ void btSimpleBroadphase::calculateOverlappingPairs(btDispatcher* dispatcher)
 					//remove duplicate
 					needsRemoval = true;
 					//should have no algorithm
-					btAssert(!pair.m_algorithm);
+					assert(!pair.m_algorithm);
 				}
 
 				if (needsRemoval)

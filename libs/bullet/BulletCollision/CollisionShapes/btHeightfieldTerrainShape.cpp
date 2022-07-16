@@ -101,13 +101,13 @@ void btHeightfieldTerrainShape::initialize(
 	PHY_ScalarType hdt, bool flipQuadEdges)
 {
 	// validation
-	btAssert(heightStickWidth > 1);   // && "bad width");
-	btAssert(heightStickLength > 1);  // && "bad length");
-	btAssert(heightfieldData);        // && "null heightfield data");
-	// btAssert(heightScale) -- do we care?  Trust caller here
-	btAssert(minHeight <= maxHeight);                                    // && "bad min/max height");
-	btAssert(upAxis >= 0 && upAxis < 3);                                 // && "bad upAxis--should be in range [0,2]");
-	btAssert(hdt != PHY_UCHAR || hdt != PHY_FLOAT || hdt != PHY_DOUBLE || hdt != PHY_SHORT);  // && "Bad height data type enum");
+	assert(heightStickWidth > 1);   // && "bad width");
+	assert(heightStickLength > 1);  // && "bad length");
+	assert(heightfieldData);        // && "null heightfield data");
+	// assert(heightScale) -- do we care?  Trust caller here
+	assert(minHeight <= maxHeight);                                    // && "bad min/max height");
+	assert(upAxis >= 0 && upAxis < 3);                                 // && "bad upAxis--should be in range [0,2]");
+	assert(hdt != PHY_UCHAR || hdt != PHY_FLOAT || hdt != PHY_DOUBLE || hdt != PHY_SHORT);  // && "Bad height data type enum");
 
 	// initialize member variables
 	m_shapeType = TERRAIN_SHAPE_PROXYTYPE;
@@ -155,7 +155,7 @@ void btHeightfieldTerrainShape::initialize(
 		default:
 		{
 			//need to get valid m_upAxis
-			btAssert(0);  // && "Bad m_upAxis");
+			assert(0);  // && "Bad m_upAxis");
 		}
 	}
 
@@ -222,7 +222,7 @@ btHeightfieldTerrainShape::getRawHeightFieldValue(int x, int y) const
 
 		default:
 		{
-			btAssert(!"Bad m_heightDataType");
+			assert(!"Bad m_heightDataType");
 		}
 	}
 
@@ -232,10 +232,10 @@ btHeightfieldTerrainShape::getRawHeightFieldValue(int x, int y) const
 /// this returns the vertex in bullet-local coordinates
 void btHeightfieldTerrainShape::getVertex(int x, int y, btVector3& vertex) const
 {
-	btAssert(x >= 0);
-	btAssert(y >= 0);
-	btAssert(x < m_heightStickWidth);
-	btAssert(y < m_heightStickLength);
+	assert(x >= 0);
+	assert(y >= 0);
+	assert(x < m_heightStickWidth);
+	assert(y < m_heightStickLength);
 
 	btScalar height = getRawHeightFieldValue(x, y);
 
@@ -268,7 +268,7 @@ void btHeightfieldTerrainShape::getVertex(int x, int y, btVector3& vertex) const
 		default:
 		{
 			//need to get valid m_upAxis
-			btAssert(0);
+			assert(0);
 		}
 	}
 
@@ -407,7 +407,7 @@ void btHeightfieldTerrainShape::processAllTriangles(btTriangleCallback* callback
 		default:
 		{
 			//need to get valid m_upAxis
-			btAssert(0);
+			assert(0);
 		}
 	}
 

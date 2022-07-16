@@ -137,8 +137,8 @@ void btConvexPolyhedron::initialize()
 
 			if (edptr)
 			{
-				btAssert(edptr->m_face0 >= 0);
-				btAssert(edptr->m_face1 < 0);
+				assert(edptr->m_face0 >= 0);
+				assert(edptr->m_face1 < 0);
 				edptr->m_face1 = i;
 			}
 			else
@@ -161,9 +161,9 @@ void btConvexPolyhedron::initialize()
 			int k = (j + 1) % numVertices;
 			btInternalVertexPair vp(m_faces[i].m_indices[j], m_faces[i].m_indices[k]);
 			btInternalEdge* edptr = edges.find(vp);
-			btAssert(edptr);
-			btAssert(edptr->m_face0 >= 0);
-			btAssert(edptr->m_face1 >= 0);
+			assert(edptr);
+			assert(edptr->m_face0 >= 0);
+			assert(edptr->m_face1 >= 0);
 
 			int connectedFace = (edptr->m_face0 == i) ? edptr->m_face1 : edptr->m_face0;
 			m_faces[i].m_connectedFaces[j] = connectedFace;

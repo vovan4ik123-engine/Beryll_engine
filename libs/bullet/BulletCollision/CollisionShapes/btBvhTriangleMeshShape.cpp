@@ -133,7 +133,7 @@ void btBvhTriangleMeshShape::performRaycast(btTriangleCallback* callback, const 
                                         case PHY_INTEGER: graphicsindex = gfxbase[j]; break;
                                         case PHY_SHORT: graphicsindex = ((unsigned short*)gfxbase)[j]; break;
                                         case PHY_UCHAR: graphicsindex = ((unsigned char*)gfxbase)[j]; break;
-                                        default: btAssert(0);
+                                        default: assert(0);
                                 }
 
 				if (type == PHY_FLOAT)
@@ -207,7 +207,7 @@ void btBvhTriangleMeshShape::performConvexcast(btTriangleCallback* callback, con
                                         case PHY_INTEGER: graphicsindex = gfxbase[j]; break;
                                         case PHY_SHORT: graphicsindex = ((unsigned short*)gfxbase)[j]; break;
                                         case PHY_UCHAR: graphicsindex = ((unsigned char*)gfxbase)[j]; break;
-                                        default: btAssert(0);
+                                        default: assert(0);
                                 }
 
 				if (type == PHY_FLOAT)
@@ -283,7 +283,7 @@ void btBvhTriangleMeshShape::processAllTriangles(btTriangleCallback* callback, c
 				nodeSubPart);
 
 			unsigned int* gfxbase = (unsigned int*)(indexbase + nodeTriangleIndex * indexstride);
-			btAssert(indicestype == PHY_INTEGER || indicestype == PHY_SHORT || indicestype == PHY_UCHAR);
+			assert(indicestype == PHY_INTEGER || indicestype == PHY_SHORT || indicestype == PHY_UCHAR);
 
 			const btVector3& meshScaling = m_meshInterface->getScaling();
 			for (int j = 2; j >= 0; j--)
@@ -354,8 +354,8 @@ void btBvhTriangleMeshShape::buildOptimizedBvh()
 
 void btBvhTriangleMeshShape::setOptimizedBvh(btOptimizedBvh* bvh, const btVector3& scaling)
 {
-	btAssert(!m_bvh);
-	btAssert(!m_ownsBvh);
+	assert(!m_bvh);
+	assert(!m_ownsBvh);
 
 	m_bvh = bvh;
 	m_ownsBvh = false;

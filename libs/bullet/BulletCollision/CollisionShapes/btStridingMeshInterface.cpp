@@ -101,7 +101,7 @@ void btStridingMeshInterface::InternalProcessAllTriangles(btInternalTriangleInde
 						break;
 					}
 					default:
-						btAssert((gfxindextype == PHY_INTEGER) || (gfxindextype == PHY_SHORT));
+						assert((gfxindextype == PHY_INTEGER) || (gfxindextype == PHY_SHORT));
 				}
 				break;
 			}
@@ -158,12 +158,12 @@ void btStridingMeshInterface::InternalProcessAllTriangles(btInternalTriangleInde
 						break;
 					}
 					default:
-						btAssert((gfxindextype == PHY_INTEGER) || (gfxindextype == PHY_SHORT));
+						assert((gfxindextype == PHY_INTEGER) || (gfxindextype == PHY_SHORT));
 				}
 				break;
 			}
 			default:
-				btAssert((type == PHY_FLOAT) || (type == PHY_DOUBLE));
+				assert((type == PHY_FLOAT) || (type == PHY_DOUBLE));
 		}
 
 		unLockReadOnlyVertexBase(part);
@@ -315,7 +315,7 @@ const char* btStridingMeshInterface::serialize(void* dataBuffer, btSerializer* s
 				}
 				default:
 				{
-					btAssert(0);
+					assert(0);
 					//unknown index type
 				}
 			}
@@ -363,7 +363,7 @@ const char* btStridingMeshInterface::serialize(void* dataBuffer, btSerializer* s
 				}
 
 				default:
-					btAssert((type == PHY_FLOAT) || (type == PHY_DOUBLE));
+					assert((type == PHY_FLOAT) || (type == PHY_DOUBLE));
 			}
 
 			unLockReadOnlyVertexBase(part);

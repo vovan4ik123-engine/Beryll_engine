@@ -302,7 +302,7 @@ public:
 
 		// Remove the pair from the hash table.
 		int index = m_hashTable[hash];
-		btAssert(index != BT_HASH_NULL);
+		assert(index != BT_HASH_NULL);
 
 		int previous = BT_HASH_NULL;
 		while (index != pairIndex)
@@ -313,7 +313,7 @@ public:
 
 		if (previous != BT_HASH_NULL)
 		{
-			btAssert(m_next[previous] == pairIndex);
+			assert(m_next[previous] == pairIndex);
 			m_next[previous] = m_next[pairIndex];
 		}
 		else
@@ -339,7 +339,7 @@ public:
 		int lastHash = m_keyArray[lastPairIndex].getHash() & (m_valueArray.capacity() - 1);
 
 		index = m_hashTable[lastHash];
-		btAssert(index != BT_HASH_NULL);
+		assert(index != BT_HASH_NULL);
 
 		previous = BT_HASH_NULL;
 		while (index != lastPairIndex)
@@ -350,7 +350,7 @@ public:
 
 		if (previous != BT_HASH_NULL)
 		{
-			btAssert(m_next[previous] == lastPairIndex);
+			assert(m_next[previous] == lastPairIndex);
 			m_next[previous] = m_next[lastPairIndex];
 		}
 		else
@@ -377,8 +377,8 @@ public:
 
 	const Value* getAtIndex(int index) const
 	{
-		btAssert(index < m_valueArray.size());
-		btAssert(index >= 0);
+		assert(index < m_valueArray.size());
+		assert(index >= 0);
 		if (index >= 0 && index < m_valueArray.size())
 		{
 			return &m_valueArray[index];
@@ -388,8 +388,8 @@ public:
 
 	Value* getAtIndex(int index)
 	{
-		btAssert(index < m_valueArray.size());
-		btAssert(index >= 0);
+		assert(index < m_valueArray.size());
+		assert(index >= 0);
 		if (index >= 0 && index < m_valueArray.size())
 		{
 			return &m_valueArray[index];
@@ -399,15 +399,15 @@ public:
 
 	Key getKeyAtIndex(int index)
 	{
-		btAssert(index < m_keyArray.size());
-		btAssert(index >= 0);
+		assert(index < m_keyArray.size());
+		assert(index >= 0);
 		return m_keyArray[index];
 	}
 
 	const Key getKeyAtIndex(int index) const
 	{
-		btAssert(index < m_keyArray.size());
-		btAssert(index >= 0);
+		assert(index < m_keyArray.size());
+		assert(index >= 0);
 		return m_keyArray[index];
 	}
 

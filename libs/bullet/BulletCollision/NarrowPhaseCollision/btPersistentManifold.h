@@ -129,13 +129,13 @@ public:
 
 	SIMD_FORCE_INLINE const btManifoldPoint& getContactPoint(int index) const
 	{
-		btAssert(index < m_cachedPoints);
+		assert(index < m_cachedPoints);
 		return m_pointCache[index];
 	}
 
 	SIMD_FORCE_INLINE btManifoldPoint& getContactPoint(int index)
 	{
-		btAssert(index < m_cachedPoints);
+		assert(index < m_cachedPoints);
 		return m_pointCache[index];
 	}
 
@@ -180,7 +180,7 @@ public:
 			m_pointCache[lastUsedIndex].m_lifeTime = 0;
 		}
 
-		btAssert(m_pointCache[lastUsedIndex].m_userPersistentData == 0);
+		assert(m_pointCache[lastUsedIndex].m_userPersistentData == 0);
 		m_cachedPoints--;
 
 		if (gContactEndedCallback && m_cachedPoints == 0)
@@ -190,7 +190,7 @@ public:
 	}
 	void replaceContactPoint(const btManifoldPoint& newPoint, int insertIndex)
 	{
-		btAssert(validContactDistance(newPoint));
+		assert(validContactDistance(newPoint));
 
 #define MAINTAIN_PERSISTENCY 1
 #ifdef MAINTAIN_PERSISTENCY
@@ -219,7 +219,7 @@ public:
 
 		if (replacePoint)
 		{
-			btAssert(lifeTime >= 0);
+			assert(lifeTime >= 0);
 			void* cache = m_pointCache[insertIndex].m_userPersistentData;
 
 			m_pointCache[insertIndex] = newPoint;

@@ -21,7 +21,7 @@ btStaticPlaneShape::btStaticPlaneShape(const btVector3& planeNormal, btScalar pl
 	: btConcaveShape(), m_planeNormal(planeNormal.normalized()), m_planeConstant(planeConstant), m_localScaling(btScalar(1.), btScalar(1.), btScalar(1.))
 {
 	m_shapeType = STATIC_PLANE_PROXYTYPE;
-	//	btAssert( btFuzzyZero(m_planeNormal.length() - btScalar(1.)) );
+	//	assert( btFuzzyZero(m_planeNormal.length() - btScalar(1.)) );
 }
 
 btStaticPlaneShape::~btStaticPlaneShape()
