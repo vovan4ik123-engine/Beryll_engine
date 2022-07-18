@@ -32,3 +32,5 @@
 #include "Beryll/GUI/Slider.h"
 
 #include "Beryll/Physics/Physics.h"
+
+#include "Beryll/Async/AsyncRun.h"

@@ -464,7 +464,7 @@ public:
 			int oneChunkSize = numberElements / m_numThreads;
 			oneChunkSize++; // make sure (oneChunkSize * m_numThreads) > numberElements
 
-			for(int i = 0; i < iEnd; i += oneChunkSize)
+			for(int i = iBegin; i < iEnd; i += oneChunkSize)
 			{
 				int chunkEnd = std::min(i + oneChunkSize, iEnd);
 
@@ -496,7 +496,7 @@ public:
 			int oneChunkSize = numberElements / m_numThreads;
 			oneChunkSize++; // make sure (oneChunkSize * m_numThreads) > numberElements
 
-			for(int i = 0; i < iEnd; i += oneChunkSize)
+			for(int i = iBegin; i < iEnd; i += oneChunkSize)
 			{
 				int chunkEnd = std::min(i + oneChunkSize, iEnd);
 

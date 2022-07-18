@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 enable_language(C CXX ASM)
 
@@ -70,6 +71,8 @@ set(Common_SRC
         src/Beryll/Renderer/Renderer.cpp
 
         src/Beryll/Physics/Physics.cpp
+
+        src/Beryll/Async/AsyncRun.cpp
 )
 
 add_library(Beryll-static STATIC ${AndroidGLES_SRC} ${Common_SRC})

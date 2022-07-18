@@ -47,7 +47,7 @@ namespace Beryll
             }
         }
 
-        const glm::vec3& getPosition() { return m_origin; }
+        const glm::vec3& getOrigin() { return m_origin; }
 
     protected:
         const int m_ID = Utils::Common::generateID(); // unique
