@@ -14,6 +14,7 @@ namespace Beryll
     {
     public:
         AsyncRun() = delete;
+        ~AsyncRun() = delete;
 
         uint32_t getThreadsNumber()
         {

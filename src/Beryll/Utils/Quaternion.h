@@ -26,6 +26,7 @@ namespace Utils
     {
     public:
         Quaternion() = delete;
+        ~Quaternion() = delete;
 
         // normalized linear interpolation. much faster than rotation on sphere
         static aiQuaternion nlerp(aiQuaternion& a, aiQuaternion& b, const float& blend)

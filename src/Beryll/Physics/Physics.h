@@ -3,6 +3,7 @@
 #include "LibsHeaders.h"
 #include "CppHeaders.h"
 #include "Beryll/Core/Timer.h"
+#include "Beryll/Core/GameLoop.h"
 
 namespace Beryll
 {
@@ -101,9 +102,6 @@ namespace Beryll
         Physics() = delete;
         ~Physics() = delete;
 
-        static void create();
-        static void simulate();
-
         // Set count of internal steps during one simulation. From 1 to 20
         // That increase simulation time and CPU usage and increase simulation accuracy(resolution)
         // If your balls penetrates your walls instead of colliding with them increace it
@@ -168,12 +166,18 @@ namespace Beryll
         static RayAllHits castRayAllHits(const glm::vec3& from, const glm::vec3 to, CollisionGroups collGroup, CollisionGroups collMask);
 
     private:
+        friend class GameLoop;
+        static void create();
+        static void simulate();
+
         static bool collisionsCallBack(btManifoldPoint& cp, const btCollisionObjectWrapper* ob1, int ID1, int index1,
                                                             const btCollisionObjectWrapper* ob2, int ID2, int index2);
         static std::set<std::pair<const int, const int>> m_collisionPairs;
 
         static btVector3 m_gravity;
         static Timer m_timer;
+
+        static std::mutex m_mutex;
 
         static std::unique_ptr<btDefaultCollisionConfiguration> m_collisionConfiguration;
         static std::unique_ptr<btCollisionDispatcherMt> m_dispatcherMT;

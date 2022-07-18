@@ -57,6 +57,7 @@ btPersistentManifold* btCollisionDispatcherMt::getNewManifold(const btCollisionO
             return 0;
         }
     }
+
     btPersistentManifold* manifold = new (mem) btPersistentManifold(body0, body1, 0, gContactBreakingThreshold, contactProcessingThreshold);
 
 	{

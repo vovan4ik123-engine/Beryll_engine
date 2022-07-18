@@ -10,6 +10,7 @@ namespace Utils
     {
     public:
         Common() = delete;
+        ~Common() = delete;
 
         static const aiNode* findAinodeForAimesh(const aiScene* scene, const aiNode* rootNode, const aiString& name)
         {

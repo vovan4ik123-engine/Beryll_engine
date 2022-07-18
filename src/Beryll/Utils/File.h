@@ -10,6 +10,7 @@ namespace Utils
     {
     public:
         File() = delete;
+        ~File() = delete;
 
         // This fn() call new[] !!! You must call delete[] for free buffer.
         // return buffer + '\0'. size will contains number bytes without '\0'

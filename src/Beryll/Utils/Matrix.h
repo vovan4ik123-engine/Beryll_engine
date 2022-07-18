@@ -16,6 +16,7 @@ namespace Utils
     {
     public:
         Matrix() = delete;
+        ~Matrix() = delete;
 
         static glm::mat4 aiToGlm(const aiMatrix4x4& aiMat)
         {
