@@ -291,8 +291,6 @@ inline int btIsDoublePrecision()
 
 				#if defined(DEBUG) || defined (_DEBUG)
 					#define assert assert
-				#else
-					#define assert(x)
 				#endif
 
 				//btFullAssert is optional, slows down a lot

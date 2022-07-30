@@ -11,6 +11,7 @@ namespace Beryll
     int Physics::m_resolutionFactor = 1;
     std::mutex Physics::m_mutex;
     std::set<std::pair<const int, const int>> Physics::m_collisionPairs;
+
     std::vector<std::shared_ptr<btCollisionShape>> Physics::m_collisionShapes;
     std::vector<std::shared_ptr<btTriangleMesh>> Physics::m_triangleMeshes;
     std::vector<std::shared_ptr<btDefaultMotionState>> Physics::m_motionStates;
@@ -29,8 +30,8 @@ namespace Beryll
         BR_INFO("Number of threads on device:{0}", btGetTaskScheduler()->getNumThreads());
 
         btDefaultCollisionConstructionInfo cci;
-        cci.m_defaultMaxPersistentManifoldPoolSize = 100000;
-        cci.m_defaultMaxCollisionAlgorithmPoolSize = 100000;
+        cci.m_defaultMaxPersistentManifoldPoolSize = 40000;
+        cci.m_defaultMaxCollisionAlgorithmPoolSize = 40000;
         m_collisionConfiguration = std::make_unique<btDefaultCollisionConfiguration>(cci);
         m_dispatcherMT = std::make_unique<btCollisionDispatcherMt>(m_collisionConfiguration.get());
         m_broadPhase = std::make_unique<btDbvtBroadphase>();
@@ -44,6 +45,7 @@ namespace Beryll
                                                                         m_collisionConfiguration.get());
 
         m_dynamicsWorldMT->setGravity(m_gravity);
+        m_dynamicsWorldMT->getSolverInfo().m_numIterations = 5;
 
         // set collisions call backs to bullet
         gContactAddedCallback = collisionsCallBack;
@@ -88,7 +90,7 @@ namespace Beryll
                             CollisionGroups collGroup,
                             CollisionGroups collMask)
     {
-        BR_INFO("Physics::addObject name:{0}, ID:{1}", meshName, objectID);
+        BR_INFO("Physics::addObject name:{0}, mass:{1}, ID:{2}", meshName, mass, objectID);
 
         if(meshName.find("CollisionConcaveMesh") != std::string::npos)
         {
@@ -97,6 +99,18 @@ namespace Beryll
         else if(meshName.find("CollisionConvexMesh") != std::string::npos)
         {
             addConvexMesh(vertices, indices, transforms, objectID, mass, wantCallBack, collFlag, collGroup, collMask);
+        }
+        else if(meshName.find("CollisionBox") != std::string::npos)
+        {
+            addBoxShape(vertices, transforms, objectID, mass, wantCallBack, collFlag, collGroup, collMask);
+        }
+        else if(meshName.find("CollisionSphere") != std::string::npos)
+        {
+            addSphereShape(vertices, transforms, objectID, mass, wantCallBack, collFlag, collGroup, collMask);
+        }
+        else if(meshName.find("CollisionCapsule") != std::string::npos)
+        {
+            addCapsuleShape(vertices, transforms, objectID, mass, wantCallBack, collFlag, collGroup, collMask);
         }
         else
         {
@@ -154,7 +168,7 @@ namespace Beryll
         startTransform.setRotation(btQuaternion(rot.x, rot.y, rot.z, rot.w));
 
         btVector3 localInertia(0, 0, 0);
-        shape->calculateLocalInertia(mass, localInertia);
+        if(mass != 0.0f) shape->calculateLocalInertia(mass, localInertia);
 
         std::shared_ptr<btDefaultMotionState> motionState = std::make_shared<btDefaultMotionState>(startTransform);
         m_motionStates.push_back(motionState);
@@ -211,11 +225,204 @@ namespace Beryll
         startTransform.setRotation(btQuaternion(rot.x, rot.y, rot.z, rot.w));
 
         btVector3 localInertia(0, 0, 0);
-        shape->calculateLocalInertia(mass, localInertia);
+        if(mass != 0.0f) shape->calculateLocalInertia(mass, localInertia);
 
         std::shared_ptr<btDefaultMotionState> motionState = std::make_shared<btDefaultMotionState>(startTransform);
         m_motionStates.push_back(motionState);
         btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState.get(), shape.get(), localInertia);
+        std::shared_ptr<btRigidBody> body = std::make_shared<btRigidBody>(rbInfo, objectID);
+
+        std::shared_ptr<RigidBodyData> rigidBodyData = std::make_shared<RigidBodyData>(objectID, body, true);
+        body->setUserPointer(rigidBodyData.get()); // then we can fetch this rigidBodyData in collision call back
+
+        if(collFlag == CollisionFlags::KINEMATIC)
+            body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
+
+        if(wantCallBack)
+            body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
+
+        std::scoped_lock<std::mutex> lock (m_mutex);
+
+        m_rigidBodiesMap.insert(std::make_pair(objectID, rigidBodyData));
+        m_dynamicsWorldMT->addRigidBody(body.get(), static_cast<int>(collGroup), static_cast<int>(collMask));
+    }
+
+    void Physics::addBoxShape(const std::vector<glm::vec3>& vertices,
+                              const glm::mat4& transforms,
+                              const int objectID,
+                              float mass,
+                              bool wantCallBack,
+                              CollisionFlags collFlag,
+                              CollisionGroups collGroup,
+                              CollisionGroups collMask)
+    {
+        BR_ASSERT(((mass == 0.0f && collFlag != CollisionFlags::DYNAMIC) ||
+                   (mass > 0.0f && collFlag == CollisionFlags::DYNAMIC)), "Wrong parameters for box shape.");
+
+        glm::vec3 transl;
+        glm::vec3 scale;
+        glm::quat rot;
+        Utils::Matrix::decompose4x4Glm(transforms, scale, rot, transl);
+
+        float bottomX = 0.0f;
+        float topX = 0.0f;
+        float bottomY = 0.0f;
+        float topY = 0.0f;
+        float bottomZ = 0.0f;
+        float topZ = 0.0f;
+        for(const glm::vec3& vert : vertices)
+        {
+            glm::vec3 v = glm::vec3(vert.x * scale.x, vert.y * scale.y, vert.z * scale.z);
+
+            if(v.x < bottomX) bottomX = v.x;
+            if(v.x > topX) topX = v.x;
+
+            if(v.y < bottomY) bottomY = v.y;
+            if(v.y > topY) topY = v.y;
+
+            if(v.z < bottomZ) bottomZ = v.z;
+            if(v.z > topZ) topZ = v.z;
+        }
+
+        float Xsize = topX - bottomX;
+        float Ysize = topY - bottomY;
+        float Zsize = topZ - bottomZ;
+
+        std::shared_ptr<btBoxShape> boxShape = std::make_shared<btBoxShape>(btVector3(Xsize / 2, Ysize / 2, Zsize / 2));
+        m_collisionShapes.push_back(boxShape);
+
+        btTransform startTransform;
+        startTransform.setIdentity();
+        startTransform.setOrigin(btVector3(transl.x, transl.y, transl.z));
+        startTransform.setRotation(btQuaternion(rot.x, rot.y, rot.z, rot.w));
+
+        btVector3 localInertia(0, 0, 0);
+        if(mass != 0.0f) boxShape->calculateLocalInertia(mass, localInertia);
+
+        std::shared_ptr<btDefaultMotionState> motionState = std::make_shared<btDefaultMotionState>(startTransform);
+        m_motionStates.push_back(motionState);
+        btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState.get(), boxShape.get(), localInertia);
+        std::shared_ptr<btRigidBody> body = std::make_shared<btRigidBody>(rbInfo, objectID);
+
+        std::shared_ptr<RigidBodyData> rigidBodyData = std::make_shared<RigidBodyData>(objectID, body, true);
+        body->setUserPointer(rigidBodyData.get()); // then we can fetch this rigidBodyData in collision call back
+
+        if(collFlag == CollisionFlags::KINEMATIC)
+            body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
+
+        if(wantCallBack)
+            body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
+
+        std::scoped_lock<std::mutex> lock (m_mutex);
+
+        m_rigidBodiesMap.insert(std::make_pair(objectID, rigidBodyData));
+        m_dynamicsWorldMT->addRigidBody(body.get(), static_cast<int>(collGroup), static_cast<int>(collMask));
+    }
+
+    void Physics::addSphereShape(const std::vector<glm::vec3>& vertices,
+                        const glm::mat4& transforms,
+                        const int objectID,
+                        float mass,
+                        bool wantCallBack,
+                        CollisionFlags collFlag,
+                        CollisionGroups collGroup,
+                        CollisionGroups collMask)
+    {
+        BR_ASSERT(((mass == 0.0f && collFlag != CollisionFlags::DYNAMIC) ||
+                   (mass > 0.0f && collFlag == CollisionFlags::DYNAMIC)), "Wrong parameters for sphere shape.");
+
+        glm::vec3 transl;
+        glm::vec3 scale;
+        glm::quat rot;
+        Utils::Matrix::decompose4x4Glm(transforms, scale, rot, transl);
+
+        BR_ASSERT((vertices.empty() == false), "Vertices empty.")
+        glm::vec3 point = glm::vec3(vertices[0].x * scale.x, vertices[0].y * scale.y, vertices[0].z * scale.z);
+        float radius = glm::distance(glm::vec3(0.0f, 0.0f, 0.0f), point);
+
+        std::shared_ptr<btSphereShape> sphereShape = std::make_shared<btSphereShape>(radius);
+        m_collisionShapes.push_back(sphereShape);
+
+        btTransform startTransform;
+        startTransform.setIdentity();
+        startTransform.setOrigin(btVector3(transl.x, transl.y, transl.z));
+        startTransform.setRotation(btQuaternion(rot.x, rot.y, rot.z, rot.w));
+
+        btVector3 localInertia(0, 0, 0);
+        if(mass != 0.0f) sphereShape->calculateLocalInertia(mass, localInertia);
+
+        std::shared_ptr<btDefaultMotionState> motionState = std::make_shared<btDefaultMotionState>(startTransform);
+        m_motionStates.push_back(motionState);
+        btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState.get(), sphereShape.get(), localInertia);
+        std::shared_ptr<btRigidBody> body = std::make_shared<btRigidBody>(rbInfo, objectID);
+
+        std::shared_ptr<RigidBodyData> rigidBodyData = std::make_shared<RigidBodyData>(objectID, body, true);
+        body->setUserPointer(rigidBodyData.get()); // then we can fetch this rigidBodyData in collision call back
+
+        if(collFlag == CollisionFlags::KINEMATIC)
+            body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
+
+        if(wantCallBack)
+            body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
+
+        std::scoped_lock<std::mutex> lock (m_mutex);
+
+        m_rigidBodiesMap.insert(std::make_pair(objectID, rigidBodyData));
+        m_dynamicsWorldMT->addRigidBody(body.get(), static_cast<int>(collGroup), static_cast<int>(collMask));
+    }
+
+    void Physics::addCapsuleShape(const std::vector<glm::vec3>& vertices,
+                                const glm::mat4& transforms,
+                                const int objectID,
+                                float mass,
+                                bool wantCallBack,
+                                CollisionFlags collFlag,
+                                CollisionGroups collGroup,
+                                CollisionGroups collMask)
+    {
+        BR_ASSERT(((mass == 0.0f && collFlag != CollisionFlags::DYNAMIC) ||
+                   (mass > 0.0f && collFlag == CollisionFlags::DYNAMIC)), "Wrong parameters for capsule shape.");
+
+        // original capsule position should be around the Y axis
+
+        glm::vec3 transl;
+        glm::vec3 scale;
+        glm::quat rot;
+        Utils::Matrix::decompose4x4Glm(transforms, scale, rot, transl);
+
+        float bottomX = 0.0f;
+        float topX = 0.0f;
+        float bottomY = 0.0f;
+        float topY = 0.0f;
+        for(const glm::vec3& vert : vertices)
+        {
+            glm::vec3 v = glm::vec3(vert.x * scale.x, vert.y * scale.y, vert.z * scale.z);
+
+            if(v.x < bottomX) bottomX = v.x;
+            if(v.x > topX) topX = v.x;
+
+            if(v.y < bottomY) bottomY = v.y;
+            if(v.y > topY) topY = v.y;
+        }
+
+        float radius = (topX - bottomX) / 2.0f;
+        float totalHeight = topY - bottomY;
+        float heightNoRadiuses = totalHeight - radius * 2.0f;
+
+        std::shared_ptr<btCapsuleShape> capsuleShape = std::make_shared<btCapsuleShape>(radius, heightNoRadiuses);
+        m_collisionShapes.push_back(capsuleShape);
+
+        btTransform startTransform;
+        startTransform.setIdentity();
+        startTransform.setOrigin(btVector3(transl.x, transl.y, transl.z));
+        startTransform.setRotation(btQuaternion(rot.x, rot.y, rot.z, rot.w));
+
+        btVector3 localInertia(0, 0, 0);
+        if(mass != 0.0f) capsuleShape->calculateLocalInertia(mass, localInertia);
+
+        std::shared_ptr<btDefaultMotionState> motionState = std::make_shared<btDefaultMotionState>(startTransform);
+        m_motionStates.push_back(motionState);
+        btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState.get(), capsuleShape.get(), localInertia);
         std::shared_ptr<btRigidBody> body = std::make_shared<btRigidBody>(rbInfo, objectID);
 
         std::shared_ptr<RigidBodyData> rigidBodyData = std::make_shared<RigidBodyData>(objectID, body, true);
@@ -273,11 +480,12 @@ namespace Beryll
     {
         std::vector<std::pair<glm::vec3, glm::vec3>> pointsAndNormals;
 
-        if(ID1 == ID2) {return std::move(pointsAndNormals);}
+        if(ID1 == ID2) { return std::move(pointsAndNormals); }
 
         pointsAndNormals.reserve(5);
 
-        for(int i = 0; i < m_dynamicsWorldMT->getDispatcher()->getNumManifolds(); i++)
+        int numManifolds = m_dynamicsWorldMT->getDispatcher()->getNumManifolds();
+        for(int i = 0; i < numManifolds; i++)
         {
             btPersistentManifold* contactManifold = m_dynamicsWorldMT->getDispatcher()->getManifoldByIndexInternal(i);
             const btCollisionObject* obA = contactManifold->getBody0();
@@ -296,7 +504,6 @@ namespace Beryll
 
                     pointsAndNormals.emplace_back(glm::vec3(ptB.getX(), ptB.getY(), ptB.getZ()), // point
                                                   glm::vec3(normalOnB.getX(), normalOnB.getY(), normalOnB.getZ())); // normal
-
                 }
             }
         }
@@ -306,10 +513,11 @@ namespace Beryll
 
     std::vector<std::pair<glm::vec3, glm::vec3>> Physics::getAllCollisionPoints(const int ID1, const std::vector<int>& IDs)
     {
-        std::vector<std::pair<glm::vec3, glm::vec3>> points;
-        points.reserve(5);
+        std::vector<std::pair<glm::vec3, glm::vec3>> pointsAndNormals;
+        pointsAndNormals.reserve(5);
 
-        for(int i = 0; i < m_dynamicsWorldMT->getDispatcher()->getNumManifolds(); i++)
+        int numManifolds = m_dynamicsWorldMT->getDispatcher()->getNumManifolds();
+        for(int i = 0; i < numManifolds; i++)
         {
             btPersistentManifold* contactManifold = m_dynamicsWorldMT->getDispatcher()->getManifoldByIndexInternal(i);
             const btCollisionObject* obA = contactManifold->getBody0();
@@ -334,15 +542,13 @@ namespace Beryll
                     const btVector3& ptB = pt.getPositionWorldOnB();
                     const btVector3& normalOnB = pt.m_normalWorldOnB;
 
-                    points.emplace_back(glm::vec3(ptB.getX(), ptB.getY(), ptB.getZ()), // point
-                                        glm::vec3(normalOnB.getX(), normalOnB.getY(), normalOnB.getZ())); // normal
-
-                    //const btVector3& normalOnB = pt.m_normalWorldOnB;
+                    pointsAndNormals.emplace_back(glm::vec3(ptB.getX(), ptB.getY(), ptB.getZ()), // point
+                                                  glm::vec3(normalOnB.getX(), normalOnB.getY(), normalOnB.getZ())); // normal
                 }
             }
         }
 
-        return std::move(points);
+        return std::move(pointsAndNormals);
     }
 
     void Physics::setPosition(const int ID, const glm::vec3& pos, bool resetVelocities)

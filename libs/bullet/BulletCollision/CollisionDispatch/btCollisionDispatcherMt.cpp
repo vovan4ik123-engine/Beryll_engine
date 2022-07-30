@@ -29,8 +29,6 @@ btCollisionDispatcherMt::btCollisionDispatcherMt(btCollisionConfiguration* confi
 	: btCollisionDispatcher(config)
 {
 	m_manifoldsPtr.reserve(500);
-
-	m_grainSize = grainSize;  // iterations per task
 }
 
 btPersistentManifold* btCollisionDispatcherMt::getNewManifold(const btCollisionObject* body0, const btCollisionObject* body1)
@@ -97,48 +95,13 @@ void btCollisionDispatcherMt::releaseManifold(btPersistentManifold* manifold)
     }
 }
 
-//struct CollisionDispatcherUpdater : public btIParallelForBody
-//{
-//	btBroadphasePair* mPairArray;
-//	btNearCallback mCallback;
-//	btCollisionDispatcher* mDispatcher;
-//	const btDispatcherInfo* mInfo;
-//
-//	CollisionDispatcherUpdater()
-//	{
-//		mPairArray = NULL;
-//		mCallback = NULL;
-//		mDispatcher = NULL;
-//		mInfo = NULL;
-//	}
-//	void forLoop(int iBegin, int iEnd) const
-//	{
-//		for (int i = iBegin; i < iEnd; ++i)
-//		{
-//			btBroadphasePair* pair = &mPairArray[i];
-//			mCallback(*pair, *mDispatcher, *mInfo);
-//		}
-//	}
-//};
-
 void btCollisionDispatcherMt::dispatchAllCollisionPairs(btOverlappingPairCache* pairCache, const btDispatcherInfo& info, btDispatcher* dispatcher)
 {
 	const int pairCount = pairCache->getNumOverlappingPairs();
-	if (pairCount == 0)
-	{
-		return;
-	}
-
 	btBroadphasePair* pairArray = pairCache->getOverlappingPairArrayPtr();
 
 	for (int i = 0; i < pairCount; ++i)
 	{
 		defaultNearCallback(pairArray[i], *this, info);
-	}
-
-	// update the indices (used when releasing manifolds)
-	for (int i = 0; i < m_manifoldsPtr.size(); ++i)
-	{
-		m_manifoldsPtr[i]->m_index1a = i;
 	}
 }

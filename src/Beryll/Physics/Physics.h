@@ -221,5 +221,31 @@ namespace Beryll
                                   CollisionGroups collGroup,
                                   CollisionGroups collMask); // vypuklaja
 
+        static void addBoxShape(const std::vector<glm::vec3>& vertices,
+                                  const glm::mat4& transforms,
+                                  const int objectID,
+                                  float mass,
+                                  bool wantCallBack,
+                                  CollisionFlags collFlag,
+                                  CollisionGroups collGroup,
+                                  CollisionGroups collMask);
+
+        static void addSphereShape(const std::vector<glm::vec3>& vertices,
+                                    const glm::mat4& transforms,
+                                    const int objectID,
+                                    float mass,
+                                    bool wantCallBack,
+                                    CollisionFlags collFlag,
+                                    CollisionGroups collGroup,
+                                    CollisionGroups collMask);
+
+        static void addCapsuleShape(const std::vector<glm::vec3>& vertices,
+                                    const glm::mat4& transforms,
+                                    const int objectID,
+                                    float mass,
+                                    bool wantCallBack,
+                                    CollisionFlags collFlag,
+                                    CollisionGroups collGroup,
+                                    CollisionGroups collMask);
     };
 }

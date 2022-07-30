@@ -18,7 +18,6 @@ subject to the following restrictions:
 
 #include "BulletCollision/CollisionDispatch/btCollisionDispatcher.h"
 #include "LinearMath/btThreads.h"
-#include <vector>
 #include <mutex>
 #include <cassert>
 
@@ -49,7 +48,7 @@ public:
 		{
 			std::scoped_lock<std::mutex> scopedLock(m_mutex);
 
-			ptr = m_manifoldsPtr.empty() ? nullptr : &m_manifoldsPtr[0];
+			ptr = m_manifoldsPtr.size() == 0 ? nullptr : &m_manifoldsPtr[0];
 		}
 
 		assert(ptr);
@@ -92,8 +91,7 @@ public:
 	}
 
 private:
-	int m_grainSize;
-	std::vector<btPersistentManifold*> m_manifoldsPtr;
+	btAlignedObjectArray<btPersistentManifold*> m_manifoldsPtr;
 	mutable std::mutex m_mutex; // mutable for lock in const functions
 };
 
