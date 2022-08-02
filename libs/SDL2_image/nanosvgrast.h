@@ -25,15 +25,22 @@
 #ifndef NANOSVGRAST_H
 #define NANOSVGRAST_H
 
+#ifndef NSVG_EXPORT
+#define NSVG_EXPORT
+#endif
+
+#ifndef NANOSVGRAST_CPLUSPLUS
 #ifdef __cplusplus
 extern "C" {
+#endif
 #endif
 
 typedef struct NSVGrasterizer NSVGrasterizer;
 
 /* Example Usage:
 	// Load SVG
-	struct SNVGImage* image = nsvgParseFromFile("test.svg.");
+	NSVGimage* image;
+	image = nsvgParseFromFile("test.svg", "px", 96);
 
 	// Create rasterizer (can be used to render multiple images).
 	struct NSVGrasterizer* rast = nsvgCreateRasterizer();
@@ -44,7 +51,7 @@ typedef struct NSVGrasterizer NSVGrasterizer;
 */
 
 // Allocated rasterizer context.
-NSVGrasterizer* nsvgCreateRasterizer(void);
+NSVG_EXPORT NSVGrasterizer* nsvgCreateRasterizer(void);
 
 // Rasterizes SVG image, returns RGBA image (non-premultiplied alpha)
 //   r - pointer to rasterizer context
@@ -55,19 +62,19 @@ NSVGrasterizer* nsvgCreateRasterizer(void);
 //   w - width of the image to render
 //   h - height of the image to render
 //   stride - number of bytes per scaleline in the destination buffer
-void nsvgRasterize(NSVGrasterizer* r,
-				   NSVGimage* image, float tx, float ty, float scale,
-				   unsigned char* dst, int w, int h, int stride);
+NSVG_EXPORT void nsvgRasterize(NSVGrasterizer* r,
+				               NSVGimage* image, float tx, float ty, float scale,
+				               unsigned char* dst, int w, int h, int stride);
 
 // Deletes rasterizer context.
-void nsvgDeleteRasterizer(NSVGrasterizer*);
+NSVG_EXPORT void nsvgDeleteRasterizer(NSVGrasterizer*);
 
 
+#ifndef NANOSVGRAST_CPLUSPLUS
 #ifdef __cplusplus
 }
 #endif
-
-#endif // NANOSVGRAST_H
+#endif
 
 #ifdef NANOSVGRAST_IMPLEMENTATION
 
@@ -145,7 +152,7 @@ struct NSVGrasterizer
 	int width, height, stride;
 };
 
-NSVGrasterizer* nsvgCreateRasterizer()
+NSVG_EXPORT NSVGrasterizer* nsvgCreateRasterizer(void)
 {
 	NSVGrasterizer* r = (NSVGrasterizer*)malloc(sizeof(NSVGrasterizer));
 	if (r == NULL) goto error;
@@ -161,7 +168,7 @@ error:
 	return NULL;
 }
 
-void nsvgDeleteRasterizer(NSVGrasterizer* r)
+NSVG_EXPORT void nsvgDeleteRasterizer(NSVGrasterizer* r)
 {
 	NSVGmemPage* p;
 
@@ -332,10 +339,11 @@ static void nsvg__flattenCubicBez(NSVGrasterizer* r,
 								  float x3, float y3, float x4, float y4,
 								  int level, int type)
 {
+	const int max_level = 10;
 	float x12,y12,x23,y23,x34,y34,x123,y123,x234,y234,x1234,y1234;
 	float dx,dy,d2,d3;
 
-	if (level > 10) return;
+	if (level > max_level) return;
 
 	x12 = (x1+x2)*0.5f;
 	y12 = (y1+y2)*0.5f;
@@ -355,14 +363,16 @@ static void nsvg__flattenCubicBez(NSVGrasterizer* r,
 		nsvg__addPathPoint(r, x4, y4, type);
 		return;
 	}
-
+	++level;
+	if (level > max_level) return;
+	
 	x234 = (x23+x34)*0.5f;
 	y234 = (y23+y34)*0.5f;
 	x1234 = (x123+x234)*0.5f;
 	y1234 = (y123+y234)*0.5f;
 
-	nsvg__flattenCubicBez(r, x1,y1, x12,y12, x123,y123, x1234,y1234, level+1, 0);
-	nsvg__flattenCubicBez(r, x1234,y1234, x234,y234, x34,y34, x4,y4, level+1, type);
+	nsvg__flattenCubicBez(r, x1,y1, x12,y12, x123,y123, x1234,y1234, level, 0);
+	nsvg__flattenCubicBez(r, x1234,y1234, x234,y234, x34,y34, x4,y4, level, type);
 }
 
 static void nsvg__flattenShape(NSVGrasterizer* r, NSVGshape* shape, float scale)
@@ -838,7 +848,8 @@ static void nsvg__flattenShapeStroke(NSVGrasterizer* r, NSVGshape* shape, float 
 	}
 }
 
-static int nsvg__cmpEdge(const void *p, const void *q)
+static int SDLCALL
+nsvg__cmpEdge(const void *p, const void *q)
 {
 	const NSVGedge* a = (const NSVGedge*)p;
 	const NSVGedge* b = (const NSVGedge*)q;
@@ -954,7 +965,7 @@ static float nsvg__clampf(float a, float mn, float mx) { return a < mn ? mn : (a
 
 static unsigned int nsvg__RGBA(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
 {
-	return (r) | (g << 8) | (b << 16) | (a << 24);
+	return ((unsigned int)r) | ((unsigned int)g << 8) | ((unsigned int)b << 16) | ((unsigned int)a << 24);
 }
 
 static unsigned int nsvg__lerpRGBA(unsigned int c0, unsigned int c1, float u)
@@ -1360,7 +1371,7 @@ static void dumpEdges(NSVGrasterizer* r, const char* name)
 }
 */
 
-void nsvgRasterize(NSVGrasterizer* r,
+NSVG_EXPORT void nsvgRasterize(NSVGrasterizer* r,
 				   NSVGimage* image, float tx, float ty, float scale,
 				   unsigned char* dst, int w, int h, int stride)
 {
@@ -1404,7 +1415,8 @@ void nsvgRasterize(NSVGrasterizer* r,
 			}
 
 			// Rasterize edges
-			qsort(r->edges, r->nedges, sizeof(NSVGedge), nsvg__cmpEdge);
+			if (r->nedges != 0)
+				qsort(r->edges, r->nedges, sizeof(NSVGedge), nsvg__cmpEdge);
 
 			// now, traverse the scanlines and find the intersections on each scanline, use non-zero rule
 			nsvg__initPaint(&cache, &shape->fill, shape->opacity);
@@ -1430,7 +1442,8 @@ void nsvgRasterize(NSVGrasterizer* r,
 			}
 
 			// Rasterize edges
-			qsort(r->edges, r->nedges, sizeof(NSVGedge), nsvg__cmpEdge);
+			if (r->nedges != 0)
+				qsort(r->edges, r->nedges, sizeof(NSVGedge), nsvg__cmpEdge);
 
 			// now, traverse the scanlines and find the intersections on each scanline, use non-zero rule
 			nsvg__initPaint(&cache, &shape->stroke, shape->opacity);
@@ -1448,3 +1461,5 @@ void nsvgRasterize(NSVGrasterizer* r,
 }
 
 #endif
+
+#endif // NANOSVGRAST_H

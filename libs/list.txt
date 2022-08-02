@@ -1,8 +1,7 @@
 SDL2
 SDL2 mixer
-SDL2 image
-SDL2 net / boost asio
-SDL2 ttf ?
+SDL2 image  2.6.1
+SDL2 net
 ImGUI
 glm
 assimp

@@ -1,6 +1,6 @@
 /*
   showimage:  A test application for the SDL image loading library.
-  Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2022 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -18,10 +18,6 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
-
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 
 #include "SDL.h"
 #include "SDL_image.h"
@@ -58,7 +54,9 @@ int main(int argc, char *argv[])
     SDL_Renderer *renderer;
     SDL_Texture *texture;
     Uint32 flags;
-    int i, w, h, done;
+    int i, w, h;
+    int done = 0;
+    int quit = 0;
     SDL_Event event;
     const char *saveFile = NULL;
 
@@ -88,6 +86,11 @@ int main(int argc, char *argv[])
 
     for ( i=1; argv[i]; ++i ) {
         if ( SDL_strcmp(argv[i], "-fullscreen") == 0 ) {
+            continue;
+        }
+
+        if ( SDL_strcmp(argv[i], "-quit") == 0 ) {
+            quit = 1;
             continue;
         }
 
@@ -131,32 +134,32 @@ int main(int argc, char *argv[])
         SDL_SetWindowSize(window, w, h);
         SDL_ShowWindow(window);
 
-        done = 0;
-        while ( ! done ) {
+        done = quit;
+        while ( !done ) {
             while ( SDL_PollEvent(&event) ) {
                 switch (event.type) {
                     case SDL_KEYUP:
                         switch (event.key.keysym.sym) {
-                            case SDLK_LEFT:
-                                if ( i > 1 ) {
-                                    i -= 2;
-                                    done = 1;
-                                }
-                                break;
-                            case SDLK_RIGHT:
-                                if ( argv[i+1] ) {
-                                    done = 1;
-                                }
-                                break;
-                            case SDLK_ESCAPE:
-                            case SDLK_q:
-                                argv[i+1] = NULL;
-                            /* Drop through to done */
-                            case SDLK_SPACE:
-                            case SDLK_TAB:
+                        case SDLK_LEFT:
+                            if ( i > 1 ) {
+                                i -= 2;
+                                done = 1;
+                            }
+                            break;
+                        case SDLK_RIGHT:
+                            if ( argv[i+1] ) {
+                                done = 1;
+                            }
+                            break;
+                        case SDLK_ESCAPE:
+                        case SDLK_q:
+                            argv[i+1] = NULL;
+                        /* Drop through to done */
+                        case SDLK_SPACE:
+                        case SDLK_TAB:
                             done = 1;
                             break;
-                            default:
+                        default:
                             break;
                         }
                         break;

@@ -1,6 +1,6 @@
 /*
   SDL_image:  An example image loading library for use with SDL
-  Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2022 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -61,7 +61,8 @@ static struct {
     if (lib.FUNC == NULL) { SDL_UnloadObject(lib.handle); return -1; }
 #else
 #define FUNCTION_LOADER(FUNC, SIG) \
-    lib.FUNC = FUNC;
+    lib.FUNC = FUNC; \
+    if (lib.FUNC == NULL) { IMG_SetError("Missing webp.framework"); return -1; }
 #endif
 
 int IMG_InitWEBP()
@@ -265,6 +266,9 @@ error:
 }
 
 #else
+#if _MSC_VER >= 1300
+#pragma warning(disable : 4100) /* warning C4100: 'op' : unreferenced formal parameter */
+#endif
 
 int IMG_InitWEBP()
 {

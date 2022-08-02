@@ -1,6 +1,6 @@
 /*
   SDL_image:  An example image loading library for use with SDL
-  Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2022 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -142,13 +142,13 @@ SDL_Surface *IMG_LoadPCX_RW(SDL_RWops *src)
     } else if(pcxh.BitsPerPixel == 8 && pcxh.NPlanes == 3) {
         bits = 24;
 #if SDL_BYTEORDER == SDL_LIL_ENDIAN
-            Rmask = 0x000000FF;
-            Gmask = 0x0000FF00;
-            Bmask = 0x00FF0000;
+        Rmask = 0x000000FF;
+        Gmask = 0x0000FF00;
+        Bmask = 0x00FF0000;
 #else
-            Rmask = 0xFF0000;
-            Gmask = 0x00FF00;
-            Bmask = 0x0000FF;
+        Rmask = 0xFF0000;
+        Gmask = 0x00FF00;
+        Bmask = 0x0000FF;
 #endif
     } else {
         error = "unsupported PCX format";
@@ -220,18 +220,21 @@ SDL_Surface *IMG_LoadPCX_RW(SDL_RWops *src)
         } else if ( src_bits == 24 ) {
             /* de-interlace planes */
             Uint8 *innerSrc = buf;
+            Uint8 *end1 = buf+bpl;
             int plane;
             for ( plane = 0; plane < pcxh.NPlanes; plane++ ) {
                 int x;
                 Uint8 *dst = row + plane;
+                Uint8 *end2= row + surface->pitch;
                 for ( x = 0; x < width; x++ ) {
-                    if ( dst >= row+surface->pitch ) {
+                    if ( (innerSrc + x) >= end1 || dst >= end2 ) {
                         error = "decoding out of bounds (corrupt?)";
                         goto done;
                     }
-                    *dst = *innerSrc++;
+                    *dst = innerSrc[x];
                     dst += pcxh.NPlanes;
                 }
+                innerSrc += pcxh.BytesPerLine;
             }
         }
 
@@ -283,6 +286,9 @@ done:
 }
 
 #else
+#if _MSC_VER >= 1300
+#pragma warning(disable : 4100) /* warning C4100: 'op' : unreferenced formal parameter */
+#endif
 
 /* See if an image is contained in a data source */
 int IMG_isPCX(SDL_RWops *src)
