@@ -7,7 +7,7 @@
 
 #include "SDL2_image/SDL_image.h"
 
-#include "SDL2_mixer/SDL_mixer.h"
+#include "SDL2_mixer/include/SDL_mixer.h"
 
 #include "SDL2_net/SDL_net.h"
 

@@ -27,10 +27,7 @@ namespace Beryll
         auto result =  m_WAVs.find(strPath);
         if(result != m_WAVs.end()) { return; }
 
-        SDL_RWops* rw = SDL_RWFromFile(strPath.c_str(), "rb");
-        BR_ASSERT((rw != nullptr), "Load WAV failed:{0}", strPath);
-
-        Mix_Chunk* wavSound = Mix_LoadWAV_RW(rw, 1);
+        Mix_Chunk* wavSound = Mix_LoadWAV(path);
         BR_ASSERT((wavSound != nullptr), "Create Mix_Chunk failed:{0}", strPath);
 
         Mix_VolumeChunk(wavSound, MIX_MAX_VOLUME / 2);
@@ -58,10 +55,7 @@ namespace Beryll
         auto result =  m_MP3s.find(strPath);
         if(result != m_MP3s.end()) { return; }
 
-        SDL_RWops* rw = SDL_RWFromFile(strPath.c_str(), "rb");
-        BR_ASSERT((rw != nullptr), "Load MP3 failed:{0}", strPath);
-
-        Mix_Music* music = Mix_LoadMUS_RW(rw, 1);
+        Mix_Music* music = Mix_LoadMUS(path);
         BR_ASSERT((music != nullptr), "Create Mix_Music failed:{0}", strPath);
 
         Mix_VolumeMusic(64); // volume from 0 to 128

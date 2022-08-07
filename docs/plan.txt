@@ -3,17 +3,14 @@
 update Player
 
 
-
+update IMGui to 1.88
+update SDL2 to 2.24.1
 
 use
 #include <android/log.h>
 __android_log_print(ANDROID_LOG_DEBUG, "TAG", "message");
 __android_log_print(ANDROID_LOG_DEBUG, "MANIFOLDS", "size: %d", (int)m_manifoldsPtr.size());
 not spdlog
-
-update SDL2_image to 2.6.0
-update SDL2_mixer to 2.6.0
-update IMGui to 1.88
 
 
 collision shapes by performance:
