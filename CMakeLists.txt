@@ -31,14 +31,18 @@ add_subdirectory(libs/assimp)
 add_subdirectory(libs/sqlite)
 add_subdirectory(libs/bullet)
 
-set(AndroidGLES_SRC
-        src/Beryll/Platform/AndroidGLES/AndroidGLESWindow.cpp
-        src/Beryll/Platform/AndroidGLES/AndroidGLESImGUI.cpp
-        src/Beryll/Platform/AndroidGLES/AndroidGLESBuffer.cpp
-        src/Beryll/Platform/AndroidGLES/AndroidGLESVertexArray.cpp
-        src/Beryll/Platform/AndroidGLES/AndroidGLESShader.cpp
-        src/Beryll/Platform/AndroidGLES/AndroidGLESTexture.cpp
-)
+if(ANDROID)
+    set(AndroidGLES_SRC
+            src/Beryll/Platform/AndroidGLES/AndroidGLESWindow.cpp
+            src/Beryll/Platform/AndroidGLES/AndroidGLESImGUI.cpp
+            src/Beryll/Platform/AndroidGLES/AndroidGLESBuffer.cpp
+            src/Beryll/Platform/AndroidGLES/AndroidGLESVertexArray.cpp
+            src/Beryll/Platform/AndroidGLES/AndroidGLESShader.cpp
+            src/Beryll/Platform/AndroidGLES/AndroidGLESTexture.cpp
+            )
+elseif(APPLE)
+    #set(IOSMetal_SRC src/Beryll/Platform/...)
+endif()
 
 set(Common_SRC
         src/Beryll/Core/GameStateMachine.cpp
@@ -75,7 +79,7 @@ set(Common_SRC
         src/Beryll/Async/AsyncRun.cpp
 )
 
-add_library(Beryll-static STATIC ${AndroidGLES_SRC} ${Common_SRC})
+add_library(Beryll-static STATIC ${AndroidGLES_SRC} ${IOSMetal_SRC} ${Common_SRC})
 
 # add these lines to main CmakeLists.txt
 #include_directories(Beryll_engine/libs)
