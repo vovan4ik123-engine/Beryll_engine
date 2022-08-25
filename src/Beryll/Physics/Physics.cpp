@@ -559,6 +559,9 @@ namespace Beryll
             std::scoped_lock<std::mutex> lock (m_mutex);
 
             btTransform t;
+            if(iter->second->rb->getMotionState()) iter->second->rb->getMotionState()->getWorldTransform(t);
+            else t = iter->second->rb->getWorldTransform();
+
             t.setOrigin(btVector3(pos.x, pos.y, pos.z));
 
             iter->second->rb->setWorldTransform(t);
@@ -594,6 +597,9 @@ namespace Beryll
             std::scoped_lock<std::mutex> lock (m_mutex);
 
             btTransform t;
+            if(iter->second->rb->getMotionState()) iter->second->rb->getMotionState()->getWorldTransform(t);
+            else t = iter->second->rb->getWorldTransform();
+
             t.setRotation(btQuaternion(rot.x, rot.y, rot.z, rot.w));
 
             iter->second->rb->setWorldTransform(t);
