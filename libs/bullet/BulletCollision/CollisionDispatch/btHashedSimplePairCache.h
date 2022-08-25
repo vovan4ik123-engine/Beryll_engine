@@ -75,11 +75,15 @@ public:
 
 	virtual btSimplePair* getOverlappingPairArrayPtr()
 	{
+		if(m_overlappingPairArray.size() == 0) return nullptr;
+
 		return &m_overlappingPairArray[0];
 	}
 
 	const btSimplePair* getOverlappingPairArrayPtr() const
 	{
+		if(m_overlappingPairArray.size() == 0) return nullptr;
+
 		return &m_overlappingPairArray[0];
 	}
 

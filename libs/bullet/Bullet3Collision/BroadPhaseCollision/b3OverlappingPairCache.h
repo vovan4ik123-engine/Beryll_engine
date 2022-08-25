@@ -128,11 +128,15 @@ public:
 
 	virtual b3BroadphasePair* getOverlappingPairArrayPtr()
 	{
+		if(m_overlappingPairArray.size() == 0) return nullptr;
+
 		return &m_overlappingPairArray[0];
 	}
 
 	const b3BroadphasePair* getOverlappingPairArrayPtr() const
 	{
+		if(m_overlappingPairArray.size() == 0) return nullptr;
+
 		return &m_overlappingPairArray[0];
 	}
 
@@ -313,11 +317,15 @@ public:
 
 	b3BroadphasePair* getOverlappingPairArrayPtr()
 	{
+		if(m_overlappingPairArray.size() == 0) return nullptr;
+
 		return &m_overlappingPairArray[0];
 	}
 
 	const b3BroadphasePair* getOverlappingPairArrayPtr() const
 	{
+		if(m_overlappingPairArray.size() == 0) return nullptr;
+
 		return &m_overlappingPairArray[0];
 	}
 
@@ -357,10 +365,14 @@ class b3NullPairCache : public b3OverlappingPairCache
 public:
 	virtual b3BroadphasePair* getOverlappingPairArrayPtr()
 	{
+		if(m_overlappingPairArray.size() == 0) return nullptr;
+
 		return &m_overlappingPairArray[0];
 	}
 	const b3BroadphasePair* getOverlappingPairArrayPtr() const
 	{
+		if(m_overlappingPairArray.size() == 0) return nullptr;
+
 		return &m_overlappingPairArray[0];
 	}
 	b3BroadphasePairArray& getOverlappingPairArray()
