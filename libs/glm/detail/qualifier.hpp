@@ -24,9 +24,9 @@ namespace glm
 		packed = packed_highp, ///< By default packed qualifier is also high precision
 
 #		if GLM_CONFIG_ALIGNED_GENTYPES == GLM_ENABLE && defined(GLM_FORCE_DEFAULT_ALIGNED_GENTYPES)
-			defaultp = aligned_highp
+			defaultp = aligned_mediump
 #		else
-			defaultp = highp
+			defaultp = lowp
 #		endif
 	};
 

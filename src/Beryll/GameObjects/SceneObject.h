@@ -14,7 +14,7 @@ namespace Beryll
         {
             m_origin = pos;
 
-            m_translateMatrix = glm::translate(glm::mat4x4{1.0f}, pos);
+            m_translateMatrix = glm::translate(glm::mat4{1.0f}, pos);
 
             m_modelMatrix = m_translateMatrix * m_rotateMatrix * m_scaleMatrix;
 

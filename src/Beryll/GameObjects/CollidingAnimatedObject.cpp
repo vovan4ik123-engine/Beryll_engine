@@ -218,7 +218,7 @@ namespace Beryll
                 m_modelMatrix = Utils::Matrix::aiToGlm(node->mTransformation);
             }
 
-            m_scaleMatrix = glm::scale(glm::mat4x4{1.0f}, Utils::Matrix::getScaleFrom4x4Glm(m_modelMatrix));
+            m_scaleMatrix = glm::scale(glm::mat4{1.0f}, Utils::Matrix::getScaleFrom4x4Glm(m_modelMatrix));
             m_origin = Utils::Matrix::getPositionFrom4x4Glm(m_modelMatrix);
         }
     }
@@ -239,7 +239,7 @@ namespace Beryll
 
         m_origin = m_physicsTransforms.origin;
 
-        m_translateMatrix = glm::translate(glm::mat4x4{1.0f}, m_physicsTransforms.origin);
+        m_translateMatrix = glm::translate(glm::mat4{1.0f}, m_physicsTransforms.origin);
         m_rotateMatrix = glm::toMat4(m_physicsTransforms.rotation);
 
         m_modelMatrix = m_translateMatrix * m_rotateMatrix * m_scaleMatrix;
