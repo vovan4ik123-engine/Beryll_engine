@@ -9,7 +9,7 @@ namespace Beryll
     enum class Platform
     {
         UNKNOWN,
-        ANDROID_GLES
+        ANDROID_GLES // OpenGL is right-handed coordinate system in object space and world space.
     };
 
     class GameLoop

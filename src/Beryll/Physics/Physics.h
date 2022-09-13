@@ -34,16 +34,17 @@ namespace Beryll
     enum class CollisionGroups
     {
         NONE = 0,
-        CUBE = 1,
-        GROUND = 2,
-        CAMERA = 4,
+        CAMERA = 1,
+        STATIC_ENVIRONMENT = 2,
+        DYNAMIC_ENVIRONMENT = 4,
         PLAYER = 8,
-        WALL = 16,
+        ENEMY = 16,
         BULLET = 32,
-        YOU_CANN_ADD_YOUR_GROUP1 = 64,
-        YOU_CANN_ADD_YOUR_GROUP2 = 128,
+        WALL = 64,
+        YOU_CANN_ADD_YOUR_GROUP1 = 128,
+        YOU_CANN_ADD_YOUR_GROUP2 = 256,
 
-        YOU_CANN_COMBINE_GROUPS_WHEN_USE = GROUND | CAMERA | WALL,
+        YOU_CANN_COMBINE_GROUPS_WHEN_USE = STATIC_ENVIRONMENT | CAMERA | WALL,
 
         ALL_GROUPS = -1 // all bits = 1
     };
@@ -135,25 +136,26 @@ namespace Beryll
                               CollisionGroups collGroup,
                               CollisionGroups collMask);
 
-        static void setPosition(const int ID, const glm::vec3& pos, bool resetVelocities = true);
-        static void setRotation(const int ID, const glm::quat& rot, bool resetVelocities = true);
-        static PhysicsTransforms getTransforms(const int ID);
-        // bullet physics dont store scale in transform. keep scale in model matrix/vector in model
-
         static void softRemoveObject(const int ID); // remove from simulation but keep in m_rigidBodiesMap
-        static void restoreObject(const int ID, bool resetVelocities = true); // restore from m_rigidBodiesMap to simulation
+        static void restoreObject(const int ID, bool resetVelocities = false); // restore from m_rigidBodiesMap to simulation
 
         static void activateObject(const int ID); // awake object in physics world
 
-        static void setAngularFactor(const int ID, const glm::vec3& angFactor); // affect objects rotation speed during collisions
-        static void setLinearFactor(const int ID, const glm::vec3& linFactor); // affect objects translation speed during collisions
-        static void setAngularVelocity(const int ID, const glm::vec3& angVelocity); // set rotation velocity
-        static void setLinearVelocity(const int ID, const glm::vec3& linVelocity); // set translation velocity
+        // bullet physics dont store scale in transform. keep scale in model matrix/vector in model
+        static PhysicsTransforms getTransforms(const int ID);
 
-        static void setDefaultGravity(const glm::vec3& gravity); // change gravity for whole physics world
-        static void setGravityForObject(const int ID, const glm::vec3& gravity); // change gravity for object
-        static void disableGravityForObject(const int ID);
-        static void enableGravityForObject(const int ID);
+        static void setOrigin(const int ID, const glm::vec3& orig, bool resetVelocities = false);
+        static void addToOrigin(const int ID, const glm::vec3& dist, bool resetVelocities = false);
+        static void setRotation(const int ID, const glm::quat& rot, bool resetVelocities = false);
+        static void addToRotation(const int ID, const glm::quat& rot, bool resetVelocities = false);
+        static void setAngularFactor(const int ID, const glm::vec3& angFactor, bool resetVelocities = false); // affect objects rotation speed during collisions
+        static void setLinearFactor(const int ID, const glm::vec3& linFactor, bool resetVelocities = false); // affect objects translation speed during collisions
+        static void setAngularVelocity(const int ID, const glm::vec3& angVelocity, bool resetVelocities = false); // set rotation velocity
+        static void setLinearVelocity(const int ID, const glm::vec3& linVelocity, bool resetVelocities = false); // set translation velocity
+        static void setGravityForAllWorld(const glm::vec3& gravity); // change gravity for whole physics world
+        static void setGravityForObject(const int ID, const glm::vec3& gravity, bool resetVelocities = false); // change gravity for object
+        static void disableGravityForObject(const int ID, bool resetVelocities = false);
+        static void enableGravityForObject(const int ID, bool resetVelocities = false);
 
         static bool getIsCollision(const int ID1, const int ID2);
         static std::vector<int> getCollisionsWithGroup(const int id, const CollisionGroups group); // return IDs of all colliding objects in specific group
@@ -161,7 +163,7 @@ namespace Beryll
         static std::vector<std::pair<glm::vec3, glm::vec3>> getAllCollisionPoints(const int ID1, const int ID2); // return point + his normal
         static std::vector<std::pair<glm::vec3, glm::vec3>> getAllCollisionPoints(const int ID1, const std::vector<int>& IDs); // return point + his normal
 
-        // Cast ray. Only objects in physics world can be hitted
+        // Cast ray. Only objects in physics world can be hit
         static RayClosestHit castRayClosestHit(const glm::vec3& from, const glm::vec3 to, CollisionGroups collGroup, CollisionGroups collMask);
         static RayAllHits castRayAllHits(const glm::vec3& from, const glm::vec3 to, CollisionGroups collGroup, CollisionGroups collMask);
 
@@ -200,6 +202,8 @@ namespace Beryll
 
         static float m_timeStep;
         static bool m_simulationEnabled;
+
+        static void resetVelocitiesForBody(const std::shared_ptr<btRigidBody>& b, bool reset);
 
         static void addConcaveMesh(const std::vector<glm::vec3>& vertices,
                                    const std::vector<uint32_t>& indices,

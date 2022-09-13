@@ -195,7 +195,7 @@ namespace Beryll
             m_modelMatrix = Utils::Matrix::aiToGlm(node->mTransformation);
         }
 
-        m_origin = Utils::Matrix::getPositionFrom4x4Glm(m_modelMatrix);
+        m_origin = Utils::Matrix::getTranslationFrom4x4Glm(m_modelMatrix);
     }
 
     AnimatedObject::~AnimatedObject()

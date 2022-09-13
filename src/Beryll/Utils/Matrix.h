@@ -10,8 +10,20 @@ namespace Utils
     //m[0][0] = 1.0; // sets the upper left element to 1.0
     //m[2][3] = 2.0; // sets the 4th element of the third column to 2.0
     //m[1] refers to the SECOND COLUMN VECTOR
+    //m[3] = last column = translation vector
     //Remember, OpenGL defaults to column major matrices, which means access is of the format mat[col][row].
     //In the example, m[2][3] sets the 4th ROW (index 3) of the 3rd COLUMN (index 2) to 2.0.
+
+    // in glm and GLSL(shader)
+    //TransformedVector = TranslationMatrix * RotationMatrix * ScaleMatrix * OriginalVector;
+    //performs the scaling FIRST, and THEN the rotation, and THEN the translation.
+    //glm::mat4 myModelMatrix = myTranslationMatrix * myRotationMatrix * myScaleMatrix;
+    //glm::vec4 myTransformedVector = myModelMatrix * myOriginalVector;
+
+    //M_new = M_prev * M would apply first matrix M then M_prev
+
+    //http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-17-quaternions/#how-do-i-create-a-quaternion-in-c-
+
     class Matrix
     {
     public:
@@ -29,7 +41,7 @@ namespace Utils
             return result;
         }
 
-        //static void decomposeAI()
+        //static void decomposeAI() {}
 
         static void decompose4x4Glm(const glm::mat4& matr, glm::vec3& scale, glm::quat& rotation, glm::vec3& translation)
         {
@@ -50,28 +62,14 @@ namespace Utils
             return scale;
         }
 
-        static glm::vec3 getPositionFrom4x4Glm(const glm::mat4& matr)
+        static glm::vec3 getTranslationFrom4x4Glm(const glm::mat4& matr)
         {
-            glm::vec3 scale;
-            glm::vec3 translation;
-            glm::quat rotation;
-            glm::vec3 skew;
-            glm::vec4 perspective;
-            glm::decompose(matr, scale, rotation, translation, skew, perspective);
-
-            return translation;
+            return glm::vec3(matr[3][0], matr[3][1], matr[3][2]);
         }
 
         static glm::quat getRotationFrom4x4Glm(const glm::mat4& matr)
         {
-            glm::vec3 scale;
-            glm::vec3 translation;
-            glm::quat rotation;
-            glm::vec3 skew;
-            glm::vec4 perspective;
-            glm::decompose(matr, scale, rotation, translation, skew, perspective);
-
-            return rotation;
+            return glm::quat{matr};
         }
     };
 }

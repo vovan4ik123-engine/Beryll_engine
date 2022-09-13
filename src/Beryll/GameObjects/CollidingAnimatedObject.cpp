@@ -219,7 +219,7 @@ namespace Beryll
             }
 
             m_scaleMatrix = glm::scale(glm::mat4{1.0f}, Utils::Matrix::getScaleFrom4x4Glm(m_modelMatrix));
-            m_origin = Utils::Matrix::getPositionFrom4x4Glm(m_modelMatrix);
+            m_origin = Utils::Matrix::getTranslationFrom4x4Glm(m_modelMatrix);
         }
     }
 

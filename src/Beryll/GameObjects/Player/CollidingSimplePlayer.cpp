@@ -68,14 +68,11 @@ namespace Beryll
             }
         }
 
-
         BR_INFO("m_fromOriginToTop:{0}, m_fromOriginToBottom:{1}, m_playerHeight{2}", m_fromOriginToTop, m_fromOriginToBottom, m_playerHeight);
 
         BR_ASSERT(((m_fromOriginToBottom > 0.0f) && (m_fromOriginToTop > 0.0f) && (m_XZradius > 0.0f) && (m_playerHeight > 0.0f)), "Players XYZ dimensions are 0.");
 
-
-        m_eyeDirection_X_Y_Z = Camera::getCameraDirection();
-        m_eyeDirection_X_Z = glm::normalize(glm::vec3(m_eyeDirection_X_Y_Z.x, 0.0f, m_eyeDirection_X_Y_Z.z));
+        setAngularFactor(glm::vec3(0.0f, 0.0f, 0.0f), true);
     }
 
     CollidingSimplePlayer::~CollidingSimplePlayer()
@@ -88,9 +85,6 @@ namespace Beryll
         // call base class method first
         CollidingSimpleObject::updateBeforePhysics();
 
-        //Beryll::Physics::activateObject(m_ID);
-
-
     }
 
     void CollidingSimplePlayer::updateAfterPhysics()
@@ -98,12 +92,34 @@ namespace Beryll
         // call base class method first
         CollidingSimpleObject::updateAfterPhysics();
 
+        //BR_INFO("origin X:{0} Y:{1} Z:{2}", m_origin.x, m_origin.y, m_origin.z);
 
-        m_collidingObjectsIDs = Physics::getCollisionsWithGroup(m_ID, CollisionGroups::GROUND);
-        if(!m_collidingObjectsIDs.empty())
+        m_collidingStaticObjects = Physics::getCollisionsWithGroup(m_ID, CollisionGroups::STATIC_ENVIRONMENT);
+        if(!m_collidingStaticObjects.empty())
         {
-            //BR_INFO("m_collidingObjectsIDs.size():{0}", m_collidingObjectsIDs.size());
-            m_collidingPoints = Physics::getAllCollisionPoints(m_ID, m_collidingObjectsIDs);
+            m_collidingStaticPoints = Physics::getAllCollisionPoints(m_ID, m_collidingStaticObjects);
+            for(const std::pair<glm::vec3, glm::vec3>& point : m_collidingStaticPoints)
+            {
+                playerOnGround = false;
+                // point.second is normal vector on collision point
+                if(Utils::Common::getAngleInDegrees(Constants::worldUp, point.second) < walkableFloorAngle)
+                {
+                    // player stay on allowed floor angle
+                    playerOnGround = true;
+                    break;
+                }
+            }
+        }
+
+        if(playerOnGround)
+        {
+            disableGravity(true);
+            setLinearFactor(glm::vec3(0.0f, 0.0f, 0.0f), true);
+        }
+        else
+        {
+            enableGravity(true);
+            setLinearFactor(glm::vec3(1.0f, 1.0f, 1.0f), true);
         }
 
     }
@@ -112,16 +128,27 @@ namespace Beryll
     {
         // call base class method
         CollidingSimpleObject::draw();
-
-
     }
 
     void CollidingSimplePlayer::playSound()
     {
         // call base class method
         CollidingSimpleObject::playSound();
-
-
     }
 
+    void CollidingSimplePlayer::move(MoveDirection direction)
+    {
+        glm::quat rotationPlayerToCamera = Utils::Common::getRotationBetweenVectors(m_eyeDirectionXZ, Camera::getCameraDirectionXZ());
+        addToRotation(rotationPlayerToCamera, true);
+        // after rotation
+        m_eyeDirectionXZ = Camera::getCameraDirectionXZ(); // should be unit
+        m_eyeDirectionXYZ = Camera::getCameraDirectionXYZ();
+
+        glm::vec3 moveDistance = (m_eyeDirectionXZ * moveSpeed) * TimeStep::getTimeStepSec();
+        if(!playerOnGround)
+        {
+            moveDistance *= airControlFactor;
+        }
+        addToOrigin(moveDistance);
+    }
 }

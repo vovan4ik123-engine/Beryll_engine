@@ -29,7 +29,7 @@ static int uniqueId = 0;
 btRigidBody::btRigidBody(const btRigidBody::btRigidBodyConstructionInfo& constructionInfo, int id)
 {
 	setupRigidBody(constructionInfo);
-	idForEngine = id;
+	beryllEngineObjectID = id;
 }
 
 btRigidBody::btRigidBody(btScalar mass, btMotionState* motionState, btCollisionShape* collisionShape, const btVector3& localInertia)

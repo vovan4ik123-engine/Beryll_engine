@@ -450,6 +450,8 @@ namespace Beryll
 
     bool Physics::getIsCollision(const int ID1, const int ID2)
     {
+        if(ID1 == ID2) { return false; }
+
         if(m_collisionPairs.find(std::make_pair(ID1, ID2)) != m_collisionPairs.end()) { return true; }
 
         if(m_collisionPairs.find(std::make_pair(ID2, ID1)) != m_collisionPairs.end()) { return true; }
@@ -466,9 +468,9 @@ namespace Beryll
         {
             if(m_dynamicsWorldMT->getCollisionObjectArray()[i]->getBroadphaseHandle()->m_collisionFilterGroup & static_cast<int>(group))
             {
-                if(getIsCollision(ID, m_dynamicsWorldMT->getCollisionObjectArray()[i]->idForEngine))
+                if(getIsCollision(ID, m_dynamicsWorldMT->getCollisionObjectArray()[i]->beryllEngineObjectID))
                 {
-                    ids.push_back(m_dynamicsWorldMT->getCollisionObjectArray()[i]->idForEngine);
+                    ids.push_back(m_dynamicsWorldMT->getCollisionObjectArray()[i]->beryllEngineObjectID);
                 }
             }
         }
@@ -491,19 +493,20 @@ namespace Beryll
             const btCollisionObject* obA = contactManifold->getBody0();
             const btCollisionObject* obB = contactManifold->getBody1();
 
-            if((obA->idForEngine == ID1 && obB->idForEngine == ID2) ||
-               (obA->idForEngine == ID2 && obB->idForEngine == ID1))
+            if((obA->beryllEngineObjectID == ID1 && obB->beryllEngineObjectID == ID2) ||
+               (obA->beryllEngineObjectID == ID2 && obB->beryllEngineObjectID == ID1))
             {
                 // we found contact point between 2 objects
                 for (int j = 0; j < contactManifold->getNumContacts(); j++)
                 {
-                    btManifoldPoint& pt = contactManifold->getContactPoint(j);
+                    const btManifoldPoint& pt = contactManifold->getContactPoint(j);
 
                     const btVector3& ptB = pt.getPositionWorldOnB();
-                    const btVector3& normalOnB = pt.m_normalWorldOnB;
+                    btVector3 normalOnB = pt.m_normalWorldOnB;
+                    normalOnB.normalize();
 
                     pointsAndNormals.emplace_back(glm::vec3(ptB.getX(), ptB.getY(), ptB.getZ()), // point
-                                                  glm::vec3(normalOnB.getX(), normalOnB.getY(), normalOnB.getZ())); // normal
+                                                  glm::normalize(glm::vec3(normalOnB.getX(), normalOnB.getY(), normalOnB.getZ()))); // normal
                 }
             }
         }
@@ -527,23 +530,33 @@ namespace Beryll
             bool obB_ID_existInIDs = false;
             for(const int id : IDs)
             {
-                if(id == obA->idForEngine) {obA_ID_existInIDs = true;}
-                if(id == obB->idForEngine) {obB_ID_existInIDs = true;}
+                if(id == obA->beryllEngineObjectID)
+                {
+                    obA_ID_existInIDs = true;
+                    break;
+                }
+
+                if(id == obB->beryllEngineObjectID)
+                {
+                    obB_ID_existInIDs = true;
+                    break;
+                }
             }
 
-            if((obA->idForEngine == ID1 && obB_ID_existInIDs) ||
-               (obB->idForEngine == ID1 && obA_ID_existInIDs))
+            if((obA->beryllEngineObjectID == ID1 && obB_ID_existInIDs) ||
+               (obB->beryllEngineObjectID == ID1 && obA_ID_existInIDs))
             {
-                // we found contact point between 2 objects
+                // we found collision between 2 objects
                 for (int j = 0; j < contactManifold->getNumContacts(); j++)
                 {
-                    btManifoldPoint& pt = contactManifold->getContactPoint(j);
+                    const btManifoldPoint& pt = contactManifold->getContactPoint(j);
 
                     const btVector3& ptB = pt.getPositionWorldOnB();
-                    const btVector3& normalOnB = pt.m_normalWorldOnB;
+                    btVector3 normalOnB = pt.m_normalWorldOnB;
+                    normalOnB.normalize();
 
                     pointsAndNormals.emplace_back(glm::vec3(ptB.getX(), ptB.getY(), ptB.getZ()), // point
-                                                  glm::vec3(normalOnB.getX(), normalOnB.getY(), normalOnB.getZ())); // normal
+                                                  glm::normalize(glm::vec3(normalOnB.getX(), normalOnB.getY(), normalOnB.getZ()))); // normal
                 }
             }
         }
@@ -551,7 +564,7 @@ namespace Beryll
         return std::move(pointsAndNormals);
     }
 
-    void Physics::setPosition(const int ID, const glm::vec3& pos, bool resetVelocities)
+    void Physics::setOrigin(const int ID, const glm::vec3& orig, bool resetVelocities)
     {
         auto iter = m_rigidBodiesMap.find(ID);
         if(iter != m_rigidBodiesMap.end())
@@ -559,20 +572,18 @@ namespace Beryll
             std::scoped_lock<std::mutex> lock (m_mutex);
 
             btTransform t;
-            if(iter->second->rb->getMotionState()) iter->second->rb->getMotionState()->getWorldTransform(t);
-            else t = iter->second->rb->getWorldTransform();
+            if(iter->second->rb->getMotionState())
+                iter->second->rb->getMotionState()->getWorldTransform(t);
+            else
+                t = iter->second->rb->getWorldTransform();
 
-            t.setOrigin(btVector3(pos.x, pos.y, pos.z));
+            t.setOrigin(btVector3(orig.x, orig.y, orig.z));
 
             iter->second->rb->setWorldTransform(t);
-            iter->second->rb->getMotionState()->setWorldTransform(t);
+            if(iter->second->rb->getMotionState())
+                iter->second->rb->getMotionState()->setWorldTransform(t);
 
-            if(resetVelocities)
-            {
-                iter->second->rb->setLinearVelocity(btVector3(0.0f, 0.0f, 0.0f));
-                iter->second->rb->setAngularVelocity(btVector3(0.0f, 0.0f, 0.0f));
-                iter->second->rb->clearForces();
-            }
+            resetVelocitiesForBody(iter->second->rb, resetVelocities);
 
             iter->second->rb->activate(true);
 
@@ -585,7 +596,38 @@ namespace Beryll
         }
         else
         {
-            BR_ASSERT(false, "Can not set position for {0}", ID);
+            BR_ASSERT(false, "Can not set origin for {0}", ID);
+        }
+    }
+
+    void Physics::addToOrigin(const int ID, const glm::vec3& dist, bool resetVelocities)
+    {
+        auto iter = m_rigidBodiesMap.find(ID);
+        if(iter != m_rigidBodiesMap.end())
+        {
+            std::scoped_lock<std::mutex> lock (m_mutex);
+
+            btTransform t;
+            if(iter->second->rb->getMotionState())
+                iter->second->rb->getMotionState()->getWorldTransform(t);
+            else
+                t = iter->second->rb->getWorldTransform();
+
+            t.getOrigin() += btVector3(dist.x, dist.y, dist.z); // add to reference
+            //btVector3 currentOrig = t.getOrigin();
+            //t.setOrigin(currentOrig + btVector3(dist.x, dist.y, dist.z));
+
+            iter->second->rb->setWorldTransform(t);
+            if(iter->second->rb->getMotionState())
+                iter->second->rb->getMotionState()->setWorldTransform(t);
+
+            resetVelocitiesForBody(iter->second->rb, resetVelocities);
+
+            iter->second->rb->activate(true);
+        }
+        else
+        {
+            BR_ASSERT(false, "Can not add to origin for {0}", ID);
         }
     }
 
@@ -597,20 +639,50 @@ namespace Beryll
             std::scoped_lock<std::mutex> lock (m_mutex);
 
             btTransform t;
-            if(iter->second->rb->getMotionState()) iter->second->rb->getMotionState()->getWorldTransform(t);
-            else t = iter->second->rb->getWorldTransform();
+            if(iter->second->rb->getMotionState())
+                iter->second->rb->getMotionState()->getWorldTransform(t);
+            else
+                t = iter->second->rb->getWorldTransform();
 
-            t.setRotation(btQuaternion(rot.x, rot.y, rot.z, rot.w));
+            glm::quat rotationToSet = glm::normalize(rot);
+            t.setRotation(btQuaternion(rotationToSet.x, rotationToSet.y, rotationToSet.z, rotationToSet.w));
 
             iter->second->rb->setWorldTransform(t);
-            iter->second->rb->getMotionState()->setWorldTransform(t);
+            if(iter->second->rb->getMotionState())
+                iter->second->rb->getMotionState()->setWorldTransform(t);
 
-            if(resetVelocities)
-            {
-                iter->second->rb->setLinearVelocity(btVector3(0.0f, 0.0f, 0.0f));
-                iter->second->rb->setAngularVelocity(btVector3(0.0f, 0.0f, 0.0f));
-                iter->second->rb->clearForces();
-            }
+            resetVelocitiesForBody(iter->second->rb, resetVelocities);
+
+            iter->second->rb->activate(true);
+        }
+        else
+        {
+            BR_ASSERT(false, "Can not set rotation for {0}", ID);
+        }
+    }
+
+    void Physics::addToRotation(const int ID, const glm::quat& rot, bool resetVelocities)
+    {
+        auto iter = m_rigidBodiesMap.find(ID);
+        if(iter != m_rigidBodiesMap.end())
+        {
+            std::scoped_lock<std::mutex> lock (m_mutex);
+
+            btTransform t;
+            if(iter->second->rb->getMotionState())
+                iter->second->rb->getMotionState()->getWorldTransform(t);
+            else
+                t = iter->second->rb->getWorldTransform();
+
+            btQuaternion originalRotation = t.getRotation();
+            // rotations will be combined from right to left(originalRotation first, then btQuaternion(.....)
+            t.setRotation(btQuaternion(rot.x, rot.y, rot.z, rot.w) * originalRotation);
+
+            iter->second->rb->setWorldTransform(t);
+            if(iter->second->rb->getMotionState())
+                iter->second->rb->getMotionState()->setWorldTransform(t);
+
+            resetVelocitiesForBody(iter->second->rb, resetVelocities);
 
             iter->second->rb->activate(true);
         }
@@ -629,13 +701,13 @@ namespace Beryll
         {
             std::scoped_lock<std::mutex> lock (m_mutex);
 
-            btTransform trans;
+            btTransform t;
 
-            if(iter->second->rb->getMotionState()) iter->second->rb->getMotionState()->getWorldTransform(trans);
-            else trans = iter->second->rb->getWorldTransform();
+            if(iter->second->rb->getMotionState()) iter->second->rb->getMotionState()->getWorldTransform(t);
+            else t = iter->second->rb->getWorldTransform();
 
-            physicsTransforms.origin = glm::vec3(trans.getOrigin().getX(), trans.getOrigin().getY(), trans.getOrigin().getZ());
-            physicsTransforms.rotation = glm::quat(trans.getRotation().getW(), trans.getRotation().getX(), trans.getRotation().getY(), trans.getRotation().getZ());
+            physicsTransforms.origin = glm::vec3(t.getOrigin().getX(), t.getOrigin().getY(), t.getOrigin().getZ());
+            physicsTransforms.rotation = glm::quat(t.getRotation().getW(), t.getRotation().getX(), t.getRotation().getY(), t.getRotation().getZ());
         }
         else
         {
@@ -664,12 +736,7 @@ namespace Beryll
         {
             std::scoped_lock<std::mutex> lock (m_mutex);
 
-            if(resetVelocities)
-            {
-                iter->second->rb->setLinearVelocity(btVector3(0.0f, 0.0f, 0.0f));
-                iter->second->rb->setAngularVelocity(btVector3(0.0f, 0.0f, 0.0f));
-                iter->second->rb->clearForces();
-            }
+            resetVelocitiesForBody(iter->second->rb, resetVelocities);
 
             iter->second->rb->activate(true);
 
@@ -691,7 +758,7 @@ namespace Beryll
         }
     }
 
-    void Physics::setAngularFactor(const int ID, const glm::vec3& angFactor)
+    void Physics::setAngularFactor(const int ID, const glm::vec3& angFactor, bool resetVelocities)
     {
         auto iter = m_rigidBodiesMap.find(ID);
         if(iter != m_rigidBodiesMap.end())
@@ -699,10 +766,12 @@ namespace Beryll
             std::scoped_lock<std::mutex> lock (m_mutex);
 
             iter->second->rb->setAngularFactor(btVector3(angFactor.x, angFactor.y, angFactor.z));
+
+            resetVelocitiesForBody(iter->second->rb, resetVelocities);
         }
     }
 
-    void Physics::setLinearFactor(const int ID, const glm::vec3& linFactor)
+    void Physics::setLinearFactor(const int ID, const glm::vec3& linFactor, bool resetVelocities)
     {
         auto iter = m_rigidBodiesMap.find(ID);
         if(iter != m_rigidBodiesMap.end())
@@ -710,10 +779,12 @@ namespace Beryll
             std::scoped_lock<std::mutex> lock (m_mutex);
 
             iter->second->rb->setLinearFactor(btVector3(linFactor.x, linFactor.y, linFactor.z));
+
+            resetVelocitiesForBody(iter->second->rb, resetVelocities);
         }
     }
 
-    void Physics::setAngularVelocity(const int ID, const glm::vec3& angVelocity)
+    void Physics::setAngularVelocity(const int ID, const glm::vec3& angVelocity, bool resetVelocities)
     {
         auto iter = m_rigidBodiesMap.find(ID);
         if(iter != m_rigidBodiesMap.end())
@@ -721,10 +792,12 @@ namespace Beryll
             std::scoped_lock<std::mutex> lock (m_mutex);
 
             iter->second->rb->setAngularVelocity(btVector3(angVelocity.x, angVelocity.y, angVelocity.z));
+
+            resetVelocitiesForBody(iter->second->rb, resetVelocities);
         }
     }
 
-    void Physics::setLinearVelocity(const int ID, const glm::vec3& linVelocity)
+    void Physics::setLinearVelocity(const int ID, const glm::vec3& linVelocity, bool resetVelocities)
     {
         auto iter = m_rigidBodiesMap.find(ID);
         if(iter != m_rigidBodiesMap.end())
@@ -732,10 +805,12 @@ namespace Beryll
             std::scoped_lock<std::mutex> lock (m_mutex);
 
             iter->second->rb->setLinearVelocity(btVector3(linVelocity.x, linVelocity.y, linVelocity.z));
+
+            resetVelocitiesForBody(iter->second->rb, resetVelocities);
         }
     }
 
-    void Physics::setDefaultGravity(const glm::vec3& gravity)
+    void Physics::setGravityForAllWorld(const glm::vec3& gravity)
     {
         std::scoped_lock<std::mutex> lock (m_mutex);
 
@@ -744,7 +819,7 @@ namespace Beryll
             m_dynamicsWorldMT->setGravity(m_gravity);
     }
 
-    void Physics::setGravityForObject(const int ID, const glm::vec3& gravity)
+    void Physics::setGravityForObject(const int ID, const glm::vec3& gravity, bool resetVelocities)
     {
         auto iter = m_rigidBodiesMap.find(ID);
         if(iter != m_rigidBodiesMap.end())
@@ -752,10 +827,12 @@ namespace Beryll
             std::scoped_lock<std::mutex> lock (m_mutex);
 
             iter->second->rb->setGravity(btVector3(gravity.x, gravity.y, gravity.z));
+
+            resetVelocitiesForBody(iter->second->rb, resetVelocities);
         }
     }
 
-    void Physics::disableGravityForObject(const int ID)
+    void Physics::disableGravityForObject(const int ID, bool resetVelocities)
     {
         auto iter = m_rigidBodiesMap.find(ID);
         if(iter != m_rigidBodiesMap.end())
@@ -763,10 +840,12 @@ namespace Beryll
             std::scoped_lock<std::mutex> lock (m_mutex);
 
             iter->second->rb->setGravity(btVector3(0.0f, 0.0f, 0.0f));
+
+            resetVelocitiesForBody(iter->second->rb, resetVelocities);
         }
     }
 
-    void Physics::enableGravityForObject(const int ID)
+    void Physics::enableGravityForObject(const int ID, bool resetVelocities)
     {
         auto iter = m_rigidBodiesMap.find(ID);
         if(iter != m_rigidBodiesMap.end())
@@ -774,6 +853,8 @@ namespace Beryll
             std::scoped_lock<std::mutex> lock (m_mutex);
 
             iter->second->rb->setGravity(m_gravity);
+
+            resetVelocitiesForBody(iter->second->rb, resetVelocities);
         }
     }
 
@@ -837,5 +918,14 @@ namespace Beryll
         }
 
         return RayAllHits{};
+    }
+
+    void Physics::resetVelocitiesForBody(const std::shared_ptr<btRigidBody>& b, bool reset)
+    {
+        if(!reset) { return; }
+
+        b->setLinearVelocity(btVector3(0.0f, 0.0f, 0.0f));
+        b->setAngularVelocity(btVector3(0.0f, 0.0f, 0.0f));
+        b->clearForces();
     }
 }

@@ -5,6 +5,7 @@
 
 #include "Beryll/Physics/Physics.h"
 #include "Beryll/Utils/CommonUtils.h"
+#include "Beryll/Core/Log.h"
 
 namespace Beryll
 {
@@ -21,11 +22,10 @@ namespace Beryll
         virtual void playSound() = 0; // subclass sounds
 
         int getID() { return m_ID; }
-
+        const glm::vec3& getOrigin() { return m_origin; }
         bool getHasCollisionObject() { return m_hasCollisionObject; }
+        bool getIsEnabled() { return m_isEnabled; } // use it for disable object from update/draw/sound loops
 
-        // use it for disable object from update/draw/sound loops
-        bool getIsEnabled() { return m_isEnabled; }
         void enable()
         {
             if(!m_isEnabled)
@@ -36,6 +36,7 @@ namespace Beryll
                     Beryll::Physics::restoreObject(m_ID);
             }
         }
+
         void disable()
         {
             if(m_canBeDisabled)
@@ -46,8 +47,6 @@ namespace Beryll
                     Beryll::Physics::softRemoveObject(m_ID);
             }
         }
-
-        const glm::vec3& getOrigin() { return m_origin; }
 
     protected:
         const int m_ID = Utils::Common::generateID(); // unique

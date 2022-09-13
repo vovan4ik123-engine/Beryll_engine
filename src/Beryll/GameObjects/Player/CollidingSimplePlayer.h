@@ -45,6 +45,15 @@ namespace Beryll
         void draw() override;
         void playSound() override;
 
+        // player controller
+        void move(MoveDirection direction);
+        float moveSpeed = 1.0f; // meter in second
+        float walkableFloorAngle = 60.0f; // in degrees
+        float maxStepHeight = 0.2f; // meters
+        float airControlFactor = 0.3f; // factor to multiply moveSpeed if player not on ground
+        bool canMove = true;
+        bool playerOnGround = false;
+
     private:
         float m_fromOriginToBottom = 0.0f; // distance between origin and player bottom
         float m_fromOriginToTop = 0.0f; // distance between origin and player top
@@ -52,13 +61,15 @@ namespace Beryll
 
         float m_playerHeight = 0.0f;
 
-        glm::vec3 m_eyeDirection_X_Y_Z{0.0f};
-        glm::vec3 m_eyeDirection_X_Z{0.0f};
+        glm::vec3 m_eyeDirectionXYZ{1.0f, 0.0f, 0.0f}; // start position = looking along +X axis
+        glm::vec3 m_eyeDirectionXZ{1.0f, 0.0f, 0.0f};
 
-        glm::vec3 m_moveDirection_X_Y_Z{0.0f};
-        glm::vec3 m_moveDirection_X_Z{0.0f};
+        std::vector<int> m_collidingStaticObjects; // prevent creation and deletion every frame
+        std::vector<std::pair<glm::vec3, glm::vec3>> m_collidingStaticPoints; // prevent creation and deletion every frame
 
-        std::vector<int> m_collidingObjectsIDs; // prevent creation and deletion every frame!!!
-        std::vector<std::pair<glm::vec3, glm::vec3>> m_collidingPoints; // prevent creation and deletion every frame!!!
+        std::vector<int> m_collidingDynamicObjects; // prevent creation and deletion every frame
+        std::vector<std::pair<glm::vec3, glm::vec3>> m_collidingDynamicPoints; // prevent creation and deletion every frame
+
+        glm::mat4 matrixToExperiment{1.0f};
     };
 }

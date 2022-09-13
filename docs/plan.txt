@@ -3,8 +3,7 @@
 update Player
 
 
-update IMGui to 1.88
-update SDL2 to 2.24.1
+update IMGui to 1.88+
 
 use
 #include <android/log.h>

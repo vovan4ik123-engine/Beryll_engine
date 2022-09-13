@@ -1,4 +1,4 @@
-idForEngine in btCollisionObject
+beryllEngineObjectID in btCollisionObject
 
 remove rigid body without broadphase
 
