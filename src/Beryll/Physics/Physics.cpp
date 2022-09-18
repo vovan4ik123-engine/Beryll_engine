@@ -965,4 +965,16 @@ namespace Beryll
             iter->second->rb->clearForces();
         }
     }
+
+    void Physics::applyCentralImpulseForObject(const int ID, const glm::vec3& impulse)
+    {
+        auto iter = m_rigidBodiesMap.find(ID);
+        if(iter != m_rigidBodiesMap.end())
+        {
+            std::scoped_lock<std::mutex> lock (m_mutex);
+
+            iter->second->rb->activate(true);
+            iter->second->rb->applyCentralImpulse(btVector3(impulse.x, impulse.y, impulse.z));
+        }
+    }
 }

@@ -158,6 +158,7 @@ namespace Beryll
         static void disableGravityForObject(const int ID, bool resetVelocities = false);
         static void enableGravityForObject(const int ID, bool resetVelocities = false);
         static void resetVelocitiesForObject(const int ID);
+        static void applyCentralImpulseForObject(const int ID, const glm::vec3& impulse);
 
         static bool getIsCollision(const int ID1, const int ID2);
         static std::vector<int> getCollisionsWithGroup(const int id, const CollisionGroups group); // return IDs of all colliding objects in specific group

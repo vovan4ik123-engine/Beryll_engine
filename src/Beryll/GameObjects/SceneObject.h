@@ -160,6 +160,14 @@ namespace Beryll
             }
         }
 
+        void applyImpulse(const glm::vec3& impulse)
+        {
+            if(m_hasCollisionObject)
+            {
+                Physics::applyCentralImpulseForObject(m_ID, impulse);
+            }
+        }
+
         // inherited pure virtual methods are here
 
     protected:
