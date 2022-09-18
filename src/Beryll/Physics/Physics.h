@@ -140,6 +140,7 @@ namespace Beryll
         static void restoreObject(const int ID, bool resetVelocities = false); // restore from m_rigidBodiesMap to simulation
 
         static void activateObject(const int ID); // awake object in physics world
+        static bool getIsObjectActive(const int ID); // check if object is active
 
         // bullet physics dont store scale in transform. keep scale in model matrix/vector in model
         static PhysicsTransforms getTransforms(const int ID);
@@ -156,6 +157,7 @@ namespace Beryll
         static void setGravityForObject(const int ID, const glm::vec3& gravity, bool resetVelocities = false); // change gravity for object
         static void disableGravityForObject(const int ID, bool resetVelocities = false);
         static void enableGravityForObject(const int ID, bool resetVelocities = false);
+        static void resetVelocitiesForObject(const int ID);
 
         static bool getIsCollision(const int ID1, const int ID2);
         static std::vector<int> getCollisionsWithGroup(const int id, const CollisionGroups group); // return IDs of all colliding objects in specific group
@@ -203,7 +205,7 @@ namespace Beryll
         static float m_timeStep;
         static bool m_simulationEnabled;
 
-        static void resetVelocitiesForBody(const std::shared_ptr<btRigidBody>& b, bool reset);
+        static void resetVelocitiesForObject(const std::shared_ptr<btRigidBody>& b, bool reset);
 
         static void addConcaveMesh(const std::vector<glm::vec3>& vertices,
                                    const std::vector<uint32_t>& indices,

@@ -101,21 +101,21 @@ namespace Utils
                 {
                     // vectors are close to Y axis
                     // get cross product with X
-                    glm::vec3 axis = glm::cross(glm::vec3(1.0f, 0.0f, 0.0f), start);
-                    return glm::angleAxis(glm::pi<float>(), glm::normalize(axis));
+                    glm::vec3 axis = glm::normalize(glm::cross(glm::vec3(1.0f, 0.0f, 0.0f), start));
+                    return glm::angleAxis(glm::pi<float>(), axis);
                 }
                 else
                 {
                     // get cross product with Y
-                    glm::vec3 axis = glm::cross(glm::vec3(0.0f, 1.0f, 0.0f), start);
-                    return glm::angleAxis(glm::pi<float>(), glm::normalize(axis));
+                    glm::vec3 axis = glm::normalize(glm::cross(glm::vec3(0.0f, 1.0f, 0.0f), start));
+                    return glm::angleAxis(glm::pi<float>(), axis);
                 }
             }
 
             float angleRadians = glm::acos(cosAngle);
-            glm::vec3 axis = glm::cross(start, dest);
+            glm::vec3 axis = glm::normalize(glm::cross(start, dest));
 
-            return glm::angleAxis(angleRadians, glm::normalize(axis));
+            return glm::angleAxis(angleRadians, axis);
         }
 
     private:

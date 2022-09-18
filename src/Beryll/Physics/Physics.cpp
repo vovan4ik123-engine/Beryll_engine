@@ -583,7 +583,7 @@ namespace Beryll
             if(iter->second->rb->getMotionState())
                 iter->second->rb->getMotionState()->setWorldTransform(t);
 
-            resetVelocitiesForBody(iter->second->rb, resetVelocities);
+            resetVelocitiesForObject(iter->second->rb, resetVelocities);
 
             iter->second->rb->activate(true);
 
@@ -614,14 +614,12 @@ namespace Beryll
                 t = iter->second->rb->getWorldTransform();
 
             t.getOrigin() += btVector3(dist.x, dist.y, dist.z); // add to reference
-            //btVector3 currentOrig = t.getOrigin();
-            //t.setOrigin(currentOrig + btVector3(dist.x, dist.y, dist.z));
 
             iter->second->rb->setWorldTransform(t);
             if(iter->second->rb->getMotionState())
                 iter->second->rb->getMotionState()->setWorldTransform(t);
 
-            resetVelocitiesForBody(iter->second->rb, resetVelocities);
+            resetVelocitiesForObject(iter->second->rb, resetVelocities);
 
             iter->second->rb->activate(true);
         }
@@ -651,7 +649,7 @@ namespace Beryll
             if(iter->second->rb->getMotionState())
                 iter->second->rb->getMotionState()->setWorldTransform(t);
 
-            resetVelocitiesForBody(iter->second->rb, resetVelocities);
+            resetVelocitiesForObject(iter->second->rb, resetVelocities);
 
             iter->second->rb->activate(true);
         }
@@ -682,7 +680,7 @@ namespace Beryll
             if(iter->second->rb->getMotionState())
                 iter->second->rb->getMotionState()->setWorldTransform(t);
 
-            resetVelocitiesForBody(iter->second->rb, resetVelocities);
+            resetVelocitiesForObject(iter->second->rb, resetVelocities);
 
             iter->second->rb->activate(true);
         }
@@ -736,7 +734,7 @@ namespace Beryll
         {
             std::scoped_lock<std::mutex> lock (m_mutex);
 
-            resetVelocitiesForBody(iter->second->rb, resetVelocities);
+            resetVelocitiesForObject(iter->second->rb, resetVelocities);
 
             iter->second->rb->activate(true);
 
@@ -758,6 +756,32 @@ namespace Beryll
         }
     }
 
+    bool Physics::getIsObjectActive(const int ID)
+    {
+        auto iter = m_rigidBodiesMap.find(ID);
+        if(iter != m_rigidBodiesMap.end() && iter->second->existInDynamicWorld) // found object by ID and it exist in world
+        {
+            std::scoped_lock<std::mutex> lock (m_mutex);
+
+            int activationState = iter->second->rb->getActivationState();
+
+            if(activationState == ACTIVE_TAG ||
+               activationState == WANTS_DEACTIVATION ||
+               activationState == DISABLE_DEACTIVATION)
+            {
+                return true;
+            }
+
+            return false;
+        }
+        else
+        {
+            BR_ASSERT(false, "Object:{0} not in simulation", ID);
+        }
+
+        return false;
+    }
+
     void Physics::setAngularFactor(const int ID, const glm::vec3& angFactor, bool resetVelocities)
     {
         auto iter = m_rigidBodiesMap.find(ID);
@@ -767,7 +791,7 @@ namespace Beryll
 
             iter->second->rb->setAngularFactor(btVector3(angFactor.x, angFactor.y, angFactor.z));
 
-            resetVelocitiesForBody(iter->second->rb, resetVelocities);
+            resetVelocitiesForObject(iter->second->rb, resetVelocities);
         }
     }
 
@@ -780,7 +804,7 @@ namespace Beryll
 
             iter->second->rb->setLinearFactor(btVector3(linFactor.x, linFactor.y, linFactor.z));
 
-            resetVelocitiesForBody(iter->second->rb, resetVelocities);
+            resetVelocitiesForObject(iter->second->rb, resetVelocities);
         }
     }
 
@@ -793,7 +817,7 @@ namespace Beryll
 
             iter->second->rb->setAngularVelocity(btVector3(angVelocity.x, angVelocity.y, angVelocity.z));
 
-            resetVelocitiesForBody(iter->second->rb, resetVelocities);
+            resetVelocitiesForObject(iter->second->rb, resetVelocities);
         }
     }
 
@@ -806,7 +830,7 @@ namespace Beryll
 
             iter->second->rb->setLinearVelocity(btVector3(linVelocity.x, linVelocity.y, linVelocity.z));
 
-            resetVelocitiesForBody(iter->second->rb, resetVelocities);
+            resetVelocitiesForObject(iter->second->rb, resetVelocities);
         }
     }
 
@@ -828,7 +852,7 @@ namespace Beryll
 
             iter->second->rb->setGravity(btVector3(gravity.x, gravity.y, gravity.z));
 
-            resetVelocitiesForBody(iter->second->rb, resetVelocities);
+            resetVelocitiesForObject(iter->second->rb, resetVelocities);
         }
     }
 
@@ -841,7 +865,7 @@ namespace Beryll
 
             iter->second->rb->setGravity(btVector3(0.0f, 0.0f, 0.0f));
 
-            resetVelocitiesForBody(iter->second->rb, resetVelocities);
+            resetVelocitiesForObject(iter->second->rb, resetVelocities);
         }
     }
 
@@ -854,7 +878,7 @@ namespace Beryll
 
             iter->second->rb->setGravity(m_gravity);
 
-            resetVelocitiesForBody(iter->second->rb, resetVelocities);
+            resetVelocitiesForObject(iter->second->rb, resetVelocities);
         }
     }
 
@@ -920,12 +944,25 @@ namespace Beryll
         return RayAllHits{};
     }
 
-    void Physics::resetVelocitiesForBody(const std::shared_ptr<btRigidBody>& b, bool reset)
+    void Physics::resetVelocitiesForObject(const std::shared_ptr<btRigidBody>& b, bool reset)
     {
         if(!reset) { return; }
 
         b->setLinearVelocity(btVector3(0.0f, 0.0f, 0.0f));
         b->setAngularVelocity(btVector3(0.0f, 0.0f, 0.0f));
         b->clearForces();
+    }
+
+    void Physics::resetVelocitiesForObject(const int ID)
+    {
+        auto iter = m_rigidBodiesMap.find(ID);
+        if(iter != m_rigidBodiesMap.end())
+        {
+            std::scoped_lock<std::mutex> lock (m_mutex);
+
+            iter->second->rb->setLinearVelocity(btVector3(0.0f, 0.0f, 0.0f));
+            iter->second->rb->setAngularVelocity(btVector3(0.0f, 0.0f, 0.0f));
+            iter->second->rb->clearForces();
+        }
     }
 }

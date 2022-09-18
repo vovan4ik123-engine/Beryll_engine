@@ -72,7 +72,10 @@ namespace Beryll
 
         BR_ASSERT(((m_fromOriginToBottom > 0.0f) && (m_fromOriginToTop > 0.0f) && (m_XZradius > 0.0f) && (m_playerHeight > 0.0f)), "Players XYZ dimensions are 0.");
 
-        setAngularFactor(glm::vec3(0.0f, 0.0f, 0.0f), true);
+        m_walkableFloorAngleRadians = glm::radians(walkableFloorAngleDegrees);
+
+        setAngularFactor(glm::vec3(0.0f, 0.0f, 0.0f));
+        setLinearFactor(glm::vec3(1.0f, 1.0f, 1.0f));
     }
 
     CollidingSimplePlayer::~CollidingSimplePlayer()
@@ -85,6 +88,14 @@ namespace Beryll
         // call base class method first
         CollidingSimpleObject::updateBeforePhysics();
 
+        if(m_playerOnGround)
+        {
+            disableGravity(true);
+        }
+        else
+        {
+            enableGravity(true);
+        }
     }
 
     void CollidingSimplePlayer::updateAfterPhysics()
@@ -93,33 +104,37 @@ namespace Beryll
         CollidingSimpleObject::updateAfterPhysics();
 
         //BR_INFO("origin X:{0} Y:{1} Z:{2}", m_origin.x, m_origin.y, m_origin.z);
+        if(!getIsActive())
+        {
+            return;
+        }
+
+        // object is active. that means it should have collisions or drop down in the air
+        m_playerOnGround = false;
+
+        m_bottomCollisionPoint = std::make_pair(glm::vec3(0.0f, std::numeric_limits<float>::max(), 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 
         m_collidingStaticObjects = Physics::getCollisionsWithGroup(m_ID, CollisionGroups::STATIC_ENVIRONMENT);
         if(!m_collidingStaticObjects.empty())
         {
+            resetVelocities();
+
             m_collidingStaticPoints = Physics::getAllCollisionPoints(m_ID, m_collidingStaticObjects);
             for(const std::pair<glm::vec3, glm::vec3>& point : m_collidingStaticPoints)
             {
-                playerOnGround = false;
-                // point.second is normal vector on collision point
-                if(Utils::Common::getAngleInDegrees(Constants::worldUp, point.second) < walkableFloorAngle)
+                if(point.first.y < m_bottomCollisionPoint.first.y)
                 {
+                    m_bottomCollisionPoint = point;
+                }
+
+                // point.second is normal vector on collision point
+                if(Utils::Common::getAngleInRadians(Constants::worldUp, point.second) < m_walkableFloorAngleRadians)
+                {
+                    //BR_INFO("playerOnGround = true");
                     // player stay on allowed floor angle
-                    playerOnGround = true;
-                    break;
+                    m_playerOnGround = true;
                 }
             }
-        }
-
-        if(playerOnGround)
-        {
-            disableGravity(true);
-            setLinearFactor(glm::vec3(0.0f, 0.0f, 0.0f), true);
-        }
-        else
-        {
-            enableGravity(true);
-            setLinearFactor(glm::vec3(1.0f, 1.0f, 1.0f), true);
         }
 
     }
@@ -139,16 +154,65 @@ namespace Beryll
     void CollidingSimplePlayer::move(MoveDirection direction)
     {
         glm::quat rotationPlayerToCamera = Utils::Common::getRotationBetweenVectors(m_eyeDirectionXZ, Camera::getCameraDirectionXZ());
-        addToRotation(rotationPlayerToCamera, true);
+        addToRotation(rotationPlayerToCamera);
         // after rotation
         m_eyeDirectionXZ = Camera::getCameraDirectionXZ(); // should be unit
         m_eyeDirectionXYZ = Camera::getCameraDirectionXYZ();
+        m_backDirectionXZ = Camera::getCameraBackDirectionXZ();
+        m_rightDirectionXZ = Camera::getCameraRightXZ();
+        m_leftDirectionXZ = Camera::getCameraLeftXZ();
 
-        glm::vec3 moveDistance = (m_eyeDirectionXZ * moveSpeed) * TimeStep::getTimeStepSec();
-        if(!playerOnGround)
+        glm::vec3 moveDistance{0.0f};
+
+        if(direction == MoveDirection::FORWARD)
+        {
+            moveDistance = (m_eyeDirectionXZ * moveSpeed) * TimeStep::getTimeStepSec();
+        }
+        else if(direction == MoveDirection::BACKWARD)
+        {
+            moveDistance = (m_backDirectionXZ * moveSpeed) * TimeStep::getTimeStepSec();
+        }
+        else if(direction == MoveDirection::LEFT)
+        {
+            moveDistance = (m_leftDirectionXZ * moveSpeed) * TimeStep::getTimeStepSec();
+        }
+        else if(direction == MoveDirection::RIGHT)
+        {
+            moveDistance = (m_rightDirectionXZ * moveSpeed) * TimeStep::getTimeStepSec();
+        }
+
+        if(m_playerOnGround)
+        {
+            // approximate next allowed collision points on Y axis(up and bottom) after player move based on walkableFloorAngle
+            // if m_playerOnGround == true, m_bottomCollisionPoint.first.y < std::numeric_limits<float>::max() also should be true
+            float approximatedAllowedPositionOnY = glm::tan(m_walkableFloorAngleRadians) * glm::length(moveDistance);
+            approximatedAllowedPositionOnY *= 1.1f; // + 10%
+
+            glm::vec3 newPosApproximatedUp = m_bottomCollisionPoint.first + moveDistance;
+            newPosApproximatedUp.y += approximatedAllowedPositionOnY;
+            glm::vec3 newPosApproximatedDown = m_bottomCollisionPoint.first + moveDistance;
+            newPosApproximatedDown.y -= approximatedAllowedPositionOnY;
+            RayClosestHit newPosYHit = Physics::castRayClosestHit(newPosApproximatedUp, newPosApproximatedDown, CollisionGroups::PLAYER, CollisionGroups::STATIC_ENVIRONMENT);
+
+            if(newPosYHit.hit)
+            {
+                if(m_bottomCollisionPoint.first.y > newPosYHit.hitPoint.y)
+                {
+                    moveDistance.y = -(m_bottomCollisionPoint.first.y - newPosYHit.hitPoint.y);
+                }
+                else
+                {
+                    moveDistance.y = newPosYHit.hitPoint.y - m_bottomCollisionPoint.first.y;
+                }
+            }
+        }
+        else
         {
             moveDistance *= airControlFactor;
         }
+
         addToOrigin(moveDistance);
+
+        m_playerOnGround = false;
     }
 }

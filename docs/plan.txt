@@ -12,7 +12,7 @@ __android_log_print(ANDROID_LOG_DEBUG, "MANIFOLDS", "size: %d", (int)m_manifolds
 not spdlog
 
 
-collision shapes by performance:
+dynamic collision shapes by performance:
 200 items collision Convex  300 ms
 200 items collision Box     180 ms
 200 items collision Sphere  140 ms

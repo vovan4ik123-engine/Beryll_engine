@@ -142,6 +142,24 @@ namespace Beryll
             }
         }
 
+        bool getIsActive()
+        {
+            if(m_hasCollisionObject)
+            {
+                return Physics::getIsObjectActive(m_ID);
+            }
+
+            return false;
+        }
+
+        void resetVelocities()
+        {
+            if(m_hasCollisionObject)
+            {
+                Physics::resetVelocitiesForObject(m_ID);
+            }
+        }
+
         // inherited pure virtual methods are here
 
     protected:

@@ -19,11 +19,12 @@ subject to the following restrictions:
 #include "LinearMath/btTransform.h"
 
 //island management, m_activationState1
-#define ACTIVE_TAG 1
-#define ISLAND_SLEEPING 2
-#define WANTS_DEACTIVATION 3
-#define DISABLE_DEACTIVATION 4
-#define DISABLE_SIMULATION 5
+#define ACTIVE_TAG 1			//  is for active rigid bodies.
+#define ISLAND_SLEEPING 2		// is for deactivated rigid bodies. When objects hardly move for a while it become deactivated.
+#define WANTS_DEACTIVATION 3	// the rigidbody has hardly been moving for several frames, but there are active rigidbodies closeby, so the island cannot be deactivated.
+								// As soon as all objects in an island have the WANTS_DEACTIVATION state, the entire island becomes ISLAND_SLEEPING.
+#define DISABLE_DEACTIVATION 4	// avoid a rigidbody to become deactivated. Handy for main player character
+#define DISABLE_SIMULATION 5	// internally used state when a failure is detected, it stops simulation of rigidbody.
 #define FIXED_BASE_MULTI_BODY 6
 
 struct btBroadphaseProxy;

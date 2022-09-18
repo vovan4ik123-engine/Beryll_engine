@@ -54,7 +54,8 @@ namespace Beryll
 
         // Update layers start
             Window::getInstance()->checkOrientationChange();
-            // set positions of objects here based on user input
+            // first react to user input, set positions of objects, move objects: player->move()
+            // then update objects (let themselves prepare to simulation): GameObject->updateBeforePhysics();
             GameStateMachine::updateBeforePhysics();
 
             Physics::simulate();
