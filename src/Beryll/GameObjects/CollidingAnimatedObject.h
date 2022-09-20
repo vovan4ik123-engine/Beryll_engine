@@ -11,8 +11,6 @@ namespace Beryll
         CollidingAnimatedObject() = delete;
         /*
          * modelPath - path to models file (.DAE or .FBX). start path from first folder inside assets/
-         * canBeDisabled - true if object can be disabled from game (update/draw/playsound/simulate physics)
-         *                 object can be dissabled if camera dont see it or distance is too far. For performance
          * collisionMass - mass of this object for physics simulation. 0 for static objects
          *                 for example map ground should be alwaus enabled
          * wantCollisionCallBack - if true Physics module will store actual collisions for this object,
@@ -28,7 +26,6 @@ namespace Beryll
          *               sampler2D .... for specular texture MUST be second in shader
          */
         CollidingAnimatedObject(const char* modelPath,  // common params
-                                bool canBeDisabled,
                                 float collisionMass,    // physics params
                                 bool wantCollisionCallBack,
                                 CollisionFlags collFlag,

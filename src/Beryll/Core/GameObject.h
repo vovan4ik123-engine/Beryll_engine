@@ -39,11 +39,11 @@ namespace Beryll
 
         void disable()
         {
-            if(m_canBeDisabled)
+            if(m_isEnabled)
             {
                 m_isEnabled = false;
 
-                if(m_hasCollisionObject)
+                if (m_hasCollisionObject)
                     Beryll::Physics::softRemoveObject(m_ID);
             }
         }
@@ -55,8 +55,6 @@ namespace Beryll
 
         // set true for all collision objects
         bool m_hasCollisionObject = false;
-        // some objects can not be disabled from update/draw/playSound/simulation. Ground for example
-        bool m_canBeDisabled = true;
         // disable object for performance
         bool m_isEnabled = true;
     };

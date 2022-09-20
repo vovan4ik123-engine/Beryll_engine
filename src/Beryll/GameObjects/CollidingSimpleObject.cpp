@@ -9,7 +9,6 @@
 namespace Beryll
 {
     CollidingSimpleObject::CollidingSimpleObject(const char* modelPath,
-                                                 bool canBeDisabled,
                                                  float collisionMass,
                                                  bool wantCollisionCallBack,
                                                  CollisionFlags collFlag,
@@ -37,8 +36,6 @@ namespace Beryll
 
         BR_ASSERT((m_scene->mNumMeshes == 2),
                   "Colliding simple object MUST contain 2 meshes {0}. For draw and physics simulation", modelPath);
-
-        m_canBeDisabled = canBeDisabled;
 
         for(int i = 0; i < m_scene->mNumMeshes; ++i)
         {

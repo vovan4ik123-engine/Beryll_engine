@@ -11,7 +11,6 @@
 namespace Beryll
 {
     CollidingAnimatedObject::CollidingAnimatedObject(const char* modelPath,
-                                                     bool canBeDisabled,
                                                      float collisionMass,
                                                      bool wantCollisionCallBack,
                                                      CollisionFlags collFlag,
@@ -40,8 +39,6 @@ namespace Beryll
         BR_INFO("Num meshes:{0}", m_scene->mNumMeshes);
         BR_ASSERT((m_scene->mNumMeshes == 2),
                   "Colliding animated object MUST contain 2 meshes {0}. For draw and physics simulation", modelPath);
-
-        m_canBeDisabled = canBeDisabled;
 
         m_globalInverseMatrix = m_scene->mRootNode->mTransformation;
         m_globalInverseMatrix.Inverse();

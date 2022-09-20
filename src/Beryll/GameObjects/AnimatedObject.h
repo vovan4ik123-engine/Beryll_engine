@@ -11,8 +11,6 @@ namespace Beryll
         AnimatedObject() = delete;
         /*
          * modelPath - path to models file (.DAE or .FBX). start path from first folder inside assets/
-         * canBeDisabled - true if object can be disabled from game (update/draw/playsound/simulate physics)
-         *                 object can be dissabled if camera dont see it or distance is too far. For performance
          * vertexPath - path to vertex shader for this model
          * fragmentPath - path to fragment shader for this model
          * diffSampler - name of sampler2D .... for diffuse texture in fragment shader
@@ -21,7 +19,6 @@ namespace Beryll
          *               sampler2D .... for specular texture MUST be second in shader
          */
         AnimatedObject(const char* modelPath,  // common params
-                       bool canBeDisabled,
                        const char* vertexPath, // graphics params
                        const char* fragmentPath,
                        const char* diffSampler,

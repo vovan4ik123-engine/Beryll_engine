@@ -9,7 +9,6 @@
 namespace Beryll
 {
     SimpleObject::SimpleObject(const char* modelPath,
-                               bool canBeDisabled,
                                const char* vertexPath,
                                const char* fragmentPath,
                                const char* diffSampler,
@@ -32,8 +31,6 @@ namespace Beryll
 
         BR_ASSERT((m_scene->mNumMeshes == 1),
                 "Simple object MUST contain only 1 mesh {0}. Combine into one if you have many", modelPath);
-
-        m_canBeDisabled = canBeDisabled;
 
         // prepare vectors
         std::vector<glm::vec3> vertices;

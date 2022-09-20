@@ -11,7 +11,6 @@
 namespace Beryll
 {
     AnimatedObject::AnimatedObject(const char* modelPath,
-                                   bool canBeDisabled,
                                    const char* vertexPath,
                                    const char* fragmentPath,
                                    const char* diffSampler,
@@ -36,8 +35,6 @@ namespace Beryll
 
         BR_ASSERT((m_scene->HasAnimations()) && (m_scene->mMeshes[0]->mNumBones > 0),
                   "Animated object must have animation + bone");
-
-        m_canBeDisabled = canBeDisabled;
 
         m_globalInverseMatrix = m_scene->mRootNode->mTransformation;
         m_globalInverseMatrix.Inverse();

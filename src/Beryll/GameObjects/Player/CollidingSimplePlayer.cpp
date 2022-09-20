@@ -4,7 +4,6 @@
 namespace Beryll
 {
     CollidingSimplePlayer::CollidingSimplePlayer(const char* modelPath,  // common params
-                          bool canBeDisabled,
                           float collisionMass,    // physics params
                           bool wantCollisionCallBack,
                           CollisionFlags collFlag,
@@ -16,7 +15,6 @@ namespace Beryll
                           const char* specSampler)
                           // call base class constructor
                           : CollidingSimpleObject(modelPath,
-                                                  canBeDisabled,
                                                   collisionMass,
                                                   wantCollisionCallBack,
                                                   collFlag,
