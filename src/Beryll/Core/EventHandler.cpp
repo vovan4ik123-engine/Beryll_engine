@@ -159,7 +159,7 @@ namespace Beryll
         }
         else
         {
-            BR_ASSERT(false, "Reset this event not implemented {0}", static_cast<int>(id));
+            BR_ASSERT(false, "Reset for this event not implemented:%d", static_cast<int>(id));
         }
     }
 }

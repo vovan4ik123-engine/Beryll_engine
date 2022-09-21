@@ -1,7 +1,5 @@
 ---------------------plan:---------------------
 
-store CollisionGroups in gameObjects
-
 update Player
 
 remove spdlog

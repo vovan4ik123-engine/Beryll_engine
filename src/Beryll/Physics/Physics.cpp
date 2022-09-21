@@ -27,7 +27,7 @@ namespace Beryll
     void Physics::create()
     {
         btSetTaskScheduler(btCreateTaskSchedulerForBeryll());
-        BR_INFO("Number of threads on device:{0}", btGetTaskScheduler()->getNumThreads());
+        BR_INFO("Number of threads on device:%d", btGetTaskScheduler()->getNumThreads());
 
         btDefaultCollisionConstructionInfo cci;
         cci.m_defaultMaxPersistentManifoldPoolSize = 40000;
@@ -53,7 +53,7 @@ namespace Beryll
 
     void Physics::simulate()
     {
-        BR_ASSERT((m_dynamicsWorldMT != nullptr), "Create physics before simulate");
+        BR_ASSERT((m_dynamicsWorldMT != nullptr), "%s", "Create physics before simulate");
 
         // dont simulate if disabled or no objects
         // or time after m_timer.reset() is very short (for example we return from state (pause, ...) where simulation was disabled)
@@ -75,8 +75,8 @@ namespace Beryll
         m_dynamicsWorldMT->stepSimulation(m_timeStep,
                                      m_resolutionFactor + 1,
                                      m_timeStep / m_resolutionFactor);
-        //BR_INFO("Simulation objects count:{0}", m_dynamicsWorldMT->getNumCollisionObjects());
-        //BR_INFO("Simulation time millisec:{0}", timer.elapsedMilliSec());
+        //BR_INFO("Simulation objects count:%d", m_dynamicsWorldMT->getNumCollisionObjects());
+        //BR_INFO("Simulation time millisec:%d", timer.elapsedMilliSec());
     }
 
     void Physics::addObject(const std::vector<glm::vec3>& vertices,
@@ -90,7 +90,7 @@ namespace Beryll
                             CollisionGroups collGroup,
                             CollisionGroups collMask)
     {
-        BR_INFO("Physics::addObject name:{0}, mass:{1}, ID:{2}", meshName, mass, objectID);
+        BR_INFO("Physics::addObject name:%s, mass:%f, ID:%d", meshName.c_str(), mass, objectID);
 
         if(meshName.find("CollisionConcaveMesh") != std::string::npos)
         {
@@ -114,7 +114,7 @@ namespace Beryll
         }
         else
         {
-            BR_ASSERT(false, "Collision shape not supported:{0}", meshName);
+            BR_ASSERT(false, "Collision shape not supported:%s", meshName.c_str());
         }
     }
 
@@ -128,8 +128,8 @@ namespace Beryll
                                  CollisionGroups collGroup,
                                  CollisionGroups collMask)
     {
-        BR_ASSERT((mass == 0.0f), "ConcaveMesh can be only static or kinematic. means mass = 0.");
-        BR_ASSERT((collFlag != CollisionFlags::DYNAMIC), "ConcaveMesh can be only static or kinematic.");
+        BR_ASSERT((mass == 0.0f), "%s", "ConcaveMesh can be only static or kinematic. means mass = 0.");
+        BR_ASSERT((collFlag != CollisionFlags::DYNAMIC), "%s", "ConcaveMesh can be only static or kinematic.");
 
         glm::vec3 transl;
         glm::vec3 scale;
@@ -201,7 +201,7 @@ namespace Beryll
                                 CollisionGroups collMask)
     {
         BR_ASSERT(((mass == 0.0f && collFlag != CollisionFlags::DYNAMIC) ||
-                   (mass > 0.0f && collFlag == CollisionFlags::DYNAMIC)), "Wrong parameters for convex mesh.");
+                   (mass > 0.0f && collFlag == CollisionFlags::DYNAMIC)), "%s", "Wrong parameters for convex mesh.");
 
         glm::vec3 transl;
         glm::vec3 scale;
@@ -257,7 +257,7 @@ namespace Beryll
                               CollisionGroups collMask)
     {
         BR_ASSERT(((mass == 0.0f && collFlag != CollisionFlags::DYNAMIC) ||
-                   (mass > 0.0f && collFlag == CollisionFlags::DYNAMIC)), "Wrong parameters for box shape.");
+                   (mass > 0.0f && collFlag == CollisionFlags::DYNAMIC)), "%s", "Wrong parameters for box shape.");
 
         glm::vec3 transl;
         glm::vec3 scale;
@@ -329,14 +329,14 @@ namespace Beryll
                         CollisionGroups collMask)
     {
         BR_ASSERT(((mass == 0.0f && collFlag != CollisionFlags::DYNAMIC) ||
-                   (mass > 0.0f && collFlag == CollisionFlags::DYNAMIC)), "Wrong parameters for sphere shape.");
+                   (mass > 0.0f && collFlag == CollisionFlags::DYNAMIC)), "%s", "Wrong parameters for sphere shape.");
 
         glm::vec3 transl;
         glm::vec3 scale;
         glm::quat rot;
         Utils::Matrix::decompose4x4Glm(transforms, scale, rot, transl);
 
-        BR_ASSERT((vertices.empty() == false), "Vertices empty.")
+        BR_ASSERT((vertices.empty() == false), "%s", "Vertices empty.")
         glm::vec3 point = glm::vec3(vertices[0].x * scale.x, vertices[0].y * scale.y, vertices[0].z * scale.z);
         float radius = glm::distance(glm::vec3(0.0f, 0.0f, 0.0f), point);
 
@@ -381,7 +381,7 @@ namespace Beryll
                                 CollisionGroups collMask)
     {
         BR_ASSERT(((mass == 0.0f && collFlag != CollisionFlags::DYNAMIC) ||
-                   (mass > 0.0f && collFlag == CollisionFlags::DYNAMIC)), "Wrong parameters for capsule shape.");
+                   (mass > 0.0f && collFlag == CollisionFlags::DYNAMIC)), "%s", "Wrong parameters for capsule shape.");
 
         // original capsule position should be around the Y axis
 
@@ -596,7 +596,7 @@ namespace Beryll
         }
         else
         {
-            BR_ASSERT(false, "Can not set origin for {0}", ID);
+            BR_ASSERT(false, "Can not set origin for ID:%d", ID);
         }
     }
 
@@ -625,7 +625,7 @@ namespace Beryll
         }
         else
         {
-            BR_ASSERT(false, "Can not add to origin for {0}", ID);
+            BR_ASSERT(false, "Can not add to origin for ID:%d", ID);
         }
     }
 
@@ -655,7 +655,7 @@ namespace Beryll
         }
         else
         {
-            BR_ASSERT(false, "Can not set rotation for {0}", ID);
+            BR_ASSERT(false, "Can not set rotation for ID:%d", ID);
         }
     }
 
@@ -686,7 +686,7 @@ namespace Beryll
         }
         else
         {
-            BR_ASSERT(false, "Can not set rotation for {0}", ID);
+            BR_ASSERT(false, "Can not set rotation for ID:%d", ID);
         }
     }
 
@@ -709,7 +709,7 @@ namespace Beryll
         }
         else
         {
-            BR_ASSERT(false, "Can not find transforms for {0}", ID);
+            BR_ASSERT(false, "Can not find transforms for ID:%d", ID);
         }
 
         return physicsTransforms;
@@ -776,7 +776,7 @@ namespace Beryll
         }
         else
         {
-            BR_ASSERT(false, "Object:{0} not in simulation", ID);
+            BR_ASSERT(false, "Object:%d not in simulation", ID);
         }
 
         return false;

@@ -19,7 +19,7 @@ namespace Beryll
                                                  const char* diffSampler,
                                                  const char* specSampler)
     {
-        BR_INFO("Loading colliding simple object:{0}", modelPath);
+        BR_INFO("Loading colliding simple object:%s", modelPath);
 
         uint32_t bufferSize = 0;
         char* buffer = Utils::File::readToBuffer(modelPath, &bufferSize);
@@ -31,11 +31,11 @@ namespace Beryll
 
         if( !m_scene || !m_scene->mRootNode || m_scene->mFlags == AI_SCENE_FLAGS_INCOMPLETE)
         {
-            BR_ASSERT(false, "Scene loading error for file {0}", modelPath);
+            BR_ASSERT(false, "Scene loading error for file:%s", modelPath);
         }
 
         BR_ASSERT((m_scene->mNumMeshes == 2),
-                  "Colliding simple object MUST contain 2 meshes {0}. For draw and physics simulation", modelPath);
+                  "Colliding simple object:%s MUST contain 2 meshes. For draw and physics simulation", modelPath);
 
         for(int i = 0; i < m_scene->mNumMeshes; ++i)
         {
@@ -116,7 +116,7 @@ namespace Beryll
                 aiMaterial* material = m_scene->mMaterials[m_scene->mMeshes[i]->mMaterialIndex];
 
                 const std::string mP = modelPath;
-                BR_ASSERT((mP.find_last_of('/') != std::string::npos), "Texture + model must be in folder:{0}", mP);
+                BR_ASSERT((mP.find_last_of('/') != std::string::npos), "Texture + model must be in folder:%s", mP.c_str());
 
                 std::string texturePath;
 
@@ -128,7 +128,7 @@ namespace Beryll
                     texturePath = mP.substr(0, mP.find_last_of('/'));
                     texturePath += '/';
                     texturePath += textName.C_Str();
-                    BR_INFO("Diffuse texture here:{0}", texturePath);
+                    BR_INFO("Diffuse texture here:%s", texturePath.c_str());
 
                     m_shader->activateTexture(diffSampler, m_diffSamplerIndexInShader);
 
@@ -143,7 +143,7 @@ namespace Beryll
                     texturePath = mP.substr(0, mP.find_last_of('/'));
                     texturePath += '/';
                     texturePath += textName.C_Str();
-                    BR_INFO("Specular texture here:{0}", texturePath);
+                    BR_INFO("Specular texture here:%s", texturePath.c_str());
 
                     m_shader->activateTexture(specSampler, m_specSamplerIndexInShader);
 

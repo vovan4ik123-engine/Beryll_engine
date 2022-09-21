@@ -17,7 +17,7 @@ namespace Beryll
         }
         else
         {
-            BR_ASSERT(false, "Can not create ImGUI. Unknown platform.");
+            BR_ASSERT(false, "%s", "Can not create ImGUI. Unknown platform.");
         }
     }
 }

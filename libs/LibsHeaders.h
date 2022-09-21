@@ -4,16 +4,13 @@
 // include this file only inside engine
 
 #include "SDL2/include/SDL.h"
+#include "SDL2/include/SDL_log.h"
 
 #include "SDL2_image/SDL_image.h"
 
 #include "SDL2_mixer/include/SDL_mixer.h"
 
 #include "SDL2_net/SDL_net.h"
-
-#include "spdlog/spdlog.h"
-#include "spdlog/logger.h"
-#include "spdlog/sinks/android_sink.h"
 
 #include "glm/glm.hpp"
 #include "glm/gtc/type_ptr.hpp"

@@ -37,7 +37,7 @@ namespace Beryll
 
     void GameLoop::run()
     {
-        BR_INFO("GameLoop started");
+        BR_INFO("%s", "GameLoop started");
 
         m_isRun = true;
         m_loopTime = 1000 / m_maxFPS; // millisec
@@ -92,6 +92,6 @@ namespace Beryll
             }
         }
 
-        BR_INFO("GameLoop stopped");
+        BR_INFO("%s", "GameLoop stopped");
     }
 }

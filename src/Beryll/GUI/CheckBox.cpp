@@ -7,7 +7,7 @@ namespace Beryll
     CheckBox::CheckBox(std::string text, float left, float top)
         : m_text(std::move(text)), m_leftPos(left / 100.0f), m_topPos(top / 100.0f)
     {
-        BR_ASSERT((left >= 0 && left <= 100) && (top >= 0 && top <= 100), "Wrong Check box position");
+        BR_ASSERT((left >= 0 && left <= 100) && (top >= 0 && top <= 100), "%s", "Wrong Check box position");
     }
 
     CheckBox::~CheckBox()

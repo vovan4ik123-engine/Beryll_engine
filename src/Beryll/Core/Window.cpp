@@ -16,7 +16,7 @@ namespace Beryll
         }
         else
         {
-            BR_ASSERT(false, "Can not create Window. Unknown platform.");
+            BR_ASSERT(false, "%s", "Can not create Window. Unknown platform.");
         }
     }
 }

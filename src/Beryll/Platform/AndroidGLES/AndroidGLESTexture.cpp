@@ -11,13 +11,13 @@ namespace Beryll
     AndroidGLESTexture::AndroidGLESTexture(const char* path, uint32_t indexInShader)
     {
         const std::string strPath = path;
-        BR_ASSERT((strPath.find_last_of('.') != std::string::npos), "Texture does not have extension:{0}", strPath);
+        BR_ASSERT((strPath.find_last_of('.') != std::string::npos), "Texture does not have extension:%s", strPath.c_str());
 
         std::string extension = strPath.substr(strPath.find_last_of('.'));
-        BR_ASSERT(((extension == ".png") || (extension == ".jpg")), "Supported only .png or .jpg textures:{0}", strPath);
+        BR_ASSERT(((extension == ".png") || (extension == ".jpg")), "Supported only .png or .jpg textures:%s", strPath.c_str());
 
         // only two sampler2D supports for now (0 = diffuse, 1 = specular)
-        BR_ASSERT(((indexInShader == 0) || (indexInShader == 1)), "Pass correct index of sampler2D for texture");
+        BR_ASSERT(((indexInShader == 0) || (indexInShader == 1)), "%s", "Pass correct index of sampler2D for texture");
 
         m_indexInShader = indexInShader;
 
@@ -30,10 +30,10 @@ namespace Beryll
         }
 
         SDL_RWops* rw = SDL_RWFromFile(strPath.c_str(), "rb");
-        BR_ASSERT((rw != nullptr), "Load texture failed:{0}", strPath);
+        BR_ASSERT((rw != nullptr), "Load texture failed:%s", strPath.c_str());
 
         SDL_Surface* surface = IMG_Load_RW(rw, 1);
-        BR_ASSERT((surface != nullptr), "Create surface failed:{0}", strPath);
+        BR_ASSERT((surface != nullptr), "Create surface failed:%s", strPath.c_str());
 
         glGenTextures(1, &m_textureID);
         glBindTexture(GL_TEXTURE_2D, m_textureID);

@@ -21,7 +21,7 @@ namespace Beryll
                                                      const char* diffSampler,
                                                      const char* specSampler)
     {
-        BR_INFO("Loading colliding animated object:{0}", modelPath);
+        BR_INFO("Loading colliding animated object:%s", modelPath);
 
         uint32_t bufferSize = 0;
         char *buffer = Utils::File::readToBuffer(modelPath, &bufferSize);
@@ -33,12 +33,12 @@ namespace Beryll
 
         if (!m_scene || !m_scene->mRootNode || m_scene->mFlags == AI_SCENE_FLAGS_INCOMPLETE)
         {
-            BR_ASSERT(false, "Scene loading error for file:{0}", modelPath);
+            BR_ASSERT(false, "Scene loading error for file:%s", modelPath);
         }
 
-        BR_INFO("Num meshes:{0}", m_scene->mNumMeshes);
+        BR_INFO("Num meshes:%d", m_scene->mNumMeshes);
         BR_ASSERT((m_scene->mNumMeshes == 2),
-                  "Colliding animated object MUST contain 2 meshes {0}. For draw and physics simulation", modelPath);
+                  "Colliding animated object:%s MUST contain 2 meshes. For draw and physics simulation", modelPath);
 
         m_globalInverseMatrix = m_scene->mRootNode->mTransformation;
         m_globalInverseMatrix.Inverse();
@@ -57,7 +57,7 @@ namespace Beryll
             }
 
             BR_ASSERT((m_scene->HasAnimations()) && (m_scene->mMeshes[i]->mNumBones > 0),
-                      "Colliding animated object must have animation + bone");
+                      "%s", "Colliding animated object must have animation + bone");
 
             // prepare vectors
             std::vector<glm::vec3> vertices;
@@ -115,7 +115,7 @@ namespace Beryll
                 auto iter = m_boneNameIndex.find(boneName);
                 if (iter != m_boneNameIndex.end())
                 {
-                    BR_ASSERT(false, "Many bones have same name in one model:{0}", modelPath);
+                    BR_ASSERT(false, "Many bones have same name in one model:%s", modelPath);
                 }
                 else
                 {
@@ -169,7 +169,7 @@ namespace Beryll
                 aiMaterial *material = m_scene->mMaterials[m_scene->mMeshes[i]->mMaterialIndex];
 
                 const std::string mP = modelPath;
-                BR_ASSERT((mP.find_last_of('/') != std::string::npos), "Texture + model must be in folder:{0}", mP);
+                BR_ASSERT((mP.find_last_of('/') != std::string::npos), "Texture + model must be in folder:%s", mP.c_str());
 
                 std::string texturePath;
 
@@ -181,7 +181,7 @@ namespace Beryll
                     texturePath = mP.substr(0, mP.find_last_of('/'));
                     texturePath += '/';
                     texturePath += textName.C_Str();
-                    BR_INFO("Diffuse texture here:{0}", texturePath);
+                    BR_INFO("Diffuse texture here:%s", texturePath.c_str());
 
                     m_shader->activateTexture(diffSampler, m_diffSamplerIndexInShader);
 
@@ -196,7 +196,7 @@ namespace Beryll
                     texturePath = mP.substr(0, mP.find_last_of('/'));
                     texturePath += '/';
                     texturePath += textName.C_Str();
-                    BR_INFO("Specular texture here:{0}", texturePath);
+                    BR_INFO("Specular texture here:%s", texturePath.c_str());
 
                     m_shader->activateTexture(specSampler, m_specSamplerIndexInShader);
 
@@ -208,7 +208,7 @@ namespace Beryll
             for(int g = 0; g < m_scene->mNumAnimations; ++g)
             {
                 m_animationNameIndex.insert(std::make_pair(m_scene->mAnimations[g]->mName.C_Str(), g));
-                BR_INFO("Have animation {0} with name:{1}", g, m_scene->mAnimations[g]->mName.C_Str());
+                BR_INFO("Have animation %d with name:%s", g, m_scene->mAnimations[g]->mName.C_Str());
             }
 
             const aiNode *node = Utils::Common::findAinodeForAimesh(m_scene, m_scene->mRootNode, m_scene->mMeshes[i]->mName);
@@ -297,9 +297,8 @@ namespace Beryll
 
         if(nodeAnim)
         {
-            // BR_INFO("nodeAnim->mNumScalingKeys:{0}", nodeAnim->mNumScalingKeys);
-            BR_ASSERT((nodeAnim->mNumScalingKeys == nodeAnim->mNumPositionKeys), "mNumScalingKeys != mNumPositionKeys");
-            BR_ASSERT((nodeAnim->mNumScalingKeys == nodeAnim->mNumRotationKeys), "mNumScalingKeys != mNumRotationKeys");
+            BR_ASSERT((nodeAnim->mNumScalingKeys == nodeAnim->mNumPositionKeys), "%s", "mNumScalingKeys != mNumPositionKeys");
+            BR_ASSERT((nodeAnim->mNumScalingKeys == nodeAnim->mNumRotationKeys), "%s", "mNumScalingKeys != mNumRotationKeys");
 
             int currentFrameIndex = 0;
             for(int i = 0; i < nodeAnim->mNumPositionKeys - 1; ++i) // will use i + 1
@@ -312,14 +311,14 @@ namespace Beryll
             }
 
             int nextFrameIndex = currentFrameIndex + 1;
-            BR_ASSERT((nextFrameIndex < nodeAnim->mNumPositionKeys), "nextFrameIndex ! < nodeAnim->mNumPositionKeys");
+            BR_ASSERT((nextFrameIndex < nodeAnim->mNumPositionKeys), "%s", "nextFrameIndex ! < nodeAnim->mNumPositionKeys");
 
             float deltaTime = static_cast<float>(nodeAnim->mPositionKeys[nextFrameIndex].mTime) -
                               static_cast<float>(nodeAnim->mPositionKeys[currentFrameIndex].mTime);
             // factor = how much time passed between current and next frame in range 0...1
             float factor = (animationTime - static_cast<float>(nodeAnim->mPositionKeys[currentFrameIndex].mTime)) / deltaTime;
             BR_ASSERT((factor >= 0.0f && factor <= 1.0f),
-                      "Translation factor must be in range 0...1. Factor:{0}, mTime:{1}, currentFrameIndex:{2}",
+                      "Translation factor must be in range 0...1. Factor:%f, mTime:%f, currentFrameIndex:%d",
                       factor, nodeAnim->mPositionKeys[currentFrameIndex].mTime, currentFrameIndex);
 
             aiMatrix4x4 scalingMatr = interpolateScaling(nodeAnim, currentFrameIndex, nextFrameIndex, factor);
@@ -440,7 +439,7 @@ namespace Beryll
         }
         else
         {
-            BR_ASSERT(false, "Animation with name:{0} does not exist", name);
+            BR_ASSERT(false, "Animation with name:%s does not exist", name);
         }
     }
 

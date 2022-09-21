@@ -12,23 +12,23 @@ namespace Beryll
         // MIX_DEFAULT_FREQUENCY = sample rate = frequency = speed playing				// size (speed playing )
         if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, MIX_CHANNELS, 1024) == -1)
         {
-            BR_ASSERT(false, "SDL mixer init error");
+            BR_ASSERT(false, "%s", "SDL mixer init error");
         }
     }
 
     void SoundsManager::loadWAV(const char* path)
     {
         const std::string strPath = path;
-        BR_ASSERT((strPath.find_last_of('.') != std::string::npos), "Sound does not have extension:{0}", strPath);
+        BR_ASSERT((strPath.find_last_of('.') != std::string::npos), "Sound does not have extension:%s", path);
 
         std::string extension = strPath.substr(strPath.find_last_of('.'));
-        BR_ASSERT((extension == ".wav"), "loadWAV() loads only .wav sounds");
+        BR_ASSERT((extension == ".wav"), "%s", "loadWAV() loads only .wav sounds");
 
         auto result =  m_WAVs.find(strPath);
         if(result != m_WAVs.end()) { return; }
 
         Mix_Chunk* wavSound = Mix_LoadWAV(path);
-        BR_ASSERT((wavSound != nullptr), "Create Mix_Chunk failed:{0}", strPath);
+        BR_ASSERT((wavSound != nullptr), "Create Mix_Chunk failed:%s", path);
 
         Mix_VolumeChunk(wavSound, MIX_MAX_VOLUME / 2);
 
@@ -47,16 +47,16 @@ namespace Beryll
     void SoundsManager::loadBackgroundMP3(const char* path)
     {
         const std::string strPath = path;
-        BR_ASSERT((strPath.find_last_of('.') != std::string::npos), "Sound does not have extension:{0}", strPath);
+        BR_ASSERT((strPath.find_last_of('.') != std::string::npos), "Sound does not have extension:%s", path);
 
         std::string extension = strPath.substr(strPath.find_last_of('.'));
-        BR_ASSERT((extension == ".mp3"), "loadBackgroundMP3() loads only .mp3 sounds");
+        BR_ASSERT((extension == ".mp3"), "%s", "loadBackgroundMP3() loads only .mp3 sounds");
 
         auto result =  m_MP3s.find(strPath);
         if(result != m_MP3s.end()) { return; }
 
         Mix_Music* music = Mix_LoadMUS(path);
-        BR_ASSERT((music != nullptr), "Create Mix_Music failed:{0}", strPath);
+        BR_ASSERT((music != nullptr), "Create Mix_Music failed:%s", path);
 
         Mix_VolumeMusic(64); // volume from 0 to 128
 

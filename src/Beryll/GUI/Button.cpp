@@ -10,7 +10,7 @@ namespace Beryll
         : m_text(std::move(text)), m_leftPos(left / 100.0f), m_topPos(top / 100.0f), m_width(width / 100.0f), m_height(height / 100.0f)
     {
         BR_ASSERT((left >= 0.0f && left <= 100.0f) && (top >= 0.0f && top <= 100.0f)
-                &&(width >= 0.0f && width <= 100.0f) && (height >= 0.0f && height <= 100.0f), "Wrong button size or position")
+                &&(width >= 0.0f && width <= 100.0f) && (height >= 0.0f && height <= 100.0f), "%s", "Wrong button size or position")
 
         m_actRepeat = actRepeat;
     }

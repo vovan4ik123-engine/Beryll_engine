@@ -8,7 +8,7 @@ namespace Beryll
     {
         if (SDL_Init(SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_SENSOR) < 0)
         {
-            BR_ASSERT(false, "SDL init error");
+            BR_ASSERT(false, "%s", "SDL init error");
         }
 
         // SET ATTRIBUTE ONLY after initialize
@@ -53,7 +53,7 @@ namespace Beryll
                                         SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN | SDL_WINDOW_RESIZABLE);
         }
 
-        BR_ASSERT((m_window != nullptr), "m_window == nullptr");
+        BR_ASSERT((m_window != nullptr), "%s", "m_window == nullptr");
 
         m_glContext = SDL_GL_CreateContext(m_window);
         SDL_GL_MakeCurrent(m_window, m_glContext);
@@ -67,7 +67,7 @@ namespace Beryll
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // src alpha for src color, 1 - src alpha for destination color
 
-        BR_INFO("AndroidGLESWindow created and initialized. width:{0}, height:{1}", m_screenWidth, m_screenHeight);
+        BR_INFO("AndroidGLESWindow created and initialized. width:%d, height:%d", m_screenWidth, m_screenHeight);
     }
 
     AndroidGLESWindow::~AndroidGLESWindow()
@@ -76,7 +76,7 @@ namespace Beryll
         SDL_DestroyWindow(m_window);
         SDL_Quit();
 
-        BR_INFO("AndroidGLESWindow destroyed + SDL_Quit");
+        BR_INFO("%s", "AndroidGLESWindow destroyed + SDL_Quit");
     }
 
     void AndroidGLESWindow::reCreate()
@@ -94,7 +94,7 @@ namespace Beryll
                                     m_screenWidth, m_screenHeight,
                                     SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN | SDL_WINDOW_RESIZABLE);
 
-        BR_ASSERT((m_window != nullptr), "m_window == nullptr");
+        BR_ASSERT((m_window != nullptr), "%s", "m_window == nullptr");
 
         SDL_GL_MakeCurrent(m_window, m_glContext); // set old context for new window
 
@@ -107,7 +107,7 @@ namespace Beryll
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        BR_INFO("AndroidGLESWindow re created. width:{0}, height:{1}", m_screenWidth, m_screenHeight);
+        BR_INFO("AndroidGLESWindow re created. width:%d, height:%d", m_screenWidth, m_screenHeight);
     }
 
     void AndroidGLESWindow::checkOrientationChange()

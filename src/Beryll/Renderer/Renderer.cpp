@@ -17,7 +17,7 @@ namespace Beryll
         }
         else
         {
-            BR_ASSERT(false, "Can not create VertexBuffer. Unknown platform.");
+            BR_ASSERT(false, "%s", "Can not create VertexBuffer. Unknown platform.");
             return nullptr;
         }
     }
@@ -30,7 +30,7 @@ namespace Beryll
         }
         else
         {
-            BR_ASSERT(false, "Can not create VertexBuffer. Unknown platform.");
+            BR_ASSERT(false, "%s", "Can not create VertexBuffer. Unknown platform.");
             return nullptr;
         }
     }
@@ -43,7 +43,7 @@ namespace Beryll
         }
         else
         {
-            BR_ASSERT(false, "Can not create VertexBuffer. Unknown platform.");
+            BR_ASSERT(false, "%s", "Can not create VertexBuffer. Unknown platform.");
             return nullptr;
         }
     }
@@ -56,7 +56,7 @@ namespace Beryll
         }
         else
         {
-            BR_ASSERT(false, "Can not create VertexBuffer. Unknown platform.");
+            BR_ASSERT(false, "%s", "Can not create VertexBuffer. Unknown platform.");
             return nullptr;
         }
     }
@@ -69,7 +69,7 @@ namespace Beryll
         }
         else
         {
-            BR_ASSERT(false, "Can not create IndexBuffer. Unknown platform.");
+            BR_ASSERT(false, "%s", "Can not create IndexBuffer. Unknown platform.");
             return nullptr;
         }
     }
@@ -82,7 +82,7 @@ namespace Beryll
         }
         else
         {
-            BR_ASSERT(false, "Can not create VertexArray. Unknown platform.");
+            BR_ASSERT(false, "%s", "Can not create VertexArray. Unknown platform.");
             return nullptr;
         }
     }
@@ -95,7 +95,7 @@ namespace Beryll
         }
         else
         {
-            BR_ASSERT(false, "Can not create Shader. Unknown platform.");
+            BR_ASSERT(false, "%s", "Can not create Shader. Unknown platform.");
             return nullptr;
         }
     }
@@ -108,7 +108,7 @@ namespace Beryll
         }
         else
         {
-            BR_ASSERT(false, "Can not create Texture. Unknown platform.");
+            BR_ASSERT(false, "%s", "Can not create Texture. Unknown platform.");
             return nullptr;
         }
     }

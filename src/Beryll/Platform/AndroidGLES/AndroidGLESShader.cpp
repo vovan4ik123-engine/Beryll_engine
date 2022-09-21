@@ -42,9 +42,9 @@ namespace Beryll
 
             char* log = new char[len + 1];
             glGetShaderInfoLog(vertexShaderID, len, &len, log); // fill log
-            BR_ERROR("Vertex Shader failed:{0}", log);
+            BR_ERROR("Vertex Shader failed:%s", log);
             delete[] log;
-            BR_ASSERT(false, "Vertex Shader failed");
+            BR_ASSERT(false, "%s", "Vertex Shader failed");
         }
 
         glCompileShader(fragmentShaderID);
@@ -56,9 +56,9 @@ namespace Beryll
 
             char* log = new char[len + 1];
             glGetShaderInfoLog(fragmentShaderID, len, &len, log); // fill log
-            BR_ERROR("Fragment Shader failed:{0}", log);
+            BR_ERROR("Fragment Shader failed:%s", log);
             delete[] log;
-            BR_ASSERT(false, "Fragment Shader failed");
+            BR_ASSERT(false, "%s", "Fragment Shader failed");
         }
 
         m_shaderProgram = glCreateProgram();

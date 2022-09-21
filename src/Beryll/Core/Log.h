@@ -1,37 +1,9 @@
 #pragma once
 
+#if defined(BR_DEBUG)
+
 #include "LibsHeaders.h"
 #include "CppHeaders.h"
-
-namespace Beryll
-{
-    class Log
-    {
-    public:
-        static Log* inst()
-        {
-            static Log instance;
-            return &instance;
-        }
-
-#if defined(ANDROID)
-        std::shared_ptr<spdlog::logger> getAndroidLogger()
-        {
-            return m_androidLogger;
-        }
-#endif
-
-    private:
-        Log() {};
-        ~Log() {};
-
-#if defined(ANDROID)
-        std::shared_ptr<spdlog::logger> m_androidLogger = spdlog::android_logger_mt("android", "spdlog-android");
-#endif
-    };
-}
-
-#if defined(BR_DEBUG)
 
     static std::mutex globalLogMutex;
 
@@ -66,7 +38,7 @@ namespace Beryll
             strForm += FIND_FIRST_ARG(__VA_ARGS__);   \
             {                \
                 std::scoped_lock<std::mutex> logLock(globalLogMutex);                 \
-                Beryll::Log::inst()->getAndroidLogger()->info(strForm GET_ARGS(__VA_ARGS__) \
+                SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, strForm.c_str() GET_ARGS(__VA_ARGS__) \
             }                 \
         }
         #define BR_WARN(...) \
@@ -80,7 +52,7 @@ namespace Beryll
             strForm += FIND_FIRST_ARG(__VA_ARGS__);   \
             {                \
                 std::scoped_lock<std::mutex> logLock(globalLogMutex);                 \
-                Beryll::Log::inst()->getAndroidLogger()->warn(strForm GET_ARGS(__VA_ARGS__) \
+                SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, strForm.c_str() GET_ARGS(__VA_ARGS__) \
             }                  \
         }
         #define BR_ERROR(...) \
@@ -94,11 +66,11 @@ namespace Beryll
             strForm += FIND_FIRST_ARG(__VA_ARGS__);   \
             {                \
                 std::scoped_lock<std::mutex> logLock(globalLogMutex);                 \
-                Beryll::Log::inst()->getAndroidLogger()->error(strForm GET_ARGS(__VA_ARGS__) \
+                SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, strForm.c_str() GET_ARGS(__VA_ARGS__) \
             }                   \
         }
 
-        #define BR_ASSERT(condition, ...) { if(condition == false) { BR_ERROR(__VA_ARGS__); assert(condition); } }
+        #define BR_ASSERT(condition, ...) { if(condition == false) { BR_ERROR(__VA_ARGS__); assert(false); } }
 
     #else // if defined(BR_DEBUG) but unknown platform
 
@@ -118,9 +90,11 @@ namespace Beryll
 
 #endif // BR_DEBUG
 
-// Exapmles
-// ... = formatted string + parameters or usual string
-// BR_INFO("Info with param:{0} second:{1} {2} {3} -- == -{4}", "info1", 434.344f, 3, 4, 5);
-// BR_WARN("Warn with param {0}", "warn1");
-// BR_ERROR("Error with param {0}", "error1");
-// BR_ASSERT(false, "message before assert {0} {1}", "some info", 123);
+// max number of argument in format string = 5
+// example of string with 3 arguments
+// format string: "str:%s int:%d float:%f, "qwe", 12, 4.1234
+
+// %s = const char*
+// %f = float
+// %d = int
+

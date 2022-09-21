@@ -26,7 +26,7 @@ namespace Beryll
 
         static std::unique_ptr<MainImGUI>& getInstance()
         {
-            BR_ASSERT((m_imGUI != nullptr), "MainImGUI is not created. Use MainImGUI::create() first");
+            BR_ASSERT((m_imGUI != nullptr), "%s", "MainImGUI is not created. Use MainImGUI::create() first");
             return m_imGUI;
         }
 

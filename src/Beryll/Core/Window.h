@@ -22,7 +22,7 @@ namespace Beryll
 
         static std::unique_ptr<Window>& getInstance()
         {
-            BR_ASSERT((m_window != nullptr), "Window is not created. Use Window::create() first");
+            BR_ASSERT((m_window != nullptr), "%s", "Window is not created. Use Window::create() first");
             return m_window;
         }
 

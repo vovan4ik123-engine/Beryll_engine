@@ -66,9 +66,9 @@ namespace Beryll
             }
         }
 
-        BR_INFO("m_fromOriginToTop:{0}, m_fromOriginToBottom:{1}, m_playerHeight{2}", m_fromOriginToTop, m_fromOriginToBottom, m_playerHeight);
+        BR_INFO("m_fromOriginToTop:%f, m_fromOriginToBottom:%f, m_playerHeight:%f", m_fromOriginToTop, m_fromOriginToBottom, m_playerHeight);
 
-        BR_ASSERT(((m_fromOriginToBottom > 0.0f) && (m_fromOriginToTop > 0.0f) && (m_XZradius > 0.0f) && (m_playerHeight > 0.0f)), "Players XYZ dimensions are 0.");
+        BR_ASSERT(((m_fromOriginToBottom > 0.0f) && (m_fromOriginToTop > 0.0f) && (m_XZradius > 0.0f) && (m_playerHeight > 0.0f)), "%s", "Players XYZ dimensions are 0.");
 
         setAngularFactor(glm::vec3(0.0f, 0.0f, 0.0f));
         setLinearFactor(glm::vec3(1.0f, 1.0f, 1.0f));
@@ -99,7 +99,7 @@ namespace Beryll
         // call base class method first
         CollidingSimpleObject::updateAfterPhysics();
 
-        //BR_INFO("origin X:{0} Y:{1} Z:{2}", m_origin.x, m_origin.y, m_origin.z);
+        //BR_INFO("origin X:%d Y:%d Z:%d", m_origin.x, m_origin.y, m_origin.z);
         if(!getIsActive())
         {
             return;
