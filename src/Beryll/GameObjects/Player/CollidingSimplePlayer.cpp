@@ -124,7 +124,7 @@ namespace Beryll
                 }
 
                 // point.second is normal vector on collision point
-                if(Utils::Common::getAngleInRadians(Constants::worldUp, point.second) < walkableFloorAngleRadians)
+                if(Utils::Common::getAngleInRadians(BeryllConstants::worldUp, point.second) < walkableFloorAngleRadians)
                 {
                     //BR_INFO("playerOnGround = true");
                     // player stay on allowed floor angle

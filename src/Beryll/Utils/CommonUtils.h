@@ -2,7 +2,7 @@
 
 #include "LibsHeaders.h"
 #include "CppHeaders.h"
-#include "Beryll/Core/Constants.h"
+#include "Beryll/Core/BeryllConstants.h"
 
 namespace Utils
 {
@@ -72,7 +72,7 @@ namespace Utils
         // v2 <-----|
         static bool getIsVectorOnRightSide(const glm::vec3& v1, const glm::vec3& v2)
         {
-            const glm::vec3 rightVector = glm::normalize(glm::cross(v1, Constants::worldUp));
+            const glm::vec3 rightVector = glm::normalize(glm::cross(v1, BeryllConstants::worldUp));
 
             if(glm::acos(glm::dot(rightVector, v2)) < glm::half_pi<float>())
                 return true;

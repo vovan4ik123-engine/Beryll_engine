@@ -50,6 +50,8 @@ namespace Beryll
             if(meshName.find("Collision") != std::string::npos)
             {
                 m_hasCollisionObject = true;
+                m_collisionGroup = collGroup;
+
                 processCollisionMesh(m_scene->mMeshes[i], meshName, collisionMass, wantCollisionCallBack, collFlag, collGroup, collMask);
                 continue;
             }

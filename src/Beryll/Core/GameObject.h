@@ -25,6 +25,7 @@ namespace Beryll
         const glm::vec3& getOrigin() { return m_origin; }
         bool getHasCollisionObject() { return m_hasCollisionObject; }
         bool getIsEnabled() { return m_isEnabled; } // use it for disable object from update/draw/sound loops
+        CollisionGroups getCollisionGroup() { return m_collisionGroup; }
 
         void enable()
         {
@@ -50,12 +51,9 @@ namespace Beryll
 
     protected:
         const int m_ID = Utils::Common::generateID(); // unique
-
         glm::vec3 m_origin{0.0f};
-
-        // set true for all collision objects
-        bool m_hasCollisionObject = false;
-        // disable object for performance
-        bool m_isEnabled = true;
+        bool m_hasCollisionObject = false; // set true for all collision objects
+        CollisionGroups m_collisionGroup = CollisionGroups::NONE; // set inside colliding objects
+        bool m_isEnabled = true; // disable object for performance
     };
 }

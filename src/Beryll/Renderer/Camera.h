@@ -100,7 +100,7 @@ namespace Beryll
             m_cameraBackDirectionXYZ = -m_cameraDirectionXYZ;
             m_cameraBackDirectionXZ = glm::normalize(glm::vec3(m_cameraBackDirectionXYZ.x, 0.0f, m_cameraBackDirectionXYZ.z));
 
-            m_cameraRightXYZ = glm::normalize(glm::cross(m_cameraDirectionXYZ, Constants::worldUp));
+            m_cameraRightXYZ = glm::normalize(glm::cross(m_cameraDirectionXYZ, BeryllConstants::worldUp));
             m_cameraRightXZ = glm::normalize(glm::vec3(m_cameraRightXYZ.x, 0.0f, m_cameraRightXYZ.z));
 
             m_cameraLeftXYZ = -m_cameraRightXYZ;

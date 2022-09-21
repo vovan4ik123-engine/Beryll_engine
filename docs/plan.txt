@@ -1,5 +1,7 @@
 ---------------------plan:---------------------
 
+store CollisionGroups in gameObjects
+
 update Player
 
 remove spdlog
@@ -13,7 +15,14 @@ not spdlog
 
 
 dynamic collision shapes by performance:
-200 items collision Convex  300 ms
-200 items collision Box     180 ms
-200 items collision Sphere  140 ms
-200 items collision Capsule 180 ms
+    200 items collision Convex  300 ms
+    200 items collision Box     180 ms
+    200 items collision Sphere  140 ms
+    200 items collision Capsule 180 ms
+
+release performance scene:
+    0 objects:              8ms
+    player capsule:         1ms
+    simple animated man:    1ms
+    150 static vertices + player capsule: 1ms
+    40k static vertices + player capsule: 6ms
