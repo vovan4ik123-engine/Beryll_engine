@@ -46,18 +46,19 @@ namespace Beryll
         void move(MoveDirection direction);
         void jump();
 
-        float moveSpeed = 5.0f; // meter in second
+        float moveSpeed = 5.0f; // meters in second
         float walkableFloorAngleRadians = glm::radians(60.0f);
         float startJumpAngleRadians = glm::radians(50.0f);
-        float maxStepHeight = 0.2f; // meters
+        float maxStepHeight = 2.0f; // meters. MUST be less than m_playerHeight
         float airControlFactor = 0.3f; // factor to multiply moveSpeed if player not on ground
-        float backwardMoveFactor = 0.6f; // factor to multiply if player move backward
+        float backwardMoveFactor = 0.6f; // factor to multiply moveSpeed if player move backward
 
     private:
-        float m_fromOriginToBottom = 0.0f; // distance between origin and player bottom
         float m_fromOriginToTop = 0.0f; // distance between origin and player top
+        float m_fromOriginToBottom = 0.0f; // distance between origin and player bottom
         float m_XZradius = 0.0f; // radius on X/Z axis. from collision mesh origin
         float m_playerHeight = 0.0f;
+
         bool m_playerOnGround = false;
         bool m_playerMoving = false;
 

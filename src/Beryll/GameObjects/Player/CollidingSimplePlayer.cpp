@@ -108,7 +108,7 @@ namespace Beryll
         // object is active. that means it should have collisions or drop down in the air
         m_playerOnGround = false;
         m_playerMoving = false;
-        //BR_INFO("playerOnGround = false");
+        //BR_INFO("%s", "playerOnGround = false");
 
         m_bottomCollisionPoint = std::make_pair(glm::vec3(0.0f, std::numeric_limits<float>::max(), 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 
@@ -124,9 +124,10 @@ namespace Beryll
                 }
 
                 // point.second is normal vector on collision point
-                if(Utils::Common::getAngleInRadians(BeryllConstants::worldUp, point.second) < walkableFloorAngleRadians)
+                float floorAngleRadians = Utils::Common::getAngleInRadians(BeryllConstants::worldUp, point.second);
+                if(floorAngleRadians < walkableFloorAngleRadians)
                 {
-                    //BR_INFO("playerOnGround = true");
+                    //BR_INFO("%s", "playerOnGround = true");
                     // player stay on allowed floor angle
                     m_playerOnGround = true;
                 }
@@ -182,28 +183,122 @@ namespace Beryll
             moveVector = (m_rightDirectionXZ * moveSpeed) * TimeStep::getTimeStepSec();
         }
 
+        //BR_INFO("origin X:%f Y:%f Z:%f", m_origin.x, m_origin.y, m_origin.z);
+        float moveVectorLength = glm::length(moveVector);
+        glm::vec3 radiusToMoveDirection = ((m_XZradius + m_XZradius * 0.3f) / moveVectorLength) * moveVector;
+
+        glm::vec3 playerHeadUp = m_origin;
+        playerHeadUp.y += m_fromOriginToTop;
+        glm::vec3 playerHeadUpNextPos = playerHeadUp + radiusToMoveDirection;
+        RayClosestHit headWallHit = Physics::castRayClosestHit(playerHeadUp,
+                                                                     playerHeadUpNextPos,
+                                                                     CollisionGroups::PLAYER,
+                                                                     CollisionGroups::STATIC_ENVIRONMENT);
+        if(headWallHit.hit)
+        {
+            glm::vec3 headBackwardMoveVector = glm::normalize(playerHeadUp - playerHeadUpNextPos);
+            if(Utils::Common::getAngleInRadians(headBackwardMoveVector, headWallHit.hitNormal) < 0.698f) // < than 40 degrees
+            {
+                // players head moving directly into wall = can not move
+                BR_INFO("%s", "headWallHit return");
+                return;
+            }
+        }
+
         if(m_playerOnGround)
         {
-            // approximate next allowed collision points on Y axis(up and bottom) after player move based on walkableFloorAngle
-            // if m_playerOnGround == true, m_bottomCollisionPoint.first.y < std::numeric_limits<float>::max() also should be true
-            float approximatedAllowedPositionOnY = glm::tan(walkableFloorAngleRadians) * glm::length(moveVector);
-            approximatedAllowedPositionOnY *= 1.1f; // + 10%
+            bool allowedStairStepFound = false;
 
-            glm::vec3 newPosApproximatedUp = m_bottomCollisionPoint.first + moveVector;
-            newPosApproximatedUp.y += approximatedAllowedPositionOnY;
-            glm::vec3 newPosApproximatedDown = m_bottomCollisionPoint.first + moveVector;
-            newPosApproximatedDown.y -= approximatedAllowedPositionOnY;
-            RayClosestHit newPosYHit = Physics::castRayClosestHit(newPosApproximatedUp, newPosApproximatedDown, CollisionGroups::PLAYER, CollisionGroups::STATIC_ENVIRONMENT);
-
-            if(newPosYHit.hit)
+            glm::vec3 playerLegs = m_origin;
+            playerLegs.y -= (m_fromOriginToBottom - m_XZradius);
+            glm::vec3 playerLegsNextPos = playerLegs + radiusToMoveDirection;
+            RayClosestHit legsWallHit = Physics::castRayClosestHit(playerLegs,
+                                                                   playerLegsNextPos,
+                                                                   CollisionGroups::PLAYER,
+                                                                   CollisionGroups::STATIC_ENVIRONMENT);
+            if(legsWallHit.hit)
             {
-                if(m_bottomCollisionPoint.first.y > newPosYHit.hitPoint.y)
+                BR_INFO("%s", "legsWallHit");
+                glm::vec3 legsBackwardMoveVector = glm::normalize(playerLegs - playerLegsNextPos);
+                if(Utils::Common::getAngleInRadians(legsBackwardMoveVector, legsWallHit.hitNormal) < 0.698f) // < than 40 degrees
                 {
-                    moveVector.y = -(m_bottomCollisionPoint.first.y - newPosYHit.hitPoint.y);
+                    BR_INFO("%s", "legsWallHit < than 40 degrees");
+                    // legs hit wall in front
+                    // search for stair step
+                    glm::vec3 stepCheckUp = glm::vec3(playerLegsNextPos.x, m_origin.y + m_fromOriginToTop, playerLegsNextPos.z);
+                    glm::vec3 stepCheckBottom = glm::vec3(playerLegsNextPos.x, m_origin.y - m_fromOriginToBottom, playerLegsNextPos.z);
+                    RayClosestHit potentialStepHit = Physics::castRayClosestHit(stepCheckUp,
+                                                                                stepCheckBottom,
+                                                                                CollisionGroups::PLAYER,
+                                                                                CollisionGroups::STATIC_ENVIRONMENT);
+
+                    if (potentialStepHit.hit)
+                    {
+                        BR_INFO("potentialStepHit y:%f", potentialStepHit.hitPoint.y);
+                        float surfaceSlopeRadians = Utils::Common::getAngleInRadians(BeryllConstants::worldUp, potentialStepHit.hitNormal);
+                        if (surfaceSlopeRadians < glm::radians(3.0f)) // allow stair step surface be slope 0-3 degrees
+                        {
+                            // probably we found stair step
+                            // calculate where should be player if that is not stair step, but only ground slope
+                            float oppositeSideLength = glm::tan(surfaceSlopeRadians) * glm::length(radiusToMoveDirection);
+                            oppositeSideLength *= 1.02; // + 2%
+                            if(oppositeSideLength == 0.0f) { oppositeSideLength += 0.02f; } // add 2 cm
+                            float nextYOfPlayer = m_bottomCollisionPoint.first.y + oppositeSideLength; // after move on this ground slope(if not stair step)
+                            if (potentialStepHit.hitPoint.y > nextYOfPlayer)
+                            {
+                                // assume stair step in front
+                                float diffPlayerYStepY = potentialStepHit.hitPoint.y - m_bottomCollisionPoint.first.y;
+                                if (diffPlayerYStepY <= maxStepHeight)
+                                {
+                                    // player can move to this stair step
+                                    BR_INFO("%s h:%f", "player moved to stair step", diffPlayerYStepY);
+                                    allowedStairStepFound = true;
+                                    moveVector.y = diffPlayerYStepY;
+                                }
+                                else
+                                {
+                                    // legs hit wall in front but stair step in front is too height
+                                    BR_INFO("%s h:%f", "legs hit wall in front but stair step in front is too height", diffPlayerYStepY);
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // legs hit wall in front but no stair step in front
+                        BR_INFO("%s", "legs hit wall in front but no stair step in front");
+                        return;
+                    }
                 }
-                else
+            }
+
+            if(!allowedStairStepFound)
+            {
+                // approximate next allowed collision points on Y axis(up and bottom) after player move based on walkableFloorAngle
+                // if m_playerOnGround == true, m_bottomCollisionPoint.first.y < std::numeric_limits<float>::max() also should be true
+                float approximatedAllowedPositionOnY = glm::tan(walkableFloorAngleRadians) * moveVectorLength;
+                approximatedAllowedPositionOnY *= 1.05f; // + 5%
+
+                glm::vec3 newPosApproximatedUp = m_bottomCollisionPoint.first + moveVector;
+                newPosApproximatedUp.y += approximatedAllowedPositionOnY;
+                glm::vec3 newPosApproximatedBottom = m_bottomCollisionPoint.first + moveVector;
+                newPosApproximatedBottom.y -= approximatedAllowedPositionOnY;
+                RayClosestHit newPosYHit = Physics::castRayClosestHit(newPosApproximatedUp,
+                                                                      newPosApproximatedBottom,
+                                                                      CollisionGroups::PLAYER,
+                                                                      CollisionGroups::STATIC_ENVIRONMENT);
+
+                if (newPosYHit.hit)
                 {
-                    moveVector.y = newPosYHit.hitPoint.y - m_bottomCollisionPoint.first.y;
+                    BR_INFO("%s", "walkable floor found");
+                    if (m_bottomCollisionPoint.first.y > newPosYHit.hitPoint.y)
+                    {
+                        moveVector.y = -(m_bottomCollisionPoint.first.y - newPosYHit.hitPoint.y);
+                    } else
+                    {
+                        moveVector.y = newPosYHit.hitPoint.y - m_bottomCollisionPoint.first.y;
+                    }
                 }
             }
         }

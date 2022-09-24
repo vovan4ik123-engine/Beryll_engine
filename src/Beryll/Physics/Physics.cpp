@@ -914,7 +914,7 @@ namespace Beryll
         btVector3 fr(from.x, from.y, from.z);
         btVector3 t(to.x, to.y, to.z);
         btCollisionWorld::AllHitsRayResultCallback allResults(fr, t);
-        allResults.m_flags |= btTriangleRaycastCallback::kF_KeepUnflippedNormal;
+        allResults.m_flags |= btTriangleRaycastCallback::kF_FilterBackfaces;
         allResults.m_flags |= btTriangleRaycastCallback::kF_UseSubSimplexConvexCastRaytest;
         allResults.m_collisionFilterGroup = static_cast<int>(collGroup);
         allResults.m_collisionFilterMask = static_cast<int>(collMask);
