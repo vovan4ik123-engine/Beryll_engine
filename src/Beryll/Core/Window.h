@@ -44,6 +44,8 @@ namespace Beryll
 
         // Metal specific methods
 
+        SDL_DisplayOrientation currentOrientation = SDL_ORIENTATION_UNKNOWN;
+
     private:
         friend class GameLoop;
         static void create(); // should be called only in GameLoop

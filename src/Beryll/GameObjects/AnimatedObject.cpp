@@ -208,12 +208,11 @@ namespace Beryll
     void AnimatedObject::updateAfterPhysics()
     {
 
+        calculateTransforms();
     }
 
     void AnimatedObject::draw()
     {
-        calculateTransforms();
-
         m_MVP = Camera::get3DCamera() * m_modelMatrix;
 
         m_shader->bind();

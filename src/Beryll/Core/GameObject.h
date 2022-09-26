@@ -14,7 +14,7 @@ namespace Beryll
     class GameObject
     {
     public:
-        virtual ~GameObject() {}
+        virtual ~GameObject() { }
 
         virtual void updateBeforePhysics() = 0; // handle users input, move objects here
         virtual void updateAfterPhysics() = 0; // update positions after simulation, resolve collisions, Physics::getTransforms() here
@@ -34,7 +34,9 @@ namespace Beryll
                 m_isEnabled = true;
 
                 if(m_hasCollisionObject)
+                {
                     Beryll::Physics::restoreObject(m_ID);
+                }
             }
         }
 
@@ -45,7 +47,9 @@ namespace Beryll
                 m_isEnabled = false;
 
                 if (m_hasCollisionObject)
+                {
                     Beryll::Physics::softRemoveObject(m_ID);
+                }
             }
         }
 

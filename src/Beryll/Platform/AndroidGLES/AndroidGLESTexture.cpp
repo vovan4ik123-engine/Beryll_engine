@@ -25,6 +25,7 @@ namespace Beryll
         if(result != m_textures.end())
         {
             // texture was added before, use it
+            BR_INFO("texture was added before %s", result->first.c_str());
             m_textureID = result->second;
             return;
         }
@@ -40,6 +41,8 @@ namespace Beryll
 
         int pixelFormat = GL_RGB;
         if(4 == surface->format->BytesPerPixel) pixelFormat = GL_RGBA;
+
+        BR_ASSERT((surface->format->BytesPerPixel == 3 || surface->format->BytesPerPixel == 4), "Load texture failed:%s. Use 24 or 32 bit depth", strPath.c_str());
 
         glTexImage2D(GL_TEXTURE_2D, 0, pixelFormat, surface->w, surface->h, 0, pixelFormat, GL_UNSIGNED_BYTE, surface->pixels);
 

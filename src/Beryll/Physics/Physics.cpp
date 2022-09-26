@@ -75,7 +75,8 @@ namespace Beryll
         m_dynamicsWorldMT->stepSimulation(m_timeStep,
                                      m_resolutionFactor + 1,
                                      m_timeStep / m_resolutionFactor);
-        //BR_INFO("Simulation objects count:%d", m_dynamicsWorldMT->getNumCollisionObjects());
+
+        BR_INFO("Simulation objects count:%d", m_dynamicsWorldMT->getNumCollisionObjects());
         //BR_INFO("Simulation time millisec:%d", timer.elapsedMilliSec());
     }
 
@@ -175,7 +176,7 @@ namespace Beryll
         btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState.get(), shape.get(), localInertia);
         std::shared_ptr<btRigidBody> body = std::make_shared<btRigidBody>(rbInfo, objectID);
 
-        std::shared_ptr<RigidBodyData> rigidBodyData = std::make_shared<RigidBodyData>(objectID, body, true);
+        std::shared_ptr<RigidBodyData> rigidBodyData = std::make_shared<RigidBodyData>(objectID, body, true, collGroup, collMask);
         body->setUserPointer(rigidBodyData.get()); // then we can fetch this rigidBodyData in collision call back
 
         if(collFlag == CollisionFlags::KINEMATIC)
@@ -232,7 +233,7 @@ namespace Beryll
         btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState.get(), shape.get(), localInertia);
         std::shared_ptr<btRigidBody> body = std::make_shared<btRigidBody>(rbInfo, objectID);
 
-        std::shared_ptr<RigidBodyData> rigidBodyData = std::make_shared<RigidBodyData>(objectID, body, true);
+        std::shared_ptr<RigidBodyData> rigidBodyData = std::make_shared<RigidBodyData>(objectID, body, true, collGroup, collMask);
         body->setUserPointer(rigidBodyData.get()); // then we can fetch this rigidBodyData in collision call back
 
         if(collFlag == CollisionFlags::KINEMATIC)
@@ -304,7 +305,7 @@ namespace Beryll
         btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState.get(), boxShape.get(), localInertia);
         std::shared_ptr<btRigidBody> body = std::make_shared<btRigidBody>(rbInfo, objectID);
 
-        std::shared_ptr<RigidBodyData> rigidBodyData = std::make_shared<RigidBodyData>(objectID, body, true);
+        std::shared_ptr<RigidBodyData> rigidBodyData = std::make_shared<RigidBodyData>(objectID, body, true, collGroup, collMask);
         body->setUserPointer(rigidBodyData.get()); // then we can fetch this rigidBodyData in collision call back
 
         if(collFlag == CollisionFlags::KINEMATIC)
@@ -356,7 +357,7 @@ namespace Beryll
         btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState.get(), sphereShape.get(), localInertia);
         std::shared_ptr<btRigidBody> body = std::make_shared<btRigidBody>(rbInfo, objectID);
 
-        std::shared_ptr<RigidBodyData> rigidBodyData = std::make_shared<RigidBodyData>(objectID, body, true);
+        std::shared_ptr<RigidBodyData> rigidBodyData = std::make_shared<RigidBodyData>(objectID, body, true, collGroup, collMask);
         body->setUserPointer(rigidBodyData.get()); // then we can fetch this rigidBodyData in collision call back
 
         if(collFlag == CollisionFlags::KINEMATIC)
@@ -425,7 +426,7 @@ namespace Beryll
         btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState.get(), capsuleShape.get(), localInertia);
         std::shared_ptr<btRigidBody> body = std::make_shared<btRigidBody>(rbInfo, objectID);
 
-        std::shared_ptr<RigidBodyData> rigidBodyData = std::make_shared<RigidBodyData>(objectID, body, true);
+        std::shared_ptr<RigidBodyData> rigidBodyData = std::make_shared<RigidBodyData>(objectID, body, true, collGroup, collMask);
         body->setUserPointer(rigidBodyData.get()); // then we can fetch this rigidBodyData in collision call back
 
         if(collFlag == CollisionFlags::KINEMATIC)
@@ -697,12 +698,14 @@ namespace Beryll
         auto iter = m_rigidBodiesMap.find(ID);
         if(iter != m_rigidBodiesMap.end())
         {
-            std::scoped_lock<std::mutex> lock (m_mutex);
-
             btTransform t;
 
-            if(iter->second->rb->getMotionState()) iter->second->rb->getMotionState()->getWorldTransform(t);
-            else t = iter->second->rb->getWorldTransform();
+            {
+                std::scoped_lock<std::mutex> lock (m_mutex);
+
+                if(iter->second->rb->getMotionState()) iter->second->rb->getMotionState()->getWorldTransform(t);
+                else t = iter->second->rb->getWorldTransform();
+            }
 
             physicsTransforms.origin = glm::vec3(t.getOrigin().getX(), t.getOrigin().getY(), t.getOrigin().getZ());
             physicsTransforms.rotation = glm::quat(t.getRotation().getW(), t.getRotation().getX(), t.getRotation().getY(), t.getRotation().getZ());
@@ -739,8 +742,8 @@ namespace Beryll
             iter->second->rb->activate(true);
 
             m_dynamicsWorldMT->addRigidBody(iter->second->rb.get(),
-                                            iter->second->rb->getBroadphaseHandle()->m_collisionFilterGroup,
-                                            iter->second->rb->getBroadphaseHandle()->m_collisionFilterMask);
+                                            static_cast<int>(iter->second->collGroup),
+                                            static_cast<int>(iter->second->collMask));
             iter->second->existInDynamicWorld = true;
         }
     }

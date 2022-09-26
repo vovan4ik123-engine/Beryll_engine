@@ -55,7 +55,5 @@ namespace Beryll
     private:
         static std::vector<bool> m_events;
         static std::vector<Finger> m_fingers;
-
-        static SDL_DisplayOrientation m_currentOrientation;
     };
 }

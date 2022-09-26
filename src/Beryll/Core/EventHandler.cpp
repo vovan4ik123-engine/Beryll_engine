@@ -9,8 +9,6 @@ namespace Beryll
     std::vector<bool> EventHandler::m_events = std::vector<bool>(static_cast<int>(EventID::COUNT), false);
     std::vector<Finger> EventHandler::m_fingers = std::vector<Finger>();
 
-    SDL_DisplayOrientation EventHandler::m_currentOrientation = SDL_ORIENTATION_UNKNOWN;
-
     void EventHandler::loadEvents()
     {
         for(Finger& f : m_fingers) { f.downEvent = false; }
@@ -134,10 +132,10 @@ namespace Beryll
 
 //SCREEN
                 case SDL_WINDOWEVENT :
-                    if (SDL_GetDisplayOrientation(0) != m_currentOrientation)
+                    if (SDL_GetDisplayOrientation(0) != Window::getInstance()->currentOrientation)
                     {
                         m_events[static_cast<int>(EventID::DISPLAY_ORIENTATION_CHANGE)] = true;
-                        m_currentOrientation = SDL_GetDisplayOrientation(0);
+                        Window::getInstance()->currentOrientation = SDL_GetDisplayOrientation(0);
                     }
                     break;
 //END SCREEN

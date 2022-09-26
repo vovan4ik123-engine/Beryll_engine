@@ -13,8 +13,8 @@ namespace Beryll
         void bind() override;
         void unBind() override;
 
-        void setFloat(const char* name, const float& value) override;
-        void setInt(const char* name, const int& value) override;
+        void setFloat(const char* name, const float value) override;
+        void setInt(const char* name, const int value) override;
         void setMatrix4x4Float(const char* name, const glm::mat4& value) override;
         void setMatrix4x4Float(const char* name, aiMatrix4x4& value) override;
         void setMatrix3x3Float(const char* name, const glm::mat3& value) override;

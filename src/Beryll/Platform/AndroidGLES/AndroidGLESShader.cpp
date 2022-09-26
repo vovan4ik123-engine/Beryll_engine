@@ -94,12 +94,12 @@ namespace Beryll
         glUseProgram(0);
     }
 
-    void AndroidGLESShader::setFloat(const char* name, const float& value)
+    void AndroidGLESShader::setFloat(const char* name, const float value)
     {
         glUniform1f(glGetUniformLocation(m_shaderProgram, name), value);
     }
 
-    void AndroidGLESShader::setInt(const char* name, const int& value)
+    void AndroidGLESShader::setInt(const char* name, const int value)
     {
         glUniform1i(glGetUniformLocation(m_shaderProgram, name), value);
     }

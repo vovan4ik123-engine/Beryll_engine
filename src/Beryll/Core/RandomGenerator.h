@@ -8,13 +8,13 @@ namespace Beryll
     {
     public:
 
-        static int getQualityInt(int first, int last)
+        static int getQualityInt(const unsigned int first, const unsigned int last)
         {
             std::uniform_int_distribution<int> dist(first, last);
             return dist(re);
         }
 
-        static int getFastInt(int first, int last)
+        static int getFastInt(const unsigned int first, const unsigned int last)
         {
             return (std::rand() % (last - first)) + first;
         }

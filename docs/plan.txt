@@ -1,8 +1,7 @@
 ---------------------plan:---------------------
 
-update Player
 
-remove spdlog
+
 update IMGui to 1.88+
 
 use
@@ -21,6 +20,7 @@ dynamic collision shapes by performance:
 release performance scene:
     0 objects:              8ms
     player capsule:         1ms
-    simple animated man:    1ms
+    simple animated man:    1.4ms
     150 static vertices + player capsule: 1ms
     40k static vertices + player capsule: 6ms
+    every +10k colliding ground vertices to scene = +0.875ms to frame time

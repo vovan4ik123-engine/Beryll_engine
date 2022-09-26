@@ -237,23 +237,38 @@ void btCollisionWorld::performDiscreteCollisionDetection()
 
 void btCollisionWorld::removeCollisionObject(btCollisionObject* collisionObject)
 {
-	int iObj = collisionObject->getWorldArrayIndex();
+    {
+        btBroadphaseProxy* bp = collisionObject->getBroadphaseHandle();
+        if (bp)
+        {
+            //
+            // only clear the cached algorithms
+            //
+            getBroadphase()->getOverlappingPairCache()->cleanProxyFromPairs(bp, m_dispatcher1);
+            getBroadphase()->destroyProxy(bp, m_dispatcher1);
+            collisionObject->setBroadphaseHandle(0);
+        }
+    }
 
-	if (iObj >= 0 && iObj < m_collisionObjects.size())
-	{
-		assert(collisionObject == m_collisionObjects[iObj]);
-		m_collisionObjects.swap(iObj, m_collisionObjects.size() - 1);
-		m_collisionObjects.pop_back();
+    int iObj = collisionObject->getWorldArrayIndex();
 
-		m_collisionObjects[iObj]->setWorldArrayIndex(iObj);
-
-	}
-	else
-	{
-		m_collisionObjects.remove(collisionObject);
-	}
-
-	collisionObject->setWorldArrayIndex(-1);
+    if (iObj >= 0 && iObj < m_collisionObjects.size())
+    {
+        assert(collisionObject == m_collisionObjects[iObj]);
+        m_collisionObjects.swap(iObj, m_collisionObjects.size() - 1);
+        m_collisionObjects.pop_back();
+        if (iObj < m_collisionObjects.size())
+        {
+            m_collisionObjects[iObj]->setWorldArrayIndex(iObj);
+        }
+    }
+    else
+    {
+        // slow linear search
+        //swapremove
+        m_collisionObjects.remove(collisionObject);
+    }
+    collisionObject->setWorldArrayIndex(-1);
 }
 
 void btCollisionWorld::rayTestSingle(const btTransform& rayFromTrans, const btTransform& rayToTrans,

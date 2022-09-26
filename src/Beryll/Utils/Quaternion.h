@@ -37,7 +37,7 @@ namespace Utils
         ~Quaternion() = delete;
 
         // normalized linear interpolation. much faster than rotation on sphere
-        static aiQuaternion nlerp(aiQuaternion& a, aiQuaternion& b, const float& blend)
+        static aiQuaternion nlerp(aiQuaternion& a, aiQuaternion& b, const float blend)
         {
             // we can check without sqrt if length = 1. because sqrt(1) = 1. Oo
             float aLength = a.x * a.x + a.y * a.y + a.z * a.z + a.w * a.w;

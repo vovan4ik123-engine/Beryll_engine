@@ -33,16 +33,18 @@ namespace Beryll
     // or preventing enemies from being able to pick up power-ups.
     enum class CollisionGroups
     {
+        // max number of collision groups = 32 (including NONE).
+        // last group is 31 = 1 << 30
         NONE = 0,
         CAMERA = 1,
-        STATIC_ENVIRONMENT = 2,
-        DYNAMIC_ENVIRONMENT = 4,
-        PLAYER = 8,
-        ENEMY = 16,
-        BULLET = 32,
-        WALL = 64,
-        YOU_CANN_ADD_YOUR_GROUP1 = 128,
-        YOU_CANN_ADD_YOUR_GROUP2 = 256,
+        STATIC_ENVIRONMENT = 1 << 1,
+        DYNAMIC_ENVIRONMENT = 1 << 2,
+        PLAYER = 1 << 3,
+        ENEMY = 1 << 4,
+        BULLET = 1 << 5,
+        WALL = 1 << 6,
+        GROUND = 1 << 7,
+        YOU_CANN_ADD_YOUR_GROUP = 1 << 8,
 
         YOU_CANN_COMBINE_GROUPS_WHEN_USE = STATIC_ENVIRONMENT | CAMERA | WALL,
 
@@ -62,12 +64,15 @@ namespace Beryll
 
     struct RigidBodyData
     {
-        RigidBodyData(int id, const std::shared_ptr<btRigidBody>& b, const bool& exist)
-        : bodyID(id), rb(b), existInDynamicWorld(exist) {}
+        RigidBodyData(int id, const std::shared_ptr<btRigidBody>& b, const bool exist, CollisionGroups collGr, CollisionGroups collMs)
+        : bodyID(id), rb(b), existInDynamicWorld(exist), collGroup(collGr), collMask(collMs)  {}
 
         const int bodyID;
         const std::shared_ptr<btRigidBody> rb;
         bool existInDynamicWorld = false;
+
+        CollisionGroups collGroup;
+        CollisionGroups collMask;
     };
 
     struct PhysicsTransforms
@@ -141,6 +146,12 @@ namespace Beryll
 
         static void activateObject(const int ID); // awake object in physics world
         static bool getIsObjectActive(const int ID); // check if object is active
+
+        static bool getIsCollisionGroupContainsOther(const CollisionGroups& gr1, const CollisionGroups& gr2)
+        {
+            // return true if gr1 contains gr2
+            return (static_cast<int>(gr1) & static_cast<int>(gr2)) > 0;
+        }
 
         // bullet physics dont store scale in transform. keep scale in model matrix/vector in model
         static PhysicsTransforms getTransforms(const int ID);

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "LibsHeaders.h"
+#include "Beryll/Core/Window.h"
 #include "Beryll/Utils/CommonUtils.h"
 
 namespace Beryll
@@ -18,7 +19,7 @@ namespace Beryll
         }
 
         /*
-        static glm::mat4 getCamera2D(const float& screnWidth, const float& screenHeight)
+        static glm::mat4 getCamera2D(const float screnWidth, const float screenHeight)
         {
             // for 2D objects:
             // near plan: Z = 1.0f
@@ -28,7 +29,7 @@ namespace Beryll
         */
 
         // call before get3DCamera()
-        static void update3DCamera(const float& screnWidth, const float& screenHeight)
+        static void update3DCamera(const float screnWidth, const float screenHeight)
         {
             updateCameraVectors();
 
@@ -39,8 +40,21 @@ namespace Beryll
         {
             // check distance
             if(glm::distance(m_cameraPos, objectPos) > m_objectsViewDistance) return false;
-            // check angle. here we can use half of fov but that is not enough if objects in corner of screen
-            if(Utils::Common::getAngleInRadians(m_cameraDirectionXYZ, objectPos - m_cameraPos) > m_fovRadians) return false;
+
+            if(Window::getInstance()->currentOrientation == SDL_ORIENTATION_PORTRAIT ||
+               Window::getInstance()->currentOrientation == SDL_ORIENTATION_PORTRAIT_FLIPPED)
+            {
+                if(Utils::Common::getAngleInRadians(m_cameraDirectionXYZ, glm::normalize(objectPos - m_cameraPos)) > m_halfFovRadians) return false;
+            }
+            else if(Window::getInstance()->currentOrientation == SDL_ORIENTATION_LANDSCAPE ||
+                    Window::getInstance()->currentOrientation == SDL_ORIENTATION_LANDSCAPE_FLIPPED)
+            {
+                if(Utils::Common::getAngleInRadians(m_cameraDirectionXYZ, glm::normalize(objectPos - m_cameraPos)) > m_fovRadians) return false;
+            }
+            else
+            {
+                return false;
+            }
 
             return true;
         }
@@ -52,10 +66,14 @@ namespace Beryll
 
         static void setCameraPos(const glm::vec3& pos) { m_cameraPos = pos; }
         static void setCameraFront(const glm::vec3& front) { m_cameraFrontPos = front; }
-        static void setCameraFov(const float& fovDegree) { m_fovRadians = glm::radians(fovDegree); }
-        static void setPerspectiveNearClipPlane(const float& near) { m_perspNearClipPlane = near; }
-        static void setPerspectiveFarClipPlane(const float& far) { m_perspFarClipPlane = far; }
-        static void setObjectsViewDistance(const float& viewDistance) { m_objectsViewDistance = viewDistance; }
+        static void setCameraFov(const float fovDegrees)
+        {
+            m_fovRadians = glm::radians(fovDegrees);
+            m_halfFovRadians = m_fovRadians * 0.5f;
+        }
+        static void setPerspectiveNearClipPlane(const float near) { m_perspNearClipPlane = near; }
+        static void setPerspectiveFarClipPlane(const float far) { m_perspFarClipPlane = far; }
+        static void setObjectsViewDistance(const float viewDistance) { m_objectsViewDistance = viewDistance; }
 
         static float getObjectsViewDistance() { return m_objectsViewDistance; }
         static const glm::vec3& getCameraDirectionXYZ() { return m_cameraDirectionXYZ; }
@@ -85,6 +103,7 @@ namespace Beryll
         static glm::vec3 m_cameraLeftXZ;
 
         static float m_fovRadians;
+        static float m_halfFovRadians;
         static float m_perspNearClipPlane;
         static float m_perspFarClipPlane;
 
@@ -114,7 +133,7 @@ namespace Beryll
             return glm::lookAt(m_cameraPos, m_cameraPos + m_cameraDirectionXYZ, m_cameraUp);
         }
 
-        static glm::mat4 getPerspective3D(const float& screenWidth, const float& screenHeight)
+        static glm::mat4 getPerspective3D(const float screenWidth, const float screenHeight)
         {
             return glm::perspectiveFov(m_fovRadians,
                                        screenWidth,

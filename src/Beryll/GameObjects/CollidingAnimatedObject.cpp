@@ -242,12 +242,12 @@ namespace Beryll
         m_rotateMatrix = glm::toMat4(m_physicsTransforms.rotation);
 
         m_modelMatrix = m_translateMatrix * m_rotateMatrix * m_scaleMatrix;
+
+        calculateTransforms();
     }
 
     void CollidingAnimatedObject::draw()
     {
-        calculateTransforms();
-
         m_MVP = Camera::get3DCamera() * m_modelMatrix;
 
         m_shader->bind();
