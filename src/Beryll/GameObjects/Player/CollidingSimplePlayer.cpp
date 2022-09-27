@@ -70,6 +70,8 @@ namespace Beryll
 
         BR_ASSERT(((m_fromOriginToBottom > 0.0f) && (m_fromOriginToTop > 0.0f) && (m_XZradius > 0.0f) && (m_playerHeight > 0.0f)), "%s", "Players XYZ dimensions are 0.");
 
+        m_playerMass = collisionMass;
+
         setAngularFactor(glm::vec3(0.0f, 0.0f, 0.0f));
         setLinearFactor(glm::vec3(1.0f, 1.0f, 1.0f));
     }
@@ -326,7 +328,7 @@ namespace Beryll
                 m_jumpDirection = glm::vec3(0.0f, 1.0f, 0.0f);
             }
 
-            applyImpulse(glm::normalize(m_jumpDirection) * m_playerHeight * moveSpeed);
+            applyImpulse(glm::normalize(m_jumpDirection) * moveSpeed * startJumpPower);
         }
     }
 }

@@ -29,11 +29,11 @@ namespace Beryll
         */
 
         // call before get3DCamera()
-        static void update3DCamera(const float screnWidth, const float screenHeight)
+        static void update3DCamera()
         {
             updateCameraVectors();
 
-            m_perspective3D = getPerspective3D(screnWidth, screenHeight) * getVeiw3D();
+            m_perspective3D = getPerspective3D(Window::getInstance()->getScreenWidth(), Window::getInstance()->getScreenHeight()) * getVeiw3D();
         }
 
         static bool getIsSeeObject(const glm::vec3& objectPos) // check does camera see object or object is out of view

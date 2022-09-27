@@ -67,7 +67,7 @@ namespace Beryll
 
         // Update camera (immediately before draw)
             // Dont set any camera attributes after this call (set in updateAfterPhysics())
-            Camera::update3DCamera(Window::getInstance()->getScreenWidth(), Window::getInstance()->getScreenHeight());
+            Camera::update3DCamera();
 
         // Draw start
             Window::getInstance()->clear();
