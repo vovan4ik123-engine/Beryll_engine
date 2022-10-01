@@ -27,48 +27,13 @@ namespace Beryll
     {
         // player described by collision mesh
 
-        for (int i = 0; i < m_scene->mNumMeshes; ++i)
-        {
-            std::string meshName = m_scene->mMeshes[i]->mName.C_Str();
-
-            if (meshName.find("Collision") != std::string::npos)
-            {
-                float smallestX = 0.0f;
-                float biggestX = 0.0f;
-                float mostBottomVertex = 0.0f;
-                float mostTopVertex = 0.0f;
-                for (int g = 0; g < m_scene->mMeshes[i]->mNumVertices; ++g)
-                {
-                    if (m_scene->mMeshes[i]->mVertices[g].y < mostBottomVertex)
-                    {
-                        mostBottomVertex = m_scene->mMeshes[i]->mVertices[g].y;
-                    }
-
-                    if (m_scene->mMeshes[i]->mVertices[g].y > mostTopVertex)
-                    {
-                        mostTopVertex = m_scene->mMeshes[i]->mVertices[g].y;
-                    }
-
-                    if (m_scene->mMeshes[i]->mVertices[g].x < smallestX)
-                    {
-                        smallestX = m_scene->mMeshes[i]->mVertices[g].x;
-                    }
-                    if (m_scene->mMeshes[i]->mVertices[g].x > biggestX)
-                    {
-                        biggestX = m_scene->mMeshes[i]->mVertices[g].x;
-                    }
-                }
-
-                m_playerHeight = mostTopVertex - mostBottomVertex;
-                m_XZradius = (biggestX - smallestX) / 2.0f;
-                m_fromOriginToBottom = 0 - mostBottomVertex;
-                m_fromOriginToTop = mostTopVertex - 0;
-            }
-        }
+        m_playerHeight = m_mostTopVertex - m_mostBottomVertex;
+        m_XZradius = (m_biggestX - m_smallestX) / 2.0f;
+        m_fromOriginToBottom = 0 - m_mostBottomVertex;
+        m_fromOriginToTop = m_mostTopVertex - 0;
+        BR_ASSERT(((m_fromOriginToBottom > 0.0f) && (m_fromOriginToTop > 0.0f) && (m_XZradius > 0.0f) && (m_playerHeight > 0.0f)), "%s", "Players XYZ dimensions are 0.");
 
         BR_INFO("m_fromOriginToTop:%f, m_fromOriginToBottom:%f, m_playerHeight:%f", m_fromOriginToTop, m_fromOriginToBottom, m_playerHeight);
-
-        BR_ASSERT(((m_fromOriginToBottom > 0.0f) && (m_fromOriginToTop > 0.0f) && (m_XZradius > 0.0f) && (m_playerHeight > 0.0f)), "%s", "Players XYZ dimensions are 0.");
 
         m_playerMass = collisionMass;
 

@@ -24,29 +24,53 @@ namespace Beryll
         uint32_t bufferSize = 0;
         char* buffer = Utils::File::readToBuffer(modelPath, &bufferSize);
 
-        m_scene = m_importer.ReadFileFromMemory(buffer, bufferSize,
+        Assimp::Importer importer;
+        const aiScene* scene = importer.ReadFileFromMemory(buffer, bufferSize,
                                                 aiProcess_Triangulate |
                                                 aiProcess_SortByPType |
                                                 aiProcess_FlipUVs);
 
-        if( !m_scene || !m_scene->mRootNode || m_scene->mFlags == AI_SCENE_FLAGS_INCOMPLETE)
+        if( !scene || !scene->mRootNode || scene->mFlags == AI_SCENE_FLAGS_INCOMPLETE)
         {
             BR_ASSERT(false, "Scene loading error for file:%s", modelPath);
         }
 
-        BR_ASSERT((m_scene->mNumMeshes == 2),
+        BR_ASSERT((scene->mNumMeshes == 2),
                   "Colliding simple object:%s MUST contain 2 meshes. For draw and physics simulation", modelPath);
 
-        for(int i = 0; i < m_scene->mNumMeshes; ++i)
+        for(int i = 0; i < scene->mNumMeshes; ++i)
         {
-            std::string meshName = m_scene->mMeshes[i]->mName.C_Str();
+            std::string meshName = scene->mMeshes[i]->mName.C_Str();
 
             if(meshName.find("Collision") != std::string::npos)
             {
+                // collect collision mesh dimensions
+                for (int g = 0; g < scene->mMeshes[i]->mNumVertices; ++g)
+                {
+                    if (scene->mMeshes[i]->mVertices[g].y < m_mostBottomVertex)
+                        m_mostBottomVertex = scene->mMeshes[i]->mVertices[g].y;
+
+                    if (scene->mMeshes[i]->mVertices[g].y > m_mostTopVertex)
+                        m_mostTopVertex = scene->mMeshes[i]->mVertices[g].y;
+
+                    if (scene->mMeshes[i]->mVertices[g].x < m_smallestX)
+                        m_smallestX = scene->mMeshes[i]->mVertices[g].x;
+
+                    if (scene->mMeshes[i]->mVertices[g].x > m_biggestX)
+                        m_biggestX = scene->mMeshes[i]->mVertices[g].x;
+
+                    if (scene->mMeshes[i]->mVertices[g].z < m_smallestZ)
+                        m_smallestZ = scene->mMeshes[i]->mVertices[g].z;
+
+                    if (scene->mMeshes[i]->mVertices[g].z > m_biggestZ)
+                        m_biggestZ = scene->mMeshes[i]->mVertices[g].z;
+                }
+
                 m_hasCollisionObject = true;
+                m_isEnabledInPhysicsSimulation = true;
                 m_collisionGroup = collGroup;
 
-                processCollisionMesh(m_scene->mMeshes[i], meshName, collisionMass, wantCollisionCallBack, collFlag, collGroup, collMask);
+                processCollisionMesh(scene, scene->mMeshes[i], meshName, collisionMass, wantCollisionCallBack, collFlag, collGroup, collMask);
                 continue;
             }
 
@@ -55,23 +79,23 @@ namespace Beryll
             std::vector<glm::vec3> normals;
             std::vector<glm::vec2> textureCoords;
             std::vector<uint32_t> indices;
-            vertices.reserve(m_scene->mMeshes[i]->mNumVertices);
-            normals.reserve(m_scene->mMeshes[i]->mNumVertices);
-            textureCoords.reserve(m_scene->mMeshes[i]->mNumVertices);
-            indices.reserve(m_scene->mMeshes[i]->mNumFaces * 3);
+            vertices.reserve(scene->mMeshes[i]->mNumVertices);
+            normals.reserve(scene->mMeshes[i]->mNumVertices);
+            textureCoords.reserve(scene->mMeshes[i]->mNumVertices);
+            indices.reserve(scene->mMeshes[i]->mNumFaces * 3);
 
             // vertices
-            for(int g = 0; g < m_scene->mMeshes[i]->mNumVertices; ++g)
+            for(int g = 0; g < scene->mMeshes[i]->mNumVertices; ++g)
             {
-                vertices.emplace_back(m_scene->mMeshes[i]->mVertices[g].x,
-                                      m_scene->mMeshes[i]->mVertices[g].y,
-                                      m_scene->mMeshes[i]->mVertices[g].z);
+                vertices.emplace_back(scene->mMeshes[i]->mVertices[g].x,
+                                      scene->mMeshes[i]->mVertices[g].y,
+                                      scene->mMeshes[i]->mVertices[g].z);
 
-                if(m_scene->mMeshes[i]->mNormals)
+                if(scene->mMeshes[i]->mNormals)
                 {
-                    normals.emplace_back(m_scene->mMeshes[i]->mNormals[g].x,
-                                         m_scene->mMeshes[i]->mNormals[g].y,
-                                         m_scene->mMeshes[i]->mNormals[g].z);
+                    normals.emplace_back(scene->mMeshes[i]->mNormals[g].x,
+                                         scene->mMeshes[i]->mNormals[g].y,
+                                         scene->mMeshes[i]->mNormals[g].z);
                 }
                 else
                 {
@@ -79,10 +103,10 @@ namespace Beryll
                 }
 
                 // use only first set of texture coordinates
-                if(m_scene->mMeshes[i]->mTextureCoords[0])
+                if(scene->mMeshes[i]->mTextureCoords[0])
                 {
-                    textureCoords.emplace_back(m_scene->mMeshes[i]->mTextureCoords[0][g].x,
-                                               m_scene->mMeshes[i]->mTextureCoords[0][g].y);
+                    textureCoords.emplace_back(scene->mMeshes[i]->mTextureCoords[0][g].x,
+                                               scene->mMeshes[i]->mTextureCoords[0][g].y);
                 }
                 else
                 {
@@ -94,11 +118,11 @@ namespace Beryll
             m_textureCoordsBuffer = Renderer::createVertexBuffer(textureCoords);
 
             // indices
-            for(int g = 0; g < m_scene->mMeshes[i]->mNumFaces; ++g) // every face MUST be a triangle !!!!
+            for(int g = 0; g < scene->mMeshes[i]->mNumFaces; ++g) // every face MUST be a triangle !!!!
             {
-                indices.emplace_back(m_scene->mMeshes[i]->mFaces[g].mIndices[0]);
-                indices.emplace_back(m_scene->mMeshes[i]->mFaces[g].mIndices[1]);
-                indices.emplace_back(m_scene->mMeshes[i]->mFaces[g].mIndices[2]);
+                indices.emplace_back(scene->mMeshes[i]->mFaces[g].mIndices[0]);
+                indices.emplace_back(scene->mMeshes[i]->mFaces[g].mIndices[1]);
+                indices.emplace_back(scene->mMeshes[i]->mFaces[g].mIndices[2]);
             }
             m_indexBuffer = Renderer::createIndexBuffer(indices);
 
@@ -111,9 +135,9 @@ namespace Beryll
             m_shader = Renderer::createShader(vertexPath, fragmentPath);
 
             // material
-            if(m_scene->mMeshes[i]->mMaterialIndex >= 0)
+            if(scene->mMeshes[i]->mMaterialIndex >= 0)
             {
-                aiMaterial* material = m_scene->mMaterials[m_scene->mMeshes[i]->mMaterialIndex];
+                aiMaterial* material = scene->mMaterials[scene->mMeshes[i]->mMaterialIndex];
 
                 const std::string mP = modelPath;
                 BR_ASSERT((mP.find_last_of('/') != std::string::npos), "Texture + model must be in folder:%s", mP.c_str());
@@ -151,7 +175,7 @@ namespace Beryll
                 }
             }
 
-            const aiNode* node = Utils::Common::findAinodeForAimesh(m_scene, m_scene->mRootNode, m_scene->mMeshes[i]->mName);
+            const aiNode* node = Utils::Common::findAinodeForAimesh(scene, scene->mRootNode, scene->mMeshes[i]->mName);
             if(node)
             {
                 m_modelMatrix = Utils::Matrix::aiToGlm(node->mTransformation);
@@ -209,7 +233,8 @@ namespace Beryll
 
     }
 
-    void CollidingSimpleObject::processCollisionMesh(const aiMesh* mesh,
+    void CollidingSimpleObject::processCollisionMesh(const aiScene* scene,
+                                                     const aiMesh* mesh,
                                                      const std::string& meshName,
                                                      float mass,
                                                      bool wantCallBack,
@@ -219,7 +244,7 @@ namespace Beryll
     {
         glm::mat4 collisionTransforms{1.0f};
 
-        const aiNode* node = Utils::Common::findAinodeForAimesh(m_scene, m_scene->mRootNode, mesh->mName);
+        const aiNode* node = Utils::Common::findAinodeForAimesh(scene, scene->mRootNode, mesh->mName);
         if(node)
         {
             collisionTransforms = Utils::Matrix::aiToGlm(node->mTransformation);

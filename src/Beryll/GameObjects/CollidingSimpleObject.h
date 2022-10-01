@@ -54,11 +54,17 @@ namespace Beryll
         std::unique_ptr<Texture> m_specTexture;
         const uint32_t m_specSamplerIndexInShader = 1; // specular sampler MUST be second in fragment shader
 
-        Assimp::Importer m_importer;
-        const aiScene* m_scene = nullptr;
+        // collision mesh dimensions
+        float m_smallestX = std::numeric_limits<float>::max();
+        float m_biggestX = std::numeric_limits<float>::min();
+        float m_smallestZ = std::numeric_limits<float>::max();
+        float m_biggestZ = std::numeric_limits<float>::min();
+        float m_mostBottomVertex = std::numeric_limits<float>::max();
+        float m_mostTopVertex = std::numeric_limits<float>::min();
 
     private:
-        void processCollisionMesh(const aiMesh* mesh,
+        void processCollisionMesh(const aiScene* scene,
+                                  const aiMesh* mesh,
                                   const std::string& meshName,
                                   float mass,
                                   bool wantCallBack,

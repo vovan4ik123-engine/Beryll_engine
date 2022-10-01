@@ -49,7 +49,30 @@ namespace Beryll
 
             if(meshName.find("Collision") != std::string::npos)
             {
+                // collect collision mesh dimensions
+                for (int g = 0; g < m_scene->mMeshes[i]->mNumVertices; ++g)
+                {
+                    if (m_scene->mMeshes[i]->mVertices[g].y < m_mostBottomVertex)
+                        m_mostBottomVertex = m_scene->mMeshes[i]->mVertices[g].y;
+
+                    if (m_scene->mMeshes[i]->mVertices[g].y > m_mostTopVertex)
+                        m_mostTopVertex = m_scene->mMeshes[i]->mVertices[g].y;
+
+                    if (m_scene->mMeshes[i]->mVertices[g].x < m_smallestX)
+                        m_smallestX = m_scene->mMeshes[i]->mVertices[g].x;
+
+                    if (m_scene->mMeshes[i]->mVertices[g].x > m_biggestX)
+                        m_biggestX = m_scene->mMeshes[i]->mVertices[g].x;
+
+                    if (m_scene->mMeshes[i]->mVertices[g].z < m_smallestZ)
+                        m_smallestZ = m_scene->mMeshes[i]->mVertices[g].z;
+
+                    if (m_scene->mMeshes[i]->mVertices[g].z > m_biggestZ)
+                        m_biggestZ = m_scene->mMeshes[i]->mVertices[g].z;
+                }
+
                 m_hasCollisionObject = true;
+                m_isEnabledInPhysicsSimulation = true;
                 m_collisionGroup = collGroup;
 
                 processCollisionMesh(m_scene->mMeshes[i], meshName, collisionMass, wantCollisionCallBack, collFlag, collGroup, collMask);

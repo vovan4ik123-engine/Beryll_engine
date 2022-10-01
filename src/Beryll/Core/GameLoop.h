@@ -28,14 +28,16 @@ namespace Beryll
         }
 
         static uint32_t getFPS() { return 1000 / TimeStep::getTimeStepMilliSec(); }
-
         static uint32_t getMaxFPS() { return m_maxFPS; }
-
         static uint32_t getFrameTime() { return m_frameTime; }
-
         static Platform getPlatform() { return m_platform; }
-
         static void stopLoop() { m_isRun = false; }
+
+        // for staticstics
+        static uint32_t calcStart;
+        static uint32_t calcTime;
+        static uint32_t drawStart;
+        static uint32_t drawTime;
 
     private:
         friend int ::main(int argc, char *argv[]);

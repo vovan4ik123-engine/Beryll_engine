@@ -87,6 +87,14 @@ namespace Beryll
         Assimp::Importer m_importer;
         const aiScene* m_scene = nullptr;
 
+        // collision mesh dimensions
+        float m_smallestX = std::numeric_limits<float>::max();
+        float m_biggestX = std::numeric_limits<float>::min();
+        float m_smallestZ = std::numeric_limits<float>::max();
+        float m_biggestZ = std::numeric_limits<float>::min();
+        float m_mostBottomVertex = std::numeric_limits<float>::max();
+        float m_mostTopVertex = std::numeric_limits<float>::min();
+
     private:
         void processCollisionMesh(const aiMesh* mesh,
                                   const std::string& meshName,

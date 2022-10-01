@@ -16,7 +16,7 @@ namespace Beryll
         void draw() override;
         void playSound() override;
 
-        bool getValue() { return m_sliderValue; }
+        float getValue() { return m_sliderValue; }
 
         void setFontColor(float r, float g, float b, float a) { m_fontColor = ImVec4{ r, g, b, a }; }
         void setSliderGrabColor(float r, float g, float b, float a) { m_sliderGrabColor = ImVec4{ r, g, b, a }; }

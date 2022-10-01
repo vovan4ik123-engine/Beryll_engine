@@ -50,7 +50,7 @@ namespace Beryll
 
         ALL_GROUPS = -1 // all bits = 1
     };
-    inline CollisionGroups operator | (const CollisionGroups& gr1, const CollisionGroups& gr2)
+    inline CollisionGroups operator | (CollisionGroups gr1, CollisionGroups gr2)
     {
         return static_cast<CollisionGroups>(static_cast<int>(gr1) | static_cast<int>(gr2));
     }
@@ -147,7 +147,7 @@ namespace Beryll
         static void activateObject(const int ID); // awake object in physics world
         static bool getIsObjectActive(const int ID); // check if object is active
 
-        static bool getIsCollisionGroupContainsOther(const CollisionGroups& gr1, const CollisionGroups& gr2)
+        static bool getIsCollisionGroupContainsOther(CollisionGroups gr1, CollisionGroups gr2)
         {
             // return true if gr1 contains gr2
             return (static_cast<int>(gr1) & static_cast<int>(gr2)) > 0;

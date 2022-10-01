@@ -1,11 +1,7 @@
 beryllEngineObjectID in btCollisionObject
 
-remove rigid body without broadphase
-
-synchronize with mutex.
-avoid [btGetCurrentThreadIndex()]
-
-btCollisionDispatcher::CD_USE_RELATIVE_CONTACT_BREAKING_THRESHOLD ???
+synchronize with mutex. ??
+avoid [btGetCurrentThreadIndex()] ??
 
 check btThreadsAreRunning()
 

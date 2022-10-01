@@ -19,17 +19,18 @@ namespace Beryll
         uint32_t bufferSize = 0;
         char* buffer = Utils::File::readToBuffer(modelPath, &bufferSize);
 
-        m_scene = m_importer.ReadFileFromMemory(buffer, bufferSize,
+        Assimp::Importer importer;
+        const aiScene* scene = importer.ReadFileFromMemory(buffer, bufferSize,
                                                 aiProcess_Triangulate |
                                                         aiProcess_SortByPType |
                                                         aiProcess_FlipUVs);
 
-        if( !m_scene || !m_scene->mRootNode || m_scene->mFlags == AI_SCENE_FLAGS_INCOMPLETE)
+        if( !scene || !scene->mRootNode || scene->mFlags == AI_SCENE_FLAGS_INCOMPLETE)
         {
             BR_ASSERT(false, "Scene loading error for file:%s", modelPath);
         }
 
-        BR_ASSERT((m_scene->mNumMeshes == 1),
+        BR_ASSERT((scene->mNumMeshes == 1),
                 "Simple object:%s MUST contain only 1 mesh. Combine into one if you have many", modelPath);
 
         // prepare vectors
@@ -37,23 +38,23 @@ namespace Beryll
         std::vector<glm::vec3> normals;
         std::vector<glm::vec2> textureCoords;
         std::vector<uint32_t> indices;
-        vertices.reserve(m_scene->mMeshes[0]->mNumVertices);
-        normals.reserve(m_scene->mMeshes[0]->mNumVertices);
-        textureCoords.reserve(m_scene->mMeshes[0]->mNumVertices);
-        indices.reserve(m_scene->mMeshes[0]->mNumFaces * 3);
+        vertices.reserve(scene->mMeshes[0]->mNumVertices);
+        normals.reserve(scene->mMeshes[0]->mNumVertices);
+        textureCoords.reserve(scene->mMeshes[0]->mNumVertices);
+        indices.reserve(scene->mMeshes[0]->mNumFaces * 3);
 
         // vertices
-        for(int g = 0; g < m_scene->mMeshes[0]->mNumVertices; ++g)
+        for(int g = 0; g < scene->mMeshes[0]->mNumVertices; ++g)
         {
-            vertices.emplace_back(m_scene->mMeshes[0]->mVertices[g].x,
-                                    m_scene->mMeshes[0]->mVertices[g].y,
-                                    m_scene->mMeshes[0]->mVertices[g].z);
+            vertices.emplace_back(scene->mMeshes[0]->mVertices[g].x,
+                                    scene->mMeshes[0]->mVertices[g].y,
+                                    scene->mMeshes[0]->mVertices[g].z);
 
-            if(m_scene->mMeshes[0]->mNormals)
+            if(scene->mMeshes[0]->mNormals)
             {
-                normals.emplace_back(m_scene->mMeshes[0]->mNormals[g].x,
-                                       m_scene->mMeshes[0]->mNormals[g].y,
-                                       m_scene->mMeshes[0]->mNormals[g].z);
+                normals.emplace_back(scene->mMeshes[0]->mNormals[g].x,
+                                       scene->mMeshes[0]->mNormals[g].y,
+                                       scene->mMeshes[0]->mNormals[g].z);
             }
             else
             {
@@ -61,10 +62,10 @@ namespace Beryll
             }
 
             // use only first set of texture coordinates
-            if(m_scene->mMeshes[0]->mTextureCoords[0])
+            if(scene->mMeshes[0]->mTextureCoords[0])
             {
-                textureCoords.emplace_back(m_scene->mMeshes[0]->mTextureCoords[0][g].x,
-                                             m_scene->mMeshes[0]->mTextureCoords[0][g].y);
+                textureCoords.emplace_back(scene->mMeshes[0]->mTextureCoords[0][g].x,
+                                             scene->mMeshes[0]->mTextureCoords[0][g].y);
             }
             else
             {
@@ -76,11 +77,11 @@ namespace Beryll
         m_textureCoordsBuffer = Renderer::createVertexBuffer(textureCoords);
 
         // indices
-        for(int g = 0; g < m_scene->mMeshes[0]->mNumFaces; ++g) // every face MUST be a triangle !!!!
+        for(int g = 0; g < scene->mMeshes[0]->mNumFaces; ++g) // every face MUST be a triangle !!!!
         {
-            indices.emplace_back(m_scene->mMeshes[0]->mFaces[g].mIndices[0]);
-            indices.emplace_back(m_scene->mMeshes[0]->mFaces[g].mIndices[1]);
-            indices.emplace_back(m_scene->mMeshes[0]->mFaces[g].mIndices[2]);
+            indices.emplace_back(scene->mMeshes[0]->mFaces[g].mIndices[0]);
+            indices.emplace_back(scene->mMeshes[0]->mFaces[g].mIndices[1]);
+            indices.emplace_back(scene->mMeshes[0]->mFaces[g].mIndices[2]);
         }
         m_indexBuffer = Renderer::createIndexBuffer(indices);
 
@@ -93,9 +94,9 @@ namespace Beryll
         m_shader = Renderer::createShader(vertexPath, fragmentPath);
 
         // material
-        if(m_scene->mMeshes[0]->mMaterialIndex >= 0)
+        if(scene->mMeshes[0]->mMaterialIndex >= 0)
         {
-            aiMaterial* material = m_scene->mMaterials[m_scene->mMeshes[0]->mMaterialIndex];
+            aiMaterial* material = scene->mMaterials[scene->mMeshes[0]->mMaterialIndex];
 
             const std::string mP = modelPath;
             BR_ASSERT((mP.find_last_of('/') != std::string::npos), "Texture + model must be in folder:%s", mP.c_str());
@@ -133,7 +134,7 @@ namespace Beryll
             }
         }
 
-        const aiNode* node = Utils::Common::findAinodeForAimesh(m_scene, m_scene->mRootNode, m_scene->mMeshes[0]->mName);
+        const aiNode* node = Utils::Common::findAinodeForAimesh(scene, scene->mRootNode, scene->mMeshes[0]->mName);
         if(node)
         {
             m_modelMatrix = Utils::Matrix::aiToGlm(node->mTransformation);

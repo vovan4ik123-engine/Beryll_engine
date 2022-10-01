@@ -21,6 +21,11 @@ namespace Beryll
 
     Platform GameLoop::m_platform = Platform::UNKNOWN;
 
+    uint32_t GameLoop::calcStart = 0;
+    uint32_t GameLoop::calcTime = 0;
+    uint32_t GameLoop::drawStart = 0;
+    uint32_t GameLoop::drawTime = 0;
+
     void GameLoop::create(Platform p)
     {
         m_platform = p;
@@ -47,6 +52,7 @@ namespace Beryll
         {
             TimeStep::fixateTime(); // fixate time of last finished game loop
             m_frameStart = TimeStep::getMillisecFromStart();
+            calcStart = TimeStep::getMillisecFromStart();
 
         // Check user input
             EventHandler::resetEvents(EventID::ALL_EVENTS);
@@ -60,7 +66,7 @@ namespace Beryll
 
             Physics::simulate();
 
-            // read positions of objects after simulation here
+            // read positions of objects after simulation, resolve collisions here
             // prefer update camera properties here
             GameStateMachine::updateAfterPhysics();
         // Update layers finish
@@ -69,15 +75,22 @@ namespace Beryll
             // Dont set any camera attributes after this call (set in updateAfterPhysics())
             Camera::update3DCamera();
 
-        // Draw start
+            calcTime = TimeStep::getMillisecFromStart() - calcStart;
+        // Draw start    DONT CALL ANY DRAW COMMANDS before this point !!!!!!!!
+            // First finish draw previous frame
+            Window::getInstance()->finishDraw();
+            Window::getInstance()->swapWindow();
+
+            drawTime = TimeStep::getMillisecFromStart() - drawStart;
+            // Next start draw new frame
             Window::getInstance()->clear();
             MainImGUI::getInstance()->beginFrame();
 
+            drawStart = TimeStep::getMillisecFromStart();
             GameStateMachine::draw();
+            Window::getInstance()->flushDraw();
 
-            Window::getInstance()->finishDraw();
             MainImGUI::getInstance()->endFrame();
-            Window::getInstance()->swapWindow();
         // Draw finish
 
         // PlaySound start

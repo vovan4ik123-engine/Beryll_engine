@@ -41,8 +41,5 @@ namespace Beryll
         const uint32_t m_diffSamplerIndexInShader = 0; // diffuse sampler MUST be first in fragment shader
         std::unique_ptr<Texture> m_specTexture;
         const uint32_t m_specSamplerIndexInShader = 1; // specular sampler MUST be second in fragment shader
-
-        Assimp::Importer m_importer;
-        const aiScene* m_scene = nullptr;
     };
 }

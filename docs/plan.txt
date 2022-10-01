@@ -1,26 +1,20 @@
 ---------------------plan:---------------------
 
+sky box
+update shaders (diff spec samplers enable way)
+
+lighting
+shadows ???
+cel shading ???
+Normal Mapping
+Parallax Mapping
+particles
 
 
 update IMGui to 1.88+
 
-use
+
+
 #include <android/log.h>
 __android_log_print(ANDROID_LOG_DEBUG, "TAG", "message");
 __android_log_print(ANDROID_LOG_DEBUG, "MANIFOLDS", "size: %d", (int)m_manifoldsPtr.size());
-not spdlog
-
-
-dynamic collision shapes by performance:
-    200 items collision Convex  300 ms
-    200 items collision Box     180 ms
-    200 items collision Sphere  140 ms
-    200 items collision Capsule 180 ms
-
-release performance scene:
-    0 objects:              8ms
-    player capsule:         1ms
-    simple animated man:    1.4ms
-    150 static vertices + player capsule: 1ms
-    40k static vertices + player capsule: 6ms
-    every +10k colliding ground vertices to scene = +0.875ms to frame time
