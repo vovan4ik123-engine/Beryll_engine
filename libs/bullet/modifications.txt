@@ -60,7 +60,7 @@ public:
             for(int i = iBegin; i < iEnd; i += oneChunkSize)
             {
                 int chunkEnd = std::min(i + oneChunkSize, iEnd);
-
+                std::cref(
 				m_futuresVoid.emplace_back(std::async(std::launch::async, &btIParallelForBody::forLoop, &body, i, chunkEnd));
             }
 
@@ -92,7 +92,7 @@ public:
 			for(int i = iBegin; i < iEnd; i += oneChunkSize)
 			{
 				int chunkEnd = std::min(i + oneChunkSize, iEnd);
-
+                std::cref(
 				m_futuresFloat.emplace_back(std::async(std::launch::async, &btIParallelSumBody::sumLoop, &body, i, chunkEnd));
 			}
 

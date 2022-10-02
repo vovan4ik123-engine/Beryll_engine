@@ -9,16 +9,16 @@ namespace Beryll
 {
     AndroidGLESShader::AndroidGLESShader(const char* vertexPath, const char* fragmentPath)
     {
-        std::string keyInMap = vertexPath;
-        keyInMap += fragmentPath;
+        m_ID = vertexPath;
+        m_ID += fragmentPath;
 
-        auto result =  m_shaders.find(keyInMap);
-        if(result != m_shaders.end())
+        auto result =  m_shaderPrograms.find(m_ID);
+        if(result != m_shaderPrograms.end())
         {
             // shaders with given source was compiled and added before
             // use it
             //BR_INFO("%s", "shaders with given source was compiled and added before");
-            m_shaderProgram = result->second;
+            m_shaderProgramID = result->second; // copy shared pointer
             return;
         }
 
@@ -62,32 +62,43 @@ namespace Beryll
             BR_ASSERT(false, "%s", "Fragment Shader failed");
         }
 
-        m_shaderProgram = glCreateProgram();
-        glAttachShader(m_shaderProgram, vertexShaderID);
-        glAttachShader(m_shaderProgram, fragmentShaderID);
+        m_shaderProgramID = std::make_shared<uint32_t>();
 
-        glLinkProgram(m_shaderProgram);
+        *m_shaderProgramID = glCreateProgram();
+        glAttachShader(*m_shaderProgramID, vertexShaderID);
+        glAttachShader(*m_shaderProgramID, fragmentShaderID);
 
-        glDetachShader(m_shaderProgram, vertexShaderID);
-        glDetachShader(m_shaderProgram, fragmentShaderID);
+        glLinkProgram(*m_shaderProgramID);
+
+        glDetachShader(*m_shaderProgramID, vertexShaderID);
+        glDetachShader(*m_shaderProgramID, fragmentShaderID);
         glDeleteShader(vertexShaderID);     // only mark for delete in future if was not detached !!!
         glDeleteShader(fragmentShaderID);   // Will be deleted during call glDeleteProgram(programID);
                                             // or delete now if was detached
 
-        m_shaders.insert(std::make_pair(keyInMap, m_shaderProgram));
+        m_shaderPrograms.insert(std::make_pair(m_ID, m_shaderProgramID));
     }
 
     AndroidGLESShader::~AndroidGLESShader()
     {
-        // keep shaders in static map m_shaders
-        //glDeleteProgram(m_shaderProgram);
+        if(m_shaderProgramID.use_count() <= 2)
+        {
+            // use_count() <= 2 means only shared_ptr in this class left and in map
+            // if we destroy this m_shaderProgramID (last copy except copy in map) also delete from OpenGL and map.
+            auto result =  m_shaderPrograms.find(m_ID);
+            if(result != m_shaderPrograms.end())
+            {
+                glDeleteProgram(*m_shaderProgramID);
+                m_shaderPrograms.erase(result);
+            }
+        }
     }
 
-    std::map<std::string, uint32_t> AndroidGLESShader::m_shaders;
+    std::map<const std::string, std::shared_ptr<uint32_t>> AndroidGLESShader::m_shaderPrograms;
 
     void AndroidGLESShader::bind()
     {
-        glUseProgram(m_shaderProgram);
+        glUseProgram(*m_shaderProgramID);
     }
 
     void AndroidGLESShader::unBind()
@@ -97,36 +108,36 @@ namespace Beryll
 
     void AndroidGLESShader::setFloat(const char* name, const float value)
     {
-        glUniform1f(glGetUniformLocation(m_shaderProgram, name), value);
+        glUniform1f(glGetUniformLocation(*m_shaderProgramID, name), value);
     }
 
     void AndroidGLESShader::setInt(const char* name, const int value)
     {
-        glUniform1i(glGetUniformLocation(m_shaderProgram, name), value);
+        glUniform1i(glGetUniformLocation(*m_shaderProgramID, name), value);
     }
 
     void AndroidGLESShader::setMatrix4x4Float(const char* name, const glm::mat4& value)
     {
-        glUniformMatrix4fv(glGetUniformLocation(m_shaderProgram, name), 1, GL_FALSE, glm::value_ptr(value));
+        glUniformMatrix4fv(glGetUniformLocation(*m_shaderProgramID, name), 1, GL_FALSE, glm::value_ptr(value));
     }
 
     void AndroidGLESShader::setMatrix4x4Float(const char* name, aiMatrix4x4& value)
     {
-        glUniformMatrix4fv(glGetUniformLocation(m_shaderProgram, name), 1, GL_TRUE, reinterpret_cast<float*>(&value));
+        glUniformMatrix4fv(glGetUniformLocation(*m_shaderProgramID, name), 1, GL_TRUE, reinterpret_cast<float*>(&value));
     }
 
     void AndroidGLESShader::setMatrix3x3Float(const char* name, const glm::mat3& value)
     {
-        glUniformMatrix3fv(glGetUniformLocation(m_shaderProgram, name), 1, GL_FALSE, glm::value_ptr(value));
+        glUniformMatrix3fv(glGetUniformLocation(*m_shaderProgramID, name), 1, GL_FALSE, glm::value_ptr(value));
     }
 
     void AndroidGLESShader::activateDiffuseTexture()
     {
-        glUniform1i(glGetUniformLocation(m_shaderProgram, "diffuseTexture"), 0);
+        glUniform1i(glGetUniformLocation(*m_shaderProgramID, "diffuseTexture"), 0);
     }
 
     void AndroidGLESShader::activateSpecularTexture()
     {
-        glUniform1i(glGetUniformLocation(m_shaderProgram, "specularTexture"), 1);
+        glUniform1i(glGetUniformLocation(*m_shaderProgramID, "specularTexture"), 1);
     }
 }

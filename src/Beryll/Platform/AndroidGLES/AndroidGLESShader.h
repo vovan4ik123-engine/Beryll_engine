@@ -24,13 +24,20 @@ namespace Beryll
 
     private:
         friend class Renderer;
+        /*
+         * vertexPath - path to vertex file in asset folder
+         * fragmentPath - path to fragment file in asset folder
+         */
         AndroidGLESShader(const char* vertexPath, const char* fragmentPath);
 
         // keep shaders in static map and reuse them
         // key = vertexPath + fragmentPath
         // value = shader program
-        static std::map<std::string, uint32_t> m_shaders;
+        static std::map<const std::string, std::shared_ptr<uint32_t>> m_shaderPrograms;
 
-        uint32_t m_shaderProgram = 0;
+        std::string m_ID; // ID in static map = vertexPath + fragmentPath
+                          // if many objects load same shader, shader ID will same for all of them
+        std::shared_ptr<uint32_t> m_shaderProgramID; // ID in OpenGL
+                                                     // will copied across all objects with same m_ID
     };
 }

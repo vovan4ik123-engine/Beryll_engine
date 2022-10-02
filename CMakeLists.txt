@@ -60,6 +60,7 @@ set(Common_SRC
         src/Beryll/GameObjects/AnimatedObject.cpp
         src/Beryll/GameObjects/CollidingSimpleObject.cpp
         src/Beryll/GameObjects/CollidingAnimatedObject.cpp
+        src/Beryll/GameObjects/SkyBox.cpp
 
         src/Beryll/GameObjects/Player/CollidingSimplePlayer.cpp
 

@@ -25,11 +25,14 @@ namespace Beryll
         AndroidGLESTexture(const char* path, TextureType type);
 
         // keep textures in static map in subclasses for reuse them
-        // key = texturePath
-        // value = textureID
-        static std::map<std::string, uint32_t> m_textures;
+        // key = m_ID
+        // value = m_openGLID
+        static std::map<const std::string, std::shared_ptr<uint32_t>> m_textures;
 
-        uint32_t m_textureID = 0;
+        const std::string m_ID; // ID in static map = texture path
+                                // if many objects load same texture, texture ID will same for all of them
+        std::shared_ptr<uint32_t> m_openGLID; // ID in OpenGL
+                                              // will copied across all objects with same m_ID
         TextureType m_type = TextureType::UNKNOWN;
     };
 }

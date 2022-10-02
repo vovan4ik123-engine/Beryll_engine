@@ -76,7 +76,7 @@ namespace Beryll
                                      m_resolutionFactor + 1,
                                      m_timeStep / m_resolutionFactor);
 
-        BR_INFO("Simulation objects count:%d", m_dynamicsWorldMT->getNumCollisionObjects());
+        //BR_INFO("Simulation objects count:%d", m_dynamicsWorldMT->getNumCollisionObjects());
         //BR_INFO("Simulation time millisec:%d", timer.elapsedMilliSec());
     }
 

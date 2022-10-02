@@ -1,0 +1,46 @@
+Name of MVP matrix in shader must be MVP_matrix
+    uniform mat4 MVP_matrix;
+
+Shader can contain two sampler2D for textures. Order of them is important.
+    First sampler2D should be for diffuse texture and must has name diffuseTexture
+        uniform sampler2D diffuseTexture;
+    Second sampler2D should be for specular texture(if exist) and must has name specularTexture
+        uniform sampler2D specularTexture;
+
+Vertex shader example:
+    #version 300 es
+
+    precision highp float; // highp mediump lowp
+
+    layout(location = 0) in vec3 inPosition;
+    layout(location = 1) in vec3 inNormal;
+    layout(location = 2) in vec2 inTextureCoords;
+
+    out vec2 textureCoords;
+
+    uniform mat4 MVP_matrix;
+
+    void main()
+    {
+        textureCoords = inTextureCoords;
+
+        gl_Position = MVP_matrix * vec4(inPosition, 1.0);
+    }
+
+Fragment shader example:
+    #version 300 es
+
+    precision highp float; // highp mediump lowp
+
+    in vec2 textureCoords;
+
+    out vec4 outColor;
+
+    uniform sampler2D diffuseTexture;   // first in shader !!!
+    uniform sampler2D specularTexture;  // second in shader !!!
+
+    void main()
+    {
+        outColor = texture(diffuseTexture, textureCoords);
+    }
+

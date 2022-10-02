@@ -250,7 +250,7 @@ namespace Beryll
 
                 if (newPosYHit.hit)
                 {
-                    BR_INFO("%s", "walkable floor found");
+                    //BR_INFO("%s", "walkable floor found");
                     if (m_bottomCollisionPoint.first.y > newPosYHit.hitPoint.y)
                     {
                         moveVector.y = -(m_bottomCollisionPoint.first.y - newPosYHit.hitPoint.y);
