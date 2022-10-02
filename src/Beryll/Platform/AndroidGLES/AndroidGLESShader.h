@@ -19,7 +19,8 @@ namespace Beryll
         void setMatrix4x4Float(const char* name, aiMatrix4x4& value) override;
         void setMatrix3x3Float(const char* name, const glm::mat3& value) override;
 
-        void activateTexture(const char* nameInShader, uint32_t index) override;
+        void activateDiffuseTexture() override;
+        void activateSpecularTexture() override;
 
     private:
         friend class Renderer;

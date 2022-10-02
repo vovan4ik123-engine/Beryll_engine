@@ -26,8 +26,8 @@ namespace Beryll
 
         static std::unique_ptr<VertexArray> createVertexArray();
 
-        static std::unique_ptr<Shader> createShader(const char* vertexPath, const char* fragmentPath);
+        static std::shared_ptr<Shader> createShader(const char* vertexPath, const char* fragmentPath);
 
-        static std::unique_ptr<Texture> createTexture(const char* path, uint32_t indexInShader = -1);
+        static std::unique_ptr<Texture> createTexture(const char* path, TextureType type);
     };
 }

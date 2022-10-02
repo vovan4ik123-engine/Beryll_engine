@@ -87,11 +87,11 @@ namespace Beryll
         }
     }
 
-    std::unique_ptr<Shader> Renderer::createShader(const char* vertexPath, const char* fragmentPath)
+    std::shared_ptr<Shader> Renderer::createShader(const char* vertexPath, const char* fragmentPath)
     {
         if(GameLoop::getPlatform() == Platform::ANDROID_GLES)
         {
-            return std::unique_ptr<Shader>(new AndroidGLESShader(vertexPath, fragmentPath));
+            return std::shared_ptr<Shader>(new AndroidGLESShader(vertexPath, fragmentPath));
         }
         else
         {
@@ -100,11 +100,11 @@ namespace Beryll
         }
     }
 
-    std::unique_ptr<Texture> Renderer::createTexture(const char* path, uint32_t indexInShader)
+    std::unique_ptr<Texture> Renderer::createTexture(const char* path, TextureType type)
     {
         if(GameLoop::getPlatform() == Platform::ANDROID_GLES)
         {
-            return std::unique_ptr<Texture>(new AndroidGLESTexture(path, indexInShader));
+            return std::unique_ptr<Texture>(new AndroidGLESTexture(path, type));
         }
         else
         {

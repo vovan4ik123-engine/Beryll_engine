@@ -8,22 +8,14 @@ namespace Beryll
                           bool wantCollisionCallBack,
                           CollisionFlags collFlag,
                           CollisionGroups collGroup,
-                          CollisionGroups collMask,
-                          const char* vertexPath, // graphics params
-                          const char* fragmentPath,
-                          const char* diffSampler,
-                          const char* specSampler)
+                          CollisionGroups collMask)
                           // call base class constructor
                           : CollidingSimpleObject(modelPath,
                                                   collisionMass,
                                                   wantCollisionCallBack,
                                                   collFlag,
                                                   collGroup,
-                                                  collMask,
-                                                  vertexPath,
-                                                  fragmentPath,
-                                                  diffSampler,
-                                                  specSampler)
+                                                  collMask)
     {
         // player described by collision mesh
 

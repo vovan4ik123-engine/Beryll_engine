@@ -33,7 +33,7 @@ namespace Beryll
         static Platform getPlatform() { return m_platform; }
         static void stopLoop() { m_isRun = false; }
 
-        // for staticstics
+        // for statistics
         static uint32_t calcStart;
         static uint32_t calcTime;
         static uint32_t drawStart;

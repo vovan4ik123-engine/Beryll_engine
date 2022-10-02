@@ -10,19 +10,9 @@ namespace Beryll
     public:
         AnimatedObject() = delete;
         /*
-         * modelPath - path to models file (.DAE or .FBX). start path from first folder inside assets/
-         * vertexPath - path to vertex shader for this model
-         * fragmentPath - path to fragment shader for this model
-         * diffSampler - name of sampler2D .... for diffuse texture in fragment shader
-         *               sampler2D .... for diffuse texture MUST be first in shader
-         * specSampler - name of sampler2D .... for specular texture in fragment shader
-         *               sampler2D .... for specular texture MUST be second in shader
+         * modelPath - path to model file (.DAE or .FBX). start path from first folder inside assets/
          */
-        AnimatedObject(const char* modelPath,  // common params
-                       const char* vertexPath, // graphics params
-                       const char* fragmentPath,
-                       const char* diffSampler,
-                       const char* specSampler = nullptr);
+        AnimatedObject(const char* modelPath);
         ~AnimatedObject() override;
 
         void updateBeforePhysics() override;
@@ -31,6 +21,10 @@ namespace Beryll
         void playSound() override;
 
         void setAnimation(const char* name); // animations should be loaded from model
+        void setShader(std::shared_ptr<Shader> shader)
+        {
+            m_shader = std::move(shader);
+        }
 
     protected:
         // animation data
@@ -65,11 +59,9 @@ namespace Beryll
         std::shared_ptr<VertexBuffer> m_boneWeightsBuffer;
         std::shared_ptr<IndexBuffer> m_indexBuffer;
         std::unique_ptr<VertexArray> m_vertexArray;
-        std::unique_ptr<Shader> m_shader;
+        std::shared_ptr<Shader> m_shader;
         std::unique_ptr<Texture> m_diffTexture;
-        const uint32_t m_diffSamplerIndexInShader = 0; // diffuse sampler MUST be first in fragment shader
         std::unique_ptr<Texture> m_specTexture;
-        const uint32_t m_specSamplerIndexInShader = 1; // specular sampler MUST be second in fragment shader
         // model data end
 
         Assimp::Importer m_importer;

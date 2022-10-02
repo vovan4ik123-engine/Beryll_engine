@@ -8,27 +8,28 @@
 
 namespace Beryll
 {
-    AndroidGLESTexture::AndroidGLESTexture(const char* path, uint32_t indexInShader)
+    AndroidGLESTexture::AndroidGLESTexture(const char* path, TextureType type)
     {
+        m_type = type;
+
         const std::string strPath = path;
-        BR_ASSERT((strPath.find_last_of('.') != std::string::npos), "Texture does not have extension:%s", strPath.c_str());
-
-        std::string extension = strPath.substr(strPath.find_last_of('.'));
-        BR_ASSERT(((extension == ".png") || (extension == ".jpg")), "Supported only .png or .jpg textures:%s", strPath.c_str());
-
-        // only two sampler2D supports for now (0 = diffuse, 1 = specular)
-        BR_ASSERT(((indexInShader == 0) || (indexInShader == 1)), "%s", "Pass correct index of sampler2D for texture");
-
-        m_indexInShader = indexInShader;
 
         auto result =  m_textures.find(strPath);
         if(result != m_textures.end())
         {
             // texture was added before, use it
-            BR_INFO("texture was added before %s", result->first.c_str());
+            //BR_INFO("%s", "texture was added before");
             m_textureID = result->second;
             return;
         }
+
+        BR_ASSERT((strPath.find_last_of('.') != std::string::npos), "Texture does not have extension:%s", strPath.c_str());
+
+        BR_ASSERT(((strPath.substr(strPath.find_last_of('.')) == ".png") ||
+                   (strPath.substr(strPath.find_last_of('.')) == ".jpg")),
+                  "Supported only .png or .jpg textures:%s", strPath.c_str());
+
+        BR_ASSERT(((type == TextureType::DIFFUSE_TEXTURE) || (type == TextureType::SPECULAR_TEXTURE)), "%s", "Not correct texture type");
 
         SDL_RWops* rw = SDL_RWFromFile(strPath.c_str(), "rb");
         BR_ASSERT((rw != nullptr), "Load texture failed:%s", strPath.c_str());
@@ -66,12 +67,12 @@ namespace Beryll
 
     void AndroidGLESTexture::bind()
     {
-        if(m_indexInShader == 0)
+        if(m_type == TextureType::DIFFUSE_TEXTURE)
         {
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, m_textureID);
         }
-        else if(m_indexInShader == 1)
+        else if(m_type == TextureType::SPECULAR_TEXTURE)
         {
             glActiveTexture(GL_TEXTURE1);
             glBindTexture(GL_TEXTURE_2D, m_textureID);
@@ -80,12 +81,12 @@ namespace Beryll
 
     void AndroidGLESTexture::unBind()
     {
-        if(m_indexInShader == 0)
+        if(m_type == TextureType::DIFFUSE_TEXTURE)
         {
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, 0);
         }
-        else if(m_indexInShader == 1)
+        else if(m_type == TextureType::SPECULAR_TEXTURE)
         {
             glActiveTexture(GL_TEXTURE1);
             glBindTexture(GL_TEXTURE_2D, 0);

@@ -17,6 +17,7 @@ namespace Beryll
         {
             // shaders with given source was compiled and added before
             // use it
+            //BR_INFO("%s", "shaders with given source was compiled and added before");
             m_shaderProgram = result->second;
             return;
         }
@@ -116,12 +117,16 @@ namespace Beryll
 
     void AndroidGLESShader::setMatrix3x3Float(const char* name, const glm::mat3& value)
     {
-        glUniformMatrix3fv(glGetUniformLocation(m_shaderProgram, name),
-                           1, GL_FALSE, glm::value_ptr(value));
+        glUniformMatrix3fv(glGetUniformLocation(m_shaderProgram, name), 1, GL_FALSE, glm::value_ptr(value));
     }
 
-    void AndroidGLESShader::activateTexture(const char* nameInShader, uint32_t index)
+    void AndroidGLESShader::activateDiffuseTexture()
     {
-        glUniform1i(glGetUniformLocation(m_shaderProgram, nameInShader), index);
+        glUniform1i(glGetUniformLocation(m_shaderProgram, "diffuseTexture"), 0);
+    }
+
+    void AndroidGLESShader::activateSpecularTexture()
+    {
+        glUniform1i(glGetUniformLocation(m_shaderProgram, "specularTexture"), 1);
     }
 }

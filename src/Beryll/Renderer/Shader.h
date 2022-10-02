@@ -21,7 +21,8 @@ namespace Beryll
         virtual void setMatrix3x3Float(const char* name, const glm::mat3& value) = 0;
 
         // for texture
-        virtual void activateTexture(const char* nameInShader, uint32_t index) = 0;
+        virtual void activateDiffuseTexture() = 0;
+        virtual void activateSpecularTexture() = 0;
 
     protected:
         // keep shaders in static map in subclasses for reuse them

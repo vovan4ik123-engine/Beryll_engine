@@ -20,11 +20,9 @@ namespace Beryll
         friend class Renderer;
         /*
          * path - path to file in asset folder
-         * numberInShader - index number of sampler2D ... for texture in fragment shader
-         *                  (use first sampler2D for diffuse texture with indexInShader = 0)
-         *                  (use second sampler2D for specular texture with indexInShader = 1)
+         * type
          */
-        AndroidGLESTexture(const char* path, uint32_t indexInShader = -1);
+        AndroidGLESTexture(const char* path, TextureType type);
 
         // keep textures in static map in subclasses for reuse them
         // key = texturePath
@@ -32,6 +30,6 @@ namespace Beryll
         static std::map<std::string, uint32_t> m_textures;
 
         uint32_t m_textureID = 0;
-        uint32_t m_indexInShader = 0;
+        TextureType m_type = TextureType::UNKNOWN;
     };
 }

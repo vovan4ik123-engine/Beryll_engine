@@ -9,7 +9,7 @@ namespace Beryll
     public:
         CollidingSimplePlayer() = delete;
         /*
-         * modelPath - path to models file (.DAE or .FBX). start path from first folder inside assets/
+         * modelPath - path to model file (.DAE or .FBX). start path from first folder inside assets/
          * collisionMass - mass of this object for physics simulation. 0 for static objects
          *                 for example map ground should be alwaus enabled
          * wantCollisionCallBack - if true Physics module will store actual collisions for this object,
@@ -17,23 +17,13 @@ namespace Beryll
          * collFlag - type of collision object in physics world
          * collGroup - group or groups of current object in physics world
          * collMask - should contain collGroup or groups with which you want collisions
-         * vertexPath - path to vertex shader for this model
-         * fragmentPath - path to fragment shader for this model
-         * diffSampler - name of sampler2D .... for diffuse texture in fragment shader
-         *               sampler2D .... for diffuse texture MUST be first in shader
-         * specSampler - name of sampler2D .... for specular texture in fragment shader
-         *               sampler2D .... for specular texture MUST be second in shader
          */
         CollidingSimplePlayer(const char* modelPath,  // common params
                               float collisionMass,    // physics params
                               bool wantCollisionCallBack,
                               CollisionFlags collFlag,
                               CollisionGroups collGroup,
-                              CollisionGroups collMask,
-                              const char* vertexPath, // graphics params
-                              const char* fragmentPath,
-                              const char* diffSampler,
-                              const char* specSampler = nullptr);
+                              CollisionGroups collMask);
         ~CollidingSimplePlayer() override;
 
         // methods from base class

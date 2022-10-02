@@ -13,11 +13,7 @@ namespace Beryll
                                                  bool wantCollisionCallBack,
                                                  CollisionFlags collFlag,
                                                  CollisionGroups collGroup,
-                                                 CollisionGroups collMask,
-                                                 const char* vertexPath,
-                                                 const char* fragmentPath,
-                                                 const char* diffSampler,
-                                                 const char* specSampler)
+                                                 CollisionGroups collMask)
     {
         BR_INFO("Loading colliding simple object:%s", modelPath);
 
@@ -132,7 +128,8 @@ namespace Beryll
             m_vertexArray->addVertexBuffer(m_textureCoordsBuffer);
             m_vertexArray->setIndexBuffer(m_indexBuffer);
 
-            m_shader = Renderer::createShader(vertexPath, fragmentPath);
+            // Default shaders. Can be changed with call setShader()
+            m_shader = Renderer::createShader("shaders/GLES/SimpleTex.vert", "shaders/GLES/SimpleTex.frag");
 
             // material
             if(scene->mMeshes[i]->mMaterialIndex >= 0)
@@ -154,12 +151,11 @@ namespace Beryll
                     texturePath += textName.C_Str();
                     BR_INFO("Diffuse texture here:%s", texturePath.c_str());
 
-                    m_shader->activateTexture(diffSampler, m_diffSamplerIndexInShader);
-
-                    m_diffTexture = Renderer::createTexture(texturePath.c_str(), m_diffSamplerIndexInShader);
+                    m_diffTexture = Renderer::createTexture(texturePath.c_str(), TextureType::DIFFUSE_TEXTURE);
+                    m_shader->activateDiffuseTexture();
                 }
 
-                if(material->GetTextureCount(aiTextureType_SPECULAR) > 0 && specSampler != nullptr)
+                if(material->GetTextureCount(aiTextureType_SPECULAR) > 0)
                 {
                     aiString textName;
                     material->GetTexture(aiTextureType_SPECULAR, 0, &textName);
@@ -169,9 +165,8 @@ namespace Beryll
                     texturePath += textName.C_Str();
                     BR_INFO("Specular texture here:%s", texturePath.c_str());
 
-                    m_shader->activateTexture(specSampler, m_specSamplerIndexInShader);
-
-                    m_specTexture = Renderer::createTexture(texturePath.c_str(), m_specSamplerIndexInShader);
+                    m_specTexture = Renderer::createTexture(texturePath.c_str(), TextureType::SPECULAR_TEXTURE);
+                    m_shader->activateSpecularTexture();
                 }
             }
 
