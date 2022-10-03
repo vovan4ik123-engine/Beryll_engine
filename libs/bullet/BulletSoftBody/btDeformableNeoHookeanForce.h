@@ -100,7 +100,7 @@ public:
 		if (m_mu_damp == 0 && m_lambda_damp == 0)
 			return;
 		int numNodes = getNumNodes();
-		assert(numNodes <= force.size());
+		btAssert(numNodes <= force.size());
 		btVector3 grad_N_hat_1st_col = btVector3(-1, -1, -1);
 		for (int i = 0; i < m_softBodies.size(); ++i)
 		{
@@ -204,7 +204,7 @@ public:
 	virtual void addScaledElasticForce(btScalar scale, TVStack& force)
 	{
 		int numNodes = getNumNodes();
-		assert(numNodes <= force.size());
+		btAssert(numNodes <= force.size());
 		btVector3 grad_N_hat_1st_col = btVector3(-1, -1, -1);
 		for (int i = 0; i < m_softBodies.size(); ++i)
 		{
@@ -274,7 +274,7 @@ public:
 		if (m_mu_damp == 0 && m_lambda_damp == 0)
 			return;
 		int numNodes = getNumNodes();
-		assert(numNodes <= df.size());
+		btAssert(numNodes <= df.size());
 		btVector3 grad_N_hat_1st_col = btVector3(-1, -1, -1);
 		for (int i = 0; i < m_softBodies.size(); ++i)
 		{
@@ -318,7 +318,7 @@ public:
 	virtual void addScaledElasticForceDifferential(btScalar scale, const TVStack& dx, TVStack& df)
 	{
 		int numNodes = getNumNodes();
-		assert(numNodes <= df.size());
+		btAssert(numNodes <= df.size());
 		btVector3 grad_N_hat_1st_col = btVector3(-1, -1, -1);
 		for (int i = 0; i < m_softBodies.size(); ++i)
 		{

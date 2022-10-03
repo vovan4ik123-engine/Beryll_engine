@@ -107,7 +107,7 @@ GUINT GIM_BOX_TREE::_sort_and_calc_splitting_index(
 		splitIndex = startIndex + (numIndices >> 1);
 	}
 
-	assert(!((splitIndex == startIndex) || (splitIndex == (endIndex))));
+	btAssert(!((splitIndex == startIndex) || (splitIndex == (endIndex))));
 
 	return splitIndex;
 }
@@ -116,7 +116,7 @@ void GIM_BOX_TREE::_build_sub_tree(gim_array<GIM_AABB_DATA>& primitive_boxes, GU
 {
 	GUINT current_index = m_num_nodes++;
 
-	assert((endIndex - startIndex) > 0);
+	btAssert((endIndex - startIndex) > 0);
 
 	if ((endIndex - startIndex) == 1)  //we got a leaf
 	{

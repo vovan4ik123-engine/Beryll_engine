@@ -26,12 +26,13 @@ namespace Beryll
 
     void Physics::create()
     {
-        btSetTaskScheduler(btCreateTaskSchedulerForBeryll());
+        btSetTaskScheduler(btCreateDefaultTaskScheduler());
+
         BR_INFO("Number of threads on device:%d", btGetTaskScheduler()->getNumThreads());
 
         btDefaultCollisionConstructionInfo cci;
-        cci.m_defaultMaxPersistentManifoldPoolSize = 40000;
-        cci.m_defaultMaxCollisionAlgorithmPoolSize = 40000;
+        cci.m_defaultMaxPersistentManifoldPoolSize = 50000;
+        cci.m_defaultMaxCollisionAlgorithmPoolSize = 50000;
         m_collisionConfiguration = std::make_unique<btDefaultCollisionConfiguration>(cci);
         m_dispatcherMT = std::make_unique<btCollisionDispatcherMt>(m_collisionConfiguration.get());
         m_broadPhase = std::make_unique<btDbvtBroadphase>();
@@ -70,7 +71,7 @@ namespace Beryll
         // maxSubSteps: timeStep < maxSubSteps * fixedTimeStep
         // fixedTimeStep: simulation resolution increases as this value decreases.
         //                If your balls penetrates your walls instead of colliding with them decrease it
-        m_timeStep = std::min(m_timer.elapsedSec(), 0.2f); // protection from lag (FPS dropped down and is less than 5 FPS)
+        m_timeStep = std::min(m_timer.elapsedSec(), 0.150f); // protection from lag (FPS dropped down and is less than 6 FPS)
         m_timer.reset();
         m_dynamicsWorldMT->stepSimulation(m_timeStep,
                                      m_resolutionFactor + 1,
@@ -177,7 +178,7 @@ namespace Beryll
         std::shared_ptr<btRigidBody> body = std::make_shared<btRigidBody>(rbInfo, objectID);
 
         std::shared_ptr<RigidBodyData> rigidBodyData = std::make_shared<RigidBodyData>(objectID, body, true, collGroup, collMask);
-        body->setUserPointer(rigidBodyData.get()); // then we can fetch this rigidBodyData in collision call back
+        body->setUserPointer(rigidBodyData.get()); // then we can fetch this rigidBodyData from CollisionObject ->getUserPointer()
 
         if(collFlag == CollisionFlags::KINEMATIC)
             body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
@@ -234,7 +235,7 @@ namespace Beryll
         std::shared_ptr<btRigidBody> body = std::make_shared<btRigidBody>(rbInfo, objectID);
 
         std::shared_ptr<RigidBodyData> rigidBodyData = std::make_shared<RigidBodyData>(objectID, body, true, collGroup, collMask);
-        body->setUserPointer(rigidBodyData.get()); // then we can fetch this rigidBodyData in collision call back
+        body->setUserPointer(rigidBodyData.get()); // then we can fetch this rigidBodyData from CollisionObject ->getUserPointer()
 
         if(collFlag == CollisionFlags::KINEMATIC)
             body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
@@ -306,7 +307,7 @@ namespace Beryll
         std::shared_ptr<btRigidBody> body = std::make_shared<btRigidBody>(rbInfo, objectID);
 
         std::shared_ptr<RigidBodyData> rigidBodyData = std::make_shared<RigidBodyData>(objectID, body, true, collGroup, collMask);
-        body->setUserPointer(rigidBodyData.get()); // then we can fetch this rigidBodyData in collision call back
+        body->setUserPointer(rigidBodyData.get()); // then we can fetch this rigidBodyData from CollisionObject ->getUserPointer()
 
         if(collFlag == CollisionFlags::KINEMATIC)
             body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
@@ -358,7 +359,7 @@ namespace Beryll
         std::shared_ptr<btRigidBody> body = std::make_shared<btRigidBody>(rbInfo, objectID);
 
         std::shared_ptr<RigidBodyData> rigidBodyData = std::make_shared<RigidBodyData>(objectID, body, true, collGroup, collMask);
-        body->setUserPointer(rigidBodyData.get()); // then we can fetch this rigidBodyData in collision call back
+        body->setUserPointer(rigidBodyData.get()); // then we can fetch this rigidBodyData from CollisionObject ->getUserPointer()
 
         if(collFlag == CollisionFlags::KINEMATIC)
             body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
@@ -427,7 +428,7 @@ namespace Beryll
         std::shared_ptr<btRigidBody> body = std::make_shared<btRigidBody>(rbInfo, objectID);
 
         std::shared_ptr<RigidBodyData> rigidBodyData = std::make_shared<RigidBodyData>(objectID, body, true, collGroup, collMask);
-        body->setUserPointer(rigidBodyData.get()); // then we can fetch this rigidBodyData in collision call back
+        body->setUserPointer(rigidBodyData.get()); // then we can fetch this rigidBodyData from CollisionObject ->getUserPointer()
 
         if(collFlag == CollisionFlags::KINEMATIC)
             body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
@@ -441,11 +442,17 @@ namespace Beryll
         m_dynamicsWorldMT->addRigidBody(body.get(), static_cast<int>(collGroup), static_cast<int>(collMask));
     }
 
+    // called from MANY threads !!!!!
     bool Physics::collisionsCallBack(btManifoldPoint& cp, const btCollisionObjectWrapper* ob1, int ID1, int index1,
                                                           const btCollisionObjectWrapper* ob2, int ID2, int index2)
     {
-        m_collisionPairs.emplace(static_cast<RigidBodyData*>(ob1->getCollisionObject()->getUserPointer())->bodyID,
-                                 static_cast<RigidBodyData*>(ob2->getCollisionObject()->getUserPointer())->bodyID);
+        {
+            std::scoped_lock<std::mutex> lock (m_mutex);
+
+            m_collisionPairs.emplace(ob1->getCollisionObject()->beryllEngineObjectID,
+                                     ob2->getCollisionObject()->beryllEngineObjectID);
+        }
+
         return false;
     }
 

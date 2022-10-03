@@ -171,8 +171,8 @@ void btSimulationIslandManagerMt::initIslandPools()
 
 btSimulationIslandManagerMt::Island* btSimulationIslandManagerMt::getIsland(int id)
 {
-	assert(id >= 0);
-	assert(id < m_lookupIslandFromId.size());
+	btAssert(id >= 0);
+	btAssert(id < m_lookupIslandFromId.size());
 	Island* island = m_lookupIslandFromId[id];
 	if (island == NULL)
 	{
@@ -299,7 +299,7 @@ void btSimulationIslandManagerMt::buildIslands(btDispatcher* dispatcher, btColli
 				//				printf("error in island management\n");
 			}
 
-			assert((colObj0->getIslandTag() == islandId) || (colObj0->getIslandTag() == -1));
+			btAssert((colObj0->getIslandTag() == islandId) || (colObj0->getIslandTag() == -1));
 			if (colObj0->getIslandTag() == islandId)
 			{
 				if (colObj0->getActivationState() == ACTIVE_TAG ||
@@ -323,7 +323,7 @@ void btSimulationIslandManagerMt::buildIslands(btDispatcher* dispatcher, btColli
 					//					printf("error in island management\n");
 				}
 
-				assert((colObj0->getIslandTag() == islandId) || (colObj0->getIslandTag() == -1));
+				btAssert((colObj0->getIslandTag() == islandId) || (colObj0->getIslandTag() == -1));
 
 				if (colObj0->getIslandTag() == islandId)
 				{
@@ -344,7 +344,7 @@ void btSimulationIslandManagerMt::buildIslands(btDispatcher* dispatcher, btColli
 					//					printf("error in island management\n");
 				}
 
-				assert((colObj0->getIslandTag() == islandId) || (colObj0->getIslandTag() == -1));
+				btAssert((colObj0->getIslandTag() == islandId) || (colObj0->getIslandTag() == -1));
 
 				if (colObj0->getIslandTag() == islandId)
 				{

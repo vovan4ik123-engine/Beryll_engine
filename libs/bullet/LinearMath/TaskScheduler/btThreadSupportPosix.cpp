@@ -183,7 +183,7 @@ static void* threadFunction(void* argument)
 
 		if (userPtr)
 		{
-			assert(status->m_status);
+			btAssert(status->m_status);
 			status->m_userThreadFunc(userPtr);
 			status->m_cs->lock();
 			status->m_status = 2;
@@ -210,8 +210,8 @@ void btThreadSupportPosix::runTask(int threadIndex, void* userData)
 {
 	///we should spawn an SPU task here, and in 'waitForResponse' it should wait for response of the (one of) the first tasks that finished
 	btThreadStatus& threadStatus = m_activeThreadStatus[threadIndex];
-	assert(threadIndex >= 0);
-	assert(threadIndex < m_activeThreadStatus.size());
+	btAssert(threadIndex >= 0);
+	btAssert(threadIndex < m_activeThreadStatus.size());
 	threadStatus.m_cs = m_cs;
 	threadStatus.m_commandId = 1;
 	threadStatus.m_status = 1;
@@ -228,7 +228,7 @@ int btThreadSupportPosix::waitForResponse()
 	///We should wait for (one of) the first tasks to finish (or other SPU messages), and report its response
 	///A possible response can be 'yes, SPU handled it', or 'no, please do a PPU fallback'
 
-	assert(m_activeThreadStatus.size());
+	btAssert(m_activeThreadStatus.size());
 
 	// wait for any of the threads to finish
 	checkPThreadFunction(sem_wait(m_mainSemaphore));
@@ -249,11 +249,11 @@ int btThreadSupportPosix::waitForResponse()
 
 	btThreadStatus& threadStatus = m_activeThreadStatus[last];
 
-	assert(threadStatus.m_status > 1);
+	btAssert(threadStatus.m_status > 1);
 	threadStatus.m_status = 0;
 
 	// need to find an active spu
-	assert(last >= 0);
+	btAssert(last >= 0);
 	m_startedThreadsMask &= ~(UINT64(1) << last);
 
 	return last;

@@ -66,7 +66,7 @@ btVector3 btConvexInternalShape::localGetSupportingVertex(const btVector3& vec) 
 	return supVertex;
 
 #else
-	assert(0);
+	btAssert(0);
 	return btVector3(0, 0, 0);
 #endif  //__SPU__
 }

@@ -243,7 +243,7 @@ void btSliderConstraint::getInfo2NonVirtual(btConstraintInfo2* info, const btTra
 	const btTransform& trA = getCalculatedTransformA();
 	const btTransform& trB = getCalculatedTransformB();
 
-	assert(!m_useSolveConstraintObsolete);
+	btAssert(!m_useSolveConstraintObsolete);
 	int i, s = info->rowskip;
 
 	btScalar signFact = m_useLinearReferenceFrameA ? btScalar(1.0f) : btScalar(-1.0f);

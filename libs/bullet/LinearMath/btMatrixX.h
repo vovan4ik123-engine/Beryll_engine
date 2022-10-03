@@ -275,7 +275,7 @@ struct btMatrixX
 
 	void setIdentity()
 	{
-		assert(rows() == cols());
+		btAssert(rows() == cols());
 
 		setZero();
 		for (int row = 0; row < rows(); row++)
@@ -333,7 +333,7 @@ struct btMatrixX
 	btMatrixX operator*(const btMatrixX& other)
 	{
 		//btMatrixX*btMatrixX implementation, brute force
-		assert(cols() == other.rows());
+		btAssert(cols() == other.rows());
 
 		btMatrixX res(rows(), other.cols());
 		res.setZero();
@@ -391,7 +391,7 @@ struct btMatrixX
 
 	void multiply2_p8r(const btScalar* B, const btScalar* C, int numRows, int numRowsOther, int row, int col)
 	{
-		assert(numRows > 0 && numRowsOther > 0 && B && C);
+		btAssert(numRows > 0 && numRowsOther > 0 && B && C);
 		const btScalar* bb = B;
 		for (int i = 0; i < numRows; i++)
 		{
@@ -428,8 +428,8 @@ struct btMatrixX
 
 	void setSubMatrix(int rowstart, int colstart, int rowend, int colend, const btMatrixX& block)
 	{
-		assert(rowend + 1 - rowstart == block.rows());
-		assert(colend + 1 - colstart == block.cols());
+		btAssert(rowend + 1 - rowstart == block.rows());
+		btAssert(colend + 1 - colstart == block.cols());
 		for (int row = 0; row < block.rows(); row++)
 		{
 			for (int col = 0; col < block.cols(); col++)
@@ -440,8 +440,8 @@ struct btMatrixX
 	}
 	void setSubMatrix(int rowstart, int colstart, int rowend, int colend, const btVectorX<T>& block)
 	{
-		assert(rowend + 1 - rowstart == block.rows());
-		assert(colend + 1 - colstart == block.cols());
+		btAssert(rowend + 1 - rowstart == block.rows());
+		btAssert(colend + 1 - colstart == block.cols());
 		for (int row = 0; row < block.rows(); row++)
 		{
 			for (int col = 0; col < block.cols(); col++)

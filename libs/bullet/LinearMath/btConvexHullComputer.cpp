@@ -492,7 +492,7 @@ public:
 			}
 			for (Face* f = src->firstNearbyFace; f; f = f->nextWithSameNearbyVertex)
 			{
-				assert(f->nearbyVertex == src);
+				btAssert(f->nearbyVertex == src);
 				f->nearbyVertex = this;
 			}
 			src->firstNearbyFace = NULL;
@@ -521,7 +521,7 @@ public:
 
 		void link(Edge* n)
 		{
-			assert(reverse->target == n->reverse->target);
+			btAssert(reverse->target == n->reverse->target);
 			next = n;
 			n->prev = this;
 		}
@@ -783,7 +783,7 @@ private:
 		Edge* n = edge->next;
 		Edge* r = edge->reverse;
 
-		assert(edge->target && r->target);
+		btAssert(edge->target && r->target);
 
 		if (n != edge)
 		{
@@ -998,7 +998,7 @@ int btConvexHullInternal::Rational128::compare(int64_t b) const
 
 btConvexHullInternal::Edge* btConvexHullInternal::newEdgePair(Vertex* from, Vertex* to)
 {
-	assert(from && to);
+	btAssert(from && to);
 	Edge* e = edgePool.newObject();
 	Edge* r = edgePool.newObject();
 	e->reverse = r;
@@ -1023,16 +1023,16 @@ bool btConvexHullInternal::mergeProjection(IntermediateHull& h0, IntermediateHul
 	Vertex* v1 = h1.minYx;
 	if ((v0->point.x == v1->point.x) && (v0->point.y == v1->point.y))
 	{
-		assert(v0->point.z < v1->point.z);
+		btAssert(v0->point.z < v1->point.z);
 		Vertex* v1p = v1->prev;
 		if (v1p == v1)
 		{
 			c0 = v0;
 			if (v1->edges)
 			{
-				assert(v1->edges->next == v1->edges);
+				btAssert(v1->edges->next == v1->edges);
 				v1 = v1->edges->target;
-				assert(v1->edges->next == v1->edges);
+				btAssert(v1->edges->next == v1->edges);
 			}
 			c1 = v1;
 			return false;
@@ -1230,7 +1230,7 @@ void btConvexHullInternal::computeInternal(int start, int end, IntermediateHull&
 						w = v;
 						v = t;
 					}
-					assert(v->point.z < w->point.z);
+					btAssert(v->point.z < w->point.z);
 					v->next = v;
 					v->prev = v;
 					result.minXy = v;
@@ -1398,16 +1398,16 @@ void btConvexHullInternal::Vertex::printGraph()
 
 btConvexHullInternal::Orientation btConvexHullInternal::getOrientation(const Edge* prev, const Edge* next, const Point32& s, const Point32& t)
 {
-	assert(prev->reverse->target == next->reverse->target);
+	btAssert(prev->reverse->target == next->reverse->target);
 	if (prev->next == next)
 	{
 		if (prev->prev == next)
 		{
 			Point64 n = t.cross(s);
 			Point64 m = (*prev->target - *next->reverse->target).cross(*next->target - *next->reverse->target);
-			assert(!m.isZero());
+			btAssert(!m.isZero());
 			int64_t dot = n.dot(m);
-			assert(dot != 0);
+			btAssert(dot != 0);
 			return (dot > 0) ? COUNTER_CLOCKWISE : CLOCKWISE;
 		}
 		return COUNTER_CLOCKWISE;
@@ -1444,7 +1444,7 @@ btConvexHullInternal::Edge* btConvexHullInternal::findMaxAngle(bool ccw, const V
 #endif
 				if (cot.isNaN())
 				{
-					assert(ccw ? (t.dot(s) < 0) : (t.dot(s) > 0));
+					btAssert(ccw ? (t.dot(s) < 0) : (t.dot(s) > 0));
 				}
 				else
 				{
@@ -1483,9 +1483,9 @@ void btConvexHullInternal::findEdgeForCoplanarFaces(Vertex* c0, Vertex* c1, Edge
 	Point32 s = c1->point - c0->point;
 	Point64 normal = ((start0 ? start0 : start1)->target->point - c0->point).cross(s);
 	int64_t dist = c0->point.dot(normal);
-	assert(!start1 || (start1->target->point.dot(normal) == dist));
+	btAssert(!start1 || (start1->target->point.dot(normal) == dist));
 	Point64 perp = s.cross(normal);
-	assert(!perp.isZero());
+	btAssert(!perp.isZero());
 
 #ifdef DEBUG_CONVEX_HULL
 	printf("   Advancing %d %d  (%p %p, %d %d)\n", c0->point.index, c1->point.index, start0, start1, start0 ? start0->target->point.index : -1, start1 ? start1->target->point.index : -1);
@@ -1501,7 +1501,7 @@ void btConvexHullInternal::findEdgeForCoplanarFaces(Vertex* c0, Vertex* c1, Edge
 			{
 				break;
 			}
-			assert(e->target->point.dot(normal) == dist);
+			btAssert(e->target->point.dot(normal) == dist);
 			if (e->copy == mergeStamp)
 			{
 				break;
@@ -1527,7 +1527,7 @@ void btConvexHullInternal::findEdgeForCoplanarFaces(Vertex* c0, Vertex* c1, Edge
 			{
 				break;
 			}
-			assert(e->target->point.dot(normal) == dist);
+			btAssert(e->target->point.dot(normal) == dist);
 			if (e->copy == mergeStamp)
 			{
 				break;
@@ -1592,7 +1592,7 @@ void btConvexHullInternal::findEdgeForCoplanarFaces(Vertex* c0, Vertex* c1, Edge
 					}
 					else
 					{
-						assert((e1 == start1) && (d1.dot(normal) < 0));
+						btAssert((e1 == start1) && (d1.dot(normal) < 0));
 					}
 				}
 			}
@@ -1644,7 +1644,7 @@ void btConvexHullInternal::findEdgeForCoplanarFaces(Vertex* c0, Vertex* c1, Edge
 					}
 					else
 					{
-						assert((e0 == start0) && (d0.dot(normal) < 0));
+						btAssert((e0 == start0) && (d0.dot(normal) < 0));
 					}
 				}
 			}
@@ -1688,7 +1688,7 @@ void btConvexHullInternal::merge(IntermediateHull& h0, IntermediateHull& h1)
 		Point32 s = *c1 - *c0;
 		Point64 normal = Point32(0, 0, -1).cross(s);
 		Point64 t = s.cross(normal);
-		assert(!t.isZero());
+		btAssert(!t.isZero());
 
 		Edge* e = c0->edges;
 		Edge* start0 = NULL;
@@ -1697,7 +1697,7 @@ void btConvexHullInternal::merge(IntermediateHull& h0, IntermediateHull& h1)
 			do
 			{
 				int64_t dot = (*e->target - *c0).dot(normal);
-				assert(dot <= 0);
+				btAssert(dot <= 0);
 				if ((dot == 0) && ((*e->target - *c0).dot(t) > 0))
 				{
 					if (!start0 || (getOrientation(start0, e, s, Point32(0, 0, -1)) == CLOCKWISE))
@@ -1716,7 +1716,7 @@ void btConvexHullInternal::merge(IntermediateHull& h0, IntermediateHull& h1)
 			do
 			{
 				int64_t dot = (*e->target - *c1).dot(normal);
-				assert(dot <= 0);
+				btAssert(dot <= 0);
 				if ((dot == 0) && ((*e->target - *c1).dot(t) > 0))
 				{
 					if (!start1 || (getOrientation(start1, e, s, Point32(0, 0, -1)) == COUNTER_CLOCKWISE))
@@ -2143,7 +2143,7 @@ btScalar btConvexHullInternal::shrink(btScalar amount, btScalar clampAmount)
 						if (a && b)
 						{
 							int64_t vol = (v->point - ref).dot((a->point - ref).cross(b->point - ref));
-							assert(vol >= 0);
+							btAssert(vol >= 0);
 							Point32 c = v->point + a->point + b->point + ref;
 							hullCenterX += vol * c.x;
 							hullCenterY += vol * c.y;
@@ -2151,7 +2151,7 @@ btScalar btConvexHullInternal::shrink(btScalar amount, btScalar clampAmount)
 							volume += vol;
 						}
 
-						assert(f->copy != stamp);
+						btAssert(f->copy != stamp);
 						f->copy = stamp;
 						f->face = face;
 
@@ -2246,7 +2246,7 @@ bool btConvexHullInternal::shiftFace(Face* face, btScalar amount, btAlignedObjec
 	int64_t origDot = face->origin.dot(normal);
 	Point32 shiftedOrigin = face->origin + shift;
 	int64_t shiftedDot = shiftedOrigin.dot(normal);
-	assert(shiftedDot <= origDot);
+	btAssert(shiftedDot <= origDot);
 	if (shiftedDot >= origDot)
 	{
 		return false;
@@ -2274,7 +2274,7 @@ bool btConvexHullInternal::shiftFace(Face* face, btScalar amount, btAlignedObjec
 			n++;
 #endif
 			Rational128 dot = e->target->dot(normal);
-			assert(dot.compare(origDot) <= 0);
+			btAssert(dot.compare(origDot) <= 0);
 #ifdef DEBUG_CONVEX_HULL
 			printf("Moving downwards, edge is ");
 			e->print();
@@ -2310,7 +2310,7 @@ bool btConvexHullInternal::shiftFace(Face* face, btScalar amount, btAlignedObjec
 			n++;
 #endif
 			Rational128 dot = e->target->dot(normal);
-			assert(dot.compare(origDot) <= 0);
+			btAssert(dot.compare(origDot) <= 0);
 #ifdef DEBUG_CONVEX_HULL
 			printf("Moving upwards, edge is ");
 			e->print();
@@ -2442,7 +2442,7 @@ bool btConvexHullInternal::shiftFace(Face* face, btScalar amount, btAlignedObjec
 			n++;
 #endif
 			e = e->reverse->prev;
-			assert(e != intersection->reverse);
+			btAssert(e != intersection->reverse);
 			cmp = e->target->dot(normal).compare(shiftedDot);
 #ifdef DEBUG_CONVEX_HULL
 			printf("Testing edge ");
@@ -2486,7 +2486,7 @@ bool btConvexHullInternal::shiftFace(Face* face, btScalar amount, btAlignedObjec
 			int64_t r0 = (intersection->face->origin - shiftedOrigin).dot(n0);
 			int64_t r1 = (intersection->reverse->face->origin - shiftedOrigin).dot(n1);
 			Int128 det = Int128::mul(m00, m11) - Int128::mul(m01, m10);
-			assert(det.getSign() != 0);
+			btAssert(det.getSign() != 0);
 			Vertex* v = vertexPool.newObject();
 			v->point.index = -1;
 			v->copy = -1;
@@ -2581,7 +2581,7 @@ bool btConvexHullInternal::shiftFace(Face* face, btScalar amount, btAlignedObjec
 		stack.push_back(NULL);
 	}
 
-	assert(stack.size() > 0);
+	btAssert(stack.size() > 0);
 	vertexList = stack[0];
 
 #ifdef DEBUG_CONVEX_HULL

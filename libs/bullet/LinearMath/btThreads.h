@@ -31,7 +31,9 @@ subject to the following restrictions:
 const unsigned int BT_MAX_THREAD_COUNT = 64;  // only if BT_THREADSAFE is 1
 
 // for internal use only
+bool btIsMainThread();
 bool btThreadsAreRunning();
+unsigned int btGetCurrentThreadIndex();
 void btResetThreadIndexCounter();  // notify that all worker threads have been destroyed
 
 ///
@@ -151,8 +153,6 @@ btITaskScheduler* btGetTaskScheduler();
 
 // get non-threaded task scheduler (always available)
 btITaskScheduler* btGetSequentialTaskScheduler();
-
-btITaskScheduler* btCreateTaskSchedulerForBeryll();
 
 // create a default task scheduler (Win32 or pthreads based)
 btITaskScheduler* btCreateDefaultTaskScheduler();

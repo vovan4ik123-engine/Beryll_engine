@@ -68,8 +68,8 @@ void btSoftBodyTriangleCallback::clearCache()
 	for (int i = 0; i < m_shapeCache.size(); i++)
 	{
 		btTriIndex* tmp = m_shapeCache.getAtIndex(i);
-		assert(tmp);
-		assert(tmp->m_childShape);
+		btAssert(tmp);
+		btAssert(tmp->m_childShape);
 		m_softBody->getWorldInfo()->m_sparsesdf.RemoveReferences(tmp->m_childShape);  //necessary?
 		delete tmp->m_childShape;
 	}
@@ -101,7 +101,7 @@ void btSoftBodyTriangleCallback::processTriangle(btVector3* triangle, int partId
 	if (shapeIndex)
 	{
 		btCollisionShape* tm = shapeIndex->m_childShape;
-		assert(tm);
+		btAssert(tm);
 
 		//copy over user pointers to temporary shape
 		tm->setUserPointer(m_triBody->getCollisionShape()->getUserPointer());

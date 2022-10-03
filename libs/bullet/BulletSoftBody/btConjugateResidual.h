@@ -40,7 +40,7 @@ public:
 	int solve(MatrixX& A, TVStack& x, const TVStack& b, bool verbose = false)
 	{
 		BT_PROFILE("CRSolve");
-		assert(x.size() == b.size());
+		btAssert(x.size() == b.size());
 		reinitialize(b);
 		// r = b - A * x --with assigned dof zeroed out
 		A.multiply(x, temp_r);  // borrow temp_r here to store A*x

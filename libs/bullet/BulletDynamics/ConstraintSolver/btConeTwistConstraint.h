@@ -213,7 +213,7 @@ public:
 			}
 			default:
 			{
-				assert(0 && "Invalid limitIndex specified for btConeTwistConstraint");
+				btAssert(0 && "Invalid limitIndex specified for btConeTwistConstraint");
 				return 0.0;
 			}
 		};

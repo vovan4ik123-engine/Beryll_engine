@@ -30,7 +30,7 @@ class DefaultPreconditioner : public Preconditioner
 public:
 	virtual void operator()(const TVStack& x, TVStack& b)
 	{
-		assert(b.size() == x.size());
+		btAssert(b.size() == x.size());
 		for (int i = 0; i < b.size(); ++i)
 			b[i] = x[i];
 	}
@@ -68,8 +68,8 @@ public:
 
 	virtual void operator()(const TVStack& x, TVStack& b)
 	{
-		assert(b.size() == x.size());
-		assert(m_inv_mass.size() <= x.size());
+		btAssert(b.size() == x.size());
+		btAssert(m_inv_mass.size() <= x.size());
 		for (int i = 0; i < m_inv_mass.size(); ++i)
 		{
 			b[i] = x[i] * m_inv_mass[i];
@@ -146,7 +146,7 @@ public:
 		if (m_implicit)
 		{
 			printf("implicit not implemented\n");
-			assert(false);
+			btAssert(false);
 		}
 		for (int i = 0; i < m_lf.size(); ++i)
 		{
@@ -179,7 +179,7 @@ public:
 #ifndef USE_FULL_PRECONDITIONER
 	virtual void operator()(const TVStack& x, TVStack& b)
 	{
-		assert(b.size() == x.size());
+		btAssert(b.size() == x.size());
 		for (int i = 0; i < m_inv_A.size(); ++i)
 		{
 			b[i] = x[i] * m_inv_A[i];
@@ -193,7 +193,7 @@ public:
 #else
 	virtual void operator()(const TVStack& x, TVStack& b)
 	{
-		assert(b.size() == x.size());
+		btAssert(b.size() == x.size());
 		int offset = m_inv_A.size();
 
 		for (int i = 0; i < m_inv_A.size(); ++i)

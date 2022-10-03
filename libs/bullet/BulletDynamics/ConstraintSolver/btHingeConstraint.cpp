@@ -391,7 +391,7 @@ void btHingeConstraint::getInfo2NonVirtual(btConstraintInfo2* info, const btTran
 
 void btHingeConstraint::getInfo2Internal(btConstraintInfo2* info, const btTransform& transA, const btTransform& transB, const btVector3& angVelA, const btVector3& angVelB)
 {
-	assert(!m_useSolveConstraintObsolete);
+	btAssert(!m_useSolveConstraintObsolete);
 	int i, skip = info->rowskip;
 	// transforms in world space
 	btTransform trA = transA * m_rbAFrame;
@@ -733,7 +733,7 @@ void btHingeConstraint::setMotorTarget(btScalar targetAngle, btScalar dt)
 
 void btHingeConstraint::getInfo2InternalUsingFrameOffset(btConstraintInfo2* info, const btTransform& transA, const btTransform& transB, const btVector3& angVelA, const btVector3& angVelB)
 {
-	assert(!m_useSolveConstraintObsolete);
+	btAssert(!m_useSolveConstraintObsolete);
 	int i, s = info->rowskip;
 	// transforms in world space
 	btTransform trA = transA * m_rbAFrame;

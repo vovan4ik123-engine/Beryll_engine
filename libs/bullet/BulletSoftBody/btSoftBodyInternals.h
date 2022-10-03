@@ -647,7 +647,7 @@ struct btSymMatrix
 	int index(int c, int r) const
 	{
 		if (c > r) btSwap(c, r);
-		assert(r < dim);
+		btAssert(r < dim);
 		return ((r * (r + 1)) / 2 + c);
 	}
 	T& operator()(int c, int r) { return (store[index(c, r)]); }
@@ -677,7 +677,7 @@ public:
 	void processAllTriangles(btTriangleCallback* /*callback*/, const btVector3& /*aabbMin*/, const btVector3& /*aabbMax*/) const
 	{
 		//not yet
-		assert(0);
+		btAssert(0);
 	}
 
 	///getAabb returns the axis aligned bounding box in the coordinate frame of the given transform t.
@@ -714,7 +714,7 @@ public:
 	virtual void calculateLocalInertia(btScalar /*mass*/, btVector3& /*inertia*/) const
 	{
 		///not yet
-		assert(0);
+		btAssert(0);
 	}
 	virtual const char* getName() const
 	{

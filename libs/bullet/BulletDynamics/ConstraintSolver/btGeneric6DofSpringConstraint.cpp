@@ -44,7 +44,7 @@ void btGeneric6DofSpringConstraint::init()
 
 void btGeneric6DofSpringConstraint::enableSpring(int index, bool onOff)
 {
-	assert((index >= 0) && (index < 6));
+	btAssert((index >= 0) && (index < 6));
 	m_springEnabled[index] = onOff;
 	if (index < 3)
 	{
@@ -58,13 +58,13 @@ void btGeneric6DofSpringConstraint::enableSpring(int index, bool onOff)
 
 void btGeneric6DofSpringConstraint::setStiffness(int index, btScalar stiffness)
 {
-	assert((index >= 0) && (index < 6));
+	btAssert((index >= 0) && (index < 6));
 	m_springStiffness[index] = stiffness;
 }
 
 void btGeneric6DofSpringConstraint::setDamping(int index, btScalar damping)
 {
-	assert((index >= 0) && (index < 6));
+	btAssert((index >= 0) && (index < 6));
 	m_springDamping[index] = damping;
 }
 
@@ -85,7 +85,7 @@ void btGeneric6DofSpringConstraint::setEquilibriumPoint()
 
 void btGeneric6DofSpringConstraint::setEquilibriumPoint(int index)
 {
-	assert((index >= 0) && (index < 6));
+	btAssert((index >= 0) && (index < 6));
 	calculateTransforms();
 	if (index < 3)
 	{
@@ -99,7 +99,7 @@ void btGeneric6DofSpringConstraint::setEquilibriumPoint(int index)
 
 void btGeneric6DofSpringConstraint::setEquilibriumPoint(int index, btScalar val)
 {
-	assert((index >= 0) && (index < 6));
+	btAssert((index >= 0) && (index < 6));
 	m_equilibriumPoint[index] = val;
 }
 

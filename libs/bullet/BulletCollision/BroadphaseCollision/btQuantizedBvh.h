@@ -70,12 +70,12 @@ btQuantizedBvhNode
 	}
 	int getEscapeIndex() const
 	{
-		assert(!isLeafNode());
+		btAssert(!isLeafNode());
 		return -m_escapeIndexOrTriangleIndex;
 	}
 	int getTriangleIndex() const
 	{
-		assert(isLeafNode());
+		btAssert(isLeafNode());
 		unsigned int x = 0;
 		unsigned int y = (~(x & 0)) << (31 - MAX_NUM_PARTS_IN_BITS);
 		// Get only the lower bits where the triangle index is stored
@@ -83,7 +83,7 @@ btQuantizedBvhNode
 	}
 	int getPartId() const
 	{
-		assert(isLeafNode());
+		btAssert(isLeafNode());
 		// Get only the highest bits where the part index is stored
 		return (m_escapeIndexOrTriangleIndex >> (31 - MAX_NUM_PARTS_IN_BITS));
 	}
@@ -325,15 +325,15 @@ public:
 
 	SIMD_FORCE_INLINE void quantize(unsigned short* out, const btVector3& point, int isMax) const
 	{
-		assert(m_useQuantization);
+		btAssert(m_useQuantization);
 
-		assert(point.getX() <= m_bvhAabbMax.getX());
-		assert(point.getY() <= m_bvhAabbMax.getY());
-		assert(point.getZ() <= m_bvhAabbMax.getZ());
+		btAssert(point.getX() <= m_bvhAabbMax.getX());
+		btAssert(point.getY() <= m_bvhAabbMax.getY());
+		btAssert(point.getZ() <= m_bvhAabbMax.getZ());
 
-		assert(point.getX() >= m_bvhAabbMin.getX());
-		assert(point.getY() >= m_bvhAabbMin.getY());
-		assert(point.getZ() >= m_bvhAabbMin.getZ());
+		btAssert(point.getX() >= m_bvhAabbMin.getX());
+		btAssert(point.getY() >= m_bvhAabbMin.getY());
+		btAssert(point.getZ() >= m_bvhAabbMin.getZ());
 
 		btVector3 v = (point - m_bvhAabbMin) * m_bvhQuantization;
 		///Make sure rounding is done in a way that unQuantize(quantizeWithClamp(...)) is conservative
@@ -389,7 +389,7 @@ public:
 
 	SIMD_FORCE_INLINE void quantizeWithClamp(unsigned short* out, const btVector3& point2, int isMax) const
 	{
-		assert(m_useQuantization);
+		btAssert(m_useQuantization);
 
 		btVector3 clampedPoint(point2);
 		clampedPoint.setMax(m_bvhAabbMin);

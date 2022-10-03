@@ -108,7 +108,7 @@ public:
 	void setRotation(const btVector3& axis, const btScalar& _angle)
 	{
 		btScalar d = axis.length();
-		assert(d != btScalar(0.0));
+		btAssert(d != btScalar(0.0));
 		btScalar s = btSin(_angle * btScalar(0.5)) / d;
 		setValue(axis.x() * s, axis.y() * s, axis.z() * s,
 				 btCos(_angle * btScalar(0.5)));
@@ -426,7 +426,7 @@ public:
    * @param s The inverse scale factor */
 	btQuaternion operator/(const btScalar& s) const
 	{
-		assert(s != btScalar(0.0));
+		btAssert(s != btScalar(0.0));
 		return *this * (btScalar(1.0) / s);
 	}
 
@@ -434,7 +434,7 @@ public:
    * @param s The scale factor */
 	btQuaternion& operator/=(const btScalar& s)
 	{
-		assert(s != btScalar(0.0));
+		btAssert(s != btScalar(0.0));
 		return *this *= btScalar(1.0) / s;
 	}
 
@@ -448,7 +448,7 @@ public:
 	btScalar angle(const btQuaternion& q) const
 	{
 		btScalar s = btSqrt(length2() * q.length2());
-		assert(s != btScalar(0.0));
+		btAssert(s != btScalar(0.0));
 		return btAcos(dot(q) / s);
 	}
 
@@ -457,7 +457,7 @@ public:
 	btScalar angleShortestPath(const btQuaternion& q) const
 	{
 		btScalar s = btSqrt(length2() * q.length2());
-		assert(s != btScalar(0.0));
+		btAssert(s != btScalar(0.0));
 		if (dot(q) < 0)  // Take care of long angle case see http://en.wikipedia.org/wiki/Slerp
 			return btAcos(dot(-q) / s) * btScalar(2.0);
 		else
@@ -577,7 +577,7 @@ public:
 	btQuaternion slerp(const btQuaternion& q, const btScalar& t) const
 	{
 		const btScalar magnitude = btSqrt(length2() * q.length2());
-		assert(magnitude > btScalar(0));
+		btAssert(magnitude > btScalar(0));
 
 		const btScalar product = dot(q) / magnitude;
 		const btScalar absproduct = btFabs(product);
@@ -587,7 +587,7 @@ public:
 			// Take care of long angle case see http://en.wikipedia.org/wiki/Slerp
 			const btScalar theta = btAcos(absproduct);
 			const btScalar d = btSin(theta);
-			assert(d > btScalar(0));
+			btAssert(d > btScalar(0));
 
 			const btScalar sign = (product < 0) ? btScalar(-1) : btScalar(1);
 			const btScalar s0 = btSin((btScalar(1.0) - t) * theta) / d;

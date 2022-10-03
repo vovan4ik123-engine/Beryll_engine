@@ -37,7 +37,7 @@ struct btSdfDataStream
 			m_currentOffset += bytes;
 			return true;
 		}
-		assert(0);
+		btAssert(0);
 		return false;
 	}
 };
@@ -160,7 +160,7 @@ unsigned int btMiniSDF::multiToSingleIndex(btMultiIndex const& ijk) const
 btAlignedBox3d
 btMiniSDF::subdomain(btMultiIndex const& ijk) const
 {
-	assert(m_isValid);
+	btAssert(m_isValid);
 	btVector3 tmp;
 	tmp.m_floats[0] = m_cell_size[0] * (double)ijk.ijk[0];
 	tmp.m_floats[1] = m_cell_size[1] * (double)ijk.ijk[1];
@@ -175,7 +175,7 @@ btMiniSDF::subdomain(btMultiIndex const& ijk) const
 btMultiIndex
 btMiniSDF::singleToMultiIndex(unsigned int l) const
 {
-	assert(m_isValid);
+	btAssert(m_isValid);
 	unsigned int n01 = m_resolution[0] * m_resolution[1];
 	unsigned int k = l / n01;
 	unsigned int temp = l % n01;
@@ -191,14 +191,14 @@ btMiniSDF::singleToMultiIndex(unsigned int l) const
 btAlignedBox3d
 btMiniSDF::subdomain(unsigned int l) const
 {
-	assert(m_isValid);
+	btAssert(m_isValid);
 	return subdomain(singleToMultiIndex(l));
 }
 
 btShapeMatrix
 btMiniSDF::shape_function_(btVector3 const& xi, btShapeGradients* gradient) const
 {
-	assert(m_isValid);
+	btAssert(m_isValid);
 	btShapeMatrix res;
 
 	btScalar x = xi[0];
@@ -442,7 +442,7 @@ btMiniSDF::shape_function_(btVector3 const& xi, btShapeGradients* gradient) cons
 bool btMiniSDF::interpolate(unsigned int field_id, double& dist, btVector3 const& x,
 							btVector3* gradient) const
 {
-	assert(m_isValid);
+	btAssert(m_isValid);
 	if (!m_isValid)
 		return false;
 

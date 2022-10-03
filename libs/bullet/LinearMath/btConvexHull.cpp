@@ -64,7 +64,7 @@ btVector3 ThreePlaneIntersection(const btPlane &p0, const btPlane &p1, const btP
 
 	btScalar quotient = (N1.dot(n2n3));
 
-	assert(btFabs(quotient) > btScalar(0.000001));
+	btAssert(btFabs(quotient) > btScalar(0.000001));
 
 	quotient = btScalar(-1.) / quotient;
 	n2n3 *= p0.dist;
@@ -202,7 +202,7 @@ public:
 template <class T>
 int maxdirfiltered(const T *p, int count, const T &dir, btAlignedObjectArray<int> &allow)
 {
-	assert(count);
+	btAssert(count);
 	int m = -1;
 	for (int i = 0; i < count; i++)
 		if (allow[i])
@@ -210,7 +210,7 @@ int maxdirfiltered(const T *p, int count, const T &dir, btAlignedObjectArray<int
 			if (m == -1 || btDot(p[i], dir) > btDot(p[m], dir))
 				m = i;
 		}
-	assert(m != -1);
+	btAssert(m != -1);
 	return m;
 }
 
@@ -271,7 +271,7 @@ int maxdirsterid(const T *p, int count, const T &dir, btAlignedObjectArray<int> 
 		allow[m] = 0;
 		m = -1;
 	}
-	assert(0);
+	btAssert(0);
 	return m;
 }
 
@@ -349,7 +349,7 @@ int &btHullTriangle::neib(int a, int b)
 		if ((*this)[i] == a && (*this)[i1] == b) return n[i2];
 		if ((*this)[i] == b && (*this)[i1] == a) return n[i2];
 	}
-	assert(0);
+	btAssert(0);
 	return er;
 }
 void HullLibrary::b2bfix(btHullTriangle *s, btHullTriangle *t)
@@ -361,8 +361,8 @@ void HullLibrary::b2bfix(btHullTriangle *s, btHullTriangle *t)
 		int i2 = (i + 2) % 3;
 		int a = (*s)[i1];
 		int b = (*s)[i2];
-		assert(m_tris[s->neib(a, b)]->neib(b, a) == s->id);
-		assert(m_tris[t->neib(a, b)]->neib(b, a) == t->id);
+		btAssert(m_tris[s->neib(a, b)]->neib(b, a) == s->id);
+		btAssert(m_tris[t->neib(a, b)]->neib(b, a) == t->id);
 		m_tris[s->neib(a, b)]->neib(b, a) = t->neib(b, a);
 		m_tris[t->neib(b, a)]->neib(a, b) = s->neib(a, b);
 	}
@@ -381,7 +381,7 @@ void HullLibrary::checkit(btHullTriangle *t)
 	(void)t;
 
 	int i;
-	assert(m_tris[t->id] == t);
+	btAssert(m_tris[t->id] == t);
 	for (i = 0; i < 3; i++)
 	{
 		int i1 = (i + 1) % 3;
@@ -395,8 +395,8 @@ void HullLibrary::checkit(btHullTriangle *t)
 		(void)a;
 		(void)b;
 
-		assert(a != b);
-		assert(m_tris[t->n[i]]->neib(b, a) == t->id);
+		btAssert(a != b);
+		btAssert(m_tris[t->n[i]]->neib(b, a) == t->id);
 	}
 }
 
@@ -412,7 +412,7 @@ btHullTriangle *HullLibrary::allocateTriangle(int a, int b, int c)
 
 void HullLibrary::deAllocateTriangle(btHullTriangle *tri)
 {
-	assert(m_tris[tri->id] == tri);
+	btAssert(m_tris[tri->id] == tri);
 	m_tris[tri->id] = NULL;
 	tri->~btHullTriangle();
 	btAlignedFree(tri);
@@ -487,7 +487,7 @@ int4 HullLibrary::FindSimplex(btVector3 *verts, int verts_count, btAlignedObject
 	if (p3 == p0 || p3 == p1 || p3 == p2) p3 = maxdirsterid(verts, verts_count, -basis[2], allow);
 	if (p3 == p0 || p3 == p1 || p3 == p2)
 		return int4(-1, -1, -1, -1);
-	assert(!(p0 == p1 || p0 == p2 || p0 == p3 || p1 == p2 || p1 == p3 || p2 == p3));
+	btAssert(!(p0 == p1 || p0 == p2 || p0 == p3 || p1 == p2 || p1 == p3 || p2 == p3));
 	if (btDot(verts[p3] - verts[p0], btCross(verts[p1] - verts[p0], verts[p2] - verts[p0])) < 0)
 	{
 		btSwap(p2, p3);
@@ -514,7 +514,7 @@ int HullLibrary::calchullgen(btVector3 *verts, int verts_count, int vlimit)
 		bmax.setMax(verts[j]);
 	}
 	btScalar epsilon = (bmax - bmin).length() * btScalar(0.001);
-	assert(epsilon != 0.0);
+	btAssert(epsilon != 0.0);
 
 	int4 p = FindSimplex(verts, verts_count, allow);
 	if (p.x == -1) return 0;  // simplex failed
@@ -537,8 +537,8 @@ int HullLibrary::calchullgen(btVector3 *verts, int verts_count, int vlimit)
 	for (j = 0; j < m_tris.size(); j++)
 	{
 		btHullTriangle *t = m_tris[j];
-		assert(t);
-		assert(t->vmax < 0);
+		btAssert(t);
+		btAssert(t->vmax < 0);
 		btVector3 n = TriNormal(verts[(*t)[0]], verts[(*t)[1]], verts[(*t)[2]]);
 		t->vmax = maxdirsterid(verts, verts_count, n, allow);
 		t->rise = btDot(n, verts[t->vmax] - verts[(*t)[0]]);
@@ -549,8 +549,8 @@ int HullLibrary::calchullgen(btVector3 *verts, int verts_count, int vlimit)
 	{
 		//int3 ti=*te;
 		int v = te->vmax;
-		assert(v != -1);
-		assert(!isextreme[v]);  // wtf we've already done this vertex
+		btAssert(v != -1);
+		btAssert(!isextreme[v]);  // wtf we've already done this vertex
 		isextreme[v] = 1;
 		//if(v==p0 || v==p1 || v==p2 || v==p3) continue; // done these already
 		j = m_tris.size();
@@ -573,9 +573,9 @@ int HullLibrary::calchullgen(btVector3 *verts, int verts_count, int vlimit)
 			if (above(verts, nt, center, btScalar(0.01) * epsilon) || btCross(verts[nt[1]] - verts[nt[0]], verts[nt[2]] - verts[nt[1]]).length() < epsilon * epsilon * btScalar(0.1))
 			{
 				btHullTriangle *nb = m_tris[m_tris[j]->n[0]];
-				assert(nb);
-				assert(!hasvert(*nb, v));
-				assert(nb->id < j);
+				btAssert(nb);
+				btAssert(!hasvert(*nb, v));
+				btAssert(nb->id < j);
 				extrude(nb, v);
 				j = m_tris.size();
 			}
@@ -1090,7 +1090,7 @@ void HullLibrary::BringOutYourDead(const btVector3 *verts, unsigned int vcount, 
 	{
 		unsigned int v = indices[i];  // original array index
 
-		assert(v >= 0 && v < vcount);
+		btAssert(v >= 0 && v < vcount);
 
 		if (usedIndices[static_cast<int>(v)])  // if already remapped
 		{
@@ -1112,7 +1112,7 @@ void HullLibrary::BringOutYourDead(const btVector3 *verts, unsigned int vcount, 
 
 			ocount++;  // increment output vert count
 
-			assert(ocount >= 0 && ocount <= vcount);
+			btAssert(ocount >= 0 && ocount <= vcount);
 
 			usedIndices[static_cast<int>(v)] = ocount;  // assign new index remapping
 		}

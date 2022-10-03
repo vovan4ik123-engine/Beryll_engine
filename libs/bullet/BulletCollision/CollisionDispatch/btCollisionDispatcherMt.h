@@ -18,8 +18,6 @@ subject to the following restrictions:
 
 #include "BulletCollision/CollisionDispatch/btCollisionDispatcher.h"
 #include "LinearMath/btThreads.h"
-#include <mutex>
-#include <cassert>
 
 class btCollisionDispatcherMt : public btCollisionDispatcher
 {
@@ -31,68 +29,11 @@ public:
 
 	virtual void dispatchAllCollisionPairs(btOverlappingPairCache* pairCache, const btDispatcherInfo& info, btDispatcher* dispatcher) BT_OVERRIDE;
 
-	int getNumManifolds() const
-	{
-        int i = 0;
-        {
-            std::scoped_lock<std::mutex> scopedLock(m_mutex);
-
-            i = m_manifoldsPtr.size();
-        }
-        return i;
-	}
-
-	btPersistentManifold** getInternalManifoldPointer()
-	{
-		btPersistentManifold** ptr = nullptr;
-		{
-			std::scoped_lock<std::mutex> scopedLock(m_mutex);
-
-			ptr = m_manifoldsPtr.size() == 0 ? nullptr : &m_manifoldsPtr[0];
-		}
-
-		assert(ptr);
-
-		return ptr;
-	}
-
-	btPersistentManifold* getManifoldByIndexInternal(int index)
-	{
-		btPersistentManifold* ptr = nullptr;
-		{
-			std::scoped_lock<std::mutex> scopedLock(m_mutex);
-
-			if(index >= 0 && index < m_manifoldsPtr.size())
-			{
-				ptr = m_manifoldsPtr[index];
-			}
-		}
-
-		assert(ptr);
-
-		return ptr;
-	}
-
-	const btPersistentManifold* getManifoldByIndexInternal(int index) const
-	{
-		const btPersistentManifold* ptr = nullptr;
-		{
-			std::scoped_lock<std::mutex> scopedLock(m_mutex);
-
-			if(index >= 0 && index < m_manifoldsPtr.size())
-			{
-				ptr = m_manifoldsPtr[index];
-			}
-		}
-
-		assert(ptr);
-
-		return ptr;
-	}
-
-private:
-	btAlignedObjectArray<btPersistentManifold*> m_manifoldsPtr;
-	mutable std::mutex m_mutex; // mutable for lock in const functions
+protected:
+	btAlignedObjectArray<btAlignedObjectArray<btPersistentManifold*> > m_batchManifoldsPtr;
+	btAlignedObjectArray<btAlignedObjectArray<btPersistentManifold*> > m_batchReleasePtr;
+	bool m_batchUpdating;
+	int m_grainSize;
 };
 
 #endif  //BT_COLLISION_DISPATCHER_MT_H

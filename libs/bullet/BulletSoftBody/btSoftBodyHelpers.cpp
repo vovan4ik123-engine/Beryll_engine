@@ -1248,7 +1248,7 @@ btSoftBody* btSoftBodyHelpers::CreateFromVtkFile(btSoftBodyWorldInfo& worldInfo,
 {
 	std::ifstream fs;
 	fs.open(vtk_file);
-	assert(fs);
+	btAssert(fs);
 
 	typedef btAlignedObjectArray<int> Index;
 	std::string line;
@@ -1427,7 +1427,7 @@ void btSoftBodyHelpers::writeObj(const char* filename, const btSoftBody* psb)
 {
 	std::ofstream fs;
 	fs.open(filename);
-	assert(fs);
+	btAssert(fs);
 
 	if (psb->m_tetras.size() > 0)
 	{
@@ -1493,7 +1493,7 @@ void btSoftBodyHelpers::writeState(const char* file, const btSoftBody* psb)
 {
 	std::ofstream fs;
 	fs.open(file);
-	assert(fs);
+	btAssert(fs);
 	fs << std::scientific << std::setprecision(16);
 
 	// Only write out for trimesh, directly write out all the nodes and faces.xs

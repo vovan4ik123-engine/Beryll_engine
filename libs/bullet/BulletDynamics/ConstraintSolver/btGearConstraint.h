@@ -76,7 +76,7 @@ public:
 		(void)num;
 		(void)value;
 		(void)axis;
-		assert(0);
+		btAssert(0);
 	}
 
 	///return the local value of parameter
@@ -84,7 +84,7 @@ public:
 	{
 		(void)num;
 		(void)axis;
-		assert(0);
+		btAssert(0);
 		return 0.f;
 	}
 

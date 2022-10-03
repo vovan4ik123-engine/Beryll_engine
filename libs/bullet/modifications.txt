@@ -3,8 +3,6 @@ beryllEngineObjectID in btCollisionObject
 synchronize with mutex. ??
 avoid [btGetCurrentThreadIndex()] ??
 
-check btThreadsAreRunning()
-
 own task scheduler
 
 btITaskScheduler* btCreateTaskSchedulerForBeryll()
@@ -36,9 +34,7 @@ public:
     }
 
     int getMaxNumThreads() const override { return m_numThreads; }
-
     int getNumThreads() const override { return m_numThreads; }
-
     void setNumThreads(int numThreads) override { /* dont set anything*/ }
 
     void parallelFor(int iBegin, int iEnd, int grainSize, const btIParallelForBody& body) override
@@ -60,8 +56,8 @@ public:
             for(int i = iBegin; i < iEnd; i += oneChunkSize)
             {
                 int chunkEnd = std::min(i + oneChunkSize, iEnd);
-                std::cref(
-				m_futuresVoid.emplace_back(std::async(std::launch::async, &btIParallelForBody::forLoop, &body, i, chunkEnd));
+
+				m_futuresVoid.emplace_back(std::async(std::launch::async, &btIParallelForBody::forLoop, std::cref(body), i, chunkEnd));
             }
 
 			// wait all threads
@@ -92,8 +88,8 @@ public:
 			for(int i = iBegin; i < iEnd; i += oneChunkSize)
 			{
 				int chunkEnd = std::min(i + oneChunkSize, iEnd);
-                std::cref(
-				m_futuresFloat.emplace_back(std::async(std::launch::async, &btIParallelSumBody::sumLoop, &body, i, chunkEnd));
+
+				m_futuresFloat.emplace_back(std::async(std::launch::async, &btIParallelSumBody::sumLoop, std::cref(body), i, chunkEnd));
 			}
 
 			// wait all threads

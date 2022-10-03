@@ -40,7 +40,7 @@ public:
 		A.rowComputeNonZeroElements();
 
 		//A is a m-n matrix, m rows, n columns
-		assert(A.rows() == b.rows());
+		btAssert(A.rows() == b.rows());
 
 		int i, j, numRows = A.rows();
 

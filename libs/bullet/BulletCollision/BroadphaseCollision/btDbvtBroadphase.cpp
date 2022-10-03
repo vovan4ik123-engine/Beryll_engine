@@ -245,8 +245,19 @@ void btDbvtBroadphase::rayTest(const btVector3& rayFrom, const btVector3& rayTo,
 	// for this function to be threadsafe, each thread must have a separate copy
 	// of this stack.  This could be thread-local static to avoid dynamic allocations,
 	// instead of just a local.
+	int threadIndex = btGetCurrentThreadIndex();
 	btAlignedObjectArray<const btDbvtNode*> localStack;
-	stack = &localStack;
+	//todo(erwincoumans, "why do we get tsan issue here?")
+	if (0)//threadIndex < m_rayTestStacks.size())
+	//if (threadIndex < m_rayTestStacks.size())
+	{
+		// use per-thread preallocated stack if possible to avoid dynamic allocations
+		stack = &m_rayTestStacks[threadIndex];
+	}
+	else
+	{
+		stack = &localStack;
+	}
 #endif
 
 	m_sets[0].rayTestInternal(m_sets[0].m_root,
@@ -433,7 +444,7 @@ void btDbvtBroadphase::performDeferredRemoval(btDispatcher* dispatcher)
 {
 	if (m_paircache->hasDeferredRemoval())
 	{
-		btAlignedObjectArray<btBroadphasePair>& overlappingPairArray = m_paircache->getOverlappingPairArray();
+		btBroadphasePairArray& overlappingPairArray = m_paircache->getOverlappingPairArray();
 
 		//perform a sort, to find duplicates and to sort 'invalid' pairs to the end
 		overlappingPairArray.quickSort(btBroadphasePairSortPredicate());
@@ -478,7 +489,7 @@ void btDbvtBroadphase::performDeferredRemoval(btDispatcher* dispatcher)
 				//remove duplicate
 				needsRemoval = true;
 				//should have no algorithm
-				assert(!pair.m_algorithm);
+				btAssert(!pair.m_algorithm);
 			}
 
 			if (needsRemoval)
@@ -571,7 +582,7 @@ void btDbvtBroadphase::collide(btDispatcher* dispatcher)
 	if (m_needcleanup)
 	{
 		SPC(m_profiling.m_cleanup);
-		btAlignedObjectArray<btBroadphasePair>& pairs = m_paircache->getOverlappingPairArray();
+		btBroadphasePairArray& pairs = m_paircache->getOverlappingPairArray();
 		if (pairs.size() > 0)
 		{
 			int ni = btMin(pairs.size(), btMax<int>(m_newpairs, (pairs.size() * m_cupdates) / 100));

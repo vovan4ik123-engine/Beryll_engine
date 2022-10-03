@@ -84,7 +84,7 @@ btWheelInfo& btRaycastVehicle::addWheel(const btVector3& connectionPointCS, cons
 
 const btTransform& btRaycastVehicle::getWheelTransformWS(int wheelIndex) const
 {
-	assert(wheelIndex < getNumWheels());
+	btAssert(wheelIndex < getNumWheels());
 	const btWheelInfo& wheel = m_wheelInfo[wheelIndex];
 	return wheel.m_worldTransform;
 }
@@ -174,7 +174,7 @@ btScalar btRaycastVehicle::rayCast(btWheelInfo& wheel)
 
 	btVehicleRaycaster::btVehicleRaycasterResult rayResults;
 
-	assert(m_vehicleRaycaster);
+	btAssert(m_vehicleRaycaster);
 
 	void* object = m_vehicleRaycaster->castRay(source, target, rayResults);
 
@@ -343,7 +343,7 @@ void btRaycastVehicle::updateVehicle(btScalar step)
 
 void btRaycastVehicle::setSteeringValue(btScalar steering, int wheel)
 {
-	assert(wheel >= 0 && wheel < getNumWheels());
+	btAssert(wheel >= 0 && wheel < getNumWheels());
 
 	btWheelInfo& wheelInfo = getWheelInfo(wheel);
 	wheelInfo.m_steering = steering;
@@ -356,28 +356,28 @@ btScalar btRaycastVehicle::getSteeringValue(int wheel) const
 
 void btRaycastVehicle::applyEngineForce(btScalar force, int wheel)
 {
-	assert(wheel >= 0 && wheel < getNumWheels());
+	btAssert(wheel >= 0 && wheel < getNumWheels());
 	btWheelInfo& wheelInfo = getWheelInfo(wheel);
 	wheelInfo.m_engineForce = force;
 }
 
 const btWheelInfo& btRaycastVehicle::getWheelInfo(int index) const
 {
-	assert((index >= 0) && (index < getNumWheels()));
+	btAssert((index >= 0) && (index < getNumWheels()));
 
 	return m_wheelInfo[index];
 }
 
 btWheelInfo& btRaycastVehicle::getWheelInfo(int index)
 {
-	assert((index >= 0) && (index < getNumWheels()));
+	btAssert((index >= 0) && (index < getNumWheels()));
 
 	return m_wheelInfo[index];
 }
 
 void btRaycastVehicle::setBrake(btScalar brake, int wheelIndex)
 {
-	assert((wheelIndex >= 0) && (wheelIndex < getNumWheels()));
+	btAssert((wheelIndex >= 0) && (wheelIndex < getNumWheels()));
 	getWheelInfo(wheelIndex).m_brake = brake;
 }
 
@@ -567,7 +567,7 @@ void btRaycastVehicle::updateFriction(btScalar timeStep)
 					btScalar defaultRollingFrictionImpulse = 0.f;
 					btScalar maxImpulse = wheelInfo.m_brake ? wheelInfo.m_brake : defaultRollingFrictionImpulse;
 					btWheelContactPoint contactPt(m_chassisBody, groundObject, wheelInfo.m_raycastInfo.m_contactPointWS, m_forwardWS[wheel], maxImpulse);
-					assert(numWheelsOnGround > 0);
+					btAssert(numWheelsOnGround > 0);
 					rollingFriction = calcRollingFriction(contactPt, numWheelsOnGround);
 				}
 			}

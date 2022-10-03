@@ -456,9 +456,9 @@ void btSoftBody::appendFace(int node0, int node1, int node2, Material* mat)
 
 	appendFace(-1, mat);
 	Face& f = m_faces[m_faces.size() - 1];
-	assert(node0 != node1);
-	assert(node1 != node2);
-	assert(node2 != node0);
+	btAssert(node0 != node1);
+	btAssert(node1 != node2);
+	btAssert(node2 != node0);
 	f.m_n[0] = &m_nodes[node0];
 	f.m_n[1] = &m_nodes[node1];
 	f.m_n[2] = &m_nodes[node2];
@@ -707,7 +707,7 @@ void btSoftBody::addForce(const btVector3& force, int node)
 
 void btSoftBody::addAeroForceToNode(const btVector3& windVelocity, int nodeIndex)
 {
-	assert(nodeIndex >= 0 && nodeIndex < m_nodes.size());
+	btAssert(nodeIndex >= 0 && nodeIndex < m_nodes.size());
 
 	const btScalar dt = m_sst.sdt;
 	const btScalar kLF = m_cfg.kLF;
@@ -1419,7 +1419,7 @@ int btSoftBody::generateBendingConstraints(int distance, Material* mat)
 						if (i != j)
 						{
 							const unsigned sum = adj[IDX(i, k)] + adj[IDX(k, j)];
-							assert(sum == 2);
+							btAssert(sum == 2);
 							if (adj[IDX(i, j)] > sum)
 							{
 								adj[IDX(i, j)] = adj[IDX(j, i)] = sum;
@@ -1489,8 +1489,8 @@ void btSoftBody::randomizeConstraints()
 void btSoftBody::updateState(const btAlignedObjectArray<btVector3>& q, const btAlignedObjectArray<btVector3>& v)
 {
 	int node_count = m_nodes.size();
-	assert(node_count == q.size());
-	assert(node_count == v.size());
+	btAssert(node_count == q.size());
+	btAssert(node_count == v.size());
 	for (int i = 0; i < node_count; i++)
 	{
 		Node& n = m_nodes[i];
@@ -4399,8 +4399,8 @@ const char* btSoftBody::serialize(void* dataBuffer, class btSerializer* serializ
 			memPtr->m_material = m_links[i].m_material ? (SoftBodyMaterialData*)serializer->getUniquePointer((void*)m_links[i].m_material) : 0;
 			memPtr->m_nodeIndices[0] = m_links[i].m_n[0] ? m_links[i].m_n[0] - &m_nodes[0] : -1;
 			memPtr->m_nodeIndices[1] = m_links[i].m_n[1] ? m_links[i].m_n[1] - &m_nodes[0] : -1;
-			assert(memPtr->m_nodeIndices[0] < m_nodes.size());
-			assert(memPtr->m_nodeIndices[1] < m_nodes.size());
+			btAssert(memPtr->m_nodeIndices[0] < m_nodes.size());
+			btAssert(memPtr->m_nodeIndices[1] < m_nodes.size());
 			memPtr->m_restLength = m_links[i].m_rl;
 		}
 		serializer->finalizeChunk(chunk, "SoftBodyLinkData", BT_ARRAY_CODE, (void*)&m_links[0]);
@@ -4467,7 +4467,7 @@ const char* btSoftBody::serialize(void* dataBuffer, class btSerializer* serializ
 			memPtr->m_nodeIndex = m_anchors[i].m_node ? m_anchors[i].m_node - &m_nodes[0] : -1;
 
 			memPtr->m_rigidBody = m_anchors[i].m_body ? (btRigidBodyData*)serializer->getUniquePointer((void*)m_anchors[i].m_body) : 0;
-			assert(memPtr->m_nodeIndex < m_nodes.size());
+			btAssert(memPtr->m_nodeIndex < m_nodes.size());
 		}
 		serializer->finalizeChunk(chunk, "SoftRigidAnchorData", BT_ARRAY_CODE, (void*)&m_anchors[0]);
 	}
@@ -4630,7 +4630,7 @@ const char* btSoftBody::serialize(void* dataBuffer, class btSerializer* serializ
 				for (int j = 0; j < numElem; j++, memPtr++)
 				{
 					int* indexPtr = m_nodeIndexMap.find(m_clusters[i]->m_nodes[j]);
-					assert(indexPtr);
+					btAssert(indexPtr);
 					*memPtr = *indexPtr;
 				}
 				serializer->finalizeChunk(chunk, "int", BT_ARRAY_CODE, (void*)&m_clusters[i]->m_nodes);

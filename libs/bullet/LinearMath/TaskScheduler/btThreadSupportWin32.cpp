@@ -236,7 +236,7 @@ DWORD WINAPI win32threadStartFunc(LPVOID lpParam)
 
 		if (userPtr)
 		{
-			assert(status->m_status);
+			btAssert(status->m_status);
 			status->m_userThreadFunc(userPtr);
 			status->m_status = 2;
 			SetEvent(status->m_eventCompleteHandle);
@@ -257,8 +257,8 @@ DWORD WINAPI win32threadStartFunc(LPVOID lpParam)
 void btThreadSupportWin32::runTask(int threadIndex, void* userData)
 {
 	btThreadStatus& threadStatus = m_activeThreadStatus[threadIndex];
-	assert(threadIndex >= 0);
-	assert(int(threadIndex) < m_activeThreadStatus.size());
+	btAssert(threadIndex >= 0);
+	btAssert(int(threadIndex) < m_activeThreadStatus.size());
 
 	threadStatus.m_commandId = 1;
 	threadStatus.m_status = 1;
@@ -271,23 +271,23 @@ void btThreadSupportWin32::runTask(int threadIndex, void* userData)
 
 int btThreadSupportWin32::waitForResponse()
 {
-	assert(m_activeThreadStatus.size());
+	btAssert(m_activeThreadStatus.size());
 
 	int last = -1;
 	DWORD res = WaitForMultipleObjects(m_completeHandles.size(), &m_completeHandles[0], FALSE, INFINITE);
-	assert(res != WAIT_FAILED);
+	btAssert(res != WAIT_FAILED);
 	last = res - WAIT_OBJECT_0;
 
 	btThreadStatus& threadStatus = m_activeThreadStatus[last];
-	assert(threadStatus.m_threadHandle);
-	assert(threadStatus.m_eventCompleteHandle);
+	btAssert(threadStatus.m_threadHandle);
+	btAssert(threadStatus.m_eventCompleteHandle);
 
 	//WaitForSingleObject(threadStatus.m_eventCompleteHandle, INFINITE);
-	assert(threadStatus.m_status > 1);
+	btAssert(threadStatus.m_status > 1);
 	threadStatus.m_status = 0;
 
 	///need to find an active spu
-	assert(last >= 0);
+	btAssert(last >= 0);
 	m_startedThreadMask &= ~(DWORD_PTR(1) << last);
 
 	return last;

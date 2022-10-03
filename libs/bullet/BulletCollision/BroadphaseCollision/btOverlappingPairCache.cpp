@@ -127,7 +127,7 @@ btBroadphasePair* btHashedOverlappingPairCache::findPair(btBroadphaseProxy* prox
 		return NULL;
 	}
 
-	assert(index < m_overlappingPairArray.size());
+	btAssert(index < m_overlappingPairArray.size());
 
 	return &m_overlappingPairArray[index];
 }
@@ -248,15 +248,15 @@ void* btHashedOverlappingPairCache::removeOverlappingPair(btBroadphaseProxy* pro
 
 	void* userData = pair->m_internalInfo1;
 
-	assert(pair->m_pProxy0->getUid() == proxyId1);
-	assert(pair->m_pProxy1->getUid() == proxyId2);
+	btAssert(pair->m_pProxy0->getUid() == proxyId1);
+	btAssert(pair->m_pProxy1->getUid() == proxyId2);
 
 	int pairIndex = int(pair - &m_overlappingPairArray[0]);
-	assert(pairIndex < m_overlappingPairArray.size());
+	btAssert(pairIndex < m_overlappingPairArray.size());
 
 	// Remove the pair from the hash table.
 	int index = m_hashTable[hash];
-	assert(index != BT_NULL_PAIR);
+	btAssert(index != BT_NULL_PAIR);
 
 	int previous = BT_NULL_PAIR;
 	while (index != pairIndex)
@@ -267,7 +267,7 @@ void* btHashedOverlappingPairCache::removeOverlappingPair(btBroadphaseProxy* pro
 
 	if (previous != BT_NULL_PAIR)
 	{
-		assert(m_next[previous] == pairIndex);
+		btAssert(m_next[previous] == pairIndex);
 		m_next[previous] = m_next[pairIndex];
 	}
 	else
@@ -297,7 +297,7 @@ void* btHashedOverlappingPairCache::removeOverlappingPair(btBroadphaseProxy* pro
 	int lastHash = static_cast<int>(getHash(static_cast<unsigned int>(last->m_pProxy0->getUid()), static_cast<unsigned int>(last->m_pProxy1->getUid())) & (m_overlappingPairArray.capacity() - 1));
 
 	index = m_hashTable[lastHash];
-	assert(index != BT_NULL_PAIR);
+	btAssert(index != BT_NULL_PAIR);
 
 	previous = BT_NULL_PAIR;
 	while (index != lastPairIndex)
@@ -308,7 +308,7 @@ void* btHashedOverlappingPairCache::removeOverlappingPair(btBroadphaseProxy* pro
 
 	if (previous != BT_NULL_PAIR)
 	{
-		assert(m_next[previous] == lastPairIndex);
+		btAssert(m_next[previous] == lastPairIndex);
 		m_next[previous] = m_next[lastPairIndex];
 	}
 	else
@@ -373,7 +373,7 @@ void btHashedOverlappingPairCache::processAllOverlappingPairs(btOverlapCallback*
 {
 	if (dispatchInfo.m_deterministicOverlappingPairs)
 	{
-		btAlignedObjectArray<btBroadphasePair>& pa = getOverlappingPairArray();
+		btBroadphasePairArray& pa = getOverlappingPairArray();
 		btAlignedObjectArray<MyPairIndex> indices;
 		{
 			BT_PROFILE("sortOverlappingPairs");
@@ -416,7 +416,7 @@ void btHashedOverlappingPairCache::processAllOverlappingPairs(btOverlapCallback*
 void btHashedOverlappingPairCache::sortOverlappingPairs(btDispatcher* dispatcher)
 {
 	///need to keep hashmap in sync with pair address, so rebuild all
-	btAlignedObjectArray<btBroadphasePair> tmpPairs;
+	btBroadphasePairArray tmpPairs;
 	int i;
 	for (i = 0; i < m_overlappingPairArray.size(); i++)
 	{
@@ -468,7 +468,7 @@ void* btSortedOverlappingPairCache::removeOverlappingPair(btBroadphaseProxy* pro
 btBroadphasePair* btSortedOverlappingPairCache::addOverlappingPair(btBroadphaseProxy* proxy0, btBroadphaseProxy* proxy1)
 {
 	//don't add overlap with own
-	assert(proxy0 != proxy1);
+	btAssert(proxy0 != proxy1);
 
 	if (!needsBroadphaseCollision(proxy0, proxy1))
 		return 0;
@@ -495,7 +495,7 @@ btBroadphasePair* btSortedOverlappingPairCache::findPair(btBroadphaseProxy* prox
 
 	if (findIndex < m_overlappingPairArray.size())
 	{
-		//assert(it != m_overlappingPairSet.end());
+		//btAssert(it != m_overlappingPairSet.end());
 		btBroadphasePair* pair = &m_overlappingPairArray[findIndex];
 		return pair;
 	}

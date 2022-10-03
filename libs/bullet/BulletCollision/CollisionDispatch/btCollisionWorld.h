@@ -246,7 +246,7 @@ public:
 		virtual btScalar addSingleResult(LocalRayResult& rayResult, bool normalInWorldSpace)
 		{
 			//caller already does the filter on the m_closestHitFraction
-			assert(rayResult.m_hitFraction <= m_closestHitFraction);
+			btAssert(rayResult.m_hitFraction <= m_closestHitFraction);
 
 			m_closestHitFraction = rayResult.m_hitFraction;
 			m_collisionObject = rayResult.m_collisionObject;
@@ -378,7 +378,7 @@ public:
 		virtual btScalar addSingleResult(LocalConvexResult& convexResult, bool normalInWorldSpace)
 		{
 			//caller already does the filter on the m_closestHitFraction
-			assert(convexResult.m_hitFraction <= m_closestHitFraction);
+			btAssert(convexResult.m_hitFraction <= m_closestHitFraction);
 
 			m_closestHitFraction = convexResult.m_hitFraction;
 			m_hitCollisionObject = convexResult.m_hitCollisionObject;

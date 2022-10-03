@@ -146,15 +146,15 @@ public:
 	}
 	void internalSetAppliedImpulse(int dof, btScalar appliedImpulse)
 	{
-		assert(dof >= 0);
-		assert(dof < getNumRows());
+		btAssert(dof >= 0);
+		btAssert(dof < getNumRows());
 		m_data[dof] = appliedImpulse;
 	}
 
 	btScalar getAppliedImpulse(int dof)
 	{
-		assert(dof >= 0);
-		assert(dof < getNumRows());
+		btAssert(dof >= 0);
+		btAssert(dof < getNumRows());
 		return m_data[dof];
 	}
 	// current constraint position

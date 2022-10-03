@@ -96,7 +96,7 @@ struct MultiBodyInplaceSolverIslandCallback : public btSimulationIslandManager::
     
     MultiBodyInplaceSolverIslandCallback& operator=(const MultiBodyInplaceSolverIslandCallback& other)
     {
-        assert(0);
+        btAssert(0);
         (void)other;
         return *this;
     }
@@ -104,7 +104,7 @@ struct MultiBodyInplaceSolverIslandCallback : public btSimulationIslandManager::
     SIMD_FORCE_INLINE virtual void setup(btContactSolverInfo* solverInfo, btTypedConstraint** sortedConstraints, int numConstraints, btMultiBodyConstraint** sortedMultiBodyConstraints, int numMultiBodyConstraints, btIDebugDraw* debugDrawer)
     {
         m_islandAnalyticsData.clear();
-        assert(solverInfo);
+        btAssert(solverInfo);
         m_solverInfo = solverInfo;
         
         m_multiBodySortedConstraints = sortedMultiBodyConstraints;

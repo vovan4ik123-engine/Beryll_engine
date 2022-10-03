@@ -133,7 +133,7 @@ bool btPolyhedralConvexShape::initializePolyhedralFeatures(int shiftVerticesByMa
 			v1 = edge->getTargetVertex();
 		}
 
-		assert(combinedFace.m_indices.size() > 2);
+		btAssert(combinedFace.m_indices.size() > 2);
 
 		btVector3 faceNormal = edges[0].cross(edges[1]);
 		faceNormal.normalize();
@@ -213,7 +213,7 @@ bool btPolyhedralConvexShape::initializePolyhedralFeatures(int shiftVerticesByMa
 		}
 		else
 		{
-			assert(0);  //degenerate?
+			btAssert(0);  //degenerate?
 			faceNormals[i].setZero();
 		}
 

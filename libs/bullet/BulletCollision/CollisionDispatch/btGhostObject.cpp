@@ -26,13 +26,13 @@ btGhostObject::btGhostObject()
 btGhostObject::~btGhostObject()
 {
 	///btGhostObject should have been removed from the world, so no overlapping objects
-	assert(!m_overlappingObjects.size());
+	btAssert(!m_overlappingObjects.size());
 }
 
 void btGhostObject::addOverlappingObjectInternal(btBroadphaseProxy* otherProxy, btBroadphaseProxy* thisProxy)
 {
 	btCollisionObject* otherObject = (btCollisionObject*)otherProxy->m_clientObject;
-	assert(otherObject);
+	btAssert(otherObject);
 	///if this linearSearch becomes too slow (too many overlapping objects) we should add a more appropriate data structure
 	int index = m_overlappingObjects.findLinearSearch(otherObject);
 	if (index == m_overlappingObjects.size())
@@ -45,7 +45,7 @@ void btGhostObject::addOverlappingObjectInternal(btBroadphaseProxy* otherProxy, 
 void btGhostObject::removeOverlappingObjectInternal(btBroadphaseProxy* otherProxy, btDispatcher* dispatcher, btBroadphaseProxy* thisProxy)
 {
 	btCollisionObject* otherObject = (btCollisionObject*)otherProxy->m_clientObject;
-	assert(otherObject);
+	btAssert(otherObject);
 	int index = m_overlappingObjects.findLinearSearch(otherObject);
 	if (index < m_overlappingObjects.size())
 	{
@@ -68,10 +68,10 @@ btPairCachingGhostObject::~btPairCachingGhostObject()
 void btPairCachingGhostObject::addOverlappingObjectInternal(btBroadphaseProxy* otherProxy, btBroadphaseProxy* thisProxy)
 {
 	btBroadphaseProxy* actualThisProxy = thisProxy ? thisProxy : getBroadphaseHandle();
-	assert(actualThisProxy);
+	btAssert(actualThisProxy);
 
 	btCollisionObject* otherObject = (btCollisionObject*)otherProxy->m_clientObject;
-	assert(otherObject);
+	btAssert(otherObject);
 	int index = m_overlappingObjects.findLinearSearch(otherObject);
 	if (index == m_overlappingObjects.size())
 	{
@@ -84,9 +84,9 @@ void btPairCachingGhostObject::removeOverlappingObjectInternal(btBroadphaseProxy
 {
 	btCollisionObject* otherObject = (btCollisionObject*)otherProxy->m_clientObject;
 	btBroadphaseProxy* actualThisProxy = thisProxy1 ? thisProxy1 : getBroadphaseHandle();
-	assert(actualThisProxy);
+	btAssert(actualThisProxy);
 
-	assert(otherObject);
+	btAssert(otherObject);
 	int index = m_overlappingObjects.findLinearSearch(otherObject);
 	if (index < m_overlappingObjects.size())
 	{

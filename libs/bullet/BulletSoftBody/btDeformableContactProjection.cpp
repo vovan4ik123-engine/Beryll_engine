@@ -181,7 +181,7 @@ void btDeformableContactProjection::project(TVStack& x)
 		}
 		else
 		{
-			assert(projectionDirs.size() == 1);
+			btAssert(projectionDirs.size() == 1);
 			btVector3 dir0 = projectionDirs[0];
 			x[i] -= x[i].dot(dir0) * dir0;
 		}

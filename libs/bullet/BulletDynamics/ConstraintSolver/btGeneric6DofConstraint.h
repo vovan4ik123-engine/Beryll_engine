@@ -313,7 +313,7 @@ protected:
 
 	btGeneric6DofConstraint& operator=(btGeneric6DofConstraint& other)
 	{
-		assert(0);
+		btAssert(0);
 		(void)other;
 		return *this;
 	}

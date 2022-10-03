@@ -41,11 +41,10 @@ typedef void (*btNearCallback)(btBroadphasePair& collisionPair, btCollisionDispa
 ///Time of Impact, Closest Points and Penetration Depth.
 class btCollisionDispatcher : public btDispatcher
 {
-private:
-	btAlignedObjectArray<btPersistentManifold*> m_manifoldsPtr;
-
 protected:
 	int m_dispatcherFlags;
+
+	btAlignedObjectArray<btPersistentManifold*> m_manifoldsPtr;
 
 	btNearCallback m_nearCallback;
 
@@ -94,15 +93,15 @@ public:
 
 	btPersistentManifold* getManifoldByIndexInternal(int index)
 	{
-		assert(index>=0);
-		assert(index<m_manifoldsPtr.size());
+		btAssert(index>=0);
+		btAssert(index<m_manifoldsPtr.size());
 		return m_manifoldsPtr[index];
 	}
 
 	const btPersistentManifold* getManifoldByIndexInternal(int index) const
 	{
-		assert(index>=0);
-		assert(index<m_manifoldsPtr.size());
+		btAssert(index>=0);
+		btAssert(index<m_manifoldsPtr.size());
 		return m_manifoldsPtr[index];
 	}
 

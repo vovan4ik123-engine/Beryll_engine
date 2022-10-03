@@ -195,17 +195,17 @@ void btSpinMutex::unlock()
 // These should not be called ever
 void btSpinMutex::lock()
 {
-	assert(!"unimplemented btSpinMutex::lock() called");
+	btAssert(!"unimplemented btSpinMutex::lock() called");
 }
 
 void btSpinMutex::unlock()
 {
-	assert(!"unimplemented btSpinMutex::unlock() called");
+	btAssert(!"unimplemented btSpinMutex::unlock() called");
 }
 
 bool btSpinMutex::tryLock()
 {
-	assert(!"unimplemented btSpinMutex::tryLock() called");
+	btAssert(!"unimplemented btSpinMutex::tryLock() called");
 	return true;
 }
 
@@ -231,7 +231,7 @@ struct ThreadsafeCounter
 		mCounter++;
 		if (mCounter >= BT_MAX_THREAD_COUNT)
 		{
-			assert(!"thread counter exceeded");
+			btAssert(!"thread counter exceeded");
 			// wrap back to the first worker index
 			mCounter = 1;
 		}
@@ -286,8 +286,50 @@ static ThreadId_t getDebugThreadId()
 
 #endif  // #if BT_DETECT_BAD_THREAD_INDEX
 
+// return a unique index per thread, main thread is 0, worker threads are in [1, BT_MAX_THREAD_COUNT)
+unsigned int btGetCurrentThreadIndex()
+{
+	const unsigned int kNullIndex = ~0U;
+	THREAD_LOCAL_STATIC unsigned int sThreadIndex = kNullIndex;
+	if (sThreadIndex == kNullIndex)
+	{
+		sThreadIndex = gThreadCounter.getNext();
+		btAssert(sThreadIndex < BT_MAX_THREAD_COUNT);
+	}
+#if BT_DETECT_BAD_THREAD_INDEX
+	if (gBtTaskScheduler && sThreadIndex > 0)
+	{
+		ThreadId_t tid = getDebugThreadId();
+		// if not set
+		if (gDebugThreadIds[sThreadIndex] == kInvalidThreadId)
+		{
+			// set it
+			gDebugThreadIds[sThreadIndex] = tid;
+		}
+		else
+		{
+			if (gDebugThreadIds[sThreadIndex] != tid)
+			{
+				// this could indicate the task scheduler is breaking our assumptions about
+				// how threads are managed when threadpool is resized
+				btAssert(!"there are 2 or more threads with the same thread-index!");
+				__debugbreak();
+			}
+		}
+	}
+#endif  // #if BT_DETECT_BAD_THREAD_INDEX
+	return sThreadIndex;
+}
+
+bool btIsMainThread()
+{
+	return btGetCurrentThreadIndex() == 0;
+}
+
 void btResetThreadIndexCounter()
 {
+	// for when all current worker threads are destroyed
+	btAssert(btIsMainThread());
 	gThreadCounter.mCounter = 0;
 }
 
@@ -343,6 +385,12 @@ bool btThreadsAreRunning()
 
 void btSetTaskScheduler(btITaskScheduler* ts)
 {
+	int threadId = btGetCurrentThreadIndex();  // make sure we call this on main thread at least once before any workers run
+	if (threadId != 0)
+	{
+		btAssert(!"btSetTaskScheduler must be called from the main thread!");
+		return;
+	}
 	if (gBtTaskScheduler)
 	{
 		// deactivate old task scheduler
@@ -376,13 +424,13 @@ void btParallelFor(int iBegin, int iEnd, int grainSize, const btIParallelForBody
 	}
 #endif  // #if BT_DETECT_BAD_THREAD_INDEX
 
-	assert(gBtTaskScheduler != NULL);  // call btSetTaskScheduler() with a valid task scheduler first!
+	btAssert(gBtTaskScheduler != NULL);  // call btSetTaskScheduler() with a valid task scheduler first!
 	gBtTaskScheduler->parallelFor(iBegin, iEnd, grainSize, body);
 
 #else  // #if BT_THREADSAFE
 
 	// non-parallel version of btParallelFor
-	assert(!"called btParallelFor in non-threadsafe build. enable BT_THREADSAFE");
+	btAssert(!"called btParallelFor in non-threadsafe build. enable BT_THREADSAFE");
 	body.forLoop(iBegin, iEnd);
 
 #endif  // #if BT_THREADSAFE
@@ -403,13 +451,13 @@ btScalar btParallelSum(int iBegin, int iEnd, int grainSize, const btIParallelSum
 	}
 #endif  // #if BT_DETECT_BAD_THREAD_INDEX
 
-	assert(gBtTaskScheduler != NULL);  // call btSetTaskScheduler() with a valid task scheduler first!
+	btAssert(gBtTaskScheduler != NULL);  // call btSetTaskScheduler() with a valid task scheduler first!
 	return gBtTaskScheduler->parallelSum(iBegin, iEnd, grainSize, body);
 
 #else  // #if BT_THREADSAFE
 
 	// non-parallel version of btParallelSum
-	assert(!"called btParallelFor in non-threadsafe build. enable BT_THREADSAFE");
+	btAssert(!"called btParallelFor in non-threadsafe build. enable BT_THREADSAFE");
 	return body.sumLoop(iBegin, iEnd);
 
 #endif  //#else // #if BT_THREADSAFE

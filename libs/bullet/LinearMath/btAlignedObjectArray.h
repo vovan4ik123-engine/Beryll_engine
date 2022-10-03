@@ -146,29 +146,29 @@ public:
 
 	SIMD_FORCE_INLINE const T& at(int n) const
 	{
-		assert(n >= 0);
-		assert(n < size());
+		btAssert(n >= 0);
+		btAssert(n < size());
 		return m_data[n];
 	}
 
 	SIMD_FORCE_INLINE T& at(int n)
 	{
-		assert(n >= 0);
-		assert(n < size());
+		btAssert(n >= 0);
+		btAssert(n < size());
 		return m_data[n];
 	}
 
 	SIMD_FORCE_INLINE const T& operator[](int n) const
 	{
-		assert(n >= 0);
-		assert(n < size());
+		btAssert(n >= 0);
+		btAssert(n < size());
 		return m_data[n];
 	}
 
 	SIMD_FORCE_INLINE T& operator[](int n)
 	{
-		assert(n >= 0);
-		assert(n < size());
+		btAssert(n >= 0);
+		btAssert(n < size());
 		return m_data[n];
 	}
 
@@ -184,7 +184,7 @@ public:
 
 	SIMD_FORCE_INLINE void pop_back()
 	{
-		assert(m_size > 0);
+		btAssert(m_size > 0);
 		m_size--;
 		m_data[m_size].~T();
 	}

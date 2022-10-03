@@ -110,7 +110,7 @@ void resolveSingleBilateral(btRigidBody& body1, const btVector3& pos1,
 	(void)distance;
 
 	btScalar normalLenSqr = normal.length2();
-	assert(btFabs(normalLenSqr) < btScalar(1.1));
+	btAssert(btFabs(normalLenSqr) < btScalar(1.1));
 	if (normalLenSqr > btScalar(1.1))
 	{
 		impulse = btScalar(0.);

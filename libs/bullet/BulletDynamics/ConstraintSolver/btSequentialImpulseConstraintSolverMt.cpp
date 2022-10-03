@@ -103,7 +103,7 @@ void btSequentialImpulseConstraintSolverMt::internalSetupContactConstraints(int 
 	if (rollingFrictionIndex >= 0)
 	{
 		btSolverConstraint& spinningFrictionConstraint = m_tmpSolverContactRollingFrictionConstraintPool[rollingFrictionIndex];
-		assert(spinningFrictionConstraint.m_frictionIndex == iContactConstraint);
+		btAssert(spinningFrictionConstraint.m_frictionIndex == iContactConstraint);
 		setupTorsionalFrictionConstraint(spinningFrictionConstraint,
 										 cp.m_normalWorldOnB,
 										 solverBodyIdA,
@@ -136,7 +136,7 @@ void btSequentialImpulseConstraintSolverMt::internalSetupContactConstraints(int 
 		{
 			int iRollingFric = rollingFrictionIndex + 1 + i;
 			btSolverConstraint& rollingFrictionConstraint = m_tmpSolverContactRollingFrictionConstraintPool[iRollingFric];
-			assert(rollingFrictionConstraint.m_frictionIndex == iContactConstraint);
+			btAssert(rollingFrictionConstraint.m_frictionIndex == iContactConstraint);
 			btVector3 dir = axis[i];
 			if (dir.length() > kRollingFrictionThreshold)
 			{
@@ -180,13 +180,13 @@ void btSequentialImpulseConstraintSolverMt::internalSetupContactConstraints(int 
 		///this will give a conveyor belt effect
 		///
 		btSolverConstraint* frictionConstraint1 = &m_tmpSolverContactFrictionConstraintPool[contactConstraint.m_frictionIndex];
-		assert(frictionConstraint1->m_frictionIndex == iContactConstraint);
+		btAssert(frictionConstraint1->m_frictionIndex == iContactConstraint);
 
 		btSolverConstraint* frictionConstraint2 = NULL;
 		if (infoGlobal.m_solverMode & SOLVER_USE_2_FRICTION_DIRECTIONS)
 		{
 			frictionConstraint2 = &m_tmpSolverContactFrictionConstraintPool[contactConstraint.m_frictionIndex + 1];
-			assert(frictionConstraint2->m_frictionIndex == iContactConstraint);
+			btAssert(frictionConstraint2->m_frictionIndex == iContactConstraint);
 		}
 
 		if (!(infoGlobal.m_solverMode & SOLVER_ENABLE_FRICTION_DIRECTION_CACHING) || !(cp.m_contactPointFlags & BT_CONTACT_FLAG_LATERAL_FRICTION_INITIALIZED))
@@ -382,7 +382,7 @@ int btSequentialImpulseConstraintSolverMt::getOrInitSolverBodyThreadsafe(btColli
 		}
 		solverBodyId = m_fixedBodyId;
 	}
-	assert(solverBodyId >= 0 && solverBodyId < m_tmpSolverBodyPool.size());
+	btAssert(solverBodyId >= 0 && solverBodyId < m_tmpSolverBodyPool.size());
 	return solverBodyId;
 }
 
@@ -409,7 +409,7 @@ void btSequentialImpulseConstraintSolverMt::internalCollectContactManifoldCached
 		// A contact manifold between 2 static object should not exist!
 		// check the collision flags of your objects if this assert fires.
 		// Incorrectly set collision object flags can degrade performance in various ways.
-		assert(!m_tmpSolverBodyPool[solverBodyIdA].m_invMass.isZero() || !m_tmpSolverBodyPool[solverBodyIdB].m_invMass.isZero());
+		btAssert(!m_tmpSolverBodyPool[solverBodyIdA].m_invMass.isZero() || !m_tmpSolverBodyPool[solverBodyIdB].m_invMass.isZero());
 
 		int iContact = 0;
 		for (int j = 0; j < manifold->getNumContacts(); j++)
@@ -650,8 +650,8 @@ void btSequentialImpulseConstraintSolverMt::internalConvertMultipleJoints(const 
 		if (currentRow != -1)
 		{
 			const btTypedConstraint::btConstraintInfo1& info1 = m_tmpConstraintSizesPool[i];
-			assert(currentRow < m_tmpSolverNonContactConstraintPool.size());
-			assert(info1.m_numConstraintRows > 0);
+			btAssert(currentRow < m_tmpSolverNonContactConstraintPool.size());
+			btAssert(info1.m_numConstraintRows > 0);
 
 			btSolverConstraint* currentConstraintRow = &m_tmpSolverNonContactConstraintPool[currentRow];
 			btTypedConstraint* constraint = constraints[i];
@@ -1041,7 +1041,7 @@ btScalar btSequentialImpulseConstraintSolverMt::resolveMultipleContactFrictionCo
 			for (int iFriction = iBegin; iFriction < iEnd; ++iFriction)
 			{
 				btSolverConstraint& solveManifold = m_tmpSolverContactFrictionConstraintPool[iFriction++];
-				assert(solveManifold.m_frictionIndex == iContact);
+				btAssert(solveManifold.m_frictionIndex == iContact);
 
 				solveManifold.m_lowerLimit = -(solveManifold.m_friction * totalImpulse);
 				solveManifold.m_upperLimit = solveManifold.m_friction * totalImpulse;
@@ -1123,7 +1123,7 @@ btScalar btSequentialImpulseConstraintSolverMt::resolveMultipleContactConstraint
 			for (int iFriction = iBegin; iFriction < iEnd; ++iFriction)
 			{
 				btSolverConstraint& solveManifold = m_tmpSolverContactFrictionConstraintPool[iFriction];
-				assert(solveManifold.m_frictionIndex == iContact);
+				btAssert(solveManifold.m_frictionIndex == iContact);
 
 				solveManifold.m_lowerLimit = -(solveManifold.m_friction * totalImpulse);
 				solveManifold.m_upperLimit = solveManifold.m_friction * totalImpulse;
@@ -1183,7 +1183,7 @@ void btSequentialImpulseConstraintSolverMt::randomizeBatchedConstraintOrdering(b
 		for (int iiCons = batch.begin; iiCons < batch.end; ++iiCons)
 		{
 			int iSwap = batch.begin + btRandInt2(iiCons - batch.begin + 1);
-			assert(iSwap >= batch.begin && iSwap < batch.end);
+			btAssert(iSwap >= batch.begin && iSwap < batch.end);
 			bc.m_constraintIndices.swap(iiCons, iSwap);
 		}
 	}
@@ -1452,7 +1452,7 @@ void btSequentialImpulseConstraintSolverMt::internalWriteBackContacts(int iBegin
 	//{
 	//    const btSolverConstraint& contactConstraint = m_tmpSolverContactConstraintPool[ iContact ];
 	//    btManifoldPoint* pt = (btManifoldPoint*) contactConstraint.m_originalContactPoint;
-	//    assert( pt );
+	//    btAssert( pt );
 	//    pt->m_appliedImpulse = contactConstraint.m_appliedImpulse;
 	//    pt->m_appliedImpulseLateral1 = m_tmpSolverContactFrictionConstraintPool[ contactConstraint.m_frictionIndex ].m_appliedImpulse;
 	//    if ( m_numFrictionDirections == 2 )

@@ -60,7 +60,7 @@ public:
 
 	SIMD_FORCE_INLINE int getEscapeIndex() const
 	{
-		//assert(m_escapeIndexOrDataIndex < 0);
+		//btAssert(m_escapeIndexOrDataIndex < 0);
 		return -m_escapeIndexOrDataIndex;
 	}
 
@@ -71,7 +71,7 @@ public:
 
 	SIMD_FORCE_INLINE int getDataIndex() const
 	{
-		//assert(m_escapeIndexOrDataIndex >= 0);
+		//btAssert(m_escapeIndexOrDataIndex >= 0);
 
 		return m_escapeIndexOrDataIndex;
 	}

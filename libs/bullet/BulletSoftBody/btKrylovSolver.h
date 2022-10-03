@@ -45,7 +45,7 @@ public:
 	virtual SIMD_FORCE_INLINE TVStack sub(const TVStack& a, const TVStack& b)
 	{
 		// c = a-b
-		assert(a.size() == b.size());
+		btAssert(a.size() == b.size());
 		TVStack c;
 		c.resize(a.size());
 		for (int i = 0; i < a.size(); ++i)
@@ -84,7 +84,7 @@ public:
 	virtual SIMD_FORCE_INLINE void multAndAddTo(btScalar s, const TVStack& a, TVStack& result)
 	{
 		//        result += s*a
-		assert(a.size() == result.size());
+		btAssert(a.size() == result.size());
 		for (int i = 0; i < a.size(); ++i)
 			result[i] += s * a[i];
 	}

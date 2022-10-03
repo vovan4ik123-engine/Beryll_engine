@@ -209,7 +209,7 @@ void btAxisSweep3<BP_FP_INT_TYPE>::debugPrintAxis(int axis, bool checkCardinalit
 	}
 
 	if (checkCardinality)
-		assert(numEdges == m_numHandles * 2 + 1);
+		btAssert(numEdges == m_numHandles * 2 + 1);
 }
 #endif  //DEBUG_BROADPHASE
 
@@ -353,7 +353,7 @@ btAxisSweep3Internal<BP_FP_INT_TYPE>::btAxisSweep3Internal(const btVector3& worl
 		m_raycastAccelerator->m_deferedcollide = true;                                                                //don't add/remove pairs
 	}
 
-	//assert(bounds.HasVolume());
+	//btAssert(bounds.HasVolume());
 
 	// init bounds
 	m_worldAabbMin = worldAabbMin;
@@ -456,7 +456,7 @@ void btAxisSweep3Internal<BP_FP_INT_TYPE>::quantize(BP_FP_INT_TYPE* out, const b
 template <typename BP_FP_INT_TYPE>
 BP_FP_INT_TYPE btAxisSweep3Internal<BP_FP_INT_TYPE>::allocHandle()
 {
-	assert(m_firstFreeHandle);
+	btAssert(m_firstFreeHandle);
 
 	BP_FP_INT_TYPE handle = m_firstFreeHandle;
 	m_firstFreeHandle = getHandle(handle)->GetNextFree();
@@ -468,7 +468,7 @@ BP_FP_INT_TYPE btAxisSweep3Internal<BP_FP_INT_TYPE>::allocHandle()
 template <typename BP_FP_INT_TYPE>
 void btAxisSweep3Internal<BP_FP_INT_TYPE>::freeHandle(BP_FP_INT_TYPE handle)
 {
-	assert(handle > 0 && handle < m_maxHandles);
+	btAssert(handle > 0 && handle < m_maxHandles);
 
 	getHandle(handle)->SetNextFree(m_firstFreeHandle);
 	m_firstFreeHandle = handle;
@@ -596,7 +596,7 @@ void btAxisSweep3Internal<BP_FP_INT_TYPE>::calculateOverlappingPairs(btDispatche
 {
 	if (m_pairCache->hasDeferredRemoval())
 	{
-		btAlignedObjectArray<btBroadphasePair>& overlappingPairArray = m_pairCache->getOverlappingPairArray();
+		btBroadphasePairArray& overlappingPairArray = m_pairCache->getOverlappingPairArray();
 
 		//perform a sort, to find duplicates and to sort 'invalid' pairs to the end
 		overlappingPairArray.quickSort(btBroadphasePairSortPredicate());
@@ -640,7 +640,7 @@ void btAxisSweep3Internal<BP_FP_INT_TYPE>::calculateOverlappingPairs(btDispatche
 				//remove duplicate
 				needsRemoval = true;
 				//should have no algorithm
-				assert(!pair.m_algorithm);
+				btAssert(!pair.m_algorithm);
 			}
 
 			if (needsRemoval)
@@ -707,8 +707,8 @@ bool btAxisSweep3Internal<BP_FP_INT_TYPE>::testOverlap2D(const Handle* pHandleA,
 template <typename BP_FP_INT_TYPE>
 void btAxisSweep3Internal<BP_FP_INT_TYPE>::updateHandle(BP_FP_INT_TYPE handle, const btVector3& aabbMin, const btVector3& aabbMax, btDispatcher* dispatcher)
 {
-	//	assert(bounds.IsFinite());
-	//assert(bounds.HasVolume());
+	//	btAssert(bounds.IsFinite());
+	//btAssert(bounds.HasVolume());
 
 	Handle* pHandle = getHandle(handle);
 

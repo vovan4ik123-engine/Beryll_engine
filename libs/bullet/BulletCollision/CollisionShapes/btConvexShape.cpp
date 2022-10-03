@@ -118,7 +118,7 @@ static btVector3 convexHullSupport(const btVector3& localDirOrg, const btVector3
 
 	btScalar maxDot;
 	long ptIndex = vec.maxDot(points, numPoints, maxDot);
-	assert(ptIndex >= 0);
+	btAssert(ptIndex >= 0);
 	if (ptIndex < 0)
 	{
 		ptIndex = 0;
@@ -198,7 +198,7 @@ btVector3 btConvexShape::localGetSupportVertexWithoutMarginNonVirtual(const btVe
 				}
 				break;
 				default:
-					assert(0);
+					btAssert(0);
 					break;
 			};
 
@@ -295,12 +295,12 @@ btVector3 btConvexShape::localGetSupportVertexWithoutMarginNonVirtual(const btVe
 #ifndef __SPU__
 			return this->localGetSupportingVertexWithoutMargin(localDir);
 #else
-			assert(0);
+			btAssert(0);
 #endif
 	}
 
 	// should never reach here
-	assert(0);
+	btAssert(0);
 	return btVector3(btScalar(0.0f), btScalar(0.0f), btScalar(0.0f));
 }
 
@@ -362,12 +362,12 @@ btScalar btConvexShape::getMarginNonVirtual() const
 #ifndef __SPU__
 			return this->getMargin();
 #else
-			assert(0);
+			btAssert(0);
 #endif
 	}
 
 	// should never reach here
-	assert(0);
+	btAssert(0);
 	return btScalar(0.0f);
 }
 #ifndef __SPU__
@@ -446,13 +446,13 @@ void btConvexShape::getAabbNonVirtual(const btTransform& t, btVector3& aabbMin, 
 #ifndef __SPU__
 			this->getAabb(t, aabbMin, aabbMax);
 #else
-			assert(0);
+			btAssert(0);
 #endif
 			break;
 	}
 
 	// should never reach here
-	assert(0);
+	btAssert(0);
 }
 
 #endif  //__SPU__

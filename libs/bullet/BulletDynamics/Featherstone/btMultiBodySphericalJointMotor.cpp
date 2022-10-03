@@ -150,7 +150,7 @@ btQuaternion relRot = currentQuat.inverse() * desiredQuat;
 		frameAworld = m_bodyA->localFrameToWorld(m_linkA, frameAworld);
 		btScalar posError = 0;
 		{
-			assert(m_bodyA->getLink(m_linkA).m_jointType == btMultibodyLink::eSpherical);
+			btAssert(m_bodyA->getLink(m_linkA).m_jointType == btMultibodyLink::eSpherical);
 			switch (m_bodyA->getLink(m_linkA).m_jointType)
 			{
 				case btMultibodyLink::eSpherical:
@@ -172,7 +172,7 @@ btQuaternion relRot = currentQuat.inverse() * desiredQuat;
 				}
 				default:
 				{
-					assert(0);
+					btAssert(0);
 				}
 			};
 		}

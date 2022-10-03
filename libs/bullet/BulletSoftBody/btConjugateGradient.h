@@ -35,7 +35,7 @@ public:
 	int solve(MatrixX& A, TVStack& x, const TVStack& b, bool verbose = false)
 	{
 		BT_PROFILE("CGSolve");
-		assert(x.size() == b.size());
+		btAssert(x.size() == b.size());
 		reinitialize(b);
 		temp = b;
 		A.project(temp);

@@ -22,12 +22,12 @@ btAxisSweep3::btAxisSweep3(const btVector3& worldAabbMin, const btVector3& world
 	: btAxisSweep3Internal<unsigned short int>(worldAabbMin, worldAabbMax, 0xfffe, 0xffff, maxHandles, pairCache, disableRaycastAccelerator)
 {
 	// 1 handle is reserved as sentinel
-	assert(maxHandles > 1 && maxHandles < 32767);
+	btAssert(maxHandles > 1 && maxHandles < 32767);
 }
 
 bt32BitAxisSweep3::bt32BitAxisSweep3(const btVector3& worldAabbMin, const btVector3& worldAabbMax, unsigned int maxHandles, btOverlappingPairCache* pairCache, bool disableRaycastAccelerator)
 	: btAxisSweep3Internal<unsigned int>(worldAabbMin, worldAabbMax, 0xfffffffe, 0x7fffffff, maxHandles, pairCache, disableRaycastAccelerator)
 {
 	// 1 handle is reserved as sentinel
-	assert(maxHandles > 1 && maxHandles < 2147483647);
+	btAssert(maxHandles > 1 && maxHandles < 2147483647);
 }

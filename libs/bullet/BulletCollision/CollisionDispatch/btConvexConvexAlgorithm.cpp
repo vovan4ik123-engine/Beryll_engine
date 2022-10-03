@@ -304,7 +304,7 @@ void btConvexConvexAlgorithm ::processCollision(const btCollisionObjectWrapper* 
 
 		if (dist < threshold)
 		{
-			assert(normalOnB.length2() >= (SIMD_EPSILON * SIMD_EPSILON));
+			btAssert(normalOnB.length2() >= (SIMD_EPSILON * SIMD_EPSILON));
 			resultOut->addContactPoint(normalOnB, pointOnBWorld, dist);
 		}
 		resultOut->refreshContactPoints();
@@ -326,7 +326,7 @@ void btConvexConvexAlgorithm ::processCollision(const btCollisionObjectWrapper* 
 
 		if (dist < threshold)
 		{
-			assert(normalOnB.length2() >= (SIMD_EPSILON * SIMD_EPSILON));
+			btAssert(normalOnB.length2() >= (SIMD_EPSILON * SIMD_EPSILON));
 			resultOut->addContactPoint(normalOnB, pointOnBWorld, dist);
 		}
 		resultOut->refreshContactPoints();
@@ -348,7 +348,7 @@ void btConvexConvexAlgorithm ::processCollision(const btCollisionObjectWrapper* 
 
 		if (dist < threshold)
 		{
-			assert(normalOnB.length2() >= (SIMD_EPSILON * SIMD_EPSILON));
+			btAssert(normalOnB.length2() >= (SIMD_EPSILON * SIMD_EPSILON));
 			resultOut->addContactPoint(normalOnB, pointOnBWorld, dist);
 		}
 		resultOut->refreshContactPoints();

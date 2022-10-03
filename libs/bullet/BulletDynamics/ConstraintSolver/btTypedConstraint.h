@@ -55,7 +55,7 @@ enum btConstraintParams
 };
 
 #if 1
-#define btAssertConstrParams(_par) assert(_par)
+#define btAssertConstrParams(_par) btAssert(_par)
 #else
 #define btAssertConstrParams(_par)
 #endif
@@ -88,7 +88,7 @@ btTypedConstraint : public btTypedObject
 
 	btTypedConstraint& operator=(btTypedConstraint& other)
 	{
-		assert(0);
+		btAssert(0);
 		(void)other;
 		return *this;
 	}
@@ -295,7 +295,7 @@ public:
 	///This feedback could be used to determine breaking constraints or playing sounds.
 	btScalar getAppliedImpulse() const
 	{
-		assert(m_needsFeedback);
+		btAssert(m_needsFeedback);
 		return m_appliedImpulse;
 	}
 

@@ -163,7 +163,7 @@ public:
 				plane.setValue(btScalar(0.), btScalar(0.), btScalar(-1.), -halfExtents.z());
 				break;
 			default:
-				assert(0);
+				btAssert(0);
 		}
 	}
 
@@ -226,7 +226,7 @@ public:
 				edgeVert1 = 7;
 				break;
 			default:
-				assert(0);
+				btAssert(0);
 		}
 
 		getVertex(edgeVert0, pa);
@@ -283,7 +283,7 @@ public:
 				penetrationVector.setValue(btScalar(0.), btScalar(0.), btScalar(-1.));
 				break;
 			default:
-				assert(0);
+				btAssert(0);
 		}
 	}
 };

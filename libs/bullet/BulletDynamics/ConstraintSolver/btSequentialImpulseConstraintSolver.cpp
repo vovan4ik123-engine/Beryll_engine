@@ -740,7 +740,7 @@ int btSequentialImpulseConstraintSolver::getOrInitSolverBody(btCollisionObject& 
 		// Incorrectly set collision object flags can degrade performance in various ways.
 		if (!isMultiBodyType)
 		{
-			assert(body.isStaticOrKinematicObject());
+			btAssert(body.isStaticOrKinematicObject());
 		}
 		//it could be a multibody link collider
 		// all fixed bodies (inf mass) get mapped to a single solver id
@@ -752,7 +752,7 @@ int btSequentialImpulseConstraintSolver::getOrInitSolverBody(btCollisionObject& 
 		}
 		solverBodyId = m_fixedBodyId;
 	}
-	assert(solverBodyId >= 0 && solverBodyId < m_tmpSolverBodyPool.size());
+	btAssert(solverBodyId >= 0 && solverBodyId < m_tmpSolverBodyPool.size());
 	return solverBodyId;
 #else   // BT_THREADSAFE
 
@@ -762,7 +762,7 @@ int btSequentialImpulseConstraintSolver::getOrInitSolverBody(btCollisionObject& 
 	{
 		//body has already been converted
 		solverBodyIdA = body.getCompanionId();
-		assert(solverBodyIdA < m_tmpSolverBodyPool.size());
+		btAssert(solverBodyIdA < m_tmpSolverBodyPool.size());
 	}
 	else
 	{
@@ -1189,14 +1189,14 @@ void btSequentialImpulseConstraintSolver::convertJoint(btSolverConstraint* curre
 	}
 
 	// these vectors are already cleared in initSolverBody, no need to redundantly clear again
-	assert(bodyAPtr->getDeltaLinearVelocity().isZero());
-	assert(bodyAPtr->getDeltaAngularVelocity().isZero());
-	assert(bodyAPtr->getPushVelocity().isZero());
-	assert(bodyAPtr->getTurnVelocity().isZero());
-	assert(bodyBPtr->getDeltaLinearVelocity().isZero());
-	assert(bodyBPtr->getDeltaAngularVelocity().isZero());
-	assert(bodyBPtr->getPushVelocity().isZero());
-	assert(bodyBPtr->getTurnVelocity().isZero());
+	btAssert(bodyAPtr->getDeltaLinearVelocity().isZero());
+	btAssert(bodyAPtr->getDeltaAngularVelocity().isZero());
+	btAssert(bodyAPtr->getPushVelocity().isZero());
+	btAssert(bodyAPtr->getTurnVelocity().isZero());
+	btAssert(bodyBPtr->getDeltaLinearVelocity().isZero());
+	btAssert(bodyBPtr->getDeltaAngularVelocity().isZero());
+	btAssert(bodyBPtr->getPushVelocity().isZero());
+	btAssert(bodyBPtr->getTurnVelocity().isZero());
 	//bodyAPtr->internalGetDeltaLinearVelocity().setValue(0.f,0.f,0.f);
 	//bodyAPtr->internalGetDeltaAngularVelocity().setValue(0.f,0.f,0.f);
 	//bodyAPtr->internalGetPushVelocity().setValue(0.f,0.f,0.f);
@@ -1215,7 +1215,7 @@ void btSequentialImpulseConstraintSolver::convertJoint(btSolverConstraint* curre
 	info2.m_J2angularAxis = currentConstraintRow->m_relpos2CrossNormal;
 	info2.rowskip = sizeof(btSolverConstraint) / sizeof(btScalar);  //check this
 																	///the size of btSolverConstraint needs be a multiple of btScalar
-	assert(info2.rowskip * sizeof(btScalar) == sizeof(btSolverConstraint));
+	btAssert(info2.rowskip * sizeof(btScalar) == sizeof(btSolverConstraint));
 	info2.m_constraintError = &currentConstraintRow->m_rhs;
 	currentConstraintRow->m_cfm = infoGlobal.m_globalCfm;
 	info2.m_damping = infoGlobal.m_damping;
@@ -1262,7 +1262,7 @@ void btSequentialImpulseConstraintSolver::convertJoint(btSolverConstraint* curre
 			sum += iMJlB.dot(solverConstraint.m_contactNormal2);
 			sum += iMJaB.dot(solverConstraint.m_relpos2CrossNormal);
 			btScalar fsum = btFabs(sum);
-			assert(fsum > SIMD_EPSILON);
+			btAssert(fsum > SIMD_EPSILON);
 			btScalar sorRelaxation = 1.f;  //todo: get from globalInfo?
 			solverConstraint.m_jacDiagABInv = fsum > SIMD_EPSILON ? sorRelaxation / sum : 0.f;
 		}
@@ -1339,7 +1339,7 @@ void btSequentialImpulseConstraintSolver::convertJoints(btTypedConstraint** cons
 
 		if (info1.m_numConstraintRows)
 		{
-			assert(currentRow < totalNumRows);
+			btAssert(currentRow < totalNumRows);
 
 			btSolverConstraint* currentConstraintRow = &m_tmpSolverNonContactConstraintPool[currentRow];
 			btTypedConstraint* constraint = constraints[i];
@@ -1434,7 +1434,7 @@ btScalar btSequentialImpulseConstraintSolver::solveGroupCacheFriendlySetup(btCol
 						break;
 					}
 				}
-				assert(found);
+				btAssert(found);
 			}
 			if (!constraint->getRigidBodyB().isStaticOrKinematicObject())
 			{
@@ -1447,7 +1447,7 @@ btScalar btSequentialImpulseConstraintSolver::solveGroupCacheFriendlySetup(btCol
 						break;
 					}
 				}
-				assert(found);
+				btAssert(found);
 			}
 		}
 	}
@@ -1465,7 +1465,7 @@ btScalar btSequentialImpulseConstraintSolver::solveGroupCacheFriendlySetup(btCol
 					break;
 				}
 			}
-			assert(found);
+			btAssert(found);
 		}
 		if (!manifoldPtr[i]->getBody1()->isStaticOrKinematicObject())
 		{
@@ -1478,7 +1478,7 @@ btScalar btSequentialImpulseConstraintSolver::solveGroupCacheFriendlySetup(btCol
 					break;
 				}
 			}
-			assert(found);
+			btAssert(found);
 		}
 	}
 #endif  //BT_ADDITIONAL_DEBUG
@@ -1768,7 +1768,7 @@ void btSequentialImpulseConstraintSolver::writeBackContacts(int iBegin, int iEnd
 	{
 		const btSolverConstraint& solveManifold = m_tmpSolverContactConstraintPool[j];
 		btManifoldPoint* pt = (btManifoldPoint*)solveManifold.m_originalContactPoint;
-		assert(pt);
+		btAssert(pt);
 		pt->m_appliedImpulse = solveManifold.m_appliedImpulse;
 		//	float f = m_tmpSolverContactFrictionConstraintPool[solveManifold.m_frictionIndex].m_appliedImpulse;
 		//	printf("pt->m_appliedImpulseLateral1 = %f\n", f);

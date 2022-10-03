@@ -33,7 +33,7 @@ btCompoundCollisionAlgorithm::btCompoundCollisionAlgorithm(const btCollisionAlgo
 	m_ownsManifold = false;
 
 	const btCollisionObjectWrapper* colObjWrap = m_isSwapped ? body1Wrap : body0Wrap;
-	assert(colObjWrap->getCollisionShape()->isCompound());
+	btAssert(colObjWrap->getCollisionShape()->isCompound());
 
 	const btCompoundShape* compoundShape = static_cast<const btCompoundShape*>(colObjWrap->getCollisionShape());
 	m_compoundShapeRevision = compoundShape->getUpdateRevision();
@@ -45,7 +45,7 @@ void btCompoundCollisionAlgorithm::preallocateChildAlgorithms(const btCollisionO
 {
 	const btCollisionObjectWrapper* colObjWrap = m_isSwapped ? body1Wrap : body0Wrap;
 	const btCollisionObjectWrapper* otherObjWrap = m_isSwapped ? body0Wrap : body1Wrap;
-	assert(colObjWrap->getCollisionShape()->isCompound());
+	btAssert(colObjWrap->getCollisionShape()->isCompound());
 
 	const btCompoundShape* compoundShape = static_cast<const btCompoundShape*>(colObjWrap->getCollisionShape());
 
@@ -109,9 +109,9 @@ public:
 
 	void ProcessChildShape(const btCollisionShape* childShape, int index)
 	{
-		assert(index >= 0);
+		btAssert(index >= 0);
 		const btCompoundShape* compoundShape = static_cast<const btCompoundShape*>(m_compoundColObjWrap->getCollisionShape());
-		assert(index < compoundShape->getNumChildShapes());
+		btAssert(index < compoundShape->getNumChildShapes());
 
 		if (gCompoundChildShapePairCallback)
 		{
@@ -232,7 +232,7 @@ void btCompoundCollisionAlgorithm::processCollision(const btCollisionObjectWrapp
 	const btCollisionObjectWrapper* colObjWrap = m_isSwapped ? body1Wrap : body0Wrap;
 	const btCollisionObjectWrapper* otherObjWrap = m_isSwapped ? body0Wrap : body1Wrap;
 
-	assert(colObjWrap->getCollisionShape()->isCompound());
+	btAssert(colObjWrap->getCollisionShape()->isCompound());
 	const btCompoundShape* compoundShape = static_cast<const btCompoundShape*>(colObjWrap->getCollisionShape());
 
 	///btCompoundShape might have changed:
@@ -342,12 +342,12 @@ void btCompoundCollisionAlgorithm::processCollision(const btCollisionObjectWrapp
 
 btScalar btCompoundCollisionAlgorithm::calculateTimeOfImpact(btCollisionObject* body0, btCollisionObject* body1, const btDispatcherInfo& dispatchInfo, btManifoldResult* resultOut)
 {
-	assert(0);
+	btAssert(0);
 	//needs to be fixed, using btCollisionObjectWrapper and NOT modifying internal data structures
 	btCollisionObject* colObj = m_isSwapped ? body1 : body0;
 	btCollisionObject* otherObj = m_isSwapped ? body0 : body1;
 
-	assert(colObj->getCollisionShape()->isCompound());
+	btAssert(colObj->getCollisionShape()->isCompound());
 
 	btCompoundShape* compoundShape = static_cast<btCompoundShape*>(colObj->getCollisionShape());
 

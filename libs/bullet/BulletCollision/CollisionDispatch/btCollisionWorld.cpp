@@ -123,11 +123,11 @@ void btCollisionWorld::refreshBroadphaseProxy(btCollisionObject* collisionObject
 
 void btCollisionWorld::addCollisionObject(btCollisionObject* collisionObject, int collisionFilterGroup, int collisionFilterMask)
 {
-	assert(collisionObject);
+	btAssert(collisionObject);
 
 	//check that the object isn't already added
-	assert(m_collisionObjects.findLinearSearch(collisionObject) == m_collisionObjects.size());
-	assert(collisionObject->getWorldArrayIndex() == -1);  // do not add the same object to more than one collision world
+	btAssert(m_collisionObjects.findLinearSearch(collisionObject) == m_collisionObjects.size());
+	btAssert(collisionObject->getWorldArrayIndex() == -1);  // do not add the same object to more than one collision world
 
 	collisionObject->setWorldArrayIndex(m_collisionObjects.size());
 	m_collisionObjects.push_back(collisionObject);
@@ -201,7 +201,7 @@ void btCollisionWorld::updateAabbs()
 	for (int i = 0; i < m_collisionObjects.size(); i++)
 	{
 		btCollisionObject* colObj = m_collisionObjects[i];
-		assert(colObj->getWorldArrayIndex() == i);
+		btAssert(colObj->getWorldArrayIndex() == i);
 
 		//only update aabb of active objects
 		if (m_forceUpdateAllAabbs || colObj->isActive())
@@ -237,38 +237,40 @@ void btCollisionWorld::performDiscreteCollisionDetection()
 
 void btCollisionWorld::removeCollisionObject(btCollisionObject* collisionObject)
 {
-    {
-        btBroadphaseProxy* bp = collisionObject->getBroadphaseHandle();
-        if (bp)
-        {
-            //
-            // only clear the cached algorithms
-            //
-            getBroadphase()->getOverlappingPairCache()->cleanProxyFromPairs(bp, m_dispatcher1);
-            getBroadphase()->destroyProxy(bp, m_dispatcher1);
-            collisionObject->setBroadphaseHandle(0);
-        }
-    }
+	//bool removeFromBroadphase = false;
 
-    int iObj = collisionObject->getWorldArrayIndex();
+	{
+		btBroadphaseProxy* bp = collisionObject->getBroadphaseHandle();
+		if (bp)
+		{
+			//
+			// only clear the cached algorithms
+			//
+			getBroadphase()->getOverlappingPairCache()->cleanProxyFromPairs(bp, m_dispatcher1);
+			getBroadphase()->destroyProxy(bp, m_dispatcher1);
+			collisionObject->setBroadphaseHandle(0);
+		}
+	}
 
-    if (iObj >= 0 && iObj < m_collisionObjects.size())
-    {
-        assert(collisionObject == m_collisionObjects[iObj]);
-        m_collisionObjects.swap(iObj, m_collisionObjects.size() - 1);
-        m_collisionObjects.pop_back();
-        if (iObj < m_collisionObjects.size())
-        {
-            m_collisionObjects[iObj]->setWorldArrayIndex(iObj);
-        }
-    }
-    else
-    {
-        // slow linear search
-        //swapremove
-        m_collisionObjects.remove(collisionObject);
-    }
-    collisionObject->setWorldArrayIndex(-1);
+	int iObj = collisionObject->getWorldArrayIndex();
+	//    btAssert(iObj >= 0 && iObj < m_collisionObjects.size()); // trying to remove an object that was never added or already removed previously?
+	if (iObj >= 0 && iObj < m_collisionObjects.size())
+	{
+		btAssert(collisionObject == m_collisionObjects[iObj]);
+		m_collisionObjects.swap(iObj, m_collisionObjects.size() - 1);
+		m_collisionObjects.pop_back();
+		if (iObj < m_collisionObjects.size())
+		{
+			m_collisionObjects[iObj]->setWorldArrayIndex(iObj);
+		}
+	}
+	else
+	{
+		// slow linear search
+		//swapremove
+		m_collisionObjects.remove(collisionObject);
+	}
+	collisionObject->setWorldArrayIndex(-1);
 }
 
 void btCollisionWorld::rayTestSingle(const btTransform& rayFromTrans, const btTransform& rayToTrans,

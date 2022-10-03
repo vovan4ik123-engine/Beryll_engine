@@ -75,7 +75,7 @@ bool btBatchedConstraints::validate(btConstraintArray* constraints, const btAlig
 					}
 					else if (thisBodyBatchId != iBatch)
 					{
-						assert(!"dynamic body is used in 2 different batches in the same phase");
+						btAssert(!"dynamic body is used in 2 different batches in the same phase");
 						errors++;
 					}
 				}
@@ -88,7 +88,7 @@ bool btBatchedConstraints::validate(btConstraintArray* constraints, const btAlig
 					}
 					else if (thisBodyBatchId != iBatch)
 					{
-						assert(!"dynamic body is used in 2 different batches in the same phase");
+						btAssert(!"dynamic body is used in 2 different batches in the same phase");
 						errors++;
 					}
 				}
@@ -275,8 +275,8 @@ static void expandConstraintRowsInPlace(int* constraintBatchIds, const btBatched
 			for (int i = conInfo.numConstraintRows - 1; i >= 0; --i)
 			{
 				int iDest = conInfo.constraintIndex + i;
-				assert(iDest >= iCon);
-				assert(iDest >= 0 && iDest < numConstraintRows);
+				btAssert(iDest >= iCon);
+				btAssert(iDest >= 0 && iDest < numConstraintRows);
 				constraintBatchIds[iDest] = iBatch;
 			}
 		}
@@ -293,8 +293,8 @@ static void expandConstraintRows(int* destConstraintBatchIds, const int* srcCons
 		for (int i = 0; i < conInfo.numConstraintRows; ++i)
 		{
 			int iDest = conInfo.constraintIndex + i;
-			assert(iDest >= iCon);
-			assert(iDest >= 0 && iDest < numConstraintRows);
+			btAssert(iDest >= iCon);
+			btAssert(iDest >= 0 && iDest < numConstraintRows);
 			destConstraintBatchIds[iDest] = iBatch;
 		}
 	}
@@ -392,7 +392,7 @@ static void updateConstraintBatchIdsForMerges(int* constraintBatchIds, int numCo
 	for (int i = 0; i < numConstraints; ++i)
 	{
 		int iBatch = constraintBatchIds[i];
-		assert(iBatch < numBatches);
+		btAssert(iBatch < numBatches);
 		// if this constraint references a batch that was merged into another batch
 		if (batches[iBatch].mergeIndex != kNoMerge)
 		{
@@ -570,7 +570,7 @@ static void writeOutBatches(btBatchedConstraints* bc,
 			}
 		}
 
-		assert(iConstraint == numConstraints);
+		btAssert(iConstraint == numConstraints);
 		bc->m_constraintIndices.resizeNoInitialize(numConstraints);
 		writeOutConstraintIndicesMt(bc, constraintBatchIds, numConstraints, constraintIdPerBatch, maxNumBatchesPerPhase, numPhases);
 	}
@@ -619,7 +619,7 @@ public:
 	PreallocatedMemoryHelper() { m_numChunks = 0; }
 	void addChunk(void** ptr, size_t sz)
 	{
-		assert(m_numChunks < N);
+		btAssert(m_numChunks < N);
 		if (m_numChunks < N)
 		{
 			Chunk& chunk = m_chunks[m_numChunks];
@@ -664,8 +664,8 @@ static btVector3 findMaxDynamicConstraintExtent(
 		const btBatchedConstraintInfo& con = conInfos[iCon];
 		int iBody0 = con.bodyIds[0];
 		int iBody1 = con.bodyIds[1];
-		assert(iBody0 >= 0 && iBody0 < numBodies);
-		assert(iBody1 >= 0 && iBody1 < numBodies);
+		btAssert(iBody0 >= 0 && iBody0 < numBodies);
+		btAssert(iBody1 >= 0 && iBody1 < numBodies);
 		// is it a dynamic constraint?
 		if (bodyDynamicFlags[iBody0] && bodyDynamicFlags[iBody1])
 		{
@@ -726,7 +726,7 @@ static void assignConstraintsToGridBatches(const AssignConstraintsToGridBatchesP
 				int coordMax = btMax(body0Coords.m_ints[i], body1Coords.m_ints[i]);
 				if (coordMin != coordMax)
 				{
-					assert(coordMax == coordMin + 1);
+					btAssert(coordMax == coordMin + 1);
 					if ((coordMin & 1) == 0)
 					{
 						iPhase &= ~(1 << i);  // force bit off
@@ -746,7 +746,7 @@ static void assignConstraintsToGridBatches(const AssignConstraintsToGridBatchesP
 			{
 				iBody0 = con.bodyIds[1];
 			}
-			assert(params.bodyDynamicFlags[iBody0]);
+			btAssert(params.bodyDynamicFlags[iBody0]);
 			const btIntVec3& body0Coords = params.bodyGridCoords[iBody0];
 			// for each dimension x,y,z,
 			for (int i = 0; i < 3; ++i)
@@ -763,10 +763,10 @@ static void assignConstraintsToGridBatches(const AssignConstraintsToGridBatchesP
 			int coordOffset = (iPhase >> i) & 1;
 			chunkCoord[i] = (gridCoord[i] - coordOffset) / 2;
 			btClamp(chunkCoord[i], 0, gridChunkDim[i] - 1);
-			assert(chunkCoord[i] < gridChunkDim[i]);
+			btAssert(chunkCoord[i] < gridChunkDim[i]);
 		}
 		int iBatch = iPhase * params.maxNumBatchesPerPhase + chunkCoord[0] + chunkCoord[1] * gridChunkDim[0] + chunkCoord[2] * gridChunkDim[0] * gridChunkDim[1];
-		assert(iBatch >= 0 && iBatch < params.maxNumBatchesPerPhase * params.numPhases);
+		btAssert(iBatch >= 0 && iBatch < params.maxNumBatchesPerPhase * params.numPhases);
 		params.constraintBatchIds[iCon] = iBatch;
 	}
 }
@@ -938,7 +938,7 @@ static void setupSpatialGridBatchesMt(
 		}
 		gridCellSize *= 1.25;  // should roughly cut numCells in half
 	}
-	assert(numGridChunks <= maxGridChunkCount);
+	btAssert(numGridChunks <= maxGridChunkCount);
 	int maxNumBatchesPerPhase = numGridChunks;
 
 	// for each dynamic body, compute grid coords
@@ -953,9 +953,9 @@ static void setupSpatialGridBatchesMt(
 			coords.m_ints[0] = int(v.x());
 			coords.m_ints[1] = int(v.y());
 			coords.m_ints[2] = int(v.z());
-			assert(coords.m_ints[0] >= 0 && coords.m_ints[0] < gridDim[0]);
-			assert(coords.m_ints[1] >= 0 && coords.m_ints[1] < gridDim[1]);
-			assert(coords.m_ints[2] >= 0 && coords.m_ints[2] < gridDim[2]);
+			btAssert(coords.m_ints[0] >= 0 && coords.m_ints[0] < gridDim[0]);
+			btAssert(coords.m_ints[1] >= 0 && coords.m_ints[1] < gridDim[1]);
+			btAssert(coords.m_ints[2] >= 0 && coords.m_ints[2] < gridDim[2]);
 		}
 		else
 		{
@@ -1030,7 +1030,7 @@ static void setupSpatialGridBatchesMt(
 	}
 
 	writeOutBatches(batchedConstraints, constraintRowBatchIds, numConstraintRows, batches, batchWork, maxNumBatchesPerPhase, numPhases);
-	assert(batchedConstraints->validate(constraints, bodies));
+	btAssert(batchedConstraints->validate(constraints, bodies));
 }
 
 static void setupSingleBatch(

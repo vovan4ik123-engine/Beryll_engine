@@ -507,7 +507,7 @@ void btGeneric6DofConstraint::getInfo1NonVirtual(btConstraintInfo1* info)
 
 void btGeneric6DofConstraint::getInfo2(btConstraintInfo2* info)
 {
-	assert(!m_useSolveConstraintObsolete);
+	btAssert(!m_useSolveConstraintObsolete);
 
 	const btTransform& transA = m_rbA.getCenterOfMassTransform();
 	const btTransform& transB = m_rbB.getCenterOfMassTransform();
@@ -530,7 +530,7 @@ void btGeneric6DofConstraint::getInfo2(btConstraintInfo2* info)
 
 void btGeneric6DofConstraint::getInfo2NonVirtual(btConstraintInfo2* info, const btTransform& transA, const btTransform& transB, const btVector3& linVelA, const btVector3& linVelB, const btVector3& angVelA, const btVector3& angVelB)
 {
-	assert(!m_useSolveConstraintObsolete);
+	btAssert(!m_useSolveConstraintObsolete);
 	//prepare constraint
 	calculateTransforms(transA, transB);
 

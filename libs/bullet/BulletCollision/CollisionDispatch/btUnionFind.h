@@ -99,8 +99,8 @@ public:
 
 	int find(int x)
 	{
-		//assert(x < m_N);
-		//assert(x >= 0);
+		//btAssert(x < m_N);
+		//btAssert(x >= 0);
 
 		while (x != m_elements[x].m_id)
 		{
@@ -113,8 +113,8 @@ public:
 #else  //
 			x = m_elements[x].m_id;
 #endif
-			//assert(x < m_N);
-			//assert(x >= 0);
+			//btAssert(x < m_N);
+			//btAssert(x >= 0);
 		}
 		return x;
 	}

@@ -366,7 +366,7 @@ void btGenerateInternalEdgeInfo(btBvhTriangleMeshShape* trimeshShape, btTriangle
                                         case PHY_INTEGER: graphicsindex = gfxbase[j]; break;
                                         case PHY_SHORT: graphicsindex = ((unsigned short*)gfxbase)[j]; break;
                                         case PHY_UCHAR: graphicsindex = ((unsigned char*)gfxbase)[j]; break;
-                                        default: assert(0);
+                                        default: btAssert(0);
                                 }
 				if (type == PHY_FLOAT)
 				{
@@ -485,7 +485,7 @@ bool btClampNormal(const btVector3& edge, const btVector3& tri_normal_org, const
 /// Changes a btManifoldPoint collision normal to the normal from the mesh.
 void btAdjustInternalEdgeContacts(btManifoldPoint& cp, const btCollisionObjectWrapper* colObj0Wrap, const btCollisionObjectWrapper* colObj1Wrap, int partId0, int index0, int normalAdjustFlags)
 {
-	//assert(colObj0->getCollisionShape()->getShapeType() == TRIANGLE_SHAPE_PROXYTYPE);
+	//btAssert(colObj0->getCollisionShape()->getShapeType() == TRIANGLE_SHAPE_PROXYTYPE);
 	if (colObj0Wrap->getCollisionShape()->getShapeType() != TRIANGLE_SHAPE_PROXYTYPE)
 		return;
 

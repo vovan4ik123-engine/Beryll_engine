@@ -52,7 +52,7 @@ protected:
 
 	int allocHandle()
 	{
-		assert(m_numHandles < m_maxHandles);
+		btAssert(m_numHandles < m_maxHandles);
 		int freeHandle = m_firstFreeHandle;
 		m_firstFreeHandle = m_pHandles[freeHandle].GetNextFree();
 		m_numHandles++;
@@ -66,7 +66,7 @@ protected:
 	void freeHandle(btSimpleBroadphaseProxy* proxy)
 	{
 		int handle = int(proxy - m_pHandles);
-		assert(handle >= 0 && handle < m_maxHandles);
+		btAssert(handle >= 0 && handle < m_maxHandles);
 		if (handle == m_LastHandleIndex)
 		{
 			m_LastHandleIndex--;

@@ -20,7 +20,7 @@ Nov.2006
 #ifndef BT_STACK_ALLOC
 #define BT_STACK_ALLOC
 
-#include "btScalar.h"  //for assert
+#include "btScalar.h"  //for btAssert
 #include "btAlignedAllocator.h"
 
 ///The btBlock class is an internal structure for the btStackAlloc memory allocator.
@@ -49,7 +49,7 @@ public:
 	}
 	inline void destroy()
 	{
-		assert(usedsize == 0);
+		btAssert(usedsize == 0);
 		//Raise(L"StackAlloc is still in use");
 
 		if (usedsize == 0)
@@ -75,7 +75,7 @@ public:
 			usedsize = nus;
 			return (data + (usedsize - size));
 		}
-		assert(0);
+		btAssert(0);
 		//&& (L"Not enough memory"));
 
 		return (0);
@@ -90,7 +90,7 @@ public:
 	}
 	SIMD_FORCE_INLINE void endBlock(btBlock* block)
 	{
-		assert(block == current);
+		btAssert(block == current);
 		//Raise(L"Unmatched blocks");
 		if (block == current)
 		{
