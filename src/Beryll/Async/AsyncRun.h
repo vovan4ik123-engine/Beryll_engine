@@ -9,7 +9,7 @@ namespace Beryll
     // Any parallel execution should be done by this class.
     // Dont create any threads outside this class !!!
     // std::function<...> will called from many threads
-    // If it access common memory that can be accessed in call from second thread sync this memory by mutex
+    // If it access common memory that can be accessed in other thread sync this memory with mutex
     class AsyncRun
     {
     public:

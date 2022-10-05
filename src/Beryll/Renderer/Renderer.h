@@ -7,6 +7,7 @@
 #include "VertexArray.h"
 #include "Shader.h"
 #include "Texture.h"
+#include "SkyBox.h"
 
 namespace Beryll
 {
@@ -29,5 +30,7 @@ namespace Beryll
         static std::shared_ptr<Shader> createShader(const char* vertexPath, const char* fragmentPath);
 
         static std::unique_ptr<Texture> createTexture(const char* path, TextureType type);
+
+        static std::unique_ptr<SkyBox> createSkyBox(const char* folderPath);
     };
 }

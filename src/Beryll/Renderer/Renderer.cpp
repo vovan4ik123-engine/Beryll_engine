@@ -6,6 +6,7 @@
 #include "Beryll/Platform/AndroidGLES/AndroidGLESVertexArray.h"
 #include "Beryll/Platform/AndroidGLES/AndroidGLESShader.h"
 #include "Beryll/Platform/AndroidGLES/AndroidGLESTexture.h"
+#include "Beryll/Platform/AndroidGLES/AndroidGLESSkyBox.h"
 
 namespace Beryll
 {
@@ -109,6 +110,19 @@ namespace Beryll
         else
         {
             BR_ASSERT(false, "%s", "Can not create Texture. Unknown platform.");
+            return nullptr;
+        }
+    }
+
+    std::unique_ptr<SkyBox> Renderer::createSkyBox(const char* folderPath)
+    {
+        if(GameLoop::getPlatform() == Platform::ANDROID_GLES)
+        {
+            return std::unique_ptr<SkyBox>(new AndroidGLESSkyBox(folderPath));
+        }
+        else
+        {
+            BR_ASSERT(false, "%s", "Can not create SkyBox. Unknown platform.");
             return nullptr;
         }
     }

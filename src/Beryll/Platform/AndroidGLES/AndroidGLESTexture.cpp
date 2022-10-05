@@ -1,8 +1,6 @@
 #include "AndroidGLESTexture.h"
 #include "Beryll/Core/Log.h"
 
-#include "LibsHeaders.h"
-
 #include <GLES3/gl31.h>
 #include <GLES3/gl3ext.h>
 
@@ -35,15 +33,15 @@ namespace Beryll
         SDL_Surface* surface = IMG_Load_RW(rw, 1);
         BR_ASSERT((surface != nullptr), "Create surface failed:%s", m_ID.c_str());
 
-        m_openGLID = std::make_shared<uint32_t>();
-
-        glGenTextures(1, m_openGLID.get());
-        glBindTexture(GL_TEXTURE_2D, *m_openGLID);
+        BR_ASSERT((surface->format->BytesPerPixel == 3 || surface->format->BytesPerPixel == 4), "Load texture failed:%s. Use 24 or 32 bit depth", m_ID.c_str());
 
         int pixelFormat = GL_RGB;
         if(4 == surface->format->BytesPerPixel) pixelFormat = GL_RGBA;
 
-        BR_ASSERT((surface->format->BytesPerPixel == 3 || surface->format->BytesPerPixel == 4), "Load texture failed:%s. Use 24 or 32 bit depth", m_ID.c_str());
+        m_openGLID = std::make_shared<uint32_t>();
+
+        glGenTextures(1, m_openGLID.get());
+        glBindTexture(GL_TEXTURE_2D, *m_openGLID);
 
         glTexImage2D(GL_TEXTURE_2D, 0, pixelFormat, surface->w, surface->h, 0, pixelFormat, GL_UNSIGNED_BYTE, surface->pixels);
 
@@ -55,6 +53,7 @@ namespace Beryll
 
         glBindTexture(GL_TEXTURE_2D, 0);
 
+        SDL_FreeSurface(surface);
         m_textures.insert(std::make_pair(m_ID, m_openGLID)); // add to map
     }
 

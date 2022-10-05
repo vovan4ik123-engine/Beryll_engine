@@ -3,20 +3,20 @@
 namespace Beryll
 {
     glm::vec3 Camera::m_cameraPos = glm::vec3(0.0f, 0.0f, 0.0f);
-    glm::vec3 Camera::m_cameraFrontPos = glm::vec3(1.0f, 0.0f, 0.0f);
+    glm::vec3 Camera::m_cameraFrontPos = glm::vec3(0.0f, 0.0f, -1.0f);
     glm::vec3 Camera::m_cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
-    glm::vec3 Camera::m_cameraDirectionXYZ = glm::vec3(1.0f, 0.0f, 0.0f);
-    glm::vec3 Camera::m_cameraDirectionXZ = glm::vec3(1.0f, 0.0f, 0.0f);
+    glm::vec3 Camera::m_cameraDirectionXYZ = glm::vec3(0.0f, 0.0f, -1.0f);
+    glm::vec3 Camera::m_cameraDirectionXZ = glm::vec3(0.0f, 0.0f, -1.0f);
 
-    glm::vec3 Camera::m_cameraBackDirectionXYZ = glm::vec3(-1.0f, 0.0f, 0.0f);
-    glm::vec3 Camera::m_cameraBackDirectionXZ = glm::vec3(-1.0f, 0.0f, 0.0f);
+    glm::vec3 Camera::m_cameraBackDirectionXYZ = glm::vec3(0.0f, 0.0f, 1.0f);
+    glm::vec3 Camera::m_cameraBackDirectionXZ = glm::vec3(0.0f, 0.0f, 1.0f);
 
-    glm::vec3 Camera::m_cameraRightXYZ = glm::vec3(0.0f, 0.0f, 0.0f);
-    glm::vec3 Camera::m_cameraRightXZ = glm::vec3(0.0f, 0.0f, 0.0f);
+    glm::vec3 Camera::m_cameraRightXYZ = glm::vec3(1.0f, 0.0f, 0.0f);
+    glm::vec3 Camera::m_cameraRightXZ = glm::vec3(1.0f, 0.0f, 0.0f);
 
-    glm::vec3 Camera::m_cameraLeftXYZ = glm::vec3(0.0f, 0.0f, 0.0f);
-    glm::vec3 Camera::m_cameraLeftXZ = glm::vec3(0.0f, 0.0f, 0.0f);
+    glm::vec3 Camera::m_cameraLeftXYZ = glm::vec3(-1.0f, 0.0f, 0.0f);
+    glm::vec3 Camera::m_cameraLeftXZ = glm::vec3(-1.0f, 0.0f, 0.0f);
 
     float Camera::m_fovRadians = glm::radians(45.0f);
     float Camera::m_halfFovRadians = glm::radians(22.5f);
@@ -25,5 +25,7 @@ namespace Beryll
 
     float Camera::m_objectsViewDistance = 100.0f;
 
-    glm::mat4 Camera::m_perspective3D{1.0f};
+    glm::mat4 Camera::m_perspectiveView{1.0f};
+    glm::mat4 Camera::m_perspective{1.0f};
+    glm::mat4 Camera::m_view{1.0f};
 }

@@ -155,7 +155,7 @@ namespace Beryll
 
     void SimpleObject::draw()
     {
-        m_MVP = Camera::get3DCamera() * m_modelMatrix;
+        m_MVP = Camera::getPerspectiveView() * m_modelMatrix;
 
         m_shader->bind();
         m_shader->setMatrix4x4Float("MVP_matrix", m_MVP);

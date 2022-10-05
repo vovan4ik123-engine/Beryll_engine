@@ -1,9 +1,8 @@
 beryllEngineObjectID in btCollisionObject
 
-synchronize with mutex. ??
-avoid [btGetCurrentThreadIndex()] ??
+synchronize with mutex user collision callback
 
-own task scheduler
+own task scheduler:
 
 btITaskScheduler* btCreateTaskSchedulerForBeryll()
 {

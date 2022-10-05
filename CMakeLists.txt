@@ -39,6 +39,7 @@ if(ANDROID)
             src/Beryll/Platform/AndroidGLES/AndroidGLESVertexArray.cpp
             src/Beryll/Platform/AndroidGLES/AndroidGLESShader.cpp
             src/Beryll/Platform/AndroidGLES/AndroidGLESTexture.cpp
+            src/Beryll/Platform/AndroidGLES/AndroidGLESSkyBox.cpp
             )
 elseif(APPLE)
     #set(IOSMetal_SRC src/Beryll/Platform/...)
@@ -60,7 +61,6 @@ set(Common_SRC
         src/Beryll/GameObjects/AnimatedObject.cpp
         src/Beryll/GameObjects/CollidingSimpleObject.cpp
         src/Beryll/GameObjects/CollidingAnimatedObject.cpp
-        src/Beryll/GameObjects/SkyBox.cpp
 
         src/Beryll/GameObjects/Player/CollidingSimplePlayer.cpp
 

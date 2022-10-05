@@ -1,14 +1,13 @@
 ---------------------plan:---------------------
 
-sky box
-update shaders (diff spec samplers enable way)
+optimize draw bind unbind
 
 lighting
-shadows ???
-cel shading ???
+shadows
 Normal Mapping
 Parallax Mapping
 particles
+cel shading ???
 
 
 update IMGui to 1.88+

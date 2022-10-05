@@ -15,6 +15,7 @@
 #include "Beryll/Core/RandomGenerator.h"
 
 #include "Beryll/Renderer/Camera.h"
+#include "Beryll/Renderer/SkyBox.h"
 
 #include "Beryll/GameObjects/SimpleObject.h"
 #include "Beryll/GameObjects/CollidingSimpleObject.h"
