@@ -17,7 +17,7 @@ namespace Beryll
     uint32_t GameLoop::m_frameStart = 0;
     uint32_t GameLoop::m_frameTime = 0;
 
-    uint32_t GameLoop::m_maxFPS = 30;
+    uint32_t GameLoop::m_maxFPS = 300;
 
     Platform GameLoop::m_platform = Platform::UNKNOWN;
 
@@ -78,19 +78,18 @@ namespace Beryll
             calcTime = TimeStep::getMillisecFromStart() - calcStart;
         // Draw start    DONT CALL ANY DRAW COMMANDS before this point !!!!!!!!
             // First finish draw previous frame
-            Window::getInstance()->finishDraw();
+            //Window::getInstance()->finishDraw();
             Window::getInstance()->swapWindow();
-
             drawTime = TimeStep::getMillisecFromStart() - drawStart;
             // Next start draw new frame
+            drawStart = TimeStep::getMillisecFromStart();
             Window::getInstance()->clear();
             MainImGUI::getInstance()->beginFrame();
 
-            drawStart = TimeStep::getMillisecFromStart();
             GameStateMachine::draw();
-            Window::getInstance()->flushDraw();
 
             MainImGUI::getInstance()->endFrame();
+
         // Draw finish
 
         // PlaySound start
@@ -99,6 +98,7 @@ namespace Beryll
 
             // sleep if we finished work faster than m_loopTime
             m_frameTime = TimeStep::getMillisecFromStart() - m_frameStart;
+            //BR_INFO("m_frameTime %d", m_frameTime);
             if(m_frameTime < m_loopTime)
             {
                 TimeStep::sleep(m_loopTime - m_frameTime);

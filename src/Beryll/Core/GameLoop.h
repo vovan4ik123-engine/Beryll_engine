@@ -20,7 +20,7 @@ namespace Beryll
 
         static void setMaxFPS(uint32_t fps)
         {
-            if(fps >= 5 && fps <= 200)
+            if(fps >= 5 && fps <= 300)
             {
                 m_maxFPS = fps;
                 m_loopTime = 1000 / m_maxFPS;

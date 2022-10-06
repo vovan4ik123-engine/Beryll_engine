@@ -169,6 +169,11 @@ namespace Beryll
             }
         }
 
+        const glm::mat4& getModelMatrix()
+        {
+            return m_modelMatrix;
+        }
+
         // inherited pure virtual methods are here
 
     protected:

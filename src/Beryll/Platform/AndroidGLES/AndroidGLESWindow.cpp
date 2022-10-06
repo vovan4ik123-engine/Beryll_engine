@@ -45,7 +45,6 @@ namespace Beryll
         {
             SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 0);
             SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 0);
-            SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
 
             m_window = SDL_CreateWindow("MainWindow",
                                         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
@@ -58,8 +57,9 @@ namespace Beryll
         m_glContext = SDL_GL_CreateContext(m_window);
         SDL_GL_MakeCurrent(m_window, m_glContext);
 
-        int vsync = SDL_GL_SetSwapInterval(-1); // Enable adaptive vsync
-        if(vsync == -1) { SDL_GL_SetSwapInterval(1); } // Enable standart vsync
+        SDL_GL_SetSwapInterval(0); // disable vsync because increase time of SDL_GL_SwapWindow()
+        //int vsync = SDL_GL_SetSwapInterval(-1); // Enable adaptive vsync
+        //if(vsync == -1) { SDL_GL_SetSwapInterval(1); } // Enable standart vsync
 
         glViewport(0, 0, m_screenWidth, m_screenHeight);
         glEnable(GL_DEPTH_TEST);
@@ -98,8 +98,9 @@ namespace Beryll
 
         SDL_GL_MakeCurrent(m_window, m_glContext); // set old context for new window
 
-        int vsync = SDL_GL_SetSwapInterval(-1); // Enable adaptive vsync
-        if(vsync == -1) { SDL_GL_SetSwapInterval(1); } // Enable standart vsync
+        SDL_GL_SetSwapInterval(0); // disable vsync because increase time of SDL_GL_SwapWindow()
+        //int vsync = SDL_GL_SetSwapInterval(-1); // Enable adaptive vsync
+        //if(vsync == -1) { SDL_GL_SetSwapInterval(1); } // Enable standart vsync
 
         glViewport(0, 0, m_screenWidth, m_screenHeight); // for current resolution
         glEnable(GL_DEPTH_TEST);
