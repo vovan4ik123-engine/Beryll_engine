@@ -32,18 +32,13 @@ namespace Beryll
         void draw() override;
         void playSound() override;
 
-        void setShader(std::shared_ptr<Shader> shader)
-        {
-            m_shader = std::move(shader);
-        }
-
     protected:
         std::shared_ptr<VertexBuffer> m_vertexPosBuffer;
         std::shared_ptr<VertexBuffer> m_vertexNormalsBuffer;
         std::shared_ptr<VertexBuffer> m_textureCoordsBuffer;
         std::shared_ptr<IndexBuffer> m_indexBuffer;
         std::unique_ptr<VertexArray> m_vertexArray;
-        std::shared_ptr<Shader> m_shader;
+        std::shared_ptr<Shader> m_internalShader; // Default, simple shader. Use if no shader was bound on scene
         std::unique_ptr<Texture> m_diffTexture;
         std::unique_ptr<Texture> m_specTexture;
 

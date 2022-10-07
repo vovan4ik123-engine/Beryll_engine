@@ -13,10 +13,6 @@ namespace Beryll
         ~AndroidGLESSkyBox() override;
 
         void draw() override;
-        void setShader(std::shared_ptr<Shader> shader) override
-        {
-            m_shader = std::move(shader);
-        }
 
     private:
         friend class Renderer;

@@ -82,7 +82,7 @@ namespace Beryll
         SDL_FreeSurface(surfaceBack);
         SDL_FreeSurface(surfaceFront);
 
-        m_shader = Renderer::createShader("shaders/GLES/SkyBox.vert", "shaders/GLES/SkyBox.frag");
+        m_shader = Renderer::createShader("shaders/GLES/default/SkyBox.vert", "shaders/GLES/default/SkyBox.frag");
         m_shader->activateDiffuseTexture();
 
         std::vector<glm::vec3> vertices;

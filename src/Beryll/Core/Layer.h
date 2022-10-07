@@ -29,6 +29,9 @@ namespace Beryll
     protected:
         LayerID m_ID = LayerID::UNKNOWN; // initialize in subclass
 
-        std::vector<std::shared_ptr<GameObject>> m_gameObjects; // fill in subclass
+        // subclasses should create set of game objects, initialize them and manipulate
+        // example:
+        // std::vector<std::shared_ptr<Beryll::SceneObject>> m_sceneObjects; for scene layer
+        // std::vector<std::shared_ptr<Beryll::GUIObject>> m_guiObjects; git GUI layer
     };
 }

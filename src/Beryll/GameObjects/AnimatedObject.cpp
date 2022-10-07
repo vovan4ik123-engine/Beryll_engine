@@ -133,7 +133,7 @@ namespace Beryll
         m_vertexArray->setIndexBuffer(m_indexBuffer);
 
         // Default shaders. Can be changed with call setShader()
-        m_shader = Renderer::createShader("shaders/GLES/AnimTex.vert", "shaders/GLES/AnimTex.frag");
+        m_internalShader = Renderer::createShader("shaders/GLES/default/Animation.vert", "shaders/GLES/default/Animation.frag");
 
         // material
         if (m_scene->mMeshes[0]->mMaterialIndex >= 0)
@@ -156,7 +156,7 @@ namespace Beryll
                 BR_INFO("Diffuse texture here:%s", texturePath.c_str());
 
                 m_diffTexture = Renderer::createTexture(texturePath.c_str(), TextureType::DIFFUSE_TEXTURE);
-                m_shader->activateDiffuseTexture();
+                m_internalShader->activateDiffuseTexture();
             }
 
             if (material->GetTextureCount(aiTextureType_SPECULAR) > 0)
@@ -170,7 +170,7 @@ namespace Beryll
                 BR_INFO("Specular texture here:%s", texturePath.c_str());
 
                 m_specTexture = Renderer::createTexture(texturePath.c_str(), TextureType::SPECULAR_TEXTURE);
-                m_shader->activateSpecularTexture();
+                m_internalShader->activateSpecularTexture();
             }
         }
 
@@ -210,15 +210,18 @@ namespace Beryll
     {
         m_MVP = Camera::getPerspectiveView() * m_modelMatrix;
 
-        m_shader->bind();
-        m_shader->setMatrix4x4Float("MVP_matrix", m_MVP);
-
-        for(int i = 0; i < m_boneCount; ++i)
+        if(useInternalShader)
         {
-            m_boneMatrixNameInShader = "bonesMatrices[";
-            m_boneMatrixNameInShader += std::to_string(i);
-            m_boneMatrixNameInShader += "]";
-            m_shader->setMatrix4x4Float(m_boneMatrixNameInShader.c_str(), m_bonesMatrices[i].finalWorldTransform);
+            m_internalShader->bind();
+            m_internalShader->setMatrix4x4Float("MVP_matrix", m_MVP);
+
+            for(int i = 0; i < m_boneCount; ++i)
+            {
+                m_boneMatrixNameInShader = "bonesMatrices[";
+                m_boneMatrixNameInShader += std::to_string(i);
+                m_boneMatrixNameInShader += "]";
+                m_internalShader->setMatrix4x4Float(m_boneMatrixNameInShader.c_str(), m_bonesMatrices[i].finalWorldTransform);
+            }
         }
 
         if(m_diffTexture) { m_diffTexture->bind(); }
@@ -231,7 +234,10 @@ namespace Beryll
         if(m_diffTexture) { m_diffTexture->unBind(); }
         if(m_specTexture) { m_specTexture->unBind(); }
 
-        m_shader->unBind();
+        if(useInternalShader)
+        {
+            m_internalShader->unBind();
+        }
     }
 
     void AnimatedObject::playSound()

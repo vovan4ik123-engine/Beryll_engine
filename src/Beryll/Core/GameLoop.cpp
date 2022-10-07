@@ -78,7 +78,8 @@ namespace Beryll
             calcTime = TimeStep::getMillisecFromStart() - calcStart;
         // Draw start    DONT CALL ANY DRAW COMMANDS before this point !!!!!!!!
             // First finish draw previous frame
-            //Window::getInstance()->finishDraw();
+            //Window::getInstance()->finishDraw(); // very slow
+            //Window::getInstance()->flushDraw(); // potentially can be called but not necessary
             Window::getInstance()->swapWindow();
             drawTime = TimeStep::getMillisecFromStart() - drawStart;
             // Next start draw new frame

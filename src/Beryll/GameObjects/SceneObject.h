@@ -174,10 +174,61 @@ namespace Beryll
             return m_modelMatrix;
         }
 
-        // inherited pure virtual methods are here
+        const glm::vec3& getOrigin() { return m_origin; }
+        bool getIsEnabled() { return m_isEnabled; } // use it for disable object from update/draw/sound loops
+        bool getHasCollisionMesh() { return m_hasCollisionObject; }
+        bool getIsEnabledCollisionMesh() { return m_isEnabledInPhysicsSimulation; }
+        CollisionGroups getCollisionGroup() { return m_collisionGroup; }
+
+        // enable whole object(on scene and simulation)
+        void enable(bool resetVelocities = false)
+        {
+            m_isEnabled = true;
+
+            if(m_hasCollisionObject && !m_isEnabledInPhysicsSimulation)
+            {
+                Beryll::Physics::restoreObject(m_ID, resetVelocities);
+                m_isEnabledInPhysicsSimulation = true;
+            }
+        }
+
+        void enableCollisionMesh(bool resetVelocities = false)
+        {
+            if(m_hasCollisionObject && !m_isEnabledInPhysicsSimulation)
+            {
+                Beryll::Physics::restoreObject(m_ID, resetVelocities);
+                m_isEnabledInPhysicsSimulation = true;
+            }
+        }
+
+        // disable whole object(on scene and simulation)
+        void disable()
+        {
+            m_isEnabled = false;
+
+            if (m_hasCollisionObject && m_isEnabledInPhysicsSimulation)
+            {
+                Beryll::Physics::softRemoveObject(m_ID);
+                m_isEnabledInPhysicsSimulation = false;
+            }
+        }
+
+        void disableCollisionMesh()
+        {
+            if (m_hasCollisionObject && m_isEnabledInPhysicsSimulation)
+            {
+                Beryll::Physics::softRemoveObject(m_ID);
+                m_isEnabledInPhysicsSimulation = false;
+            }
+        }
+
+        /*
+         * inherited pure virtual methods are here
+         */
+
+        bool useInternalShader = true;
 
     protected:
-        // for all objects
         glm::mat4 m_MVP{1.0f};
         glm::mat4 m_modelMatrix{1.0f};
 
@@ -189,5 +240,13 @@ namespace Beryll
         bool m_gravityEnabled = true;
         glm::vec3 m_linearFactor = glm::vec3(1.0f, 1.0f, 1.0f);
         glm::vec3 m_angularFactor = glm::vec3(1.0f, 1.0f, 1.0f);
+
+        glm::vec3 m_origin{0.0f};
+
+        bool m_isEnabled = true; // disable object for performance
+
+        bool m_hasCollisionObject = false; // set true for all collision objects
+        CollisionGroups m_collisionGroup = CollisionGroups::NONE; // set inside colliding objects
+        bool m_isEnabledInPhysicsSimulation = false; // set inside colliding objects
     };
 }
