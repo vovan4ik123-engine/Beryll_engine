@@ -72,7 +72,6 @@ namespace Beryll
         std::unique_ptr<Texture> m_specTexture;
         // model data end
 
-        Assimp::Importer m_importer;
         const aiScene* m_scene = nullptr;
 
         // collision mesh dimensions
@@ -91,5 +90,13 @@ namespace Beryll
                                   CollisionFlags collFlag,
                                   CollisionGroups collGroup,
                                   CollisionGroups collMask);
+
+        // aiScene + Assimp::Importer lifetime for animated object should be same as animated object
+        // aiScene + Assimp::Importer has big size in memory
+        // this map will share same scene across animated objects loaded from same file
+        // id = file path. If other object load model from same file(id = file path) it will get pointer to aiScene from this map
+        static std::map<const std::string, std::pair<std::shared_ptr<Assimp::Importer>, const aiScene*>> m_importersScenes;
+
+        const std::string m_modelPath; // object ID in m_importersScenes map
     };
 }

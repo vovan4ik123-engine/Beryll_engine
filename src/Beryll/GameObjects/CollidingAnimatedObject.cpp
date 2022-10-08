@@ -10,31 +10,51 @@
 
 namespace Beryll
 {
+    std::map<const std::string, std::pair<std::shared_ptr<Assimp::Importer>, const aiScene*>> CollidingAnimatedObject::m_importersScenes;
+
     CollidingAnimatedObject::CollidingAnimatedObject(const char* modelPath,
                                                      float collisionMass,
                                                      bool wantCollisionCallBack,
                                                      CollisionFlags collFlag,
                                                      CollisionGroups collGroup,
-                                                     CollisionGroups collMask)
+                                                     CollisionGroups collMask)  : m_modelPath(modelPath)
     {
-        BR_INFO("Loading colliding animated object:%s", modelPath);
-
-        uint32_t bufferSize = 0;
-        char *buffer = Utils::File::readToBuffer(modelPath, &bufferSize);
-
-        m_scene = m_importer.ReadFileFromMemory(buffer, bufferSize,
-                                                aiProcess_Triangulate |
-                                                aiProcess_SortByPType |
-                                                aiProcess_FlipUVs);
-
-        if (!m_scene || !m_scene->mRootNode || m_scene->mFlags == AI_SCENE_FLAGS_INCOMPLETE)
+        const auto search = m_importersScenes.find(m_modelPath);
+        if(search != m_importersScenes.end())
         {
-            BR_ASSERT(false, "Scene loading error for file:%s", modelPath);
+            // scene from same file already was loaded. use it
+            m_scene = search->second.second;
         }
+        else
+        {
+            std::shared_ptr<Assimp::Importer> importer = std::make_shared<Assimp::Importer>();
+            const aiScene* scene = nullptr;
 
-        BR_INFO("Num meshes:%d", m_scene->mNumMeshes);
-        BR_ASSERT((m_scene->mNumMeshes == 2),
-                  "Colliding animated object:%s MUST contain 2 meshes. For draw and physics simulation", modelPath);
+            BR_INFO("Loading colliding animated object:%s", modelPath);
+
+            uint32_t bufferSize = 0;
+            char *buffer = Utils::File::readToBuffer(modelPath, &bufferSize);
+
+            scene = importer->ReadFileFromMemory(buffer, bufferSize,
+                                                aiProcess_Triangulate |
+                                                 aiProcess_SortByPType |
+                                                 aiProcess_FlipUVs);
+            delete[] buffer;
+            if (!scene || !scene->mRootNode || scene->mFlags == AI_SCENE_FLAGS_INCOMPLETE)
+            {
+                BR_ASSERT(false, "Scene loading error for file:%s", modelPath);
+            }
+
+            BR_ASSERT((scene->mNumMeshes == 2),
+                      "Colliding animated object:%s MUST contain 2 meshes. For draw and physics simulation", modelPath);
+
+            BR_ASSERT((scene->HasAnimations()) && (scene->mMeshes[0]->mNumBones > 0 || scene->mMeshes[1]->mNumBones > 0),
+                      "%s", "Animated object must have animation + bone");
+
+            m_scene = scene;
+
+            m_importersScenes.emplace(m_modelPath, std::make_pair(importer, scene));
+        }
 
         m_globalInverseMatrix = m_scene->mRootNode->mTransformation;
         m_globalInverseMatrix.Inverse();
@@ -188,8 +208,7 @@ namespace Beryll
             {
                 aiMaterial *material = m_scene->mMaterials[m_scene->mMeshes[i]->mMaterialIndex];
 
-                const std::string mP = modelPath;
-                BR_ASSERT((mP.find_last_of('/') != std::string::npos), "Texture + model must be in folder:%s", mP.c_str());
+                BR_ASSERT((m_modelPath.find_last_of('/') != std::string::npos), "Texture + model must be in folder:%s", m_modelPath.c_str());
 
                 std::string texturePath;
 
@@ -198,7 +217,7 @@ namespace Beryll
                     aiString textName;
                     material->GetTexture(aiTextureType_DIFFUSE, 0, &textName);
 
-                    texturePath = mP.substr(0, mP.find_last_of('/'));
+                    texturePath = m_modelPath.substr(0, m_modelPath.find_last_of('/'));
                     texturePath += '/';
                     texturePath += textName.C_Str();
                     BR_INFO("Diffuse texture here:%s", texturePath.c_str());
@@ -212,7 +231,7 @@ namespace Beryll
                     aiString textName;
                     material->GetTexture(aiTextureType_SPECULAR, 0, &textName);
 
-                    texturePath = mP.substr(0, mP.find_last_of('/'));
+                    texturePath = m_modelPath.substr(0, m_modelPath.find_last_of('/'));
                     texturePath += '/';
                     texturePath += textName.C_Str();
                     BR_INFO("Specular texture here:%s", texturePath.c_str());
