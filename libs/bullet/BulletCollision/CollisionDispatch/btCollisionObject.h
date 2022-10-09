@@ -126,7 +126,7 @@ protected:
 public:
 	BT_DECLARE_ALIGNED_ALLOCATOR();
 
-	int beryllEngineObjectID = -1;
+    int beryllEngineObjectID = -1;
 
 	enum CollisionFlags
 	{
