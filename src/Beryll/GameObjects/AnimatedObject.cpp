@@ -34,7 +34,7 @@ namespace Beryll
                                                  aiProcess_SortByPType |
                                                  aiProcess_FlipUVs);
             delete[] buffer;
-            if (!scene || !scene->mRootNode || scene->mFlags == AI_SCENE_FLAGS_INCOMPLETE)
+            if(!scene || !scene->mRootNode || scene->mFlags == AI_SCENE_FLAGS_INCOMPLETE)
             {
                 BR_ASSERT(false, "Scene loading error for file:%s", modelPath);
             }
@@ -68,25 +68,33 @@ namespace Beryll
         indices.reserve(m_scene->mMeshes[0]->mNumFaces * 3);
 
         // vertices
-        for (int i = 0; i < m_scene->mMeshes[0]->mNumVertices; ++i)
+        for(int i = 0; i < m_scene->mMeshes[0]->mNumVertices; ++i)
         {
             vertices.emplace_back(m_scene->mMeshes[0]->mVertices[i].x,
                                   m_scene->mMeshes[0]->mVertices[i].y,
                                   m_scene->mMeshes[0]->mVertices[i].z);
 
-            if (m_scene->mMeshes[0]->mNormals) {
-                normals.emplace_back(m_scene->mMeshes[0]->mNormals[i].x,
-                                     m_scene->mMeshes[0]->mNormals[i].y,
-                                     m_scene->mMeshes[0]->mNormals[i].z);
-            } else {
+            if(m_scene->mMeshes[0]->mNormals)
+            {
+                glm::vec3 normal = glm::vec3(m_scene->mMeshes[0]->mNormals[i].x,
+                                             m_scene->mMeshes[0]->mNormals[i].y,
+                                             m_scene->mMeshes[0]->mNormals[i].z);
+
+                normals.emplace_back(glm::normalize(normal));
+            }
+            else
+            {
                 normals.emplace_back(0.0f, 0.0f, 0.0f);
             }
 
             // use only first set of texture coordinates
-            if (m_scene->mMeshes[0]->mTextureCoords[0]) {
+            if(m_scene->mMeshes[0]->mTextureCoords[0])
+            {
                 textureCoords.emplace_back(m_scene->mMeshes[0]->mTextureCoords[0][i].x,
                                            m_scene->mMeshes[0]->mTextureCoords[0][i].y);
-            } else {
+            }
+            else
+            {
                 textureCoords.emplace_back(0.0f, 0.0f);
             }
         }
@@ -98,12 +106,12 @@ namespace Beryll
         m_boneCount = m_scene->mMeshes[0]->mNumBones;
         m_bonesMatrices.reserve(m_boneCount);
 
-        for (int i = 0; i < m_boneCount; ++i)
+        for(int i = 0; i < m_boneCount; ++i)
         {
             std::string boneName = m_scene->mMeshes[0]->mBones[i]->mName.C_Str();
 
             auto iter = m_boneNameIndex.find(boneName);
-            if (iter != m_boneNameIndex.end())
+            if(iter != m_boneNameIndex.end())
             {
                 BR_ASSERT(false, "Many bones have same name in one model:%s", modelPath);
             }
@@ -115,14 +123,15 @@ namespace Beryll
             }
 
             // collect all vertices to which bone has impact
-            for (int j = 0; j < m_scene->mMeshes[0]->mBones[i]->mNumWeights; ++j)
+            for(int j = 0; j < m_scene->mMeshes[0]->mBones[i]->mNumWeights; ++j)
             {
                 uint32_t vertexIndex = m_scene->mMeshes[0]->mBones[i]->mWeights[j].mVertexId;
                 float weight = m_scene->mMeshes[0]->mBones[i]->mWeights[j].mWeight;
 
-                for (int k = 0; k < NUM_BONES_PER_VERTEX; ++k)
+                for(int k = 0; k < NUM_BONES_PER_VERTEX; ++k)
                 {
-                    if (boneIDs[vertexIndex][k] == -1 && boneWeights[vertexIndex][k] == -1.0f) {
+                    if(boneIDs[vertexIndex][k] == -1 && boneWeights[vertexIndex][k] == -1.0f)
+                    {
                         boneIDs[vertexIndex][k] = i;
                         boneWeights[vertexIndex][k] = weight;
                         break;
@@ -134,11 +143,11 @@ namespace Beryll
         m_boneWeightsBuffer = Renderer::createVertexBuffer(boneWeights);
 
         // indices
-        for (int g = 0; g < m_scene->mMeshes[0]->mNumFaces; ++g) // every face MUST be a triangle !!!!
+        for(int i = 0; i < m_scene->mMeshes[0]->mNumFaces; ++i) // every face MUST be a triangle !!!!
         {
-            indices.emplace_back(m_scene->mMeshes[0]->mFaces[g].mIndices[0]);
-            indices.emplace_back(m_scene->mMeshes[0]->mFaces[g].mIndices[1]);
-            indices.emplace_back(m_scene->mMeshes[0]->mFaces[g].mIndices[2]);
+            indices.emplace_back(m_scene->mMeshes[0]->mFaces[i].mIndices[0]);
+            indices.emplace_back(m_scene->mMeshes[0]->mFaces[i].mIndices[1]);
+            indices.emplace_back(m_scene->mMeshes[0]->mFaces[i].mIndices[2]);
         }
         m_indexBuffer = Renderer::createIndexBuffer(indices);
 
@@ -154,7 +163,7 @@ namespace Beryll
         m_internalShader = Renderer::createShader("shaders/GLES/default/Animation.vert", "shaders/GLES/default/Animation.frag");
 
         // material
-        if (m_scene->mMeshes[0]->mMaterialIndex >= 0)
+        if(m_scene->mMeshes[0]->mMaterialIndex >= 0)
         {
             aiMaterial *material = m_scene->mMaterials[m_scene->mMeshes[0]->mMaterialIndex];
 
@@ -162,7 +171,7 @@ namespace Beryll
 
             std::string texturePath;
 
-            if (material->GetTextureCount(aiTextureType_DIFFUSE) > 0)
+            if(material->GetTextureCount(aiTextureType_DIFFUSE) > 0)
             {
                 aiString textName;
                 material->GetTexture(aiTextureType_DIFFUSE, 0, &textName);
@@ -176,7 +185,7 @@ namespace Beryll
                 m_internalShader->activateDiffuseTexture();
             }
 
-            if (material->GetTextureCount(aiTextureType_SPECULAR) > 0)
+            if(material->GetTextureCount(aiTextureType_SPECULAR) > 0)
             {
                 aiString textName;
                 material->GetTexture(aiTextureType_SPECULAR, 0, &textName);
@@ -192,7 +201,7 @@ namespace Beryll
         }
 
         // animations
-        for (int i = 0; i < m_scene->mNumAnimations; ++i)
+        for(int i = 0; i < m_scene->mNumAnimations; ++i)
         {
             m_animationNameIndex.insert(std::make_pair(m_scene->mAnimations[i]->mName.C_Str(), i));
             BR_INFO("Have animation %d with name:%s", i, m_scene->mAnimations[i]->mName.C_Str());
@@ -225,11 +234,10 @@ namespace Beryll
 
     void AnimatedObject::draw()
     {
-        m_MVP = Camera::getPerspectiveView() * m_modelMatrix;
-
         if(useInternalShader)
         {
             m_internalShader->bind();
+            m_MVP = Camera::getPerspectiveView() * m_modelMatrix;
             m_internalShader->setMatrix4x4Float("MVP_matrix", m_MVP);
 
             for(int i = 0; i < m_boneCount; ++i)
@@ -246,15 +254,6 @@ namespace Beryll
 
         m_vertexArray->bind();
         m_vertexArray->draw();
-        m_vertexArray->unBind();
-
-        if(m_diffTexture) { m_diffTexture->unBind(); }
-        if(m_specTexture) { m_specTexture->unBind(); }
-
-        if(useInternalShader)
-        {
-            m_internalShader->unBind();
-        }
     }
 
     void AnimatedObject::playSound()

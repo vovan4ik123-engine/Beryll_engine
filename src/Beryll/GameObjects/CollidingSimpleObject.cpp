@@ -89,9 +89,11 @@ namespace Beryll
 
                 if(scene->mMeshes[i]->mNormals)
                 {
-                    normals.emplace_back(scene->mMeshes[i]->mNormals[g].x,
-                                         scene->mMeshes[i]->mNormals[g].y,
-                                         scene->mMeshes[i]->mNormals[g].z);
+                    glm::vec3 normal = glm::vec3(scene->mMeshes[i]->mNormals[g].x,
+                                                 scene->mMeshes[i]->mNormals[g].y,
+                                                 scene->mMeshes[i]->mNormals[g].z);
+
+                    normals.emplace_back(glm::normalize(normal));
                 }
                 else
                 {
@@ -205,11 +207,10 @@ namespace Beryll
 
     void CollidingSimpleObject::draw()
     {
-        m_MVP = Camera::getPerspectiveView() * m_modelMatrix;
-
         if(useInternalShader)
         {
             m_internalShader->bind();
+            m_MVP = Camera::getPerspectiveView() * m_modelMatrix;
             m_internalShader->setMatrix4x4Float("MVP_matrix", m_MVP);
         }
 
@@ -218,15 +219,6 @@ namespace Beryll
 
         m_vertexArray->bind();
         m_vertexArray->draw();
-        m_vertexArray->unBind();
-
-        if(m_diffTexture) { m_diffTexture->unBind(); }
-        if(m_specTexture) { m_specTexture->unBind(); }
-
-        if(useInternalShader)
-        {
-            m_internalShader->unBind();
-        }
     }
 
     void CollidingSimpleObject::playSound()

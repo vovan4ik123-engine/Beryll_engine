@@ -31,8 +31,15 @@ namespace Beryll
 
         const std::string m_ID; // ID in static map = texture path
                                 // if many objects load same texture, texture ID will same for all of them
+
         std::shared_ptr<uint32_t> m_openGLID; // ID in OpenGL
                                               // will copied across all objects with same m_ID
+
         TextureType m_type = TextureType::UNKNOWN;
+
+        static uint32_t m_currentDiffuseTextureID; // should contain currently bound diffuse texture id
+                                                   // prevent bind same texture many times
+
+        static uint32_t m_currentSpecularTextureID;// should contain currently bound specular texture id
     };
 }

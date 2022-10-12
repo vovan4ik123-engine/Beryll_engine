@@ -7,6 +7,9 @@
 
 namespace Beryll
 {
+    uint32_t AndroidGLESShader::m_currentShaderProgramID = 0;
+    std::map<const std::string, std::shared_ptr<uint32_t>> AndroidGLESShader::m_shaderPrograms;
+
     AndroidGLESShader::AndroidGLESShader(const char* vertexPath, const char* fragmentPath)
     {
         m_ID = vertexPath;
@@ -94,11 +97,13 @@ namespace Beryll
         }
     }
 
-    std::map<const std::string, std::shared_ptr<uint32_t>> AndroidGLESShader::m_shaderPrograms;
-
     void AndroidGLESShader::bind()
     {
-        glUseProgram(*m_shaderProgramID);
+        if(m_currentShaderProgramID != *m_shaderProgramID)
+        {
+            glUseProgram(*m_shaderProgramID);
+            m_currentShaderProgramID = *m_shaderProgramID;
+        }
     }
 
     void AndroidGLESShader::unBind()
@@ -106,14 +111,44 @@ namespace Beryll
         glUseProgram(0);
     }
 
-    void AndroidGLESShader::setFloat(const char* name, const float value)
+    void AndroidGLESShader::set1Float(const char* name, const float x)
     {
-        glUniform1f(glGetUniformLocation(*m_shaderProgramID, name), value);
+        glUniform1f(glGetUniformLocation(*m_shaderProgramID, name), x);
     }
 
-    void AndroidGLESShader::setInt(const char* name, const int value)
+    void AndroidGLESShader::set2Float(const char* name, const float x, const float y)
     {
-        glUniform1i(glGetUniformLocation(*m_shaderProgramID, name), value);
+        glUniform2f(glGetUniformLocation(*m_shaderProgramID, name), x, y);
+    }
+
+    void AndroidGLESShader::set3Float(const char* name, const float x, const float y, const float z)
+    {
+        glUniform3f(glGetUniformLocation(*m_shaderProgramID, name), x, y, z);
+    }
+
+    void AndroidGLESShader::set4Float(const char* name, const float x, const float y, const float z, const float w)
+    {
+        glUniform4f(glGetUniformLocation(*m_shaderProgramID, name), x, y,z ,w);
+    }
+
+    void AndroidGLESShader::set1Int(const char* name, const int x)
+    {
+        glUniform1i(glGetUniformLocation(*m_shaderProgramID, name), x);
+    }
+
+    void AndroidGLESShader::set2Int(const char* name, const int x, const int y)
+    {
+        glUniform2i(glGetUniformLocation(*m_shaderProgramID, name), x, y);
+    }
+
+    void AndroidGLESShader::set3Int(const char* name, const int x, const int y, const int z)
+    {
+        glUniform3i(glGetUniformLocation(*m_shaderProgramID, name), x, y, z);
+    }
+
+    void AndroidGLESShader::set4Int(const char* name, const int x, const int y, const int z, const int w)
+    {
+        glUniform4i(glGetUniformLocation(*m_shaderProgramID, name), x, y, z, w);
     }
 
     void AndroidGLESShader::setMatrix4x4Float(const char* name, const glm::mat4& value)
@@ -121,9 +156,10 @@ namespace Beryll
         glUniformMatrix4fv(glGetUniformLocation(*m_shaderProgramID, name), 1, GL_FALSE, glm::value_ptr(value));
     }
 
-    void AndroidGLESShader::setMatrix4x4Float(const char* name, aiMatrix4x4& value)
+    void AndroidGLESShader::setMatrix4x4Float(const char* name, const aiMatrix4x4& value)
     {
-        glUniformMatrix4fv(glGetUniformLocation(*m_shaderProgramID, name), 1, GL_TRUE, reinterpret_cast<float*>(&value));
+        glUniformMatrix4fv(glGetUniformLocation(*m_shaderProgramID, name), 1, GL_TRUE,
+                           reinterpret_cast<float*>(const_cast<aiMatrix4x4*>(&value)));
     }
 
     void AndroidGLESShader::setMatrix3x3Float(const char* name, const glm::mat3& value)

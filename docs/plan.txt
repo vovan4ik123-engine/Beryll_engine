@@ -1,10 +1,5 @@
 ---------------------plan:---------------------
 
-use sceneobjects/gui objects arrays instead of gameObjects array
-remove setShader
-separate internal/external shader in game objects
-update renderer ???
-
 lighting
 shadows
 Normal Mapping

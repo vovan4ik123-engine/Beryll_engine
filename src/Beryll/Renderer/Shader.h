@@ -13,11 +13,19 @@ namespace Beryll
         virtual void bind() = 0;
         virtual void unBind() = 0;
 
-        // for unifirm variables in shader
-        virtual void setFloat(const char* name, const float value) = 0;
-        virtual void setInt(const char* name, const int value) = 0;
+        // for uniform variables in shader
+        virtual void set1Float(const char* name, const float x) = 0;
+        virtual void set2Float(const char* name, const float x, const float y) = 0;
+        virtual void set3Float(const char* name, const float x, const float y, const float z) = 0;
+        virtual void set4Float(const char* name, const float x, const float y, const float z, const float w) = 0;
+
+        virtual void set1Int(const char* name, const int x) = 0;
+        virtual void set2Int(const char* name, const int x, const int y) = 0;
+        virtual void set3Int(const char* name, const int x, const int y, const int z) = 0;
+        virtual void set4Int(const char* name, const int x, const int y, const int z, const int w) = 0;
+
         virtual void setMatrix4x4Float(const char* name, const glm::mat4& value) = 0;
-        virtual void setMatrix4x4Float(const char* name, aiMatrix4x4& value) = 0; // for assimp matrix
+        virtual void setMatrix4x4Float(const char* name, const aiMatrix4x4& value) = 0; // for assimp matrix
         virtual void setMatrix3x3Float(const char* name, const glm::mat3& value) = 0;
 
         // for texture

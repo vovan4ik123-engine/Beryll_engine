@@ -13,10 +13,18 @@ namespace Beryll
         void bind() override;
         void unBind() override;
 
-        void setFloat(const char* name, const float value) override;
-        void setInt(const char* name, const int value) override;
+        void set1Float(const char* name, const float x) override;
+        void set2Float(const char* name, const float x, const float y) override;
+        void set3Float(const char* name, const float x, const float y, const float z) override;
+        void set4Float(const char* name, const float x, const float y, const float z, const float w) override;
+
+        void set1Int(const char* name, const int x) override;
+        void set2Int(const char* name, const int x, const int y) override;
+        void set3Int(const char* name, const int x, const int y, const int z) override;
+        void set4Int(const char* name, const int x, const int y, const int z, const int w) override;
+
         void setMatrix4x4Float(const char* name, const glm::mat4& value) override;
-        void setMatrix4x4Float(const char* name, aiMatrix4x4& value) override;
+        void setMatrix4x4Float(const char* name, const aiMatrix4x4& value) override;
         void setMatrix3x3Float(const char* name, const glm::mat3& value) override;
 
         void activateDiffuseTexture() override;
@@ -39,5 +47,8 @@ namespace Beryll
                           // if many objects load same shader, shader ID will same for all of them
         std::shared_ptr<uint32_t> m_shaderProgramID; // ID in OpenGL
                                                      // will copied across all objects with same m_ID
+
+        static uint32_t m_currentShaderProgramID; // should contain currently bound shader program id
+                                                  // prevent bind same program many times
     };
 }

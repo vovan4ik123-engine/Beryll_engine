@@ -67,6 +67,7 @@ namespace Beryll
         glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, pixelFormat, surfaceFront->w, surfaceFront->h, 0, pixelFormat, GL_UNSIGNED_BYTE, surfaceFront->pixels);
         glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, pixelFormat, surfaceBack->w, surfaceBack->h, 0, pixelFormat, GL_UNSIGNED_BYTE, surfaceBack->pixels);
 
+        glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -137,26 +138,22 @@ namespace Beryll
 
     void AndroidGLESSkyBox::draw()
     {
-        m_persp = Camera::getPerspective();
-        m_view = glm::mat4(glm::mat3(Camera::getView())); // remove translation from matrix
-        m_perspView = m_persp * m_view;
-
         glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
 
-        m_shader->bind();
-        m_shader->setMatrix4x4Float("VP_matrix", m_perspView);
+        if(useInternalShader)
+        {
+            m_shader->bind();
+            m_persp = Camera::getPerspective();
+            m_view = glm::mat4(glm::mat3(Camera::getView())); // remove translation from matrix
+            m_perspView = m_persp * m_view;
+            m_shader->setMatrix4x4Float("VP_matrix", m_perspView);
+        }
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_CUBE_MAP, m_openGLID);
 
         m_vertexArray->bind();
         m_vertexArray->draw();
-        m_vertexArray->unBind();
-
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-
-        m_shader->unBind();
 
         glDepthFunc(GL_LESS); // set depth function back to default
     }

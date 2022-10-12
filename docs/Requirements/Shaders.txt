@@ -1,6 +1,9 @@
 Name of MVP matrix in shader must be MVP_matrix
     uniform mat4 MVP_matrix;
 
+Name of model matrix in shader must be M_matrix
+    uniform mat4 M_matrix;
+
 Shader can contain two sampler2D for textures. Order of them is important.
     First sampler2D should be for diffuse texture and must has name diffuseTexture
         uniform sampler2D diffuseTexture;

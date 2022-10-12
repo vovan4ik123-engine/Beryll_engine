@@ -119,23 +119,27 @@ namespace Beryll
                                       m_scene->mMeshes[i]->mVertices[g].y,
                                       m_scene->mMeshes[i]->mVertices[g].z);
 
-                if (m_scene->mMeshes[i]->mNormals)
+                if(m_scene->mMeshes[i]->mNormals)
                 {
-                    normals.emplace_back(m_scene->mMeshes[i]->mNormals[g].x,
-                                         m_scene->mMeshes[i]->mNormals[g].y,
-                                         m_scene->mMeshes[i]->mNormals[g].z);
-                } else
-                    {
+                    glm::vec3 normal = glm::vec3(m_scene->mMeshes[i]->mNormals[g].x,
+                                                 m_scene->mMeshes[i]->mNormals[g].y,
+                                                 m_scene->mMeshes[i]->mNormals[g].z);
+
+                    normals.emplace_back(glm::normalize(normal));
+                }
+                else
+                {
                     normals.emplace_back(0.0f, 0.0f, 0.0f);
                 }
 
                 // use only first set of texture coordinates
-                if (m_scene->mMeshes[i]->mTextureCoords[0])
+                if(m_scene->mMeshes[i]->mTextureCoords[0])
                 {
                     textureCoords.emplace_back(m_scene->mMeshes[i]->mTextureCoords[0][g].x,
                                                m_scene->mMeshes[i]->mTextureCoords[0][g].y);
-                } else
-                    {
+                }
+                else
+                {
                     textureCoords.emplace_back(0.0f, 0.0f);
                 }
             }
@@ -285,11 +289,10 @@ namespace Beryll
 
     void CollidingAnimatedObject::draw()
     {
-        m_MVP = Camera::getPerspectiveView() * m_modelMatrix;
-
         if(useInternalShader)
         {
             m_internalShader->bind();
+            m_MVP = Camera::getPerspectiveView() * m_modelMatrix;
             m_internalShader->setMatrix4x4Float("MVP_matrix", m_MVP);
 
             for(int i = 0; i < m_boneCount; ++i)
@@ -306,16 +309,7 @@ namespace Beryll
 
         m_vertexArray->bind();
         m_vertexArray->draw();
-        m_vertexArray->unBind();
-
-        if(m_diffTexture) { m_diffTexture->unBind(); }
-        if(m_specTexture) { m_specTexture->unBind(); }
-
-        if(useInternalShader)
-        {
-            m_internalShader->unBind();
-        }
-    }
+     }
 
     void CollidingAnimatedObject::playSound()
     {

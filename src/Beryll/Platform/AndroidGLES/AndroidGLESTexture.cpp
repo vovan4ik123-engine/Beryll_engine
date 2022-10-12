@@ -6,6 +6,10 @@
 
 namespace Beryll
 {
+    uint32_t AndroidGLESTexture::m_currentDiffuseTextureID = 0;
+    uint32_t AndroidGLESTexture::m_currentSpecularTextureID = 0;
+    std::map<const std::string, std::shared_ptr<uint32_t>> AndroidGLESTexture::m_textures;
+
     AndroidGLESTexture::AndroidGLESTexture(const char* path, TextureType type) : m_ID(path)
     {
         m_type = type;
@@ -72,19 +76,19 @@ namespace Beryll
         }
     }
 
-    std::map<const std::string, std::shared_ptr<uint32_t>> AndroidGLESTexture::m_textures;
-
     void AndroidGLESTexture::bind()
     {
-        if(m_type == TextureType::DIFFUSE_TEXTURE)
+        if(m_type == TextureType::DIFFUSE_TEXTURE && m_currentDiffuseTextureID != *m_openGLID)
         {
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, *m_openGLID);
+            m_currentDiffuseTextureID = *m_openGLID;
         }
-        else if(m_type == TextureType::SPECULAR_TEXTURE)
+        else if(m_type == TextureType::SPECULAR_TEXTURE && m_currentSpecularTextureID != *m_openGLID)
         {
             glActiveTexture(GL_TEXTURE1);
             glBindTexture(GL_TEXTURE_2D, *m_openGLID);
+            m_currentSpecularTextureID = *m_openGLID;
         }
     }
 

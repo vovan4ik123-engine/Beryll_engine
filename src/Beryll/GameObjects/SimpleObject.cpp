@@ -40,17 +40,19 @@ namespace Beryll
         indices.reserve(scene->mMeshes[0]->mNumFaces * 3);
 
         // vertices
-        for(int g = 0; g < scene->mMeshes[0]->mNumVertices; ++g)
+        for(int i = 0; i < scene->mMeshes[0]->mNumVertices; ++i)
         {
-            vertices.emplace_back(scene->mMeshes[0]->mVertices[g].x,
-                                    scene->mMeshes[0]->mVertices[g].y,
-                                    scene->mMeshes[0]->mVertices[g].z);
+            vertices.emplace_back(scene->mMeshes[0]->mVertices[i].x,
+                                  scene->mMeshes[0]->mVertices[i].y,
+                                  scene->mMeshes[0]->mVertices[i].z);
 
             if(scene->mMeshes[0]->mNormals)
             {
-                normals.emplace_back(scene->mMeshes[0]->mNormals[g].x,
-                                       scene->mMeshes[0]->mNormals[g].y,
-                                       scene->mMeshes[0]->mNormals[g].z);
+                glm::vec3 normal = glm::vec3(scene->mMeshes[0]->mNormals[i].x,
+                                             scene->mMeshes[0]->mNormals[i].y,
+                                             scene->mMeshes[0]->mNormals[i].z);
+
+                normals.emplace_back(glm::normalize(normal));
             }
             else
             {
@@ -60,8 +62,8 @@ namespace Beryll
             // use only first set of texture coordinates
             if(scene->mMeshes[0]->mTextureCoords[0])
             {
-                textureCoords.emplace_back(scene->mMeshes[0]->mTextureCoords[0][g].x,
-                                             scene->mMeshes[0]->mTextureCoords[0][g].y);
+                textureCoords.emplace_back(scene->mMeshes[0]->mTextureCoords[0][i].x,
+                                           scene->mMeshes[0]->mTextureCoords[0][i].y);
             }
             else
             {
@@ -73,11 +75,11 @@ namespace Beryll
         m_textureCoordsBuffer = Renderer::createVertexBuffer(textureCoords);
 
         // indices
-        for(int g = 0; g < scene->mMeshes[0]->mNumFaces; ++g) // every face MUST be a triangle !!!!
+        for(int i = 0; i < scene->mMeshes[0]->mNumFaces; ++i) // every face MUST be a triangle !!!!
         {
-            indices.emplace_back(scene->mMeshes[0]->mFaces[g].mIndices[0]);
-            indices.emplace_back(scene->mMeshes[0]->mFaces[g].mIndices[1]);
-            indices.emplace_back(scene->mMeshes[0]->mFaces[g].mIndices[2]);
+            indices.emplace_back(scene->mMeshes[0]->mFaces[i].mIndices[0]);
+            indices.emplace_back(scene->mMeshes[0]->mFaces[i].mIndices[1]);
+            indices.emplace_back(scene->mMeshes[0]->mFaces[i].mIndices[2]);
         }
         m_indexBuffer = Renderer::createIndexBuffer(indices);
 
@@ -155,11 +157,10 @@ namespace Beryll
 
     void SimpleObject::draw()
     {
-        m_MVP = Camera::getPerspectiveView() * m_modelMatrix;
-
         if(useInternalShader)
         {
             m_internalShader->bind();
+            m_MVP = Camera::getPerspectiveView() * m_modelMatrix;
             m_internalShader->setMatrix4x4Float("MVP_matrix", m_MVP);
         }
 
@@ -168,15 +169,6 @@ namespace Beryll
 
         m_vertexArray->bind();
         m_vertexArray->draw();
-        m_vertexArray->unBind();
-
-        if(m_diffTexture) { m_diffTexture->unBind(); }
-        if(m_specTexture) { m_specTexture->unBind(); }
-
-        if(useInternalShader)
-        {
-            m_internalShader->unBind();
-        }
     }
 
     void SimpleObject::playSound()

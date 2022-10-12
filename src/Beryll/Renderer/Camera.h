@@ -76,6 +76,8 @@ namespace Beryll
         }
 
         static void setCameraPos(const glm::vec3& pos) { m_cameraPos = pos; }
+        static const glm::vec3& getCameraPos() { return m_cameraPos; }
+
         static void setCameraFront(const glm::vec3& front) { m_cameraFrontPos = front; }
         static void setCameraFov(const float fovDegrees)
         {

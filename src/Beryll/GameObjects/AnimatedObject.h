@@ -21,14 +21,24 @@ namespace Beryll
         void playSound() override;
 
         void setAnimation(const char* name); // animations should be loaded from model
+        uint32_t getBoneCount()
+        {
+            return m_boneCount;
+        }
 
-    protected:
-        // animation data
         struct BoneMatrix // store loaded transforms for bone and final transform after frame interpolation
         {
             aiMatrix4x4 offsetMatrix{};
             aiMatrix4x4 finalWorldTransform{};
         };
+
+        const std::vector<BoneMatrix>& getBoneMatrices()
+        {
+            return m_bonesMatrices;
+        }
+
+    protected:
+        // animation data
         static constexpr uint32_t NUM_BONES_PER_VERTEX = 4; // one vertex can be affected maximum by 4 bones
         uint32_t m_boneCount = 0;
         std::map<std::string, uint32_t> m_boneNameIndex;
