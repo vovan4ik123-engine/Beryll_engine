@@ -1,11 +1,11 @@
 #pragma once
 
-#include "SceneObject.h"
+#include "BaseAnimatedObject.h"
 
 namespace Beryll
 {
     // Animated object, not participates in physics simulation
-    class AnimatedObject : public SceneObject
+    class AnimatedObject : public BaseAnimatedObject
     {
     public:
         AnimatedObject() = delete;
@@ -25,12 +25,6 @@ namespace Beryll
         {
             return m_boneCount;
         }
-
-        struct BoneMatrix // store loaded transforms for bone and final transform after frame interpolation
-        {
-            aiMatrix4x4 offsetMatrix{};
-            aiMatrix4x4 finalWorldTransform{};
-        };
 
         const std::vector<BoneMatrix>& getBoneMatrices()
         {

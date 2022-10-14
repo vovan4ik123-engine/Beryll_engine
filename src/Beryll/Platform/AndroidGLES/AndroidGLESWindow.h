@@ -20,8 +20,8 @@ namespace Beryll
 
         SDL_Window* getWindow() override { return m_window; }
         SDL_GLContext* getGlContext() override { return &m_glContext; }
-        uint32_t getScreenWidth() override { return m_screenWidth;}
-        uint32_t getScreenHeight() override { return m_screenHeight;}
+        int getScreenWidth() override { return m_screenWidth;}
+        int getScreenHeight() override { return m_screenHeight;}
 
         void setClearColor(float r, float g, float b, float a) override
         {
@@ -52,7 +52,7 @@ namespace Beryll
         SDL_Window* m_window = nullptr;
         SDL_GLContext m_glContext = nullptr;
 
-        uint32_t m_screenWidth = 0;
-        uint32_t m_screenHeight = 0;
+        int m_screenWidth = 0;
+        int m_screenHeight = 0;
     };
 }

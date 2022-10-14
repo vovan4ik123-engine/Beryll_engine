@@ -98,11 +98,13 @@ namespace Beryll
         {
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, 0);
+            m_currentDiffuseTextureID = 0;
         }
         else if(m_type == TextureType::SPECULAR_TEXTURE)
         {
             glActiveTexture(GL_TEXTURE1);
             glBindTexture(GL_TEXTURE_2D, 0);
+            m_currentSpecularTextureID = 0;
         }
     }
 }

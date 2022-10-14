@@ -7,6 +7,7 @@
 
 namespace Beryll
 {
+    // This texture is loaded from file .png or .jpg
     class AndroidGLESTexture : public Texture
     {
     public:
@@ -34,8 +35,6 @@ namespace Beryll
 
         std::shared_ptr<uint32_t> m_openGLID; // ID in OpenGL
                                               // will copied across all objects with same m_ID
-
-        TextureType m_type = TextureType::UNKNOWN;
 
         static uint32_t m_currentDiffuseTextureID; // should contain currently bound diffuse texture id
                                                    // prevent bind same texture many times

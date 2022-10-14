@@ -1,11 +1,11 @@
 #pragma once
 
-#include "SceneObject.h"
+#include "BaseAnimatedObject.h"
 
 namespace Beryll
 {
     // Animated object, participates in physics simulation
-    class CollidingAnimatedObject : public SceneObject
+    class CollidingAnimatedObject : public BaseAnimatedObject
     {
     public:
         CollidingAnimatedObject() = delete;
@@ -32,15 +32,19 @@ namespace Beryll
         void draw() override;
         void playSound() override;
 
-        void setAnimation(const char* name); // animations should be loaded from model
+        void setAnimation(const char* name) ; // animations should be loaded from model
+        uint32_t getBoneCount()
+        {
+            return m_boneCount;
+        }
+
+        const std::vector<BoneMatrix>& getBoneMatrices()
+        {
+            return m_bonesMatrices;
+        }
 
     protected:
         // animation data
-        struct BoneMatrix // store loaded transforms for bone and final transform after frame interpolation
-        {
-            aiMatrix4x4 offsetMatrix{};
-            aiMatrix4x4 finalWorldTransform{};
-        };
         static constexpr uint32_t NUM_BONES_PER_VERTEX = 4; // one vertex can be affected maximum by 4 bones
         uint32_t m_boneCount = 0;
         std::map<std::string, uint32_t> m_boneNameIndex;

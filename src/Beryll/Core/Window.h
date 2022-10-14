@@ -30,8 +30,8 @@ namespace Beryll
         virtual void checkOrientationChange() = 0; // if phone or tablet screen rotation allowed
 
         virtual SDL_Window* getWindow() = 0;
-        virtual uint32_t getScreenWidth() = 0;
-        virtual uint32_t getScreenHeight() = 0;
+        virtual int getScreenWidth() = 0;
+        virtual int getScreenHeight() = 0;
 
         virtual void setClearColor(float r, float g, float b, float a) = 0;  // background color after clear()
         virtual void clear() = 0;

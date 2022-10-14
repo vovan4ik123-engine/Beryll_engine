@@ -6,6 +6,7 @@
 #include "Beryll/Platform/AndroidGLES/AndroidGLESVertexArray.h"
 #include "Beryll/Platform/AndroidGLES/AndroidGLESShader.h"
 #include "Beryll/Platform/AndroidGLES/AndroidGLESTexture.h"
+#include "Beryll/Platform/AndroidGLES/AndroidGLESShadowMapTexture.h"
 #include "Beryll/Platform/AndroidGLES/AndroidGLESSkyBox.h"
 
 namespace Beryll
@@ -110,6 +111,23 @@ namespace Beryll
         else
         {
             BR_ASSERT(false, "%s", "Can not create Texture. Unknown platform.");
+            return nullptr;
+        }
+    }
+
+    std::unique_ptr<Texture> Renderer::createShadowMapTexture(const std::vector<std::shared_ptr<Beryll::BaseSimpleObject>>& simpleObj,
+                                                              const std::vector<std::shared_ptr<Beryll::BaseAnimatedObject>>& animatedObj,
+                                                              const std::shared_ptr<Beryll::Shader>& shaderSimple,
+                                                              const std::shared_ptr<Beryll::Shader>& shaderAnimated,
+                                                              const glm::mat4& VP_matrix)
+    {
+        if(GameLoop::getPlatform() == Platform::ANDROID_GLES)
+        {
+            return std::unique_ptr<Texture>(new AndroidGLESShadowMapTexture(simpleObj, animatedObj, shaderSimple, shaderAnimated, VP_matrix));
+        }
+        else
+        {
+            BR_ASSERT(false, "%s", "Can not create shadow map Texture. Unknown platform.");
             return nullptr;
         }
     }

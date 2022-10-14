@@ -76,21 +76,21 @@ namespace Beryll
             Camera::update3DCamera();
 
             calcTime = TimeStep::getMillisecFromStart() - calcStart;
+            drawStart = TimeStep::getMillisecFromStart();
         // Draw start    DONT CALL ANY DRAW COMMANDS before this point !!!!!!!!
             // First finish draw previous frame
             //Window::getInstance()->finishDraw(); // very slow
             //Window::getInstance()->flushDraw(); // potentially can be called but not necessary
             Window::getInstance()->swapWindow();
-            drawTime = TimeStep::getMillisecFromStart() - drawStart;
+
             // Next start draw new frame
-            drawStart = TimeStep::getMillisecFromStart();
             Window::getInstance()->clear();
             MainImGUI::getInstance()->beginFrame();
 
             GameStateMachine::draw();
 
             MainImGUI::getInstance()->endFrame();
-
+            drawTime = TimeStep::getMillisecFromStart() - drawStart;
         // Draw finish
 
         // PlaySound start

@@ -4,11 +4,12 @@ Name of MVP matrix in shader must be MVP_matrix
 Name of model matrix in shader must be M_matrix
     uniform mat4 M_matrix;
 
-Shader can contain two sampler2D for textures. Order of them is important.
-    First sampler2D should be for diffuse texture and must has name diffuseTexture
-        uniform sampler2D diffuseTexture;
-    Second sampler2D should be for specular texture(if exist) and must has name specularTexture
-        uniform sampler2D specularTexture;
+Fragment shader can contain 5 sampler2D for textures.
+    uniform sampler2D diffuseTexture;   // name and order are important
+    uniform sampler2D specularTexture;  // name and order are important
+    uniform sampler2D shadowMapTexture; // name and order are important
+    uniform sampler2D normalMapTexture; // name and order are important
+    uniform sampler2D heightMapTexture; // name and order are important
 
 Vertex shader example:
     #version 300 es

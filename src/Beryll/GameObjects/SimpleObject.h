@@ -1,11 +1,11 @@
 #pragma once
 
-#include "SceneObject.h"
+#include "BaseSimpleObject.h"
 
 namespace Beryll
 {
     // Not animated object, not participates in physics simulation
-    class SimpleObject : public SceneObject
+    class SimpleObject : public BaseSimpleObject
     {
     public:
         SimpleObject() = delete;
