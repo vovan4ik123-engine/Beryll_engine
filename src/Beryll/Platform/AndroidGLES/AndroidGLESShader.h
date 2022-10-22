@@ -29,6 +29,9 @@ namespace Beryll
 
         void activateDiffuseTexture() override;
         void activateSpecularTexture() override;
+        void activateShadowMapTexture() override;
+        void activateNormalMapTexture() override;
+        void activateHeightMapTexture() override;
 
     private:
         friend class Renderer;
@@ -47,8 +50,5 @@ namespace Beryll
                           // if many objects load same shader, shader ID will same for all of them
         std::shared_ptr<uint32_t> m_shaderProgramID; // ID in OpenGL
                                                      // will copied across all objects with same m_ID
-
-        static uint32_t m_currentShaderProgramID; // should contain currently bound shader program id
-                                                  // prevent bind same program many times
     };
 }

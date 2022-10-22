@@ -25,7 +25,7 @@ namespace Beryll
 
     float Camera::m_objectsViewDistance = 100.0f;
 
-    glm::mat4 Camera::m_perspectiveView{1.0f};
-    glm::mat4 Camera::m_perspective{1.0f};
+    glm::mat4 Camera::m_viewProjection{1.0f};
+    glm::mat4 Camera::m_projection{1.0f};
     glm::mat4 Camera::m_view{1.0f};
 }

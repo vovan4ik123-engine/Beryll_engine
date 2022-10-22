@@ -1,6 +1,10 @@
 #pragma once
 
 #include "BaseSimpleObject.h"
+#include "Beryll/Renderer/Buffer.h"
+#include "Beryll/Renderer/VertexArray.h"
+#include "Beryll/Renderer/Shader.h"
+#include "Beryll/Renderer/Texture.h"
 
 namespace Beryll
 {

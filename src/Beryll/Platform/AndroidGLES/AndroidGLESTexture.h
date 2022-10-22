@@ -17,6 +17,15 @@ namespace Beryll
         void bind() override;
         void unBind() override;
 
+        void drawIntoShadowMap(const std::vector<std::shared_ptr<Beryll::BaseSimpleObject>>& simpleObj,
+                               const std::vector<std::shared_ptr<Beryll::BaseAnimatedObject>>& animatedObj,
+                               const std::shared_ptr<Beryll::Shader>& shaderSimple,
+                               const std::shared_ptr<Beryll::Shader>& shaderAnimated,
+                               const glm::mat4& VPMatrix) override
+        {
+            BR_ASSERT(false, "%s", "drawIntoShadowMap() can be called only from shadow map texture");
+        }
+
     private:
         friend class Renderer;
         /*
@@ -35,10 +44,5 @@ namespace Beryll
 
         std::shared_ptr<uint32_t> m_openGLID; // ID in OpenGL
                                               // will copied across all objects with same m_ID
-
-        static uint32_t m_currentDiffuseTextureID; // should contain currently bound diffuse texture id
-                                                   // prevent bind same texture many times
-
-        static uint32_t m_currentSpecularTextureID;// should contain currently bound specular texture id
     };
 }

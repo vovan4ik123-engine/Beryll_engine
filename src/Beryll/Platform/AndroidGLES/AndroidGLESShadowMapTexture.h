@@ -20,6 +20,12 @@ namespace Beryll
         void bind() override;
         void unBind() override;
 
+        void drawIntoShadowMap(const std::vector<std::shared_ptr<Beryll::BaseSimpleObject>>& simpleObj,
+                               const std::vector<std::shared_ptr<Beryll::BaseAnimatedObject>>& animatedObj,
+                               const std::shared_ptr<Beryll::Shader>& shaderSimple,
+                               const std::shared_ptr<Beryll::Shader>& shaderAnimated,
+                               const glm::mat4& VPMatrix) override;
+
     private:
         friend class Renderer;
         /*
@@ -27,18 +33,15 @@ namespace Beryll
          * animatedObj - animated objects which wants shadows
          * shaderSimple - shader for simple objects for generate shadow map
          * shaderAnimated - shader for animated objects for generate shadow map
-         * VP_matrix - projection matrix from light point of view
+         * VPMatrix - projection matrix from light point of view
          */
-        AndroidGLESShadowMapTexture(const std::vector<std::shared_ptr<Beryll::BaseSimpleObject>>& simpleObj,
-                                    const std::vector<std::shared_ptr<Beryll::BaseAnimatedObject>>& animatedObj,
-                                    const std::shared_ptr<Beryll::Shader>& shaderSimple,
-                                    const std::shared_ptr<Beryll::Shader>& shaderAnimated,
-                                    const glm::mat4& VP_matrix);
+        AndroidGLESShadowMapTexture(int width, int height);
 
+        int m_defaultFBO = 0;
         uint32_t m_depthMapFBO = 0;
         uint32_t m_openGLID = 0;
 
-        static uint32_t m_currentShadowMapTextureID; // should contain currently bound shadow map texture id
-                                                     // prevent bind same texture many times
+        const int m_mapWidth;
+        const int m_mapHeight;
     };
 }

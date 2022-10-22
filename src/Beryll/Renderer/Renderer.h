@@ -32,11 +32,7 @@ namespace Beryll
         static std::shared_ptr<Shader> createShader(const char* vertexPath, const char* fragmentPath);
 
         static std::unique_ptr<Texture> createTexture(const char* path, TextureType type);
-        static std::unique_ptr<Texture> createShadowMapTexture(const std::vector<std::shared_ptr<Beryll::BaseSimpleObject>>& simpleObj,
-                                                               const std::vector<std::shared_ptr<Beryll::BaseAnimatedObject>>& animatedObj,
-                                                               const std::shared_ptr<Beryll::Shader>& shaderSimple,
-                                                               const std::shared_ptr<Beryll::Shader>& shaderAnimated,
-                                                               const glm::mat4& VP_matrix);
+        static std::unique_ptr<Texture> createShadowMapTexture(int width, int height);
 
         static std::unique_ptr<SkyBox> createSkyBox(const char* folderPath);
     };

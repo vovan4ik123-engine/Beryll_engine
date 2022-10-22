@@ -1,5 +1,9 @@
 #pragma once
 
+#include "Beryll/GameObjects/BaseSimpleObject.h"
+#include "Beryll/GameObjects/BaseAnimatedObject.h"
+#include "Shader.h"
+
 namespace Beryll
 {
     enum class TextureType
@@ -19,6 +23,12 @@ namespace Beryll
 
         virtual void bind() = 0;
         virtual void unBind() = 0;
+
+        virtual void drawIntoShadowMap(const std::vector<std::shared_ptr<Beryll::BaseSimpleObject>>& simpleObj,
+                                       const std::vector<std::shared_ptr<Beryll::BaseAnimatedObject>>& animatedObj,
+                                       const std::shared_ptr<Beryll::Shader>& shaderSimple,
+                                       const std::shared_ptr<Beryll::Shader>& shaderAnimated,
+                                       const glm::mat4& VPMatrix) = 0;
 
         TextureType getType()
         {

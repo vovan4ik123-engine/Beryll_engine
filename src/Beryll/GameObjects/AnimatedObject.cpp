@@ -4,6 +4,7 @@
 #include "Beryll/Utils/Quaternion.h"
 #include "Beryll/Utils/CommonUtils.h"
 #include "Beryll/Renderer/Camera.h"
+#include "Beryll/Renderer/Renderer.h"
 #include "Beryll/Core/Window.h"
 #include "Beryll/Core/TimeStep.h"
 #include "Beryll/Core/Timer.h"
@@ -159,8 +160,8 @@ namespace Beryll
         m_vertexArray->addVertexBuffer(m_boneWeightsBuffer);
         m_vertexArray->setIndexBuffer(m_indexBuffer);
 
-        // Default shaders. Can be changed with call setShader()
         m_internalShader = Renderer::createShader("shaders/GLES/default/Animation.vert", "shaders/GLES/default/Animation.frag");
+        m_internalShader->bind();
 
         // material
         if(m_scene->mMeshes[0]->mMaterialIndex >= 0)
@@ -237,8 +238,8 @@ namespace Beryll
         if(useInternalShader)
         {
             m_internalShader->bind();
-            m_MVP = Camera::getPerspectiveView() * m_modelMatrix;
-            m_internalShader->setMatrix4x4Float("MVP_matrix", m_MVP);
+            m_MVP = Camera::getViewProjection() * m_modelMatrix;
+            m_internalShader->setMatrix4x4Float("MVPMatrix", m_MVP);
 
             for(int i = 0; i < m_boneCount; ++i)
             {
@@ -249,8 +250,8 @@ namespace Beryll
             }
         }
 
-        if(m_diffTexture) { m_diffTexture->bind(); }
-        if(m_specTexture) { m_specTexture->bind(); }
+        if(m_diffTexture && useInternalTextures) { m_diffTexture->bind(); }
+        if(m_specTexture && useInternalTextures) { m_specTexture->bind(); }
 
         m_vertexArray->bind();
         m_vertexArray->draw();

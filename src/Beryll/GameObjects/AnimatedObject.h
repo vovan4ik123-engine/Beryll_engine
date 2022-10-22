@@ -1,6 +1,10 @@
 #pragma once
 
 #include "BaseAnimatedObject.h"
+#include "Beryll/Renderer/Buffer.h"
+#include "Beryll/Renderer/VertexArray.h"
+#include "Beryll/Renderer/Shader.h"
+#include "Beryll/Renderer/Texture.h"
 
 namespace Beryll
 {
@@ -20,13 +24,14 @@ namespace Beryll
         void draw() override;
         void playSound() override;
 
-        void setAnimation(const char* name); // animations should be loaded from model
-        uint32_t getBoneCount()
+        void setAnimation(const char* name) override; // animations should be loaded from model
+
+        uint32_t getBoneCount() override
         {
             return m_boneCount;
         }
 
-        const std::vector<BoneMatrix>& getBoneMatrices()
+        const std::vector<BoneMatrix>& getBoneMatrices() override
         {
             return m_bonesMatrices;
         }

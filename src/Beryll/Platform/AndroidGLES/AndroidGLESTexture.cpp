@@ -1,13 +1,12 @@
 #include "AndroidGLESTexture.h"
 #include "Beryll/Core/Log.h"
+#include "Beryll/Platform/AndroidGLES/AndroidGLESGlobal.h"
 
-#include <GLES3/gl31.h>
+#include <GLES3/gl32.h>
 #include <GLES3/gl3ext.h>
 
 namespace Beryll
 {
-    uint32_t AndroidGLESTexture::m_currentDiffuseTextureID = 0;
-    uint32_t AndroidGLESTexture::m_currentSpecularTextureID = 0;
     std::map<const std::string, std::shared_ptr<uint32_t>> AndroidGLESTexture::m_textures;
 
     AndroidGLESTexture::AndroidGLESTexture(const char* path, TextureType type) : m_ID(path)
@@ -78,33 +77,34 @@ namespace Beryll
 
     void AndroidGLESTexture::bind()
     {
-        if(m_type == TextureType::DIFFUSE_TEXTURE && m_currentDiffuseTextureID != *m_openGLID)
+        if(m_type == TextureType::DIFFUSE_TEXTURE && GLESStateVariables::currentTexture0 != *m_openGLID)
         {
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, *m_openGLID);
-            m_currentDiffuseTextureID = *m_openGLID;
+            GLESStateVariables::currentTexture0 = *m_openGLID;
         }
-        else if(m_type == TextureType::SPECULAR_TEXTURE && m_currentSpecularTextureID != *m_openGLID)
+        else if(m_type == TextureType::SPECULAR_TEXTURE && GLESStateVariables::currentTexture1 != *m_openGLID)
         {
             glActiveTexture(GL_TEXTURE1);
             glBindTexture(GL_TEXTURE_2D, *m_openGLID);
-            m_currentSpecularTextureID = *m_openGLID;
+            GLESStateVariables::currentTexture1 = *m_openGLID;
         }
     }
 
     void AndroidGLESTexture::unBind()
     {
-        if(m_type == TextureType::DIFFUSE_TEXTURE)
+        // this object can unbind only his own texture
+        if(m_type == TextureType::DIFFUSE_TEXTURE  && GLESStateVariables::currentTexture0 == *m_openGLID)
         {
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, 0);
-            m_currentDiffuseTextureID = 0;
+            GLESStateVariables::currentTexture0 = 0;
         }
-        else if(m_type == TextureType::SPECULAR_TEXTURE)
+        else if(m_type == TextureType::SPECULAR_TEXTURE && GLESStateVariables::currentTexture1 == *m_openGLID)
         {
             glActiveTexture(GL_TEXTURE1);
             glBindTexture(GL_TEXTURE_2D, 0);
-            m_currentSpecularTextureID = 0;
+            GLESStateVariables::currentTexture1 = 0;
         }
     }
 }

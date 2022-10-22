@@ -13,13 +13,13 @@ namespace Beryll
         ~Camera() = delete;
 
         // update3DCamera() must be called before
-        static const glm::mat4& getPerspectiveView()
+        static const glm::mat4& getViewProjection()
         {
-            return m_perspectiveView;
+            return m_viewProjection;
         }
-        static const glm::mat4& getPerspective()
+        static const glm::mat4& getProjection()
         {
-            return m_perspective;
+            return m_projection;
         }
         static const glm::mat4& getView()
         {
@@ -36,15 +36,15 @@ namespace Beryll
         }
         */
 
-        // call before getPerspectiveView()
+        // call before getViewProjection() / getProjection() / getView()
         static void update3DCamera()
         {
             updateCameraVectors();
 
-            m_perspective = getPerspective3D(Window::getInstance()->getScreenWidth(), Window::getInstance()->getScreenHeight());
+            m_projection = getPerspective3D(Window::getInstance()->getScreenWidth(), Window::getInstance()->getScreenHeight());
             m_view = getVeiw3D();
 
-            m_perspectiveView = m_perspective * m_view;
+            m_viewProjection = m_projection * m_view;
         }
 
         static bool getIsSeeObject(const glm::vec3& objectPos) // check does camera see object or object is out of view
@@ -122,8 +122,8 @@ namespace Beryll
 
         static float m_objectsViewDistance; // for method isSeeObject()
 
-        static glm::mat4 m_perspectiveView;
-        static glm::mat4 m_perspective;
+        static glm::mat4 m_viewProjection;
+        static glm::mat4 m_projection;
         static glm::mat4 m_view;
 
         static void updateCameraVectors()

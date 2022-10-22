@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Beryll/Core/GameObject.h"
-#include "Beryll/Renderer/Renderer.h"
 #include "Beryll/Utils/CommonUtils.h"
 #include "Beryll/Utils/Matrix.h"
 
@@ -12,7 +11,7 @@ namespace Beryll
         FORWARD = 0, BACKWARD = 1, RIGHT = 2, LEFT = 3
     };
 
-    class SceneObject : public GameObject
+    class SceneObject : public Beryll::GameObject
     {
     public:
         ~SceneObject() override {}
@@ -213,6 +212,7 @@ namespace Beryll
          */
 
         bool useInternalShader = true;
+        bool useInternalTextures = true;
 
     protected:
         glm::mat4 m_MVP{1.0f};

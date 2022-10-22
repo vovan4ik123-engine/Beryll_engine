@@ -23,7 +23,7 @@ namespace Beryll
 
         uint32_t m_openGLID;
 
-        std::shared_ptr<Shader> m_shader;
+        std::shared_ptr<Shader> m_internalShader;
 
         std::shared_ptr<VertexBuffer> m_vertexPosBuffer;
         std::shared_ptr<IndexBuffer> m_indexBuffer;

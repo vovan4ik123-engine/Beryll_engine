@@ -1,13 +1,13 @@
 #include "AndroidGLESShader.h"
 #include "Beryll/Core/Log.h"
 #include "Beryll/Utils/File.h"
+#include "Beryll/Platform/AndroidGLES/AndroidGLESGlobal.h"
 
-#include <GLES3/gl31.h>
+#include <GLES3/gl32.h>
 #include <GLES3/gl3ext.h>
 
 namespace Beryll
 {
-    uint32_t AndroidGLESShader::m_currentShaderProgramID = 0;
     std::map<const std::string, std::shared_ptr<uint32_t>> AndroidGLESShader::m_shaderPrograms;
 
     AndroidGLESShader::AndroidGLESShader(const char* vertexPath, const char* fragmentPath)
@@ -99,16 +99,21 @@ namespace Beryll
 
     void AndroidGLESShader::bind()
     {
-        if(m_currentShaderProgramID != *m_shaderProgramID)
+        if(GLESStateVariables::currentShaderProgram != *m_shaderProgramID)
         {
             glUseProgram(*m_shaderProgramID);
-            m_currentShaderProgramID = *m_shaderProgramID;
+            GLESStateVariables::currentShaderProgram = *m_shaderProgramID;
         }
     }
 
     void AndroidGLESShader::unBind()
     {
-        glUseProgram(0);
+        // this object can unbind only his own shader program
+        if(GLESStateVariables::currentShaderProgram == *m_shaderProgramID)
+        {
+            glUseProgram(0);
+            GLESStateVariables::currentShaderProgram = 0;
+        }
     }
 
     void AndroidGLESShader::set1Float(const char* name, const float x)
@@ -175,5 +180,20 @@ namespace Beryll
     void AndroidGLESShader::activateSpecularTexture()
     {
         glUniform1i(glGetUniformLocation(*m_shaderProgramID, "specularTexture"), 1);
+    }
+
+    void AndroidGLESShader::activateShadowMapTexture()
+    {
+        glUniform1i(glGetUniformLocation(*m_shaderProgramID, "shadowMapTexture"), 2);
+    }
+
+    void AndroidGLESShader::activateNormalMapTexture()
+    {
+        glUniform1i(glGetUniformLocation(*m_shaderProgramID, "normalMapTexture"), 3);
+    }
+
+    void AndroidGLESShader::activateHeightMapTexture()
+    {
+        glUniform1i(glGetUniformLocation(*m_shaderProgramID, "heightMapTexture"), 4);
     }
 }

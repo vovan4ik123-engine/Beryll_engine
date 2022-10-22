@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Beryll/GameObjects/SceneObject.h"
+#include "SceneObject.h"
 
 namespace Beryll
 {
-    class BaseSimpleObject : public Beryll::SceneObject
+    class BaseSimpleObject : public SceneObject
     {
     public:
         ~BaseSimpleObject() override {}

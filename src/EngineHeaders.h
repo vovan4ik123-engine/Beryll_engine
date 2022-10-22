@@ -16,7 +16,10 @@
 
 #include "Beryll/Renderer/Camera.h"
 #include "Beryll/Renderer/SkyBox.h"
+#include "Beryll/Renderer/Renderer.h"
 
+#include "Beryll/GameObjects/BaseSimpleObject.h"
+#include "Beryll/GameObjects/BaseAnimatedObject.h"
 #include "Beryll/GameObjects/SimpleObject.h"
 #include "Beryll/GameObjects/CollidingSimpleObject.h"
 #include "Beryll/GameObjects/AnimatedObject.h"

@@ -115,15 +115,11 @@ namespace Beryll
         }
     }
 
-    std::unique_ptr<Texture> Renderer::createShadowMapTexture(const std::vector<std::shared_ptr<Beryll::BaseSimpleObject>>& simpleObj,
-                                                              const std::vector<std::shared_ptr<Beryll::BaseAnimatedObject>>& animatedObj,
-                                                              const std::shared_ptr<Beryll::Shader>& shaderSimple,
-                                                              const std::shared_ptr<Beryll::Shader>& shaderAnimated,
-                                                              const glm::mat4& VP_matrix)
+    std::unique_ptr<Texture> Renderer::createShadowMapTexture(int width, int height)
     {
         if(GameLoop::getPlatform() == Platform::ANDROID_GLES)
         {
-            return std::unique_ptr<Texture>(new AndroidGLESShadowMapTexture(simpleObj, animatedObj, shaderSimple, shaderAnimated, VP_matrix));
+            return std::unique_ptr<Texture>(new AndroidGLESShadowMapTexture(width, height));
         }
         else
         {

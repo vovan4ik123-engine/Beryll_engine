@@ -1,8 +1,9 @@
 #include "AndroidGLESSkyBox.h"
 #include "Beryll/Core/Log.h"
 #include "Beryll/Renderer/Camera.h"
+#include "Beryll/Platform/AndroidGLES/AndroidGLESGlobal.h"
 
-#include <GLES3/gl31.h>
+#include <GLES3/gl32.h>
 #include <GLES3/gl3ext.h>
 
 namespace Beryll
@@ -83,8 +84,9 @@ namespace Beryll
         SDL_FreeSurface(surfaceBack);
         SDL_FreeSurface(surfaceFront);
 
-        m_shader = Renderer::createShader("shaders/GLES/default/SkyBox.vert", "shaders/GLES/default/SkyBox.frag");
-        m_shader->activateDiffuseTexture();
+        m_internalShader = Renderer::createShader("shaders/GLES/default/SkyBox.vert", "shaders/GLES/default/SkyBox.frag");
+        m_internalShader->bind();
+        m_internalShader->activateDiffuseTexture();
 
         std::vector<glm::vec3> vertices;
         vertices.emplace_back(glm::vec3{1.0f, -1.0f, -1.0f}); // right side +X
@@ -142,15 +144,19 @@ namespace Beryll
 
         if(useInternalShader)
         {
-            m_shader->bind();
-            m_persp = Camera::getPerspective();
+            m_internalShader->bind();
+            m_persp = Camera::getProjection();
             m_view = glm::mat4(glm::mat3(Camera::getView())); // remove translation from matrix
             m_perspView = m_persp * m_view;
-            m_shader->setMatrix4x4Float("VP_matrix", m_perspView);
+            m_internalShader->setMatrix4x4Float("VPMatrix", m_perspView);
         }
 
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, m_openGLID);
+        if(GLESStateVariables::currentTexture0 != m_openGLID)
+        {
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_CUBE_MAP, m_openGLID);
+            GLESStateVariables::currentTexture0 = m_openGLID;
+        }
 
         m_vertexArray->bind();
         m_vertexArray->draw();
