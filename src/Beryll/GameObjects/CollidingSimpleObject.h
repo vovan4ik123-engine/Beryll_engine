@@ -39,6 +39,7 @@ namespace Beryll
     protected:
         std::shared_ptr<VertexBuffer> m_vertexPosBuffer;
         std::shared_ptr<VertexBuffer> m_vertexNormalsBuffer;
+        std::shared_ptr<VertexBuffer> m_vertexTangentsBuffer;
         std::shared_ptr<VertexBuffer> m_textureCoordsBuffer;
         std::shared_ptr<IndexBuffer> m_indexBuffer;
         std::unique_ptr<VertexArray> m_vertexArray;

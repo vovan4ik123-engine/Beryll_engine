@@ -71,6 +71,7 @@ namespace Beryll
         // model data
         std::shared_ptr<VertexBuffer> m_vertexPosBuffer;
         std::shared_ptr<VertexBuffer> m_vertexNormalsBuffer;
+        std::shared_ptr<VertexBuffer> m_vertexTangentsBuffer;
         std::shared_ptr<VertexBuffer> m_textureCoordsBuffer;
         std::shared_ptr<VertexBuffer> m_boneIDsBuffer;
         std::shared_ptr<VertexBuffer> m_boneWeightsBuffer;

@@ -28,7 +28,10 @@ namespace Beryll
                    (m_ID.substr(m_ID.find_last_of('.')) == ".jpg")),
                   "Supported only .png or .jpg textures:%s", m_ID.c_str());
 
-        BR_ASSERT(((type == TextureType::DIFFUSE_TEXTURE) || (type == TextureType::SPECULAR_TEXTURE)), "%s", "Not correct texture type");
+        BR_ASSERT(((type == TextureType::DIFFUSE_TEXTURE) ||
+                   (type == TextureType::SPECULAR_TEXTURE) ||
+                   (type == TextureType::NORMAL_MAP_TEXTURE) ||
+                   (type == TextureType::HEIGHT_MAP_TEXTURE)), "%s", "Wrong texture type");
 
         SDL_RWops* rw = SDL_RWFromFile(m_ID.c_str(), "rb");
         BR_ASSERT((rw != nullptr), "Load texture failed:%s", m_ID.c_str());
@@ -77,6 +80,7 @@ namespace Beryll
 
     void AndroidGLESTexture::bind()
     {
+        // dont bind if m_openGLID already bound
         if(m_type == TextureType::DIFFUSE_TEXTURE && GLESStateVariables::currentTexture0 != *m_openGLID)
         {
             glActiveTexture(GL_TEXTURE0);
@@ -88,6 +92,20 @@ namespace Beryll
             glActiveTexture(GL_TEXTURE1);
             glBindTexture(GL_TEXTURE_2D, *m_openGLID);
             GLESStateVariables::currentTexture1 = *m_openGLID;
+        }
+        // else if(m_type == TextureType::SHADOW_MAP_TEXTURE) // shadow map implemented in different class
+        //     glActiveTexture(GL_TEXTURE2);
+        else if(m_type == TextureType::NORMAL_MAP_TEXTURE && GLESStateVariables::currentTexture3 != *m_openGLID)
+        {
+            glActiveTexture(GL_TEXTURE3);
+            glBindTexture(GL_TEXTURE_2D, *m_openGLID);
+            GLESStateVariables::currentTexture3 = *m_openGLID;
+        }
+        else if(m_type == TextureType::HEIGHT_MAP_TEXTURE && GLESStateVariables::currentTexture4 != *m_openGLID)
+        {
+            glActiveTexture(GL_TEXTURE4);
+            glBindTexture(GL_TEXTURE_2D, *m_openGLID);
+            GLESStateVariables::currentTexture4 = *m_openGLID;
         }
     }
 
@@ -105,6 +123,20 @@ namespace Beryll
             glActiveTexture(GL_TEXTURE1);
             glBindTexture(GL_TEXTURE_2D, 0);
             GLESStateVariables::currentTexture1 = 0;
+        }
+        // else if(m_type == TextureType::SHADOW_MAP_TEXTURE) // shadow map implemented in different class
+        //     glActiveTexture(GL_TEXTURE2);
+        else if(m_type == TextureType::NORMAL_MAP_TEXTURE && GLESStateVariables::currentTexture3 == *m_openGLID)
+        {
+            glActiveTexture(GL_TEXTURE3);
+            glBindTexture(GL_TEXTURE_2D, 0);
+            GLESStateVariables::currentTexture3 = 0;
+        }
+        else if(m_type == TextureType::HEIGHT_MAP_TEXTURE && GLESStateVariables::currentTexture4 == *m_openGLID)
+        {
+            glActiveTexture(GL_TEXTURE4);
+            glBindTexture(GL_TEXTURE_2D, 0);
+            GLESStateVariables::currentTexture4 = 0;
         }
     }
 }

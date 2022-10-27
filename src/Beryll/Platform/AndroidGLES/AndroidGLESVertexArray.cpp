@@ -35,7 +35,7 @@ namespace Beryll
     {
         if(vertBuff->getAttribSize() == VertexAttribSize::UNKNOWN || vertBuff->getAttribType() == VertexAttribType::UNKNOWN)
         {
-            BR_ASSERT(false, "%s", "Unknown vertex buffer data type or size");
+            BR_ASSERT(false, "%s", "Unknown vertex buffer data type or size.");
         }
 
         uint32_t size = 0;

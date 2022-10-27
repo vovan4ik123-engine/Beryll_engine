@@ -32,8 +32,8 @@ namespace Beryll
 
             scene = importer->ReadFileFromMemory(buffer, bufferSize,
                                                  aiProcess_Triangulate |
-                                                 aiProcess_SortByPType |
-                                                 aiProcess_FlipUVs);
+                                                 aiProcess_FlipUVs |
+                                                 aiProcess_CalcTangentSpace);
             delete[] buffer;
             if(!scene || !scene->mRootNode || scene->mFlags == AI_SCENE_FLAGS_INCOMPLETE)
             {
@@ -57,12 +57,14 @@ namespace Beryll
         // prepare vectors
         std::vector<glm::vec3> vertices;
         std::vector<glm::vec3> normals;
+        std::vector<glm::vec3> tangents;
         std::vector<glm::vec2> textureCoords;
         std::vector<glm::ivec4> boneIDs;
         std::vector<glm::vec4> boneWeights;
         std::vector<uint32_t> indices;
         vertices.reserve(m_scene->mMeshes[0]->mNumVertices);
         normals.reserve(m_scene->mMeshes[0]->mNumVertices);
+        tangents.reserve(m_scene->mMeshes[0]->mNumVertices);
         textureCoords.reserve(m_scene->mMeshes[0]->mNumVertices);
         boneIDs.resize(m_scene->mMeshes[0]->mNumVertices, glm::ivec4(-1, -1, -1, -1)); // NUM_BONES_PER_VERTEX
         boneWeights.resize(m_scene->mMeshes[0]->mNumVertices, glm::vec4(-1.0f, -1.0f, -1.0f, -1.0f)); // NUM_BONES_PER_VERTEX
@@ -88,6 +90,19 @@ namespace Beryll
                 normals.emplace_back(0.0f, 0.0f, 0.0f);
             }
 
+            if(m_scene->mMeshes[0]->mTangents)
+            {
+                glm::vec3 tangent = glm::vec3(m_scene->mMeshes[0]->mTangents[i].x,
+                                              m_scene->mMeshes[0]->mTangents[i].y,
+                                              m_scene->mMeshes[0]->mTangents[i].z);
+
+                tangents.emplace_back(glm::normalize(tangent));
+            }
+            else
+            {
+                tangents.emplace_back(0.0f, 0.0f, 0.0f);
+            }
+
             // use only first set of texture coordinates
             if(m_scene->mMeshes[0]->mTextureCoords[0])
             {
@@ -101,6 +116,7 @@ namespace Beryll
         }
         m_vertexPosBuffer = Renderer::createVertexBuffer(vertices);
         m_vertexNormalsBuffer = Renderer::createVertexBuffer(normals);
+        m_vertexTangentsBuffer = Renderer::createVertexBuffer(tangents);
         m_textureCoordsBuffer = Renderer::createVertexBuffer(textureCoords);
 
         // bones
@@ -158,6 +174,7 @@ namespace Beryll
         m_vertexArray->addVertexBuffer(m_textureCoordsBuffer);
         m_vertexArray->addVertexBuffer(m_boneIDsBuffer);
         m_vertexArray->addVertexBuffer(m_boneWeightsBuffer);
+        m_vertexArray->addVertexBuffer(m_vertexTangentsBuffer);
         m_vertexArray->setIndexBuffer(m_indexBuffer);
 
         m_internalShader = Renderer::createShader("shaders/GLES/default/Animation.vert", "shaders/GLES/default/Animation.frag");
