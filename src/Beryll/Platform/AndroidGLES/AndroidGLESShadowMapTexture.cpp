@@ -50,22 +50,22 @@ namespace Beryll
 
     void AndroidGLESShadowMapTexture::bind()
     {
-        if(GLESStateVariables::currentTexture2 != m_openGLID)
+        if(GLESStateVariables::currentTexture11 != m_openGLID)
         {
-            glActiveTexture(GL_TEXTURE2);
+            glActiveTexture(GL_TEXTURE11);
             glBindTexture(GL_TEXTURE_2D, m_openGLID);
-            GLESStateVariables::currentTexture2 = m_openGLID;
+            GLESStateVariables::currentTexture11 = m_openGLID;
         }
     }
 
     void AndroidGLESShadowMapTexture::unBind()
     {
         // this object can unbind only his own texture
-        if(GLESStateVariables::currentTexture2 == m_openGLID)
+        if(GLESStateVariables::currentTexture11 == m_openGLID)
         {
-            glActiveTexture(GL_TEXTURE2);
+            glActiveTexture(GL_TEXTURE11);
             glBindTexture(GL_TEXTURE_2D, 0);
-            GLESStateVariables::currentTexture2 = 0;
+            GLESStateVariables::currentTexture11 = 0;
         }
     }
 

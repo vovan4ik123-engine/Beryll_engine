@@ -31,9 +31,10 @@ namespace Beryll
         // for texture
         virtual void activateDiffuseTexture() = 0;
         virtual void activateSpecularTexture() = 0;
-        virtual void activateShadowMapTexture() = 0;
         virtual void activateNormalMapTexture() = 0;
         virtual void activateHeightMapTexture() = 0;
+        virtual void activateSkyBoxTexture() = 0;
+        virtual void activateShadowMapTexture() = 0;
 
     protected:
         // keep shaders in static map in subclasses for reuse them

@@ -1,0 +1,11 @@
+Every texture must be 24 or 32 bit depth.
+
+Every game object can has set of 4 textures:
+    diffuse(base color)
+    specular
+    normal map
+    height map
+
+Prefer use diffuse texture in .png format because Alpha channel.
+If you need pass transparency to shader pass it in Alpha chanel of .png texture
+Rest textures use in .jpg format because it is less size

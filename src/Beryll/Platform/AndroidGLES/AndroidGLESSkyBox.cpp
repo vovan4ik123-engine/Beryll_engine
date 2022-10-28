@@ -86,7 +86,7 @@ namespace Beryll
 
         m_internalShader = Renderer::createShader("shaders/GLES/default/SkyBox.vert", "shaders/GLES/default/SkyBox.frag");
         m_internalShader->bind();
-        m_internalShader->activateDiffuseTexture();
+        m_internalShader->activateSkyBoxTexture();
 
         std::vector<glm::vec3> vertices;
         vertices.emplace_back(glm::vec3{1.0f, -1.0f, -1.0f}); // right side +X
@@ -151,11 +151,11 @@ namespace Beryll
             m_internalShader->setMatrix4x4Float("VPMatrix", m_perspView);
         }
 
-        if(GLESStateVariables::currentTexture0 != m_openGLID)
+        if(GLESStateVariables::currentTexture10 != m_openGLID)
         {
-            glActiveTexture(GL_TEXTURE0);
+            glActiveTexture(GL_TEXTURE10);
             glBindTexture(GL_TEXTURE_CUBE_MAP, m_openGLID);
-            GLESStateVariables::currentTexture0 = m_openGLID;
+            GLESStateVariables::currentTexture10 = m_openGLID;
         }
 
         m_vertexArray->bind();

@@ -182,18 +182,23 @@ namespace Beryll
         glUniform1i(glGetUniformLocation(*m_shaderProgramID, "specularTexture"), 1);
     }
 
-    void AndroidGLESShader::activateShadowMapTexture()
-    {
-        glUniform1i(glGetUniformLocation(*m_shaderProgramID, "shadowMapTexture"), 2);
-    }
-
     void AndroidGLESShader::activateNormalMapTexture()
     {
-        glUniform1i(glGetUniformLocation(*m_shaderProgramID, "normalMapTexture"), 3);
+        glUniform1i(glGetUniformLocation(*m_shaderProgramID, "normalMapTexture"), 2);
     }
 
     void AndroidGLESShader::activateHeightMapTexture()
     {
-        glUniform1i(glGetUniformLocation(*m_shaderProgramID, "heightMapTexture"), 4);
+        glUniform1i(glGetUniformLocation(*m_shaderProgramID, "heightMapTexture"), 3);
+    }
+
+    void AndroidGLESShader::activateSkyBoxTexture()
+    {
+        glUniform1i(glGetUniformLocation(*m_shaderProgramID, "skyBoxTexture"), 10);
+    }
+
+    void AndroidGLESShader::activateShadowMapTexture()
+    {
+        glUniform1i(glGetUniformLocation(*m_shaderProgramID, "shadowMapTexture"), 11);
     }
 }

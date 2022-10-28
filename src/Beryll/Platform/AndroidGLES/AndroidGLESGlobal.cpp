@@ -8,6 +8,7 @@ namespace GLESStateVariables
     unsigned int currentTexture1 = 0;
     unsigned int currentTexture2 = 0;
     unsigned int currentTexture3 = 0;
-    unsigned int currentTexture4 = 0;
 
+    unsigned int currentTexture10 = 0;
+    unsigned int currentTexture11 = 0;
 }

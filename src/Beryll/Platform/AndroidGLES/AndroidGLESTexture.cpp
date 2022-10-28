@@ -39,10 +39,12 @@ namespace Beryll
         SDL_Surface* surface = IMG_Load_RW(rw, 1);
         BR_ASSERT((surface != nullptr), "Create surface failed:%s", m_ID.c_str());
 
-        BR_ASSERT((surface->format->BytesPerPixel == 3 || surface->format->BytesPerPixel == 4), "Load texture failed:%s. Use 24 or 32 bit depth", m_ID.c_str());
+        BR_ASSERT((surface->format->BytesPerPixel > 0 && surface->format->BytesPerPixel <= 4), "Load texture failed:%s. Depth = 0 or > 4", m_ID.c_str());
 
+        BR_INFO("Bytes per pixel:%d", surface->format->BytesPerPixel);
         int pixelFormat = GL_RGB;
         if(4 == surface->format->BytesPerPixel) pixelFormat = GL_RGBA;
+        else if(1 == surface->format->BytesPerPixel) pixelFormat = GL_RED;
 
         m_openGLID = std::make_shared<uint32_t>();
 
@@ -93,19 +95,17 @@ namespace Beryll
             glBindTexture(GL_TEXTURE_2D, *m_openGLID);
             GLESStateVariables::currentTexture1 = *m_openGLID;
         }
-        // else if(m_type == TextureType::SHADOW_MAP_TEXTURE) // shadow map implemented in different class
-        //     glActiveTexture(GL_TEXTURE2);
-        else if(m_type == TextureType::NORMAL_MAP_TEXTURE && GLESStateVariables::currentTexture3 != *m_openGLID)
+        else if(m_type == TextureType::NORMAL_MAP_TEXTURE && GLESStateVariables::currentTexture2 != *m_openGLID)
+        {
+            glActiveTexture(GL_TEXTURE2);
+            glBindTexture(GL_TEXTURE_2D, *m_openGLID);
+            GLESStateVariables::currentTexture2 = *m_openGLID;
+        }
+        else if(m_type == TextureType::HEIGHT_MAP_TEXTURE && GLESStateVariables::currentTexture3 != *m_openGLID)
         {
             glActiveTexture(GL_TEXTURE3);
             glBindTexture(GL_TEXTURE_2D, *m_openGLID);
             GLESStateVariables::currentTexture3 = *m_openGLID;
-        }
-        else if(m_type == TextureType::HEIGHT_MAP_TEXTURE && GLESStateVariables::currentTexture4 != *m_openGLID)
-        {
-            glActiveTexture(GL_TEXTURE4);
-            glBindTexture(GL_TEXTURE_2D, *m_openGLID);
-            GLESStateVariables::currentTexture4 = *m_openGLID;
         }
     }
 
@@ -124,19 +124,17 @@ namespace Beryll
             glBindTexture(GL_TEXTURE_2D, 0);
             GLESStateVariables::currentTexture1 = 0;
         }
-        // else if(m_type == TextureType::SHADOW_MAP_TEXTURE) // shadow map implemented in different class
-        //     glActiveTexture(GL_TEXTURE2);
-        else if(m_type == TextureType::NORMAL_MAP_TEXTURE && GLESStateVariables::currentTexture3 == *m_openGLID)
+        else if(m_type == TextureType::NORMAL_MAP_TEXTURE && GLESStateVariables::currentTexture2 == *m_openGLID)
+        {
+            glActiveTexture(GL_TEXTURE2);
+            glBindTexture(GL_TEXTURE_2D, 0);
+            GLESStateVariables::currentTexture2 = 0;
+        }
+        else if(m_type == TextureType::HEIGHT_MAP_TEXTURE && GLESStateVariables::currentTexture3 == *m_openGLID)
         {
             glActiveTexture(GL_TEXTURE3);
             glBindTexture(GL_TEXTURE_2D, 0);
             GLESStateVariables::currentTexture3 = 0;
-        }
-        else if(m_type == TextureType::HEIGHT_MAP_TEXTURE && GLESStateVariables::currentTexture4 == *m_openGLID)
-        {
-            glActiveTexture(GL_TEXTURE4);
-            glBindTexture(GL_TEXTURE_2D, 0);
-            GLESStateVariables::currentTexture4 = 0;
         }
     }
 }

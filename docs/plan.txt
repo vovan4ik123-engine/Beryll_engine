@@ -1,11 +1,7 @@
 ---------------------plan:---------------------
 
-lighting
-shadows
-Normal Mapping
-Parallax Mapping
+use .fbx format + textures paths
 particles
-cel shading ???
 
 
 update IMGui to 1.88+

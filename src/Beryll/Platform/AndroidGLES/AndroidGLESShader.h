@@ -29,9 +29,10 @@ namespace Beryll
 
         void activateDiffuseTexture() override;
         void activateSpecularTexture() override;
-        void activateShadowMapTexture() override;
         void activateNormalMapTexture() override;
         void activateHeightMapTexture() override;
+        void activateSkyBoxTexture() override;
+        void activateShadowMapTexture() override;
 
     private:
         friend class Renderer;
