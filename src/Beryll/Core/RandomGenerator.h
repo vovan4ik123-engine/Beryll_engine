@@ -25,9 +25,10 @@ namespace Beryll
             return dist(re);
         }
 
-        static float getFastFloat(float first, float last)
+        // return 0.0f ... 1.0f
+        static float getFastFloat()
         {
-            return ((static_cast<float>(rand()) / static_cast<float>(RAND_MAX)) * (last - first)) + first;
+            return static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX);
         }
 
     private:

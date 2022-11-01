@@ -1,5 +1,3 @@
-Every texture must be 24 or 32 bit depth.
-
 Every game object can has set of 4 textures:
     diffuse(base color)
     specular
@@ -9,3 +7,7 @@ Every game object can has set of 4 textures:
 Prefer use diffuse texture in .png format because Alpha channel.
 If you need pass transparency to shader pass it in Alpha chanel of .png texture
 Rest textures use in .jpg format because it is less size
+
+FBX format exported from blender can store diffuse + specular + normal map textures,
+height map is ignored oO.
+You should load and bind height map manually before draw object which needs it.

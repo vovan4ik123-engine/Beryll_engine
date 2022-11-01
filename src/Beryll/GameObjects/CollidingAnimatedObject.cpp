@@ -41,7 +41,7 @@ namespace Beryll
                                                  aiProcess_FlipUVs |
                                                  aiProcess_CalcTangentSpace);
             delete[] buffer;
-            if (!scene || !scene->mRootNode || scene->mFlags == AI_SCENE_FLAGS_INCOMPLETE)
+            if(!scene || !scene->mRootNode || scene->mFlags == AI_SCENE_FLAGS_INCOMPLETE)
             {
                 BR_ASSERT(false, "Scene loading error for file:%s", modelPath);
             }
@@ -67,25 +67,25 @@ namespace Beryll
             if(meshName.find("Collision") != std::string::npos)
             {
                 // collect collision mesh dimensions
-                for (int g = 0; g < m_scene->mMeshes[i]->mNumVertices; ++g)
+                for(int g = 0; g < m_scene->mMeshes[i]->mNumVertices; ++g)
                 {
-                    if (m_scene->mMeshes[i]->mVertices[g].y < m_mostBottomVertex)
-                        m_mostBottomVertex = m_scene->mMeshes[i]->mVertices[g].y;
+                    if(m_scene->mMeshes[i]->mVertices[g].y < m_mostBottomVertex)
+                       m_mostBottomVertex = m_scene->mMeshes[i]->mVertices[g].y;
 
-                    if (m_scene->mMeshes[i]->mVertices[g].y > m_mostTopVertex)
-                        m_mostTopVertex = m_scene->mMeshes[i]->mVertices[g].y;
+                    if(m_scene->mMeshes[i]->mVertices[g].y > m_mostTopVertex)
+                       m_mostTopVertex = m_scene->mMeshes[i]->mVertices[g].y;
 
-                    if (m_scene->mMeshes[i]->mVertices[g].x < m_smallestX)
-                        m_smallestX = m_scene->mMeshes[i]->mVertices[g].x;
+                    if(m_scene->mMeshes[i]->mVertices[g].x < m_smallestX)
+                       m_smallestX = m_scene->mMeshes[i]->mVertices[g].x;
 
-                    if (m_scene->mMeshes[i]->mVertices[g].x > m_biggestX)
-                        m_biggestX = m_scene->mMeshes[i]->mVertices[g].x;
+                    if(m_scene->mMeshes[i]->mVertices[g].x > m_biggestX)
+                       m_biggestX = m_scene->mMeshes[i]->mVertices[g].x;
 
-                    if (m_scene->mMeshes[i]->mVertices[g].z < m_smallestZ)
-                        m_smallestZ = m_scene->mMeshes[i]->mVertices[g].z;
+                    if(m_scene->mMeshes[i]->mVertices[g].z < m_smallestZ)
+                       m_smallestZ = m_scene->mMeshes[i]->mVertices[g].z;
 
-                    if (m_scene->mMeshes[i]->mVertices[g].z > m_biggestZ)
-                        m_biggestZ = m_scene->mMeshes[i]->mVertices[g].z;
+                    if(m_scene->mMeshes[i]->mVertices[g].z > m_biggestZ)
+                       m_biggestZ = m_scene->mMeshes[i]->mVertices[g].z;
                 }
 
                 m_hasCollisionObject = true;
@@ -173,7 +173,7 @@ namespace Beryll
                 std::string boneName = m_scene->mMeshes[i]->mBones[g]->mName.C_Str();
 
                 auto iter = m_boneNameIndex.find(boneName);
-                if (iter != m_boneNameIndex.end())
+                if(iter != m_boneNameIndex.end())
                 {
                     BR_ASSERT(false, "Many bones have same name in one model:%s", modelPath);
                 }
@@ -185,14 +185,14 @@ namespace Beryll
                 }
 
                 // collect all vertices to which bone has impact
-                for (int j = 0; j < m_scene->mMeshes[i]->mBones[g]->mNumWeights; ++j)
+                for(int j = 0; j < m_scene->mMeshes[i]->mBones[g]->mNumWeights; ++j)
                 {
                     uint32_t vertexIndex = m_scene->mMeshes[i]->mBones[g]->mWeights[j].mVertexId;
                     float weight = m_scene->mMeshes[i]->mBones[g]->mWeights[j].mWeight;
 
-                    for (int k = 0; k < NUM_BONES_PER_VERTEX; ++k)
+                    for(int k = 0; k < NUM_BONES_PER_VERTEX; ++k)
                     {
-                        if (boneIDs[vertexIndex][k] == -1 && boneWeights[vertexIndex][k] == -1.0f)
+                        if(boneIDs[vertexIndex][k] == -1 && boneWeights[vertexIndex][k] == -1.0f)
                         {
                             boneIDs[vertexIndex][k] = g;
                             boneWeights[vertexIndex][k] = weight;
@@ -205,7 +205,7 @@ namespace Beryll
             m_boneWeightsBuffer = Renderer::createVertexBuffer(boneWeights);
 
             // indices
-            for (int g = 0; g < m_scene->mMeshes[i]->mNumFaces; ++g) // every face MUST be a triangle !!!!
+            for(int g = 0; g < m_scene->mMeshes[i]->mNumFaces; ++g) // every face MUST be a triangle !!!!
             {
                 indices.emplace_back(m_scene->mMeshes[i]->mFaces[g].mIndices[0]);
                 indices.emplace_back(m_scene->mMeshes[i]->mFaces[g].mIndices[1]);
@@ -226,7 +226,7 @@ namespace Beryll
             m_internalShader->bind();
 
             // material
-            if (m_scene->mMeshes[i]->mMaterialIndex >= 0)
+            if(m_scene->mMeshes[i]->mMaterialIndex >= 0)
             {
                 aiMaterial *material = m_scene->mMaterials[m_scene->mMeshes[i]->mMaterialIndex];
 
@@ -234,32 +234,73 @@ namespace Beryll
 
                 std::string texturePath;
 
-                if (material->GetTextureCount(aiTextureType_DIFFUSE) > 0)
+                if(material->GetTextureCount(aiTextureType_DIFFUSE) > 0)
                 {
                     aiString textName;
                     material->GetTexture(aiTextureType_DIFFUSE, 0, &textName);
 
+                    std::string textName2 = textName.C_Str();
+                    for(int g = static_cast<int>(textName2.size()) - 1; g >= 0; --g)
+                    {
+                        if(textName2[g] == '/' || textName2[g] == '\\')
+                        {
+                            textName2 = textName2.substr(g + 1);
+                            break;
+                        }
+                    }
                     texturePath = m_modelPath.substr(0, m_modelPath.find_last_of('/'));
                     texturePath += '/';
-                    texturePath += textName.C_Str();
+                    texturePath += textName2;
                     BR_INFO("Diffuse texture here:%s", texturePath.c_str());
 
                     m_diffTexture = Renderer::createTexture(texturePath.c_str(), TextureType::DIFFUSE_TEXTURE);
                     m_internalShader->activateDiffuseTexture();
                 }
 
-                if (material->GetTextureCount(aiTextureType_SPECULAR) > 0)
+                if(material->GetTextureCount(aiTextureType_SPECULAR) > 0)
                 {
                     aiString textName;
                     material->GetTexture(aiTextureType_SPECULAR, 0, &textName);
 
+                    std::string textName2 = textName.C_Str();
+                    for(int g = static_cast<int>(textName2.size()) - 1; g >= 0; --g)
+                    {
+                        if(textName2[g] == '/' || textName2[g] == '\\')
+                        {
+                            textName2 = textName2.substr(g + 1);
+                            break;
+                        }
+                    }
                     texturePath = m_modelPath.substr(0, m_modelPath.find_last_of('/'));
                     texturePath += '/';
-                    texturePath += textName.C_Str();
+                    texturePath += textName2;
                     BR_INFO("Specular texture here:%s", texturePath.c_str());
 
                     m_specTexture = Renderer::createTexture(texturePath.c_str(), TextureType::SPECULAR_TEXTURE);
                     m_internalShader->activateSpecularTexture();
+                }
+
+                if(material->GetTextureCount(aiTextureType_NORMALS) > 0)
+                {
+                    aiString textName;
+                    material->GetTexture(aiTextureType_NORMALS, 0, &textName);
+
+                    std::string textName2 = textName.C_Str();
+                    for(int g = static_cast<int>(textName2.size()) - 1; g >= 0; --g)
+                    {
+                        if(textName2[g] == '/' || textName2[g] == '\\')
+                        {
+                            textName2 = textName2.substr(g + 1);
+                            break;
+                        }
+                    }
+                    texturePath = m_modelPath.substr(0, m_modelPath.find_last_of('/'));
+                    texturePath += '/';
+                    texturePath += textName2;
+                    BR_INFO("Normal map texture here:%s", texturePath.c_str());
+
+                    m_normalMapTexture = Renderer::createTexture(texturePath.c_str(), TextureType::NORMAL_MAP_TEXTURE);
+                    m_internalShader->activateNormalMapTexture();
                 }
             }
 
@@ -271,7 +312,7 @@ namespace Beryll
             }
 
             const aiNode *node = Utils::Common::findAinodeForAimesh(m_scene, m_scene->mRootNode, m_scene->mMeshes[i]->mName);
-            if (node)
+            if(node)
             {
                 m_modelMatrix = Utils::Matrix::aiToGlm(node->mTransformation);
             }
@@ -324,6 +365,7 @@ namespace Beryll
 
         if(m_diffTexture && useInternalTextures) { m_diffTexture->bind(); }
         if(m_specTexture && useInternalTextures) { m_specTexture->bind(); }
+        if(m_normalMapTexture && useInternalTextures) { m_normalMapTexture->bind(); }
 
         m_vertexArray->bind();
         m_vertexArray->draw();

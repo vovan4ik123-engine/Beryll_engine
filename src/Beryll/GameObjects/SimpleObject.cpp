@@ -125,9 +125,18 @@ namespace Beryll
                 aiString textName;
                 material->GetTexture(aiTextureType_DIFFUSE, 0, &textName);
 
+                std::string textName2 = textName.C_Str();
+                for(int g = static_cast<int>(textName2.size()) - 1; g >= 0; --g)
+                {
+                    if(textName2[g] == '/' || textName2[g] == '\\')
+                    {
+                        textName2 = textName2.substr(g + 1);
+                        break;
+                    }
+                }
                 texturePath = mP.substr(0, mP.find_last_of('/'));
                 texturePath += '/';
-                texturePath += textName.C_Str();
+                texturePath += textName2;
                 BR_INFO("Diffuse texture here:%s", texturePath.c_str());
 
                 m_diffTexture = Renderer::createTexture(texturePath.c_str(), TextureType::DIFFUSE_TEXTURE);
@@ -139,13 +148,45 @@ namespace Beryll
                 aiString textName;
                 material->GetTexture(aiTextureType_SPECULAR, 0, &textName);
 
+                std::string textName2 = textName.C_Str();
+                for(int g = static_cast<int>(textName2.size()) - 1; g >= 0; --g)
+                {
+                    if(textName2[g] == '/' || textName2[g] == '\\')
+                    {
+                        textName2 = textName2.substr(g + 1);
+                        break;
+                    }
+                }
                 texturePath = mP.substr(0, mP.find_last_of('/'));
                 texturePath += '/';
-                texturePath += textName.C_Str();
+                texturePath += textName2;
                 BR_INFO("Specular texture here:%s", texturePath.c_str());
 
                 m_specTexture = Renderer::createTexture(texturePath.c_str(), TextureType::SPECULAR_TEXTURE);
                 m_internalShader->activateSpecularTexture();
+            }
+
+            if(material->GetTextureCount(aiTextureType_NORMALS) > 0)
+            {
+                aiString textName;
+                material->GetTexture(aiTextureType_NORMALS, 0, &textName);
+
+                std::string textName2 = textName.C_Str();
+                for(int g = static_cast<int>(textName2.size()) - 1; g >= 0; --g)
+                {
+                    if(textName2[g] == '/' || textName2[g] == '\\')
+                    {
+                        textName2 = textName2.substr(g + 1);
+                        break;
+                    }
+                }
+                texturePath = mP.substr(0, mP.find_last_of('/'));
+                texturePath += '/';
+                texturePath += textName2;
+                BR_INFO("Normal map texture here:%s", texturePath.c_str());
+
+                m_normalMapTexture = Renderer::createTexture(texturePath.c_str(), TextureType::NORMAL_MAP_TEXTURE);
+                m_internalShader->activateNormalMapTexture();
             }
         }
 
@@ -184,6 +225,7 @@ namespace Beryll
 
         if(m_diffTexture && useInternalTextures) { m_diffTexture->bind(); }
         if(m_specTexture && useInternalTextures) { m_specTexture->bind(); }
+        if(m_normalMapTexture && useInternalTextures) { m_normalMapTexture->bind(); }
 
         m_vertexArray->bind();
         m_vertexArray->draw();

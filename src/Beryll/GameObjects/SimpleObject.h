@@ -34,5 +34,6 @@ namespace Beryll
         std::shared_ptr<Shader> m_internalShader; // Default, simple shader. Use if no shader was bound on scene
         std::unique_ptr<Texture> m_diffTexture;
         std::unique_ptr<Texture> m_specTexture;
+        std::unique_ptr<Texture> m_normalMapTexture;
     };
 }

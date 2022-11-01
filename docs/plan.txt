@@ -1,6 +1,5 @@
 ---------------------plan:---------------------
 
-use .fbx format + textures paths
 particles
 
 

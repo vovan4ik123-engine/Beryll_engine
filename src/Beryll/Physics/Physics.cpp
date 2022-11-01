@@ -472,7 +472,7 @@ namespace Beryll
         std::vector<int> ids;
         ids.reserve(3);
 
-        for (int i = 0; i < m_dynamicsWorldMT->getNumCollisionObjects(); ++i)
+        for(int i = 0; i < m_dynamicsWorldMT->getNumCollisionObjects(); ++i)
         {
             if(m_dynamicsWorldMT->getCollisionObjectArray()[i]->getBroadphaseHandle()->m_collisionFilterGroup & static_cast<int>(group))
             {
@@ -505,7 +505,7 @@ namespace Beryll
                (obA->beryllEngineObjectID == ID2 && obB->beryllEngineObjectID == ID1))
             {
                 // we found contact point between 2 objects
-                for (int j = 0; j < contactManifold->getNumContacts(); j++)
+                for(int j = 0; j < contactManifold->getNumContacts(); j++)
                 {
                     const btManifoldPoint& pt = contactManifold->getContactPoint(j);
 
@@ -555,7 +555,7 @@ namespace Beryll
                (obB->beryllEngineObjectID == ID1 && obA_ID_existInIDs))
             {
                 // we found collision between 2 objects
-                for (int j = 0; j < contactManifold->getNumContacts(); j++)
+                for(int j = 0; j < contactManifold->getNumContacts(); j++)
                 {
                     const btManifoldPoint& pt = contactManifold->getContactPoint(j);
 
@@ -595,7 +595,7 @@ namespace Beryll
 
             iter->second->rb->activate(true);
 
-            //for (int i = m_dynamicsWorldMT->getNumCollisionObjects() - 1; i >= 0; --i)
+            //for(int i = m_dynamicsWorldMT->getNumCollisionObjects() - 1; i >= 0; --i)
             //{
             //    btRigidBody* body = btRigidBody::upcast(m_dynamicsWorldMT->getCollisionObjectArray()[i]);
             //    if (body && body->getActivationState() != ACTIVE_TAG)
@@ -940,7 +940,7 @@ namespace Beryll
             res.hitFractions.reserve(allResults.m_hitPointWorld.size());
             res.objectsID.reserve(allResults.m_hitPointWorld.size());
 
-            for (int i = 0; i < allResults.m_hitPointWorld.size(); i++)
+            for(int i = 0; i < allResults.m_hitPointWorld.size(); i++)
             {
                 res.hitPoints.emplace_back(allResults.m_hitPointWorld[i].x(), allResults.m_hitPointWorld[i].y(), allResults.m_hitPointWorld[i].z());
                 res.hitNormals.emplace_back(allResults.m_hitNormalWorld[i].x(), allResults.m_hitNormalWorld[i].y(), allResults.m_hitNormalWorld[i].z());
