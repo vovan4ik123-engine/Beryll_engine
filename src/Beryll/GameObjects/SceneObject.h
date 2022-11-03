@@ -88,7 +88,7 @@ namespace Beryll
 
         void addToRotation(const glm::quat& rot, bool resetVelocities = false)
         {
-            if(rot.w == 1.0f) { return; } // no rotation. quaternion musts be unit !!!
+            if(rot.w == 1.0f) { return; } // no rotation. quaternion must be unit !!!
 
             if(m_hasCollisionObject)
             {

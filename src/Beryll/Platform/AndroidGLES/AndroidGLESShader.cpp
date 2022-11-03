@@ -118,58 +118,180 @@ namespace Beryll
 
     void AndroidGLESShader::set1Float(const char* name, const float x)
     {
-        glUniform1f(glGetUniformLocation(*m_shaderProgramID, name), x);
+        for(const UniformsLocations& uniforms : m_uniformsNameID)
+        {
+            if(uniforms.name == name)
+            {
+                glUniform1f(uniforms.id, x);
+                return;
+            }
+        }
+        
+        int id = glGetUniformLocation(*m_shaderProgramID, name);
+        glUniform1f(id, x);
+        m_uniformsNameID.emplace_back(UniformsLocations{name, id});
     }
 
     void AndroidGLESShader::set2Float(const char* name, const float x, const float y)
     {
-        glUniform2f(glGetUniformLocation(*m_shaderProgramID, name), x, y);
+        for(const UniformsLocations& uniforms : m_uniformsNameID)
+        {
+            if(uniforms.name == name)
+            {
+                glUniform2f(uniforms.id, x, y);
+                return;
+            }
+        }
+        
+        int id = glGetUniformLocation(*m_shaderProgramID, name);
+        glUniform2f(id, x, y);
+        m_uniformsNameID.emplace_back(UniformsLocations{name, id});
     }
 
     void AndroidGLESShader::set3Float(const char* name, const float x, const float y, const float z)
     {
-        glUniform3f(glGetUniformLocation(*m_shaderProgramID, name), x, y, z);
+        for(const UniformsLocations& uniforms : m_uniformsNameID)
+        {
+            if(uniforms.name == name)
+            {
+                glUniform3f(uniforms.id, x, y, z);
+                return;
+            }
+        }
+        
+        int id = glGetUniformLocation(*m_shaderProgramID, name);
+        glUniform3f(id, x, y, z);
+        m_uniformsNameID.emplace_back(UniformsLocations{name, id});
     }
 
     void AndroidGLESShader::set4Float(const char* name, const float x, const float y, const float z, const float w)
     {
-        glUniform4f(glGetUniformLocation(*m_shaderProgramID, name), x, y,z ,w);
+        for(const UniformsLocations& uniforms : m_uniformsNameID)
+        {
+            if(uniforms.name == name)
+            {
+                glUniform4f(uniforms.id, x, y,z ,w);
+                return;
+            }
+        }
+        
+        int id = glGetUniformLocation(*m_shaderProgramID, name);
+        glUniform4f(id, x, y,z ,w);
+        m_uniformsNameID.emplace_back(UniformsLocations{name, id});
     }
 
     void AndroidGLESShader::set1Int(const char* name, const int x)
     {
-        glUniform1i(glGetUniformLocation(*m_shaderProgramID, name), x);
+        for(const UniformsLocations& uniforms : m_uniformsNameID)
+        {
+            if(uniforms.name == name)
+            {
+                glUniform1i(uniforms.id, x);
+                return;
+            }
+        }
+        
+        int id = glGetUniformLocation(*m_shaderProgramID, name);
+        glUniform1i(id, x);
+        m_uniformsNameID.emplace_back(UniformsLocations{name, id});
     }
 
     void AndroidGLESShader::set2Int(const char* name, const int x, const int y)
     {
-        glUniform2i(glGetUniformLocation(*m_shaderProgramID, name), x, y);
+        for(const UniformsLocations& uniforms : m_uniformsNameID)
+        {
+            if(uniforms.name == name)
+            {
+                glUniform2i(uniforms.id, x, y);
+                return;
+            }
+        }
+        
+        int id = glGetUniformLocation(*m_shaderProgramID, name);
+        glUniform2i(id, x, y);
+        m_uniformsNameID.emplace_back(UniformsLocations{name, id});
     }
 
     void AndroidGLESShader::set3Int(const char* name, const int x, const int y, const int z)
     {
-        glUniform3i(glGetUniformLocation(*m_shaderProgramID, name), x, y, z);
+        for(const UniformsLocations& uniforms : m_uniformsNameID)
+        {
+            if(uniforms.name == name)
+            {
+                glUniform3i(uniforms.id, x, y, z);
+                return;
+            }
+        }
+
+        int id = glGetUniformLocation(*m_shaderProgramID, name);
+        glUniform3i(id, x, y, z);
+        m_uniformsNameID.emplace_back(UniformsLocations{name, id});
     }
 
     void AndroidGLESShader::set4Int(const char* name, const int x, const int y, const int z, const int w)
     {
-        glUniform4i(glGetUniformLocation(*m_shaderProgramID, name), x, y, z, w);
+        for(const UniformsLocations& uniforms : m_uniformsNameID)
+        {
+            if(uniforms.name == name)
+            {
+                glUniform4i(uniforms.id, x, y, z, w);
+                return;
+            }
+        }
+
+        int id = glGetUniformLocation(*m_shaderProgramID, name);
+        glUniform4i(id, x, y, z, w);
+        m_uniformsNameID.emplace_back(UniformsLocations{name, id});
     }
 
     void AndroidGLESShader::setMatrix4x4Float(const char* name, const glm::mat4& value)
     {
-        glUniformMatrix4fv(glGetUniformLocation(*m_shaderProgramID, name), 1, GL_FALSE, glm::value_ptr(value));
+        for(const UniformsLocations& uniforms : m_uniformsNameID)
+        {
+            if(uniforms.name == name)
+            {
+                glUniformMatrix4fv(uniforms.id, 1, GL_FALSE, glm::value_ptr(value));
+                return;
+            }
+        }
+
+        int id = glGetUniformLocation(*m_shaderProgramID, name);
+        glUniformMatrix4fv(id, 1, GL_FALSE, glm::value_ptr(value));
+        m_uniformsNameID.emplace_back(UniformsLocations{name, id});
     }
 
     void AndroidGLESShader::setMatrix4x4Float(const char* name, const aiMatrix4x4& value)
     {
-        glUniformMatrix4fv(glGetUniformLocation(*m_shaderProgramID, name), 1, GL_TRUE,
+        for(const UniformsLocations& uniforms : m_uniformsNameID)
+        {
+            if(uniforms.name == name)
+            {
+                glUniformMatrix4fv(uniforms.id, 1, GL_TRUE,
+                                   reinterpret_cast<float*>(const_cast<aiMatrix4x4*>(&value)));
+                return;
+            }
+        }
+
+        int id = glGetUniformLocation(*m_shaderProgramID, name);
+        glUniformMatrix4fv(id, 1, GL_TRUE,
                            reinterpret_cast<float*>(const_cast<aiMatrix4x4*>(&value)));
+        m_uniformsNameID.emplace_back(UniformsLocations{name, id});
     }
 
     void AndroidGLESShader::setMatrix3x3Float(const char* name, const glm::mat3& value)
     {
-        glUniformMatrix3fv(glGetUniformLocation(*m_shaderProgramID, name), 1, GL_FALSE, glm::value_ptr(value));
+        for(const UniformsLocations& uniforms : m_uniformsNameID)
+        {
+            if(uniforms.name == name)
+            {
+                glUniformMatrix3fv(uniforms.id, 1, GL_FALSE, glm::value_ptr(value));
+                return;
+            }
+        }
+
+        int id = glGetUniformLocation(*m_shaderProgramID, name);
+        glUniformMatrix3fv(id, 1, GL_FALSE, glm::value_ptr(value));
+        m_uniformsNameID.emplace_back(UniformsLocations{name, id});
     }
 
     void AndroidGLESShader::activateDiffuseTexture()

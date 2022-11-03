@@ -2,6 +2,6 @@
 
 namespace Beryll
 {
-    std::random_device RandomGenerator::rd;
-    std::mt19937_64 RandomGenerator::re = std::mt19937_64(rd());
+    std::mt19937_64 RandomGenerator::re = std::mt19937_64(std::random_device()());
+    std::uniform_int_distribution<int> RandomGenerator::intDist;
 }

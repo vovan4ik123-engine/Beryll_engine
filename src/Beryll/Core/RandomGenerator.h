@@ -7,33 +7,21 @@ namespace Beryll
     class RandomGenerator
     {
     public:
-
-        static int getQualityInt(const unsigned int first, const unsigned int last)
-        {
-            std::uniform_int_distribution<int> dist(first, last);
-            return dist(re);
-        }
-
-        static int getFastInt(const unsigned int first, const unsigned int last)
-        {
-            return (std::rand() % (last - first)) + first;
-        }
-
-        static float getQualityFloat(float first, float last)
-        {
-            std::uniform_real_distribution<float> dist(first, last);
-            return dist(re);
-        }
-
         // return 0.0f ... 1.0f
-        static float getFastFloat()
+        static float getFloat()
         {
-            return static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX);
+            return static_cast<float>(intDist(re)) / static_cast<float>(std::numeric_limits<int>::max());
+        }
+
+        // return 0 ... max
+        static int getInt(int max)
+        {
+            return getFloat() * static_cast<float>(max);
         }
 
     private:
         // C++ 11 random generation way
-        static std::random_device rd;
         static std::mt19937_64 re; // random engine
+        static std::uniform_int_distribution<int> intDist;
     };
 }

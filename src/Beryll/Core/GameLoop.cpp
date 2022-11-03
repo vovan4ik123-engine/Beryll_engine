@@ -30,8 +30,6 @@ namespace Beryll
     {
         m_platform = p;
 
-        std::srand(static_cast<unsigned int>(time(nullptr))); // for std::rand()
-
         Window::create();
         Window::getInstance()->setClearColor(0.8f, 0.0f, 0.8f, 1.0f);
 
@@ -40,6 +38,8 @@ namespace Beryll
         SoundsManager::create();
 
         Physics::create();
+
+        // particle system create
     }
 
     void GameLoop::run()

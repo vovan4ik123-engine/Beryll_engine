@@ -51,5 +51,12 @@ namespace Beryll
                           // if many objects load same shader, shader ID will same for all of them
         std::shared_ptr<uint32_t> m_shaderProgramID; // ID in OpenGL
                                                      // will copied across all objects with same m_ID
+
+        struct UniformsLocations
+        {
+            const std::string name;
+            const int id;
+        };
+        std::vector<UniformsLocations> m_uniformsNameID;
     };
 }

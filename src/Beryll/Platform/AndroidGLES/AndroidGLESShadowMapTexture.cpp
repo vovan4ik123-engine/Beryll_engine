@@ -75,8 +75,6 @@ namespace Beryll
                                                         const std::shared_ptr<Beryll::Shader>& shaderAnimated,
                                                         const glm::mat4& VPMatrix)
     {
-        glGetIntegerv(GL_FRAMEBUFFER_BINDING, &m_defaultFBO);
-
         glViewport(0, 0, m_mapWidth, m_mapHeight); // for texture resolution
         glBindFramebuffer(GL_FRAMEBUFFER, m_depthMapFBO);
         glClear(GL_DEPTH_BUFFER_BIT);
