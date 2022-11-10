@@ -15,16 +15,16 @@ namespace glm
 			aligned_highp, ///< Typed data is aligned in memory allowing SIMD optimizations and operations are executed with high precision in term of ULPs
 			aligned_mediump, ///< Typed data is aligned in memory allowing SIMD optimizations and operations are executed with high precision in term of ULPs for higher performance
 			aligned_lowp, // ///< Typed data is aligned in memory allowing SIMD optimizations and operations are executed with high precision in term of ULPs to maximize performance
-			aligned = aligned_highp, ///< By default aligned qualifier is also high precision
+			aligned = aligned_lowp,
 #		endif
 
 		highp = packed_highp, ///< By default highp qualifier is also packed
 		mediump = packed_mediump, ///< By default mediump qualifier is also packed
 		lowp = packed_lowp, ///< By default lowp qualifier is also packed
-		packed = packed_highp, ///< By default packed qualifier is also high precision
+		packed = packed_lowp,
 
 #		if GLM_CONFIG_ALIGNED_GENTYPES == GLM_ENABLE && defined(GLM_FORCE_DEFAULT_ALIGNED_GENTYPES)
-			defaultp = aligned_mediump
+			defaultp = aligned_lowp
 #		else
 			defaultp = lowp
 #		endif

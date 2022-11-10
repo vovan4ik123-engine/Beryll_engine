@@ -20,17 +20,13 @@ namespace Beryll
 
     uint32_t GameLoop::m_maxFPS = 300;
 
-    Platform GameLoop::m_platform = Platform::UNKNOWN;
-
     uint32_t GameLoop::calcStart = 0;
     uint32_t GameLoop::calcTime = 0;
     uint32_t GameLoop::drawStart = 0;
     uint32_t GameLoop::drawTime = 0;
 
-    void GameLoop::create(Platform p)
+    void GameLoop::create()
     {
-        m_platform = p;
-
         Window::create();
         Window::getInstance()->setClearColor(0.8f, 0.0f, 0.8f, 1.0f);
 

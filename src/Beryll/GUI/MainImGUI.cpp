@@ -1,5 +1,10 @@
 #include "MainImGUI.h"
-#include "Beryll/Platform/AndroidGLES/AndroidGLESImGUI.h"
+
+#if defined(ANDROID)
+    #include "Beryll/Platform/AndroidGLES/AndroidGLESImGUI.h"
+#elif defined(APPLE)
+
+#endif
 
 namespace Beryll
 {
@@ -9,13 +14,12 @@ namespace Beryll
     {
         if(m_imGUI) { return; }
 
-        if(GameLoop::getPlatform() == Platform::ANDROID_GLES)
-        {
-            m_imGUI = std::unique_ptr<MainImGUI>(new AndroidGLESImGUI());
-        }
-        else
-        {
-            BR_ASSERT(false, "%s", "Can not create ImGUI. Unknown platform.");
-        }
+#if defined(ANDROID)
+        m_imGUI = std::unique_ptr<MainImGUI>(new AndroidGLESImGUI());
+#elif defined(APPLE)
+
+#else
+        BR_ASSERT(false, "%s", "Can not create ImGUI. Unknown platform.");
+#endif
     }
 }

@@ -5,12 +5,6 @@
 
 namespace Beryll
 {
-    enum class Platform
-    {
-        UNKNOWN,
-        ANDROID_GLES // OpenGL is right-handed coordinate system in object space and world space.
-    };
-
     class GameLoop
     {
     public:
@@ -29,7 +23,6 @@ namespace Beryll
         static uint32_t getFPS();
         static uint32_t getMaxFPS() { return m_maxFPS; }
         static uint32_t getFrameTime() { return m_frameTime; }
-        static Platform getPlatform() { return m_platform; }
         static void stopLoop() { m_isRun = false; }
 
         // for statistics
@@ -41,10 +34,9 @@ namespace Beryll
     private:
         friend int ::main(int argc, char *argv[]);
 
-        static void create(Platform p);
+        static void create();
         static void run();
 
-        static Platform m_platform;
         static bool m_isRun;
 
         static uint32_t m_loopTime; // in millisec

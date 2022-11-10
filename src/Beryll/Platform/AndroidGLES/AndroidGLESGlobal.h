@@ -1,5 +1,7 @@
 #pragma once
 
+// OpenGL is right-handed coordinate system in object space and world space.
+
 // these variables should store actual bound things (current shader, texture, ...) in GLES
 // check them before you want change GLES state (bind shader, texture, ...)
 // default values are 0 = not bound any shader/texture

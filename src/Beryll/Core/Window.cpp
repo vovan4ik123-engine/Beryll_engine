@@ -1,5 +1,10 @@
 #include "Window.h"
-#include "Beryll/Platform/AndroidGLES/AndroidGLESWindow.h"
+
+#if defined(ANDROID)
+    #include "Beryll/Platform/AndroidGLES/AndroidGLESWindow.h"
+#elif defined(APPLE)
+
+#endif
 
 namespace Beryll
 {
@@ -9,13 +14,12 @@ namespace Beryll
     {
         if(m_window) { return; }
 
-        if(GameLoop::getPlatform() == Platform::ANDROID_GLES)
-        {
-            m_window = std::unique_ptr<Window>(new AndroidGLESWindow());
-        }
-        else
-        {
-            BR_ASSERT(false, "%s", "Can not create Window. Unknown platform.");
-        }
+#if defined(ANDROID)
+        m_window = std::unique_ptr<Window>(new AndroidGLESWindow());
+#elif defined(APPLE)
+
+#else
+        BR_ASSERT(false, "%s", "Can not create Window. Unknown platform.");
+#endif
     }
 }
