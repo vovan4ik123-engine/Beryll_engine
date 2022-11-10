@@ -8,6 +8,7 @@
 #include "Beryll/GUI/MainImGUI.h"
 #include "Beryll/Physics/Physics.h"
 #include "Beryll/Renderer/Camera.h"
+#include "Beryll/ParticleSystem/ParticleSystem.h"
 
 namespace Beryll
 {
@@ -39,7 +40,12 @@ namespace Beryll
 
         Physics::create();
 
-        // particle system create
+        ParticleSystem::create();
+    }
+
+    uint32_t GameLoop::getFPS()
+    {
+        return 1000 / TimeStep::getTimeStepMilliSec();
     }
 
     void GameLoop::run()

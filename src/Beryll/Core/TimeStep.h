@@ -3,6 +3,8 @@
 #include "LibsHeaders.h"
 #include "CppHeaders.h"
 
+#include "Beryll/Core/GameLoop.h"
+
 namespace Beryll
 {
     class TimeStep
@@ -23,14 +25,6 @@ namespace Beryll
             SDL_Delay(millisec);
         }
 
-        static void fixateTime()
-        {
-            m_timeStepMIlliSec = getMillisecFromStart() - m_currentStepStart;
-            m_timeStepSec = static_cast<float>(m_timeStepMIlliSec) * 0.001f; // same as / 1000.0f;
-
-            m_currentStepStart = getMillisecFromStart();
-        }
-
         static uint32_t getTimeStepMilliSec()
         {
             return m_timeStepMIlliSec;
@@ -45,5 +39,15 @@ namespace Beryll
         static uint32_t m_currentStepStart; // time in millisec
         static uint32_t m_timeStepMIlliSec; // time between two last fixateTime() call in millisec
         static float m_timeStepSec; // time between two last fixateTime() call in sec
+
+        friend class GameLoop;
+
+        static void fixateTime()
+        {
+            m_timeStepMIlliSec = getMillisecFromStart() - m_currentStepStart;
+            m_timeStepSec = static_cast<float>(m_timeStepMIlliSec) * 0.001f; // same as / 1000.0f;
+
+            m_currentStepStart = getMillisecFromStart();
+        }
     };
 }

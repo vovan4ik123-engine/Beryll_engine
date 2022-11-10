@@ -13,6 +13,7 @@
 #include "Beryll/Core/SoundsManager.h"
 #include "Beryll/Core/Window.h"
 #include "Beryll/Core/RandomGenerator.h"
+#include "Beryll/Core/TimeStep.h"
 
 #include "Beryll/Renderer/Camera.h"
 #include "Beryll/Renderer/SkyBox.h"
@@ -38,3 +39,5 @@
 #include "Beryll/Physics/Physics.h"
 
 #include "Beryll/Async/AsyncRun.h"
+
+#include "Beryll/ParticleSystem/ParticleSystem.h"

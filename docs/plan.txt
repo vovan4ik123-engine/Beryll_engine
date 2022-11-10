@@ -1,7 +1,9 @@
 ---------------------plan:---------------------
 
-particles
+use defines ANDROID APPLE everywhere
 
+hard delete objects from physics when object is destroyed
+use tangent vector only if specular map is in materials
 
 update IMGui to 1.88+
 

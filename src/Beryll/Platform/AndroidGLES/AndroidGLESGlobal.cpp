@@ -4,6 +4,8 @@ namespace GLESStateVariables
 {
     unsigned int currentShaderProgram = 0;
 
+    unsigned int currentVAO = 0;
+
     unsigned int currentTexture0 = 0;
     unsigned int currentTexture1 = 0;
     unsigned int currentTexture2 = 0;

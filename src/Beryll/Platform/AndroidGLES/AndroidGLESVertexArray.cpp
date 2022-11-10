@@ -1,4 +1,5 @@
 #include "AndroidGLESVertexArray.h"
+#include "AndroidGLESGlobal.h"
 #include "Beryll/Core/Log.h"
 
 #include <GLES3/gl32.h>
@@ -18,12 +19,21 @@ namespace Beryll
 
     void AndroidGLESVertexArray::bind()
     {
-        glBindVertexArray(m_VAO);
+        if(GLESStateVariables::currentVAO != m_VAO)
+        {
+            glBindVertexArray(m_VAO);
+            GLESStateVariables::currentVAO = m_VAO;
+        }
     }
 
     void AndroidGLESVertexArray::unBind()
     {
-        glBindVertexArray(0);
+        // Should unbind only own VAO
+        if(GLESStateVariables::currentVAO == m_VAO)
+        {
+            glBindVertexArray(0);
+            GLESStateVariables::currentVAO = 0;
+        }
     }
 
     void AndroidGLESVertexArray::draw()

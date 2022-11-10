@@ -8,6 +8,9 @@ namespace GLESStateVariables
     // shader
     extern unsigned int currentShaderProgram;
 
+    // Vertex Array Object
+    extern unsigned int currentVAO;
+
     // textures ID bound to specific texture unit
     // use IDs 0 - 9 for rebinded textures
     // you can bind to these IDs as much times as you need for every object

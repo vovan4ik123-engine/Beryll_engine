@@ -1,5 +1,6 @@
 #include "CollidingSimplePlayer.h"
 #include "Beryll/Renderer/Camera.h"
+#include "Beryll/Core/TimeStep.h"
 
 namespace Beryll
 {
@@ -114,7 +115,7 @@ namespace Beryll
 
     void CollidingSimplePlayer::move(MoveDirection direction)
     {
-        glm::quat rotationPlayerToCamera = Utils::Common::getRotationBetweenVectors(m_eyeDirectionXZ, Camera::getCameraDirectionXZ());
+        glm::quat rotationPlayerToCamera = glm::rotation(m_eyeDirectionXZ, Camera::getCameraDirectionXZ());
         addToRotation(rotationPlayerToCamera);
         // after rotation
         m_eyeDirectionXZ = Camera::getCameraDirectionXZ(); // should be unit

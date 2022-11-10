@@ -15,9 +15,9 @@ namespace Beryll
 
         // for uniform variables in shader
         virtual void set1Float(const char* name, const float x) = 0;
-        virtual void set2Float(const char* name, const float x, const float y) = 0;
-        virtual void set3Float(const char* name, const float x, const float y, const float z) = 0;
-        virtual void set4Float(const char* name, const float x, const float y, const float z, const float w) = 0;
+        virtual void set2Float(const char* name, const glm::vec2& vec) = 0;
+        virtual void set3Float(const char* name, const glm::vec3& vec) = 0;
+        virtual void set4Float(const char* name, const glm::vec4& vec) = 0;
 
         virtual void set1Int(const char* name, const int x) = 0;
         virtual void set2Int(const char* name, const int x, const int y) = 0;
@@ -32,7 +32,6 @@ namespace Beryll
         virtual void activateDiffuseTexture() = 0;
         virtual void activateSpecularTexture() = 0;
         virtual void activateNormalMapTexture() = 0;
-        virtual void activateHeightMapTexture() = 0;
         virtual void activateSkyBoxTexture() = 0;
         virtual void activateShadowMapTexture() = 0;
 

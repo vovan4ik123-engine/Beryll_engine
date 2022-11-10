@@ -1,6 +1,5 @@
 #include "Window.h"
 #include "Beryll/Platform/AndroidGLES/AndroidGLESWindow.h"
-#include "Beryll/Core/GameLoop.h"
 
 namespace Beryll
 {

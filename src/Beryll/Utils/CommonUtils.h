@@ -81,42 +81,8 @@ namespace Utils
         }
 
         // return glm::quat that need to make dest from start
-        static glm::quat getRotationBetweenVectors(const glm::vec3& start, const glm::vec3& dest)
-        {
-            float cosAngle = glm::dot(start, dest);
-
-            if(cosAngle > 0.9999f) // angle is less than 0.81 degrees
-            {
-                // vectors are parallel
-
-                return glm::quat(1.0f, 0.0f, 0.0f, 0.0f); // no rotation
-            }
-
-            if(cosAngle < -0.9999f) // angle is more than 179.19 degrees
-            {
-                // vectors are opposite
-
-                float cosAngleStartAndY = glm::dot(start, glm::vec3(0.0f, 1.0f, 0.0f));
-                if(cosAngleStartAndY > 0.9f || cosAngleStartAndY < -0.9f)
-                {
-                    // vectors are close to Y axis
-                    // get cross product with X
-                    glm::vec3 axis = glm::normalize(glm::cross(glm::vec3(1.0f, 0.0f, 0.0f), start));
-                    return glm::angleAxis(glm::pi<float>(), axis);
-                }
-                else
-                {
-                    // get cross product with Y
-                    glm::vec3 axis = glm::normalize(glm::cross(glm::vec3(0.0f, 1.0f, 0.0f), start));
-                    return glm::angleAxis(glm::pi<float>(), axis);
-                }
-            }
-
-            float angleRadians = glm::acos(cosAngle);
-            glm::vec3 axis = glm::normalize(glm::cross(start, dest));
-
-            return glm::angleAxis(angleRadians, axis);
-        }
+        // static glm::quat getRotationBetweenVectors(const glm::vec3& start, const glm::vec3& dest)
+        // use glm::rotation
 
     private:
         static int m_id;

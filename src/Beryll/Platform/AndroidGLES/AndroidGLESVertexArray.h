@@ -20,7 +20,7 @@ namespace Beryll
         friend class Renderer;
         AndroidGLESVertexArray();
 
-        uint32_t m_VAO;
+        uint32_t m_VAO = 0;
         uint32_t m_indexNumber = 0;
     };
 }

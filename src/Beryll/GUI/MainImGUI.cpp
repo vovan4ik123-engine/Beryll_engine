@@ -1,7 +1,5 @@
 #include "MainImGUI.h"
 #include "Beryll/Platform/AndroidGLES/AndroidGLESImGUI.h"
-#include "Beryll/Core/GameLoop.h"
-#include "Beryll/Core/Log.h"
 
 namespace Beryll
 {

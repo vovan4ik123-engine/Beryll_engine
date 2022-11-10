@@ -42,6 +42,7 @@ if(ANDROID)
             src/Beryll/Platform/AndroidGLES/AndroidGLESSkyBox.cpp
             src/Beryll/Platform/AndroidGLES/AndroidGLESShadowMapTexture.cpp
             src/Beryll/Platform/AndroidGLES/AndroidGLESGlobal.cpp
+            src/Beryll/Platform/AndroidGLES/AndroidGLESParticleSystem.cpp
             )
 elseif(APPLE)
     #set(IOSMetal_SRC src/Beryll/Platform/...)
@@ -80,6 +81,8 @@ set(Common_SRC
         src/Beryll/Physics/Physics.cpp
 
         src/Beryll/Async/AsyncRun.cpp
+
+        src/Beryll/ParticleSystem/ParticleSystem.cpp
 )
 
 add_library(Beryll-static STATIC ${AndroidGLES_SRC} ${IOSMetal_SRC} ${Common_SRC})

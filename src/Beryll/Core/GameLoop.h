@@ -2,7 +2,6 @@
 
 #include "LibsHeaders.h"
 #include "CppHeaders.h"
-#include "Beryll/Core/TimeStep.h"
 
 namespace Beryll
 {
@@ -27,7 +26,7 @@ namespace Beryll
             }
         }
 
-        static uint32_t getFPS() { return 1000 / TimeStep::getTimeStepMilliSec(); }
+        static uint32_t getFPS();
         static uint32_t getMaxFPS() { return m_maxFPS; }
         static uint32_t getFrameTime() { return m_frameTime; }
         static Platform getPlatform() { return m_platform; }

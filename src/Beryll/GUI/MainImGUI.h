@@ -4,6 +4,7 @@
 #include "CppHeaders.h"
 
 #include "Beryll/Core/Log.h"
+#include "Beryll/Core/GameLoop.h"
 
 namespace Beryll
 {
@@ -15,14 +16,7 @@ namespace Beryll
     class MainImGUI
     {
     public:
-        MainImGUI() {}
         virtual ~MainImGUI() {}
-
-        MainImGUI(const MainImGUI& w) = delete;
-        MainImGUI& operator=(const MainImGUI& w) = delete;
-
-        MainImGUI(MainImGUI&& w) = delete;
-        MainImGUI& operator=(MainImGUI&& w) = delete;
 
         static std::unique_ptr<MainImGUI>& getInstance()
         {
@@ -50,6 +44,7 @@ namespace Beryll
         virtual void setSlidersFont(const char* path, float heightInPercent) = 0;
 
     protected:
+        MainImGUI() {}
         std::string m_defaultFontPath;
         float m_defaultFontHeight = 0.03f; // in range 0...1 (0%...100% of screen size). 0.03f = 3% of screen
 

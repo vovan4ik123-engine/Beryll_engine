@@ -11,14 +11,7 @@ namespace Beryll
     class Window
     {
     public:
-        Window() {}
         virtual ~Window() {}
-
-        Window(const Window& w) = delete;
-        Window& operator=(const Window& w) = delete;
-
-        Window(Window&& w) = delete;
-        Window& operator=(Window&& w) = delete;
 
         static std::unique_ptr<Window>& getInstance()
         {
@@ -45,6 +38,9 @@ namespace Beryll
         // Metal specific methods
 
         SDL_DisplayOrientation currentOrientation = SDL_ORIENTATION_UNKNOWN;
+
+    protected:
+        Window() {}
 
     private:
         friend class GameLoop;

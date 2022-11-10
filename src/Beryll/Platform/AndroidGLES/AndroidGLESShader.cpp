@@ -132,51 +132,51 @@ namespace Beryll
         m_uniformsNameID.emplace_back(UniformsLocations{name, id});
     }
 
-    void AndroidGLESShader::set2Float(const char* name, const float x, const float y)
+    void AndroidGLESShader::set2Float(const char* name, const glm::vec2& vec)
     {
         for(const UniformsLocations& uniforms : m_uniformsNameID)
         {
             if(uniforms.name == name)
             {
-                glUniform2f(uniforms.id, x, y);
+                glUniform2f(uniforms.id, vec.x, vec.y);
                 return;
             }
         }
         
         int id = glGetUniformLocation(*m_shaderProgramID, name);
-        glUniform2f(id, x, y);
+        glUniform2f(id, vec.x, vec.y);
         m_uniformsNameID.emplace_back(UniformsLocations{name, id});
     }
 
-    void AndroidGLESShader::set3Float(const char* name, const float x, const float y, const float z)
+    void AndroidGLESShader::set3Float(const char* name, const glm::vec3& vec)
     {
         for(const UniformsLocations& uniforms : m_uniformsNameID)
         {
             if(uniforms.name == name)
             {
-                glUniform3f(uniforms.id, x, y, z);
+                glUniform3f(uniforms.id, vec.x, vec.y, vec.z);
                 return;
             }
         }
         
         int id = glGetUniformLocation(*m_shaderProgramID, name);
-        glUniform3f(id, x, y, z);
+        glUniform3f(id, vec.x, vec.y, vec.z);
         m_uniformsNameID.emplace_back(UniformsLocations{name, id});
     }
 
-    void AndroidGLESShader::set4Float(const char* name, const float x, const float y, const float z, const float w)
+    void AndroidGLESShader::set4Float(const char* name, const glm::vec4& vec)
     {
         for(const UniformsLocations& uniforms : m_uniformsNameID)
         {
             if(uniforms.name == name)
             {
-                glUniform4f(uniforms.id, x, y,z ,w);
+                glUniform4f(uniforms.id, vec.x, vec.y,vec.z,vec.w);
                 return;
             }
         }
         
         int id = glGetUniformLocation(*m_shaderProgramID, name);
-        glUniform4f(id, x, y,z ,w);
+        glUniform4f(id, vec.x, vec.y, vec.z, vec.w);
         m_uniformsNameID.emplace_back(UniformsLocations{name, id});
     }
 
@@ -307,11 +307,6 @@ namespace Beryll
     void AndroidGLESShader::activateNormalMapTexture()
     {
         glUniform1i(glGetUniformLocation(*m_shaderProgramID, "normalMapTexture"), 2);
-    }
-
-    void AndroidGLESShader::activateHeightMapTexture()
-    {
-        glUniform1i(glGetUniformLocation(*m_shaderProgramID, "heightMapTexture"), 3);
     }
 
     void AndroidGLESShader::activateSkyBoxTexture()

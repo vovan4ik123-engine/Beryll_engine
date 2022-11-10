@@ -12,7 +12,6 @@ namespace Beryll
         DIFFUSE_TEXTURE, // base color texture with RGB(A) colors of surface
         SPECULAR_TEXTURE, // specific texture with areas on object surface which should reflect light
         NORMAL_MAP_TEXTURE, // texture with normals per fragment
-        HEIGHT_MAP_TEXTURE, // texture with height per fragment
         SHADOW_MAP_TEXTURE // generated every frame from Z buffer of scene for shadows
     };
 

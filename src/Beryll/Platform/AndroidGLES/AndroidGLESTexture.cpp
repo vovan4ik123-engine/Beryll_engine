@@ -30,8 +30,7 @@ namespace Beryll
 
         BR_ASSERT(((type == TextureType::DIFFUSE_TEXTURE) ||
                    (type == TextureType::SPECULAR_TEXTURE) ||
-                   (type == TextureType::NORMAL_MAP_TEXTURE) ||
-                   (type == TextureType::HEIGHT_MAP_TEXTURE)), "%s", "Wrong texture type");
+                   (type == TextureType::NORMAL_MAP_TEXTURE)), "%s", "Wrong texture type");
 
         SDL_RWops* rw = SDL_RWFromFile(m_ID.c_str(), "rb");
         BR_ASSERT((rw != nullptr), "Load texture failed:%s", m_ID.c_str());
@@ -41,7 +40,6 @@ namespace Beryll
 
         BR_ASSERT((surface->format->BytesPerPixel > 0 && surface->format->BytesPerPixel <= 4), "Load texture failed:%s. Depth = 0 or > 4", m_ID.c_str());
 
-        BR_INFO("Bytes per pixel:%d", surface->format->BytesPerPixel);
         int pixelFormat = GL_RGB;
         if(4 == surface->format->BytesPerPixel) pixelFormat = GL_RGBA;
         else if(1 == surface->format->BytesPerPixel) pixelFormat = GL_RED;
@@ -101,12 +99,6 @@ namespace Beryll
             glBindTexture(GL_TEXTURE_2D, *m_openGLID);
             GLESStateVariables::currentTexture2 = *m_openGLID;
         }
-        else if(m_type == TextureType::HEIGHT_MAP_TEXTURE && GLESStateVariables::currentTexture3 != *m_openGLID)
-        {
-            glActiveTexture(GL_TEXTURE3);
-            glBindTexture(GL_TEXTURE_2D, *m_openGLID);
-            GLESStateVariables::currentTexture3 = *m_openGLID;
-        }
     }
 
     void AndroidGLESTexture::unBind()
@@ -129,12 +121,6 @@ namespace Beryll
             glActiveTexture(GL_TEXTURE2);
             glBindTexture(GL_TEXTURE_2D, 0);
             GLESStateVariables::currentTexture2 = 0;
-        }
-        else if(m_type == TextureType::HEIGHT_MAP_TEXTURE && GLESStateVariables::currentTexture3 == *m_openGLID)
-        {
-            glActiveTexture(GL_TEXTURE3);
-            glBindTexture(GL_TEXTURE_2D, 0);
-            GLESStateVariables::currentTexture3 = 0;
         }
     }
 }

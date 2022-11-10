@@ -128,6 +128,7 @@ namespace Beryll
                     textureCoords.emplace_back(0.0f, 0.0f);
                 }
             }
+            BR_INFO("Vertex count: %d", vertices.size());
             m_vertexPosBuffer = Renderer::createVertexBuffer(vertices);
             m_vertexNormalsBuffer = Renderer::createVertexBuffer(normals);
             m_vertexTangentsBuffer = Renderer::createVertexBuffer(tangents);

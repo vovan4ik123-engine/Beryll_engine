@@ -22,7 +22,7 @@ namespace Beryll
         }
 
         template<typename T>
-        static void Run(const std::vector<T>& v, std::function<void(const std::vector<T>&, int, int)> func)
+        static void Run(std::vector<T>& v, std::function<void(std::vector<T>&, int, int)> func)
         {
             const int numberElements = v.size();
 
@@ -43,7 +43,7 @@ namespace Beryll
                     int chunkEnd = std::min(i + oneChunkSize, numberElements);
 
                     // without std::cref(v) std::async() will COPY all parameters !!!
-                    m_futuresVoid.emplace_back(std::async(std::launch::async, func, std::cref(v), i, chunkEnd));
+                    m_futuresVoid.emplace_back(std::async(std::launch::async, func, std::ref(v), i, chunkEnd));
                 }
 
                 // wait all threads

@@ -14,9 +14,9 @@ namespace Beryll
         void unBind() override;
 
         void set1Float(const char* name, const float x) override;
-        void set2Float(const char* name, const float x, const float y) override;
-        void set3Float(const char* name, const float x, const float y, const float z) override;
-        void set4Float(const char* name, const float x, const float y, const float z, const float w) override;
+        void set2Float(const char* name, const glm::vec2& vec) override;
+        void set3Float(const char* name, const glm::vec3& vec) override;
+        void set4Float(const char* name, const glm::vec4& vec) override;
 
         void set1Int(const char* name, const int x) override;
         void set2Int(const char* name, const int x, const int y) override;
@@ -30,7 +30,6 @@ namespace Beryll
         void activateDiffuseTexture() override;
         void activateSpecularTexture() override;
         void activateNormalMapTexture() override;
-        void activateHeightMapTexture() override;
         void activateSkyBoxTexture() override;
         void activateShadowMapTexture() override;
 
