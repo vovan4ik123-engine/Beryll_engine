@@ -62,6 +62,7 @@ namespace Beryll
         AndroidGLESParticleSystem();
 
         int m_activeCount = 0;
+        bool m_anyParticleIsActive = false; // use to avoid update and draw if no active particles
         std::shared_ptr<Shader> m_internalShader;
 
         std::vector<Particle> m_quadParticles;

@@ -29,6 +29,7 @@ namespace Beryll
         BR_INFO("m_fromOriginToTop:%f, m_fromOriginToBottom:%f, m_playerHeight:%f", m_fromOriginToTop, m_fromOriginToBottom, m_playerHeight);
 
         m_playerMass = collisionMass;
+        m_previousYPos = m_origin.y;
 
         setAngularFactor(glm::vec3(0.0f, 0.0f, 0.0f));
         setLinearFactor(glm::vec3(1.0f, 1.0f, 1.0f));
@@ -50,7 +51,7 @@ namespace Beryll
         }
         else
         {
-            enableGravity();
+            enableDefaultGravity();
         }
     }
 
@@ -66,6 +67,12 @@ namespace Beryll
         }
 
         // object is active. that means it should have collisions or drop down in the air
+
+        if(m_playerOnGround)
+        {
+            m_lastTimeOnGround = TimeStep::getSecFromStart();
+        }
+
         m_playerOnGround = false;
         m_playerMoving = false;
         //BR_INFO("%s", "playerOnGround = false");
@@ -96,9 +103,30 @@ namespace Beryll
             if(m_playerOnGround)
             {
                 resetVelocities();
+                m_canJump = true;
+                m_canApplyStartFallingImpulse = true;
             }
         }
 
+        if(fallingGravityFactor != 1.0f)
+        {
+            if(!m_playerOnGround && m_previousYPos > m_origin.y && (m_lastTimeOnGround + jumpExtendTime) < TimeStep::getSecFromStart())
+            {
+                setGravity(Physics::getDefaultGravity() * fallingGravityFactor);
+            }
+            else
+            {
+                setGravity(Physics::getDefaultGravity());
+            }
+        }
+
+        if(m_canApplyStartFallingImpulse && !m_playerOnGround && m_previousYPos > m_origin.y && (m_lastTimeOnGround + jumpExtendTime) < TimeStep::getSecFromStart())
+        {
+            applyImpulse(glm::vec3{0.0f, -1.0f, 0.f} * moveSpeed * startFallingPower);
+            m_canApplyStartFallingImpulse = false;
+        }
+
+        m_previousYPos = m_origin.y;
     }
 
     void CollidingSimplePlayer::draw()
@@ -145,15 +173,15 @@ namespace Beryll
 
         //BR_INFO("origin X:%f Y:%f Z:%f", m_origin.x, m_origin.y, m_origin.z);
         float moveVectorLength = glm::length(moveVector);
-        glm::vec3 radiusToMoveDirection = ((m_XZradius + m_XZradius * 0.3f) / moveVectorLength) * moveVector;
+        glm::vec3 scaledMoveDirectionByRadius = ((m_XZradius * 1.3f) / moveVectorLength) * moveVector;
 
         glm::vec3 playerHeadUp = m_origin;
         playerHeadUp.y += m_fromOriginToTop;
-        glm::vec3 playerHeadUpNextPos = playerHeadUp + radiusToMoveDirection;
+        glm::vec3 playerHeadUpNextPos = playerHeadUp + scaledMoveDirectionByRadius;
         RayClosestHit headWallHit = Physics::castRayClosestHit(playerHeadUp,
-                                                                     playerHeadUpNextPos,
-                                                                     CollisionGroups::PLAYER,
-                                                                     CollisionGroups::STATIC_ENVIRONMENT);
+                                                               playerHeadUpNextPos,
+                                                               CollisionGroups::PLAYER,
+                                                               CollisionGroups::STATIC_ENVIRONMENT);
         if(headWallHit.hit)
         {
             glm::vec3 headBackwardMoveVector = glm::normalize(playerHeadUp - playerHeadUpNextPos);
@@ -170,8 +198,9 @@ namespace Beryll
             bool allowedStairStepFound = false;
 
             glm::vec3 playerLegs = m_origin;
-            playerLegs.y -= (m_fromOriginToBottom - m_XZradius);
-            glm::vec3 playerLegsNextPos = playerLegs + radiusToMoveDirection;
+            BR_ASSERT((m_fromOriginToBottom > m_XZradius), "%s", "Player origin should be inside cylinder of capsule. Not in bottom semi sphere.");
+            playerLegs.y -= (m_fromOriginToBottom - m_XZradius * 0.97f); // playerLegs.y - distance from origin to capsules cinder bottom
+            glm::vec3 playerLegsNextPos = playerLegs + scaledMoveDirectionByRadius;
             RayClosestHit legsWallHit = Physics::castRayClosestHit(playerLegs,
                                                                    playerLegsNextPos,
                                                                    CollisionGroups::PLAYER,
@@ -192,23 +221,23 @@ namespace Beryll
                                                                                 CollisionGroups::PLAYER,
                                                                                 CollisionGroups::STATIC_ENVIRONMENT);
 
-                    if (potentialStepHit.hit)
+                    if(potentialStepHit.hit)
                     {
                         BR_INFO("potentialStepHit y:%f", potentialStepHit.hitPoint.y);
                         float surfaceSlopeRadians = Utils::Common::getAngleInRadians(BeryllConstants::worldUp, potentialStepHit.hitNormal);
-                        if (surfaceSlopeRadians < glm::radians(3.0f)) // allow stair step surface be slope 0-3 degrees
+                        if(surfaceSlopeRadians < glm::radians(3.0f)) // allow stair step surface be slope 0-3 degrees
                         {
                             // probably we found stair step
                             // calculate where should be player if that is not stair step, but only ground slope
-                            float oppositeSideLength = glm::tan(surfaceSlopeRadians) * glm::length(radiusToMoveDirection);
+                            float oppositeSideLength = glm::tan(surfaceSlopeRadians) * glm::length(scaledMoveDirectionByRadius);
                             oppositeSideLength *= 1.02; // + 2%
                             if(oppositeSideLength == 0.0f) { oppositeSideLength += 0.02f; } // add 2 cm
                             float nextYOfPlayer = m_bottomCollisionPoint.first.y + oppositeSideLength; // after move on this ground slope(if not stair step)
-                            if (potentialStepHit.hitPoint.y > nextYOfPlayer)
+                            if(potentialStepHit.hitPoint.y > nextYOfPlayer)
                             {
                                 // assume stair step in front
                                 float diffPlayerYStepY = potentialStepHit.hitPoint.y - m_bottomCollisionPoint.first.y;
-                                if (diffPlayerYStepY <= maxStepHeight)
+                                if(diffPlayerYStepY <= maxStepHeight)
                                 {
                                     // player can move to this stair step
                                     BR_INFO("%s h:%f", "player moved to stair step", diffPlayerYStepY);
@@ -249,13 +278,14 @@ namespace Beryll
                                                                       CollisionGroups::PLAYER,
                                                                       CollisionGroups::STATIC_ENVIRONMENT);
 
-                if (newPosYHit.hit)
+                if(newPosYHit.hit)
                 {
                     //BR_INFO("%s", "walkable floor found");
-                    if (m_bottomCollisionPoint.first.y > newPosYHit.hitPoint.y)
+                    if(m_bottomCollisionPoint.first.y > newPosYHit.hitPoint.y)
                     {
                         moveVector.y = -(m_bottomCollisionPoint.first.y - newPosYHit.hitPoint.y);
-                    } else
+                    }
+                    else
                     {
                         moveVector.y = newPosYHit.hitPoint.y - m_bottomCollisionPoint.first.y;
                     }
@@ -274,7 +304,9 @@ namespace Beryll
 
     void CollidingSimplePlayer::jump()
     {
-        if(m_playerOnGround)
+        if(!m_canJump) { return; }
+
+        if(m_playerOnGround || (m_lastTimeOnGround + jumpExtendTime) > TimeStep::getSecFromStart())
         {
             if(m_playerMoving)
             {
@@ -287,6 +319,7 @@ namespace Beryll
             }
 
             applyImpulse(glm::normalize(m_jumpDirection) * moveSpeed * startJumpPower);
+            m_canJump = false;
         }
     }
 }

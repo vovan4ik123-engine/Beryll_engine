@@ -94,6 +94,7 @@ namespace Beryll
             glm::mat4 rotationMatrix{1.0f}; // only for cube particle
             glm::mat4 MVPMatrix{1.0f};
             const glm::vec3 faceDir{0.0f, 0.0f, 1.0f};
+            float rotationSide = 0.0f; // rotate to left or to right. set to -1.0f or +1.0f
         };
 
     private:

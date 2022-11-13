@@ -167,7 +167,7 @@ namespace Beryll
         static void setGravityForAllWorld(const glm::vec3& gravity); // change gravity for whole physics world
         static void setGravityForObject(const int ID, const glm::vec3& gravity, bool resetVelocities = false); // change gravity for object
         static void disableGravityForObject(const int ID, bool resetVelocities = false);
-        static void enableGravityForObject(const int ID, bool resetVelocities = false);
+        static void enableDefaultGravityForObject(const int ID, bool resetVelocities = false);
         static void resetVelocitiesForObject(const int ID);
         static void applyCentralImpulseForObject(const int ID, const glm::vec3& impulse);
 
@@ -176,6 +176,7 @@ namespace Beryll
         static const std::set<std::pair<const int, const int>>& getAllCollisions() { return m_collisionPairs; }
         static std::vector<std::pair<glm::vec3, glm::vec3>> getAllCollisionPoints(const int ID1, const int ID2); // return point + his normal
         static std::vector<std::pair<glm::vec3, glm::vec3>> getAllCollisionPoints(const int ID1, const std::vector<int>& IDs); // return point + his normal
+        static glm::vec3 getDefaultGravity() { return glm::vec3(m_gravity.x(), m_gravity.y(), m_gravity.z()); }
 
         // Cast ray. Only objects in physics world can be hit
         static RayClosestHit castRayClosestHit(const glm::vec3& from, const glm::vec3 to, CollisionGroups collGroup, CollisionGroups collMask);

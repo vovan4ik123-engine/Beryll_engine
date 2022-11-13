@@ -36,13 +36,16 @@ namespace Beryll
         void move(MoveDirection direction);
         void jump();
 
-        float moveSpeed = 15.0f; // meters in second
+        float moveSpeed = 15.0f; // meters in second.
         float backwardMoveFactor = 0.6f; // factor to multiply moveSpeed if player move backward
         float walkableFloorAngleRadians = glm::radians(60.0f);
         float maxStepHeight = 2.0f; // in meters. MUST be less than m_playerHeight
         float startJumpAngleRadians = glm::radians(50.0f);
-        float startJumpPower = 20.0f;
+        float startJumpPower = 1.0f;
+        float startFallingPower = 1.0f; // -y axis impulse when stat falling
         float airControlFactor = 0.3f; // factor to multiply moveSpeed if player not on ground
+        float fallingGravityFactor = 1.0f; // gravity multiplayer when falling down
+        float jumpExtendTime = 0.0f; // in seconds. time when player moved from ground edge to air but still can jump
 
     private:
         float m_fromOriginToTop = 0.0f; // distance between origin and player top
@@ -52,7 +55,10 @@ namespace Beryll
         float m_playerMass = 0.0f;
 
         bool m_playerOnGround = false;
+        float m_lastTimeOnGround = 0.0f;
         bool m_playerMoving = false;
+
+        float m_previousYPos = 0.0f;
 
         glm::vec3 m_eyeDirectionXYZ{1.0f, 0.0f, 0.0f}; // start position = looking along +X axis
         glm::vec3 m_eyeDirectionXZ{1.0f, 0.0f, 0.0f};
@@ -61,6 +67,8 @@ namespace Beryll
         glm::vec3 m_leftDirectionXZ{0.0f, 0.0f, 0.0f};
 
         glm::vec3 m_jumpDirection{0.0f, 1.0f, 0.0f};
+        bool m_canJump = false;
+        bool m_canApplyStartFallingImpulse = false;
 
         std::vector<int> m_collidingStaticObjects; // prevent creation and deletion every frame
         std::vector<std::pair<glm::vec3, glm::vec3>> m_collidingStaticPoints; // prevent creation and deletion every frame

@@ -12,6 +12,7 @@ namespace Utils
         Common() = delete;
         ~Common() = delete;
 
+        // max IDs count = int::max = 2,147,483,647
         static int generateID()
         {
             ++m_id;

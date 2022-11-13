@@ -246,7 +246,7 @@ namespace Beryll
 
     CollidingSimpleObject::~CollidingSimpleObject()
     {
-
+        disableCollisionMesh();
     }
 
     void CollidingSimpleObject::updateBeforePhysics()

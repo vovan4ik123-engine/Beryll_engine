@@ -25,8 +25,6 @@ namespace Beryll
 
         virtual void drawIntoShadowMap(const std::vector<std::shared_ptr<Beryll::BaseSimpleObject>>& simpleObj,
                                        const std::vector<std::shared_ptr<Beryll::BaseAnimatedObject>>& animatedObj,
-                                       const std::shared_ptr<Beryll::Shader>& shaderSimple,
-                                       const std::shared_ptr<Beryll::Shader>& shaderAnimated,
                                        const glm::mat4& VPMatrix) = 0;
 
         TextureType getType()

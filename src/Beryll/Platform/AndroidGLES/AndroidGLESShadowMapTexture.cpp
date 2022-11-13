@@ -2,6 +2,7 @@
 #include "Beryll/Core/Log.h"
 #include "Beryll/Core/Window.h"
 #include "Beryll/Platform/AndroidGLES/AndroidGLESGlobal.h"
+#include "Beryll/Renderer/Renderer.h"
 
 #include <GLES3/gl32.h>
 #include <GLES3/gl3ext.h>
@@ -39,6 +40,9 @@ namespace Beryll
         GLESStateVariables::currentTexture0 = m_openGLID;
 
         glBindFramebuffer(GL_FRAMEBUFFER, m_defaultFBO);
+
+        m_shaderSimple = Beryll::Renderer::createShader("shaders/GLES/shadowMap/Simple.vert", "shaders/GLES/shadowMap/Simple.frag");
+        m_shaderAnimated = Beryll::Renderer::createShader("shaders/GLES/shadowMap/Animation.vert", "shaders/GLES/shadowMap/Animation.frag");
     }
 
     AndroidGLESShadowMapTexture::~AndroidGLESShadowMapTexture()
@@ -71,8 +75,6 @@ namespace Beryll
 
     void AndroidGLESShadowMapTexture::drawIntoShadowMap(const std::vector<std::shared_ptr<Beryll::BaseSimpleObject>>& simpleObj,
                                                         const std::vector<std::shared_ptr<Beryll::BaseAnimatedObject>>& animatedObj,
-                                                        const std::shared_ptr<Beryll::Shader>& shaderSimple,
-                                                        const std::shared_ptr<Beryll::Shader>& shaderAnimated,
                                                         const glm::mat4& VPMatrix)
     {
         glViewport(0, 0, m_mapWidth, m_mapHeight); // for texture resolution
@@ -87,13 +89,13 @@ namespace Beryll
         }
         glCullFace(GL_FRONT);
 
-        shaderSimple->bind();
+        m_shaderSimple->bind();
 
         for(const std::shared_ptr<Beryll::BaseSimpleObject>& so: simpleObj)
         {
             if(so->getIsEnabledOnScene())
             {
-                shaderSimple->setMatrix4x4Float("MVPMatrix", VPMatrix * so->getModelMatrix());
+                m_shaderSimple->setMatrix4x4Float("MVPMatrix", VPMatrix * so->getModelMatrix());
                 so->useInternalShader = false;
                 so->useInternalTextures = false;
                 so->draw();
@@ -101,12 +103,12 @@ namespace Beryll
         }
 
         std::string boneMatrixNameInShader;
-        shaderAnimated->bind();
+        m_shaderAnimated->bind();
         for(const std::shared_ptr<Beryll::BaseAnimatedObject>& ao: animatedObj)
         {
             if(ao->getIsEnabledOnScene())
             {
-                shaderAnimated->setMatrix4x4Float("MVPMatrix", VPMatrix * ao->getModelMatrix());
+                m_shaderAnimated->setMatrix4x4Float("MVPMatrix", VPMatrix * ao->getModelMatrix());
 
                 uint32_t boneCount = ao->getBoneCount();
                 for(int i = 0; i < boneCount; ++i)
@@ -114,7 +116,7 @@ namespace Beryll
                     boneMatrixNameInShader = "bonesMatrices[";
                     boneMatrixNameInShader += std::to_string(i);
                     boneMatrixNameInShader += "]";
-                    shaderAnimated->setMatrix4x4Float(boneMatrixNameInShader.c_str(), ao->getBoneMatrices()[i].finalWorldTransform);
+                    m_shaderAnimated->setMatrix4x4Float(boneMatrixNameInShader.c_str(), ao->getBoneMatrices()[i].finalWorldTransform);
                 }
                 ao->useInternalShader = false;
                 ao->useInternalTextures = false;

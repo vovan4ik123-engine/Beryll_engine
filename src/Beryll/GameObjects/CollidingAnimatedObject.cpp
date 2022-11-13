@@ -325,7 +325,7 @@ namespace Beryll
 
     CollidingAnimatedObject::~CollidingAnimatedObject()
     {
-
+        disableCollisionMesh();
     }
 
     void CollidingAnimatedObject::updateBeforePhysics()

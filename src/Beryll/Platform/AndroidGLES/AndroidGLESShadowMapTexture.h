@@ -22,8 +22,6 @@ namespace Beryll
 
         void drawIntoShadowMap(const std::vector<std::shared_ptr<Beryll::BaseSimpleObject>>& simpleObj,
                                const std::vector<std::shared_ptr<Beryll::BaseAnimatedObject>>& animatedObj,
-                               const std::shared_ptr<Beryll::Shader>& shaderSimple,
-                               const std::shared_ptr<Beryll::Shader>& shaderAnimated,
                                const glm::mat4& VPMatrix) override;
 
     private:
@@ -40,6 +38,9 @@ namespace Beryll
         int m_defaultFBO = 0;
         uint32_t m_depthMapFBO = 0;
         uint32_t m_openGLID = 0;
+
+        std::shared_ptr<Beryll::Shader> m_shaderSimple;
+        std::shared_ptr<Beryll::Shader> m_shaderAnimated;
 
         const int m_mapWidth;
         const int m_mapHeight;

@@ -132,13 +132,22 @@ namespace Beryll
             }
         }
 
-        void enableGravity(bool resetVelocities = false)
+        void enableDefaultGravity(bool resetVelocities = false)
         {
             if(!m_gravityEnabled && m_hasCollisionObject)
             {
-                Beryll::Physics::enableGravityForObject(m_ID, resetVelocities);
+                Beryll::Physics::enableDefaultGravityForObject(m_ID, resetVelocities);
 
                 m_gravityEnabled = true;
+            }
+        }
+
+        void setGravity(const glm::vec3& grav, bool resetVelocities = false)
+        {
+            if(m_gravity != grav && m_hasCollisionObject)
+            {
+                Beryll::Physics::setGravityForObject(m_ID, grav, resetVelocities);
+                m_gravity = grav;
             }
         }
 
@@ -224,6 +233,7 @@ namespace Beryll
         PhysicsTransforms m_physicsTransforms;
 
         bool m_gravityEnabled = true;
+        glm::vec3 m_gravity{0.0f};
         glm::vec3 m_linearFactor = glm::vec3(1.0f, 1.0f, 1.0f);
         glm::vec3 m_angularFactor = glm::vec3(1.0f, 1.0f, 1.0f);
 

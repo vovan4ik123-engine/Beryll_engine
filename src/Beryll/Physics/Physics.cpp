@@ -46,7 +46,7 @@ namespace Beryll
                                                                         m_collisionConfiguration.get());
 
         m_dynamicsWorldMT->setGravity(m_gravity);
-        m_dynamicsWorldMT->getSolverInfo().m_numIterations = 5;
+        //m_dynamicsWorldMT->getSolverInfo().m_numIterations = 5;
 
         // set collisions call backs to bullet
         gContactAddedCallback = collisionsCallBack;
@@ -71,7 +71,7 @@ namespace Beryll
         // maxSubSteps: timeStep < maxSubSteps * fixedTimeStep
         // fixedTimeStep: simulation resolution increases as this value decreases.
         //                If your balls penetrates your walls instead of colliding with them decrease it
-        m_timeStep = std::min(m_timer.elapsedSec(), 0.120f); // protection from lag (FPS dropped down and is <= 8 FPS)
+        m_timeStep = std::min(m_timer.elapsedSec(), 0.1f); // protection from lag (FPS dropped down and is < 10 FPS)
         m_timer.reset();
         m_dynamicsWorldMT->stepSimulation(m_timeStep,
                                      m_resolutionFactor + 1,
@@ -710,8 +710,10 @@ namespace Beryll
             {
                 std::scoped_lock<std::mutex> lock (m_mutex);
 
-                if(iter->second->rb->getMotionState()) iter->second->rb->getMotionState()->getWorldTransform(t);
-                else t = iter->second->rb->getWorldTransform();
+                if(iter->second->rb->getMotionState())
+                    iter->second->rb->getMotionState()->getWorldTransform(t);
+                else
+                    t = iter->second->rb->getWorldTransform();
             }
 
             physicsTransforms.origin = glm::vec3(t.getOrigin().getX(), t.getOrigin().getY(), t.getOrigin().getZ());
@@ -728,10 +730,11 @@ namespace Beryll
     void Physics::softRemoveObject(const int ID)
     {
         auto iter = m_rigidBodiesMap.find(ID);
+
+        std::scoped_lock<std::mutex> lock (m_mutex);
+
         if(iter != m_rigidBodiesMap.end() && iter->second->existInDynamicWorld) // found object by ID and it exist in world
         {
-            std::scoped_lock<std::mutex> lock (m_mutex);
-
             m_dynamicsWorldMT->removeRigidBody(iter->second->rb.get());
             iter->second->existInDynamicWorld = false;
         }
@@ -740,10 +743,11 @@ namespace Beryll
     void Physics::restoreObject(const int ID, bool resetVelocities)
     {
         auto iter = m_rigidBodiesMap.find(ID);
+
+        std::scoped_lock<std::mutex> lock (m_mutex);
+
         if(iter != m_rigidBodiesMap.end() && !iter->second->existInDynamicWorld)
         {
-            std::scoped_lock<std::mutex> lock (m_mutex);
-
             resetVelocitiesForObject(iter->second->rb, resetVelocities);
 
             iter->second->rb->activate(true);
@@ -758,10 +762,11 @@ namespace Beryll
     void Physics::activateObject(const int ID)
     {
         auto iter = m_rigidBodiesMap.find(ID);
+
+        std::scoped_lock<std::mutex> lock (m_mutex);
+
         if(iter != m_rigidBodiesMap.end() && iter->second->existInDynamicWorld) // found object by ID and it exist in world
         {
-            std::scoped_lock<std::mutex> lock (m_mutex);
-
             iter->second->rb->activate(true);
         }
     }
@@ -769,10 +774,11 @@ namespace Beryll
     bool Physics::getIsObjectActive(const int ID)
     {
         auto iter = m_rigidBodiesMap.find(ID);
+
+        std::scoped_lock<std::mutex> lock (m_mutex);
+
         if(iter != m_rigidBodiesMap.end() && iter->second->existInDynamicWorld) // found object by ID and it exist in world
         {
-            std::scoped_lock<std::mutex> lock (m_mutex);
-
             int activationState = iter->second->rb->getActivationState();
 
             if(activationState == ACTIVE_TAG ||
@@ -879,7 +885,7 @@ namespace Beryll
         }
     }
 
-    void Physics::enableGravityForObject(const int ID, bool resetVelocities)
+    void Physics::enableDefaultGravityForObject(const int ID, bool resetVelocities)
     {
         auto iter = m_rigidBodiesMap.find(ID);
         if(iter != m_rigidBodiesMap.end())

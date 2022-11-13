@@ -13,7 +13,7 @@ namespace Beryll
 {
     AndroidGLESParticleSystem::AndroidGLESParticleSystem()
     {
-        m_quadParticles.resize(5000);
+        m_quadParticles.resize(50000);
         m_currentQuadParticlesIndex = static_cast<int>(m_quadParticles.size()) - 1;
 
         std::vector<glm::vec3> quadVertices{glm::vec3(-1.0f, -1.0f, 0.0f),
@@ -45,7 +45,7 @@ namespace Beryll
 
                 v[i].lifeTimePassed += TimeStep::getTimeStepSec();
                 v[i].pos += v[i].moveDir * (v[i].moveSpeed * TimeStep::getTimeStepSec());
-                v[i].rotation += (2.0f * TimeStep::getTimeStepSec()) * v[i].rotationSpeed;
+                v[i].rotation += ((2.0f * TimeStep::getTimeStepSec()) * v[i].rotationSpeed) * v[i].rotationSide;
                 float lifeInRange_0_1 = v[i].lifeTimePassed / v[i].lifeTimeFull;
                 v[i].finalColor = glm::lerp(v[i].colorBegin, v[i].colorEnd, lifeInRange_0_1);
                 v[i].finalSize = glm::lerp(v[i].sizeBegin, v[i].sizeEnd, lifeInRange_0_1);
@@ -63,39 +63,39 @@ namespace Beryll
             }
         };
 
-        m_cubeParticles.resize(4000);
+        m_cubeParticles.resize(25000);
         m_currentCubeParticlesIndex = static_cast<int>(m_cubeParticles.size()) - 1;
 
         std::vector<glm::vec3> cubeVertices;
-        cubeVertices.emplace_back(glm::vec3{1.0f, -1.0f, -1.0f}); // right side +X
-        cubeVertices.emplace_back(glm::vec3{1.0f, -1.0f, 1.0f});
-        cubeVertices.emplace_back(glm::vec3{1.0f, 1.0f, -1.0f});
-        cubeVertices.emplace_back(glm::vec3{1.0f, 1.0f, 1.0f});
+        cubeVertices.emplace_back(1.0f, -1.0f, -1.0f); // right side +X
+        cubeVertices.emplace_back(1.0f, -1.0f, 1.0f);
+        cubeVertices.emplace_back(1.0f, 1.0f, -1.0f);
+        cubeVertices.emplace_back(1.0f, 1.0f, 1.0f);
 
-        cubeVertices.emplace_back(glm::vec3{-1.0f, -1.0f, 1.0f}); // left side -X
-        cubeVertices.emplace_back(glm::vec3{-1.0f, -1.0f, -1.0f});
-        cubeVertices.emplace_back(glm::vec3{-1.0f, 1.0f, 1.0f});
-        cubeVertices.emplace_back(glm::vec3{-1.0f, 1.0f, -1.0f});
+        cubeVertices.emplace_back(-1.0f, -1.0f, 1.0f); // left side -X
+        cubeVertices.emplace_back(-1.0f, -1.0f, -1.0f);
+        cubeVertices.emplace_back(-1.0f, 1.0f, 1.0f);
+        cubeVertices.emplace_back(-1.0f, 1.0f, -1.0f);
 
-        cubeVertices.emplace_back(glm::vec3{-1.0f, 1.0f, -1.0f}); // top +Y
-        cubeVertices.emplace_back(glm::vec3{1.0f, 1.0f, -1.0f});
-        cubeVertices.emplace_back(glm::vec3{-1.0f, 1.0f, 1.0f});
-        cubeVertices.emplace_back(glm::vec3{1.0f, 1.0f, 1.0f});
+        cubeVertices.emplace_back(-1.0f, 1.0f, -1.0f); // top +Y
+        cubeVertices.emplace_back(1.0f, 1.0f, -1.0f);
+        cubeVertices.emplace_back(-1.0f, 1.0f, 1.0f);
+        cubeVertices.emplace_back(1.0f, 1.0f, 1.0f);
 
-        cubeVertices.emplace_back(glm::vec3{-1.0f, -1.0f, -1.0f}); // bottom -Y
-        cubeVertices.emplace_back(glm::vec3{1.0f, -1.0f, -1.0f});
-        cubeVertices.emplace_back(glm::vec3{-1.0f, -1.0f, 1.0f});
-        cubeVertices.emplace_back(glm::vec3{1.0f, -1.0f, 1.0f});
+        cubeVertices.emplace_back(-1.0f, -1.0f, -1.0f); // bottom -Y
+        cubeVertices.emplace_back(1.0f, -1.0f, -1.0f);
+        cubeVertices.emplace_back(-1.0f, -1.0f, 1.0f);
+        cubeVertices.emplace_back(1.0f, -1.0f, 1.0f);
 
-        cubeVertices.emplace_back(glm::vec3{1.0f, -1.0f, 1.0f}); // front side +Z
-        cubeVertices.emplace_back(glm::vec3{-1.0f, -1.0f, 1.0f});
-        cubeVertices.emplace_back(glm::vec3{1.0f, 1.0f, 1.0f});
-        cubeVertices.emplace_back(glm::vec3{-1.0f, 1.0f, 1.0f});
+        cubeVertices.emplace_back(1.0f, -1.0f, 1.0f); // front side +Z
+        cubeVertices.emplace_back(-1.0f, -1.0f, 1.0f);
+        cubeVertices.emplace_back(1.0f, 1.0f, 1.0f);
+        cubeVertices.emplace_back(-1.0f, 1.0f, 1.0f);
 
-        cubeVertices.emplace_back(glm::vec3{-1.0f, -1.0f, -1.0f}); // back side -Z
-        cubeVertices.emplace_back(glm::vec3{1.0f, -1.0f, -1.0f});
-        cubeVertices.emplace_back(glm::vec3{-1.0f, 1.0f, -1.0f});
-        cubeVertices.emplace_back(glm::vec3{1.0f, 1.0f, -1.0f});
+        cubeVertices.emplace_back(-1.0f, -1.0f, -1.0f); // back side -Z
+        cubeVertices.emplace_back(1.0f, -1.0f, -1.0f);
+        cubeVertices.emplace_back(-1.0f, 1.0f, -1.0f);
+        cubeVertices.emplace_back(1.0f, 1.0f, -1.0f);
 
 
         std::vector<uint32_t> cubeIndices{0,1,2,    1,2,3, // two triangles
@@ -148,11 +148,12 @@ namespace Beryll
 
     void AndroidGLESParticleSystem::draw()
     {
-        // update before draw
-        Beryll::AsyncRun::Run(m_quadParticles, AndroidGLESParticleSystem::updateQuadParticles);
+        if(!m_anyParticleIsActive) { return; }
 
         m_activeCount = 0;
-        // draw
+
+        Beryll::AsyncRun::Run(m_quadParticles, AndroidGLESParticleSystem::updateQuadParticles);
+
         m_internalShader->bind();
         m_quadVertexArray->bind();
 
@@ -185,6 +186,11 @@ namespace Beryll
 
             m_cubeVertexArray->draw();
         }
+
+        if(m_activeCount == 0)
+        {
+            m_anyParticleIsActive = false;
+        }
     }
 
     void AndroidGLESParticleSystem::EmitQuadsFromCenter(int particlesCount,
@@ -199,6 +205,8 @@ namespace Beryll
     {
         for(int i = 0; i < particlesCount; ++i)
         {
+            m_anyParticleIsActive = true;
+
             Particle& particle = m_quadParticles[m_currentQuadParticlesIndex];
             --m_currentQuadParticlesIndex;
             if(m_currentQuadParticlesIndex < 0)
@@ -227,6 +235,11 @@ namespace Beryll
             particle.moveSpeed = speed * RandomGenerator::getFloat();
             particle.rotation = RandomGenerator::getFloat() * 3.1416f;
             particle.rotationSpeed = RandomGenerator::getFloat();
+
+            if(RandomGenerator::getFloat() < 0.5f)
+                particle.rotationSide = -1.0f;
+            else
+                particle.rotationSide = 1.0f;
         }
     }
 
@@ -243,6 +256,8 @@ namespace Beryll
     {
         for(int i = 0; i < particlesCount; ++i)
         {
+            m_anyParticleIsActive = true;
+
             Particle& particle = m_quadParticles[m_currentQuadParticlesIndex];
             --m_currentQuadParticlesIndex;
             if(m_currentQuadParticlesIndex < 0)
@@ -277,6 +292,11 @@ namespace Beryll
             particle.moveSpeed = speed * RandomGenerator::getFloat();
             particle.rotation = RandomGenerator::getFloat() * 3.1416f;
             particle.rotationSpeed = RandomGenerator::getFloat();
+
+            if(RandomGenerator::getFloat() < 0.5f)
+                particle.rotationSide = -1.0f;
+            else
+                particle.rotationSide = 1.0f;
         }
     }
 
@@ -292,6 +312,8 @@ namespace Beryll
     {
         for(int i = 0; i < particlesCount; ++i)
         {
+            m_anyParticleIsActive = true;
+
             Particle& particle = m_cubeParticles[m_currentCubeParticlesIndex];
             --m_currentCubeParticlesIndex;
             if(m_currentCubeParticlesIndex < 0)
@@ -345,6 +367,8 @@ namespace Beryll
     {
         for(int i = 0; i < particlesCount; ++i)
         {
+            m_anyParticleIsActive = true;
+
             Particle& particle = m_cubeParticles[m_currentCubeParticlesIndex];
             --m_currentCubeParticlesIndex;
             if(m_currentCubeParticlesIndex < 0)
