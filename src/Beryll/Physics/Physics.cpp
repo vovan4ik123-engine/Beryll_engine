@@ -71,7 +71,7 @@ namespace Beryll
         // maxSubSteps: timeStep < maxSubSteps * fixedTimeStep
         // fixedTimeStep: simulation resolution increases as this value decreases.
         //                If your balls penetrates your walls instead of colliding with them decrease it
-        m_timeStep = std::min(m_timer.elapsedSec(), 0.1f); // protection from lag (FPS dropped down and is < 10 FPS)
+        m_timeStep = std::min(m_timer.elapsedSec(), 0.07f); // protection from lag (FPS dropped down and is < 14 FPS)
         m_timer.reset();
         m_dynamicsWorldMT->stepSimulation(m_timeStep,
                                      m_resolutionFactor + 1,

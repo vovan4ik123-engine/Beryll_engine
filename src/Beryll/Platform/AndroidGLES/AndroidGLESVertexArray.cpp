@@ -2,7 +2,7 @@
 #include "AndroidGLESGlobal.h"
 #include "Beryll/Core/Log.h"
 
-#include <GLES3/gl32.h>
+#include <GLES3/gl31.h>
 #include <GLES3/gl3ext.h>
 
 namespace Beryll

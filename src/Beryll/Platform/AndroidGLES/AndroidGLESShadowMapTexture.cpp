@@ -4,7 +4,7 @@
 #include "Beryll/Platform/AndroidGLES/AndroidGLESGlobal.h"
 #include "Beryll/Renderer/Renderer.h"
 
-#include <GLES3/gl32.h>
+#include <GLES3/gl31.h>
 #include <GLES3/gl3ext.h>
 
 namespace Beryll
@@ -17,14 +17,14 @@ namespace Beryll
         glGenTextures(1, &m_openGLID);
         glBindTexture(GL_TEXTURE_2D ,m_openGLID);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16, m_mapWidth, m_mapHeight, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT, NULL);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST); // GL_NEAREST GL_LINEAR
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
-        float borderColor[] = {1.0f, 1.0f, 1.0f, 1.0f};
-        glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+        //float borderColor[] = {1.0f, 1.0f, 1.0f, 1.0f}; // GL_CLAMP_TO_BORDER
+        //glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
         glBindTexture(GL_TEXTURE_2D ,0);
 
         glGetIntegerv(GL_FRAMEBUFFER_BINDING, &m_defaultFBO);

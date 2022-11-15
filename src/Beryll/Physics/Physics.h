@@ -110,7 +110,7 @@ namespace Beryll
 
         // Set count of internal steps during one simulation. From 1 to 20
         // That increase simulation time and CPU usage and increase simulation accuracy(resolution)
-        // If your balls penetrates your walls instead of colliding with them increace it
+        // If your balls penetrates your walls instead of colliding with them increase it
         static void setResolution(int res)
         {
             if(res >= 20)
