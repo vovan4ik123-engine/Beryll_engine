@@ -16,16 +16,13 @@ namespace Beryll
         // Generate texture to store Z values of framebuffer
         glGenTextures(1, &m_openGLID);
         glBindTexture(GL_TEXTURE_2D ,m_openGLID);
+
         glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16, m_mapWidth, m_mapHeight, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT, NULL);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST); // GL_NEAREST GL_LINEAR
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
-        //float borderColor[] = {1.0f, 1.0f, 1.0f, 1.0f}; // GL_CLAMP_TO_BORDER
-        //glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
-        glBindTexture(GL_TEXTURE_2D ,0);
+        glBindTexture(GL_TEXTURE_2D, 0);
 
         glGetIntegerv(GL_FRAMEBUFFER_BINDING, &m_defaultFBO);
 
@@ -38,7 +35,6 @@ namespace Beryll
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D ,m_openGLID);
         GLESStateVariables::currentTexture0 = m_openGLID;
-
         glBindFramebuffer(GL_FRAMEBUFFER, m_defaultFBO);
 
         m_shaderSimple = Beryll::Renderer::createShader("shaders/GLES/shadowMap/Simple.vert", "shaders/GLES/shadowMap/Simple.frag");
@@ -87,7 +83,6 @@ namespace Beryll
             glEnable (GL_POLYGON_OFFSET_FILL);
             glPolygonOffset(4.0f, 100.0f);
         }
-        glCullFace(GL_FRONT);
 
         m_shaderSimple->bind();
 
@@ -124,7 +119,6 @@ namespace Beryll
             }
         }
 
-        glCullFace(GL_BACK);
         glBindFramebuffer(GL_FRAMEBUFFER, m_defaultFBO);
         glColorMask (GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
         if(!polygonOffsetWasEnabled)
