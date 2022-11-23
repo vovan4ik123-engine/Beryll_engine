@@ -132,6 +132,7 @@ namespace Beryll
     {
         BR_ASSERT((mass == 0.0f), "%s", "ConcaveMesh can be only static or kinematic. means mass = 0.");
         BR_ASSERT((collFlag != CollisionFlags::DYNAMIC), "%s", "ConcaveMesh can be only static or kinematic.");
+        BR_ASSERT((vertices.empty() == false), "%s", "Vertices empty.")
 
         glm::vec3 transl;
         glm::vec3 scale;
@@ -161,7 +162,7 @@ namespace Beryll
                                       btVector3(vertex3.x, vertex3.y, vertex3.z));
         }
 
-        std::shared_ptr<btBvhTriangleMeshShape> shape = std::make_shared<btBvhTriangleMeshShape>(triangleMesh.get(), true);
+        std::shared_ptr<btBvhTriangleMeshShape> shape = std::make_shared<btBvhTriangleMeshShape>(triangleMesh.get(), true, true);
         m_collisionShapes.push_back(shape);
 
         btTransform startTransform;
@@ -204,6 +205,7 @@ namespace Beryll
     {
         BR_ASSERT(((mass == 0.0f && collFlag != CollisionFlags::DYNAMIC) ||
                    (mass > 0.0f && collFlag == CollisionFlags::DYNAMIC)), "%s", "Wrong parameters for convex mesh.");
+        BR_ASSERT((vertices.empty() == false), "%s", "Vertices empty.")
 
         glm::vec3 transl;
         glm::vec3 scale;
@@ -260,6 +262,7 @@ namespace Beryll
     {
         BR_ASSERT(((mass == 0.0f && collFlag != CollisionFlags::DYNAMIC) ||
                    (mass > 0.0f && collFlag == CollisionFlags::DYNAMIC)), "%s", "Wrong parameters for box shape.");
+        BR_ASSERT((vertices.empty() == false), "%s", "Vertices empty.")
 
         glm::vec3 transl;
         glm::vec3 scale;
@@ -332,13 +335,13 @@ namespace Beryll
     {
         BR_ASSERT(((mass == 0.0f && collFlag != CollisionFlags::DYNAMIC) ||
                    (mass > 0.0f && collFlag == CollisionFlags::DYNAMIC)), "%s", "Wrong parameters for sphere shape.");
+        BR_ASSERT((vertices.empty() == false), "%s", "Vertices empty.")
 
         glm::vec3 transl;
         glm::vec3 scale;
         glm::quat rot;
         Utils::Matrix::decompose4x4Glm(transforms, scale, rot, transl);
 
-        BR_ASSERT((vertices.empty() == false), "%s", "Vertices empty.")
         glm::vec3 point = glm::vec3(vertices[0].x * scale.x, vertices[0].y * scale.y, vertices[0].z * scale.z);
         float radius = glm::distance(glm::vec3(0.0f, 0.0f, 0.0f), point);
 
@@ -384,6 +387,7 @@ namespace Beryll
     {
         BR_ASSERT(((mass == 0.0f && collFlag != CollisionFlags::DYNAMIC) ||
                    (mass > 0.0f && collFlag == CollisionFlags::DYNAMIC)), "%s", "Wrong parameters for capsule shape.");
+        BR_ASSERT((vertices.empty() == false), "%s", "Vertices empty.")
 
         // original capsule position should be around the Y axis
 
@@ -757,6 +761,34 @@ namespace Beryll
                                             static_cast<int>(iter->second->collMask));
             iter->second->existInDynamicWorld = true;
         }
+    }
+
+    void Physics::hardRemoveAllObjects()
+    {
+        m_collisionPairs.clear();
+
+        BR_INFO("Count before hard delete %d", m_dynamicsWorldMT->getCollisionObjectArray().size());
+        // in reverse order
+        while(!m_motionStates.empty())
+        {
+            m_motionStates.pop_back();
+        }
+
+        // in reverse order
+        for(auto revIter = m_rigidBodiesMap.rbegin(); revIter != m_rigidBodiesMap.rend(); ++revIter)
+        {
+            if(revIter->second->existInDynamicWorld)
+            {
+                m_dynamicsWorldMT->removeRigidBody(revIter->second->rb.get());
+                revIter->second->existInDynamicWorld = false;
+            }
+        }
+
+        m_rigidBodiesMap.clear();
+        m_collisionShapes.clear();
+        m_triangleMeshes.clear();
+
+        BR_INFO("Count after hard delete %d", m_dynamicsWorldMT->getCollisionObjectArray().size());
     }
 
     void Physics::activateObject(const int ID)

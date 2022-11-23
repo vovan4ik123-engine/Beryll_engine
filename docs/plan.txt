@@ -1,6 +1,7 @@
 ---------------------plan:---------------------
 
-add clear physics world method
+batch rendering for particles
+add loading screen
 use tangent vector only if specular map is in materials
 
 update IMGui to 1.88+

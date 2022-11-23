@@ -143,6 +143,7 @@ namespace Beryll
 
         static void softRemoveObject(const int ID); // remove from simulation but keep in m_rigidBodiesMap
         static void restoreObject(const int ID, bool resetVelocities = false); // restore from m_rigidBodiesMap to simulation
+        static void hardRemoveAllObjects(); // remove from everywhere
 
         static void activateObject(const int ID); // awake object in physics world
         static bool getIsObjectActive(const int ID); // check if object is active
