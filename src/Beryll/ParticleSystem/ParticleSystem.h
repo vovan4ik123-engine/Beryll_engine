@@ -44,10 +44,14 @@ namespace Beryll
 
         virtual int getActiveCount() = 0;
 
+        const static std::vector<glm::vec4> quadVertices;
+
+        const static std::vector<glm::vec4> cubeVertices;
+
     protected:
         ParticleSystem() {};
 
-        struct Particle
+        struct QuadParticle
         {
             bool isActive = false;
 
@@ -66,13 +70,35 @@ namespace Beryll
             glm::vec3 moveDir{1.0f}; // must be normalized !!! and impacted by gravity (as parameter: glm::vec3 gravity)
             float moveSpeed = 1.0f; // meters in sec
 
-            float rotation = 0.0f; // only for quad particle
-            float rotationSpeed = 0.0f; // only for quad particle
+            float rotation = 0.0f;
+            float rotationSpeed = 0.0f;
 
-            glm::mat4 rotationMatrix{1.0f}; // only for cube particle
             glm::mat4 MVPMatrix{1.0f};
             const glm::vec3 faceDir{0.0f, 0.0f, 1.0f};
             float rotationSide = 0.0f; // rotate to left or to right. set to -1.0f or +1.0f
+        };
+
+        struct CubeParticle
+        {
+            bool isActive = false;
+
+            float lifeTimeFull = 1.0f;
+            float lifeTimePassed = 0.0f;
+
+            float sizeBegin = 1.0f;
+            float sizeEnd = 0.0f;
+            float finalSize = 0.0f;
+
+            glm::vec4 colorBegin{1.0f};
+            glm::vec4 colorEnd{0.0f};
+            glm::vec4 finalColor{0.0f};
+
+            glm::vec3 pos{0.0f};
+            glm::vec3 moveDir{1.0f}; // must be normalized !!! and impacted by gravity (as parameter: glm::vec3 gravity)
+            float moveSpeed = 1.0f; // meters in sec
+
+            glm::mat4 rotationMatrix{1.0f};
+            glm::mat4 MVPMatrix{1.0f};
         };
 
     private:

@@ -16,21 +16,16 @@ namespace Beryll
         m_quadParticles.resize(m_maxQuadsCount);
         m_currentQuadParticlesIndex = static_cast<int>(m_quadParticles.size()) - 1;
 
-        std::vector<glm::vec4> quadVertices{glm::vec4(-1.0f, -1.0f, 0.0f, 1.0f),
-                                            glm::vec4(1.0f, -1.0f, 0.0f, 1.0f),
-                                            glm::vec4(1.0f, 1.0f, 0.0f, 1.0f),
-                                            glm::vec4(-1.0f, 1.0f, 0.0f, 1.0f)};
-
         std::vector<uint32_t> quadIndices{0, 1, 2,
                                           2, 3, 0};
 
-        m_quadVertexPosBuffer = Renderer::createStaticVertexBuffer(quadVertices);
+        m_quadVertexPosBuffer = Renderer::createStaticVertexBuffer(ParticleSystem::quadVertices);
         m_quadIndexBuffer = Renderer::createStaticIndexBuffer(quadIndices);
         m_quadVertexArray = Renderer::createVertexArray();
         m_quadVertexArray->addVertexBuffer(m_quadVertexPosBuffer);
         m_quadVertexArray->setIndexBuffer(m_quadIndexBuffer);
 
-        updateQuadParticles = [](std::vector<Particle>& v, int begin, int end) -> void // -> void = return type
+        updateQuadParticles = [](std::vector<QuadParticle>& v, int begin, int end) -> void // -> void = return type
         {
             for(int i = begin; i < end; ++i)
             {
@@ -66,16 +61,6 @@ namespace Beryll
         m_cubeParticles.resize(70000);
         m_currentCubeParticlesIndex = static_cast<int>(m_cubeParticles.size()) - 1;
 
-        std::vector<glm::vec4> cubeVertices{glm::vec4(-1.0f, -1.0f, 1.0f, 1.0f), // front side +Z
-                                            glm::vec4(1.0f, -1.0f, 1.0f, 1.0f),
-                                            glm::vec4(1.0f, 1.0f, 1.0f, 1.0f),
-                                            glm::vec4(-1.0f, 1.0f, 1.0f, 1.0f),
-
-                                            glm::vec4(-1.0f, -1.0f, -1.0f, 1.0f), // back side -Z
-                                            glm::vec4(1.0f, -1.0f, -1.0f, 1.0f),
-                                            glm::vec4(1.0f, 1.0f, -1.0f, 1.0f),
-                                            glm::vec4(-1.0f, 1.0f, -1.0f, 1.0f)};
-
         std::vector<uint32_t> cubeIndices{0,1,2,    2,3,0, // two triangles
                                           1,5,6,    6,2,1,
                                           5,4,7,    7,6,5,
@@ -83,13 +68,13 @@ namespace Beryll
                                           3,2,6,    6,7,3,
                                           4,5,1,    1,0,4};
 
-        m_cubeVertexPosBuffer = Renderer::createStaticVertexBuffer(cubeVertices);
+        m_cubeVertexPosBuffer = Renderer::createStaticVertexBuffer(ParticleSystem::cubeVertices);
         m_cubeIndexBuffer = Renderer::createStaticIndexBuffer(cubeIndices);
         m_cubeVertexArray = Renderer::createVertexArray();
         m_cubeVertexArray->addVertexBuffer(m_cubeVertexPosBuffer);
         m_cubeVertexArray->setIndexBuffer(m_cubeIndexBuffer);
 
-        updateCubeParticles = [](std::vector<Particle>& v, int begin, int end) -> void // -> void = return type
+        updateCubeParticles = [](std::vector<CubeParticle>& v, int begin, int end) -> void // -> void = return type
         {
             for(int i = begin; i < end; ++i)
             {
@@ -135,7 +120,7 @@ namespace Beryll
             m_internalShader->bind();
             m_quadVertexArray->bind();
 
-            for(const Particle& particle : m_quadParticles)
+            for(const QuadParticle& particle : m_quadParticles)
             {
                 if(!particle.isActive)
                     continue;
@@ -156,7 +141,7 @@ namespace Beryll
             m_internalShader->bind();
             m_cubeVertexArray->bind();
 
-            for(const Particle& particle : m_cubeParticles)
+            for(const CubeParticle& particle : m_cubeParticles)
             {
                 if(!particle.isActive)
                     continue;
@@ -191,7 +176,7 @@ namespace Beryll
         {
             m_anyQuadParticleIsActive = true;
 
-            Particle& particle = m_quadParticles[m_currentQuadParticlesIndex];
+            QuadParticle& particle = m_quadParticles[m_currentQuadParticlesIndex];
             --m_currentQuadParticlesIndex;
             if(m_currentQuadParticlesIndex < 0)
             {
@@ -241,7 +226,7 @@ namespace Beryll
         {
             m_anyCubeParticleIsActive = true;
 
-            Particle& particle = m_cubeParticles[m_currentCubeParticlesIndex];
+            CubeParticle& particle = m_cubeParticles[m_currentCubeParticlesIndex];
             --m_currentCubeParticlesIndex;
             if(m_currentCubeParticlesIndex < 0)
             {
