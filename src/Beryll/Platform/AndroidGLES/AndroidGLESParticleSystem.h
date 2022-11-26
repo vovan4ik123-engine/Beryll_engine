@@ -42,6 +42,9 @@ namespace Beryll
         int m_activeCount = 0;
         std::shared_ptr<Shader> m_internalShader;
 
+        const uint32_t m_maxQuadsCount = 70000;
+        const uint32_t m_maxQuadsVertices = 70000 * 4; // 4 vertices per quad
+        const uint32_t m_maxQuadsIndices = 70000 * 6; // 6 indices per quad
         std::vector<Particle> m_quadParticles;
         int m_currentQuadParticlesIndex = 0;
         bool m_anyQuadParticleIsActive = false; // use to avoid update and draw if no active particles

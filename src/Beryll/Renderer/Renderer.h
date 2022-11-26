@@ -20,12 +20,16 @@ namespace Beryll
         Renderer() = delete;
         ~Renderer() = delete;
 
-        static std::shared_ptr<VertexBuffer> createVertexBuffer(const std::vector<glm::vec2>& data);
-        static std::shared_ptr<VertexBuffer> createVertexBuffer(const std::vector<glm::vec3>& data);
-        static std::shared_ptr<VertexBuffer> createVertexBuffer(const std::vector<glm::vec4>& data);
-        static std::shared_ptr<VertexBuffer> createVertexBuffer(const std::vector<glm::ivec4>& data);
+        static std::shared_ptr<VertexBuffer> createStaticVertexBuffer(const std::vector<glm::vec2>& data);
+        static std::shared_ptr<VertexBuffer> createStaticVertexBuffer(const std::vector<glm::vec3>& data);
+        static std::shared_ptr<VertexBuffer> createStaticVertexBuffer(const std::vector<glm::vec4>& data);
+        static std::shared_ptr<VertexBuffer> createStaticVertexBuffer(const std::vector<glm::ivec4>& data);
 
-        static std::shared_ptr<IndexBuffer> createIndexBuffer(const std::vector<uint32_t>& indices);
+        static std::shared_ptr<VertexBuffer> createDynamicVertexBuffer(VertexAttribType type, VertexAttribSize size, uint32_t maxSizeBytes);
+
+        static std::shared_ptr<IndexBuffer> createStaticIndexBuffer(const std::vector<uint32_t>& indices);
+        // If you wand dynamic index buffer: create static index buffer with max possible indices
+        //                                   and change count by setCount(uint32_t count) every frame
 
         static std::unique_ptr<VertexArray> createVertexArray();
 

@@ -13,19 +13,19 @@ namespace Beryll
 {
     AndroidGLESParticleSystem::AndroidGLESParticleSystem()
     {
-        m_quadParticles.resize(100000);
+        m_quadParticles.resize(m_maxQuadsCount);
         m_currentQuadParticlesIndex = static_cast<int>(m_quadParticles.size()) - 1;
 
-        std::vector<glm::vec3> quadVertices{glm::vec3(-1.0f, -1.0f, 0.0f),
-                                            glm::vec3(1.0f, -1.0f, 0.0f),
-                                            glm::vec3(1.0f, 1.0f, 0.0f),
-                                            glm::vec3(-1.0f, 1.0f, 0.0f)};
+        std::vector<glm::vec4> quadVertices{glm::vec4(-1.0f, -1.0f, 0.0f, 1.0f),
+                                            glm::vec4(1.0f, -1.0f, 0.0f, 1.0f),
+                                            glm::vec4(1.0f, 1.0f, 0.0f, 1.0f),
+                                            glm::vec4(-1.0f, 1.0f, 0.0f, 1.0f)};
 
         std::vector<uint32_t> quadIndices{0, 1, 2,
                                           2, 3, 0};
 
-        m_quadVertexPosBuffer = Renderer::createVertexBuffer(quadVertices);
-        m_quadIndexBuffer = Renderer::createIndexBuffer(quadIndices);
+        m_quadVertexPosBuffer = Renderer::createStaticVertexBuffer(quadVertices);
+        m_quadIndexBuffer = Renderer::createStaticIndexBuffer(quadIndices);
         m_quadVertexArray = Renderer::createVertexArray();
         m_quadVertexArray->addVertexBuffer(m_quadVertexPosBuffer);
         m_quadVertexArray->setIndexBuffer(m_quadIndexBuffer);
@@ -66,47 +66,25 @@ namespace Beryll
         m_cubeParticles.resize(70000);
         m_currentCubeParticlesIndex = static_cast<int>(m_cubeParticles.size()) - 1;
 
-        std::vector<glm::vec3> cubeVertices;
-        cubeVertices.emplace_back(1.0f, -1.0f, -1.0f); // right side +X
-        cubeVertices.emplace_back(1.0f, -1.0f, 1.0f);
-        cubeVertices.emplace_back(1.0f, 1.0f, -1.0f);
-        cubeVertices.emplace_back(1.0f, 1.0f, 1.0f);
+        std::vector<glm::vec4> cubeVertices{glm::vec4(-1.0f, -1.0f, 1.0f, 1.0f), // front side +Z
+                                            glm::vec4(1.0f, -1.0f, 1.0f, 1.0f),
+                                            glm::vec4(1.0f, 1.0f, 1.0f, 1.0f),
+                                            glm::vec4(-1.0f, 1.0f, 1.0f, 1.0f),
 
-        cubeVertices.emplace_back(-1.0f, -1.0f, 1.0f); // left side -X
-        cubeVertices.emplace_back(-1.0f, -1.0f, -1.0f);
-        cubeVertices.emplace_back(-1.0f, 1.0f, 1.0f);
-        cubeVertices.emplace_back(-1.0f, 1.0f, -1.0f);
+                                            glm::vec4(-1.0f, -1.0f, -1.0f, 1.0f), // back side -Z
+                                            glm::vec4(1.0f, -1.0f, -1.0f, 1.0f),
+                                            glm::vec4(1.0f, 1.0f, -1.0f, 1.0f),
+                                            glm::vec4(-1.0f, 1.0f, -1.0f, 1.0f)};
 
-        cubeVertices.emplace_back(-1.0f, 1.0f, -1.0f); // top +Y
-        cubeVertices.emplace_back(1.0f, 1.0f, -1.0f);
-        cubeVertices.emplace_back(-1.0f, 1.0f, 1.0f);
-        cubeVertices.emplace_back(1.0f, 1.0f, 1.0f);
+        std::vector<uint32_t> cubeIndices{0,1,2,    2,3,0, // two triangles
+                                          1,5,6,    6,2,1,
+                                          5,4,7,    7,6,5,
+                                          4,0,3,    3,7,4,
+                                          3,2,6,    6,7,3,
+                                          4,5,1,    1,0,4};
 
-        cubeVertices.emplace_back(-1.0f, -1.0f, -1.0f); // bottom -Y
-        cubeVertices.emplace_back(1.0f, -1.0f, -1.0f);
-        cubeVertices.emplace_back(-1.0f, -1.0f, 1.0f);
-        cubeVertices.emplace_back(1.0f, -1.0f, 1.0f);
-
-        cubeVertices.emplace_back(1.0f, -1.0f, 1.0f); // front side +Z
-        cubeVertices.emplace_back(-1.0f, -1.0f, 1.0f);
-        cubeVertices.emplace_back(1.0f, 1.0f, 1.0f);
-        cubeVertices.emplace_back(-1.0f, 1.0f, 1.0f);
-
-        cubeVertices.emplace_back(-1.0f, -1.0f, -1.0f); // back side -Z
-        cubeVertices.emplace_back(1.0f, -1.0f, -1.0f);
-        cubeVertices.emplace_back(-1.0f, 1.0f, -1.0f);
-        cubeVertices.emplace_back(1.0f, 1.0f, -1.0f);
-
-
-        std::vector<uint32_t> cubeIndices{0,1,2,    1,2,3, // two triangles
-                                          4,5,6,    5,6,7,
-                                          8,9,10,   9,10,11,
-                                          12,13,14, 13,14,15,
-                                          16,17,18, 17,18,19,
-                                          20,21,22, 21,22,23};
-
-        m_cubeVertexPosBuffer = Renderer::createVertexBuffer(cubeVertices);
-        m_cubeIndexBuffer = Renderer::createIndexBuffer(cubeIndices);
+        m_cubeVertexPosBuffer = Renderer::createStaticVertexBuffer(cubeVertices);
+        m_cubeIndexBuffer = Renderer::createStaticIndexBuffer(cubeIndices);
         m_cubeVertexArray = Renderer::createVertexArray();
         m_cubeVertexArray->addVertexBuffer(m_cubeVertexPosBuffer);
         m_cubeVertexArray->setIndexBuffer(m_cubeIndexBuffer);

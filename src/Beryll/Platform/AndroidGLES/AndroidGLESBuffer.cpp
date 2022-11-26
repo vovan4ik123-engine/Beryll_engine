@@ -6,88 +6,126 @@
 namespace Beryll
 {
     // Vertex buffer
-    AndroidGLESVertexBuffer::AndroidGLESVertexBuffer(const std::vector<glm::vec2>& data)
+    AndroidGLESStaticVertexBuffer::AndroidGLESStaticVertexBuffer(const std::vector<glm::vec2>& data)
     {
         glGenBuffers(1, &m_VBO);
         glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-        glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(glm::vec2), &data[0], GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(glm::vec2), data.data(), GL_STATIC_DRAW);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
 
         m_vertAttribType = VertexAttribType::FLOAT;
         m_vertAttribSyze = VertexAttribSize::TWO;
     }
 
-    AndroidGLESVertexBuffer::AndroidGLESVertexBuffer(const std::vector<glm::vec3>& data)
+    AndroidGLESStaticVertexBuffer::AndroidGLESStaticVertexBuffer(const std::vector<glm::vec3>& data)
     {
         glGenBuffers(1, &m_VBO);
         glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-        glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(glm::vec3), &data[0], GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(glm::vec3), data.data(), GL_STATIC_DRAW);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
 
         m_vertAttribType = VertexAttribType::FLOAT;
         m_vertAttribSyze = VertexAttribSize::THREE;
     }
 
-    AndroidGLESVertexBuffer::AndroidGLESVertexBuffer(const std::vector<glm::vec4>& data)
+    AndroidGLESStaticVertexBuffer::AndroidGLESStaticVertexBuffer(const std::vector<glm::vec4>& data)
     {
         glGenBuffers(1, &m_VBO);
         glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-        glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(glm::vec4), &data[0], GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(glm::vec4), data.data(), GL_STATIC_DRAW);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
 
         m_vertAttribType = VertexAttribType::FLOAT;
         m_vertAttribSyze = VertexAttribSize::FOUR;
     }
 
-    AndroidGLESVertexBuffer::AndroidGLESVertexBuffer(const std::vector<glm::ivec4>& data)
+    AndroidGLESStaticVertexBuffer::AndroidGLESStaticVertexBuffer(const std::vector<glm::ivec4>& data)
     {
         glGenBuffers(1, &m_VBO);
         glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-        glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(glm::ivec4), &data[0], GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(glm::ivec4), data.data(), GL_STATIC_DRAW);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
 
         m_vertAttribType = VertexAttribType::INT;
         m_vertAttribSyze = VertexAttribSize::FOUR;
     }
 
-    AndroidGLESVertexBuffer::~AndroidGLESVertexBuffer()
+    AndroidGLESStaticVertexBuffer::~AndroidGLESStaticVertexBuffer()
     {
         glDeleteBuffers(1, &m_VBO);
     }
 
-    void AndroidGLESVertexBuffer::bind()
+    void AndroidGLESStaticVertexBuffer::bind()
     {
         glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
     }
 
-    void AndroidGLESVertexBuffer::unBind()
+    void AndroidGLESStaticVertexBuffer::unBind()
+    {
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+    }
+
+    AndroidGLESDynamicVertexBuffer::AndroidGLESDynamicVertexBuffer(VertexAttribType type, VertexAttribSize size, uint32_t maxSizeBytes)
+    {
+        glGenBuffers(1, &m_VBO);
+        glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
+        glBufferData(GL_ARRAY_BUFFER, maxSizeBytes, nullptr, GL_DYNAMIC_DRAW);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+        m_vertAttribType = type;
+        m_vertAttribSyze = size;
+    }
+
+    AndroidGLESDynamicVertexBuffer::~AndroidGLESDynamicVertexBuffer()
+    {
+        glDeleteBuffers(1, &m_VBO);
+    }
+
+    void AndroidGLESDynamicVertexBuffer::setDynamicBufferData(const std::vector<float>& data)
+    {
+        glBufferSubData(GL_ARRAY_BUFFER, 0, data.size() * sizeof(float), data.data());
+    }
+
+    void AndroidGLESDynamicVertexBuffer::bind()
+    {
+        glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
+    }
+
+    void AndroidGLESDynamicVertexBuffer::unBind()
     {
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
     // Index buffer
-    AndroidGLESIndexBuffer::AndroidGLESIndexBuffer(const std::vector<uint32_t>& indices)
+    AndroidGLESStaticIndexBuffer::AndroidGLESStaticIndexBuffer(const std::vector<uint32_t>& indices) : m_originalCount(indices.size())
     {
         glGenBuffers(1, &m_EBO);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint32_t), &indices[0], GL_STATIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint32_t), indices.data(), GL_STATIC_DRAW);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
         m_count = indices.size();
     }
 
-    AndroidGLESIndexBuffer::~AndroidGLESIndexBuffer()
+    AndroidGLESStaticIndexBuffer::~AndroidGLESStaticIndexBuffer()
     {
         glDeleteBuffers(1, &m_EBO);
     }
 
-    void AndroidGLESIndexBuffer::bind()
+    void AndroidGLESStaticIndexBuffer::bind()
     {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
     }
 
-    void AndroidGLESIndexBuffer::unBind()
+    void AndroidGLESStaticIndexBuffer::unBind()
     {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    }
+
+    void AndroidGLESStaticIndexBuffer::setCount(uint32_t count)
+    {
+        BR_ASSERT((count <= m_originalCount), "%s", "New count can not be more that original size");
+
+        m_count = count;
     }
 }

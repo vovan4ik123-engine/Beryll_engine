@@ -15,10 +15,10 @@
 
 namespace Beryll
 {
-    std::shared_ptr<VertexBuffer> Renderer::createVertexBuffer(const std::vector<glm::vec2>& data)
+    std::shared_ptr<VertexBuffer> Renderer::createStaticVertexBuffer(const std::vector<glm::vec2>& data)
     {
 #if defined(ANDROID)
-        return std::shared_ptr<VertexBuffer>(new AndroidGLESVertexBuffer(data));
+        return std::shared_ptr<VertexBuffer>(new AndroidGLESStaticVertexBuffer(data));
 #elif defined(APPLE)
 
 #else
@@ -27,10 +27,10 @@ namespace Beryll
 #endif
     }
 
-    std::shared_ptr<VertexBuffer> Renderer::createVertexBuffer(const std::vector<glm::vec3>& data)
+    std::shared_ptr<VertexBuffer> Renderer::createStaticVertexBuffer(const std::vector<glm::vec3>& data)
     {
 #if defined(ANDROID)
-        return std::shared_ptr<VertexBuffer>(new AndroidGLESVertexBuffer(data));
+        return std::shared_ptr<VertexBuffer>(new AndroidGLESStaticVertexBuffer(data));
 #elif defined(APPLE)
 
 #else
@@ -39,10 +39,10 @@ namespace Beryll
 #endif
     }
 
-    std::shared_ptr<VertexBuffer> Renderer::createVertexBuffer(const std::vector<glm::vec4>& data)
+    std::shared_ptr<VertexBuffer> Renderer::createStaticVertexBuffer(const std::vector<glm::vec4>& data)
     {
 #if defined(ANDROID)
-        return std::shared_ptr<VertexBuffer>(new AndroidGLESVertexBuffer(data));
+        return std::shared_ptr<VertexBuffer>(new AndroidGLESStaticVertexBuffer(data));
 #elif defined(APPLE)
 
 #else
@@ -51,10 +51,10 @@ namespace Beryll
 #endif
     }
 
-    std::shared_ptr<VertexBuffer> Renderer::createVertexBuffer(const std::vector<glm::ivec4>& data)
+    std::shared_ptr<VertexBuffer> Renderer::createStaticVertexBuffer(const std::vector<glm::ivec4>& data)
     {
 #if defined(ANDROID)
-        return std::shared_ptr<VertexBuffer>(new AndroidGLESVertexBuffer(data));
+        return std::shared_ptr<VertexBuffer>(new AndroidGLESStaticVertexBuffer(data));
 #elif defined(APPLE)
 
 #else
@@ -63,10 +63,22 @@ namespace Beryll
 #endif
     }
 
-    std::shared_ptr<IndexBuffer> Renderer::createIndexBuffer(const std::vector<uint32_t>& indices)
+    std::shared_ptr<VertexBuffer> Renderer::createDynamicVertexBuffer(VertexAttribType type, VertexAttribSize size, uint32_t maxSizeBytes)
     {
 #if defined(ANDROID)
-        return std::shared_ptr<IndexBuffer>(new AndroidGLESIndexBuffer(indices));
+        return std::shared_ptr<VertexBuffer>(new AndroidGLESDynamicVertexBuffer(type, size, maxSizeBytes));
+#elif defined(APPLE)
+
+#else
+        BR_ASSERT(false, "%s", "Can not create VertexBuffer. Unknown platform.");
+        return nullptr;
+#endif
+    }
+
+    std::shared_ptr<IndexBuffer> Renderer::createStaticIndexBuffer(const std::vector<uint32_t>& indices)
+    {
+#if defined(ANDROID)
+        return std::shared_ptr<IndexBuffer>(new AndroidGLESStaticIndexBuffer(indices));
 #elif defined(APPLE)
 
 #else

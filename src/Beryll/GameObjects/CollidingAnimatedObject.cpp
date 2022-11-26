@@ -160,10 +160,10 @@ namespace Beryll
                 }
             }
             BR_INFO("Vertex count: %d", vertices.size());
-            m_vertexPosBuffer = Renderer::createVertexBuffer(vertices);
-            m_vertexNormalsBuffer = Renderer::createVertexBuffer(normals);
-            m_vertexTangentsBuffer = Renderer::createVertexBuffer(tangents);
-            m_textureCoordsBuffer = Renderer::createVertexBuffer(textureCoords);
+            m_vertexPosBuffer = Renderer::createStaticVertexBuffer(vertices);
+            m_vertexNormalsBuffer = Renderer::createStaticVertexBuffer(normals);
+            m_vertexTangentsBuffer = Renderer::createStaticVertexBuffer(tangents);
+            m_textureCoordsBuffer = Renderer::createStaticVertexBuffer(textureCoords);
 
             // bones
             m_boneCount = m_scene->mMeshes[i]->mNumBones;
@@ -202,8 +202,8 @@ namespace Beryll
                     }
                 }
             }
-            m_boneIDsBuffer = Renderer::createVertexBuffer(boneIDs);
-            m_boneWeightsBuffer = Renderer::createVertexBuffer(boneWeights);
+            m_boneIDsBuffer = Renderer::createStaticVertexBuffer(boneIDs);
+            m_boneWeightsBuffer = Renderer::createStaticVertexBuffer(boneWeights);
 
             // indices
             for(int g = 0; g < m_scene->mMeshes[i]->mNumFaces; ++g) // every face MUST be a triangle !!!!
@@ -212,7 +212,7 @@ namespace Beryll
                 indices.emplace_back(m_scene->mMeshes[i]->mFaces[g].mIndices[1]);
                 indices.emplace_back(m_scene->mMeshes[i]->mFaces[g].mIndices[2]);
             }
-            m_indexBuffer = Renderer::createIndexBuffer(indices);
+            m_indexBuffer = Renderer::createStaticIndexBuffer(indices);
 
             m_vertexArray = Renderer::createVertexArray();
             m_vertexArray->addVertexBuffer(m_vertexPosBuffer);

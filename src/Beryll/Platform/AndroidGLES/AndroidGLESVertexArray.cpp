@@ -38,15 +38,13 @@ namespace Beryll
 
     void AndroidGLESVertexArray::draw()
     {
-        glDrawElements(GL_TRIANGLES, m_indexBuffer->getCount(), GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, m_indexBuffer->getCount(), GL_UNSIGNED_INT, nullptr);
     }
 
     void AndroidGLESVertexArray::addVertexBuffer(const std::shared_ptr<VertexBuffer>& vertBuff)
     {
-        if(vertBuff->getAttribSize() == VertexAttribSize::UNKNOWN || vertBuff->getAttribType() == VertexAttribType::UNKNOWN)
-        {
-            BR_ASSERT(false, "%s", "Unknown vertex buffer data type or size.");
-        }
+        BR_ASSERT((vertBuff->getAttribSize() != VertexAttribSize::UNKNOWN &&
+                   vertBuff->getAttribType() != VertexAttribType::UNKNOWN), "%s", "Unknown vertex buffer data type or size.");
 
         int size = 0;
         uint32_t type = 0;

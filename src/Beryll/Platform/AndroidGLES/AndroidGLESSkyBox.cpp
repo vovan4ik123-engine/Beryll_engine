@@ -118,7 +118,7 @@ namespace Beryll
         vertices.emplace_back(glm::vec3{1.0f, -1.0f, -1.0f});
         vertices.emplace_back(glm::vec3{-1.0f, 1.0f, -1.0f});
         vertices.emplace_back(glm::vec3{1.0f, 1.0f, -1.0f});
-        m_vertexPosBuffer = Renderer::createVertexBuffer(vertices);
+        m_vertexPosBuffer = Renderer::createStaticVertexBuffer(vertices);
 
         std::vector<uint32_t> indices{0,1,2,    1,2,3, // two triangles
                                       4,5,6,    5,6,7,
@@ -126,7 +126,7 @@ namespace Beryll
                                       12,13,14, 13,14,15,
                                       16,17,18, 17,18,19,
                                       20,21,22, 21,22,23};
-        m_indexBuffer = Renderer::createIndexBuffer(indices);
+        m_indexBuffer = Renderer::createStaticIndexBuffer(indices);
 
         m_vertexArray = Renderer::createVertexArray();
         m_vertexArray->addVertexBuffer(m_vertexPosBuffer);
