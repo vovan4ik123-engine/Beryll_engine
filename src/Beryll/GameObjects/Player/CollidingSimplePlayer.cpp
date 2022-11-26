@@ -75,7 +75,6 @@ namespace Beryll
 
         m_playerOnGround = false;
         m_playerMoving = false;
-        //BR_INFO("%s", "playerOnGround = false");
 
         m_bottomCollisionPoint = std::make_pair(glm::vec3(0.0f, std::numeric_limits<float>::max(), 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 
@@ -97,33 +96,39 @@ namespace Beryll
                     //BR_INFO("%s", "playerOnGround = true");
                     // player stay on allowed floor angle
                     m_playerOnGround = true;
+                    // DONT break loop here !!! continue collect m_bottomCollisionPoint
                 }
             }
-
-            if(m_playerOnGround)
-            {
-                resetVelocities();
-                m_canJump = true;
-                m_canApplyStartFallingImpulse = true;
-            }
         }
 
-        if(fallingGravityFactor != 1.0f)
+        if(m_playerOnGround)
         {
-            if(!m_playerOnGround && m_previousYPos > m_origin.y && (m_lastTimeOnGround + jumpExtendTime) < TimeStep::getSecFromStart())
-            {
-                setGravity(Physics::getDefaultGravity() * fallingGravityFactor);
-            }
-            else
-            {
-                setGravity(Physics::getDefaultGravity());
-            }
+            resetVelocities();
+            m_jumped = false;
+            m_falling = false;
+            m_canApplyStartFallingImpulse = true;
+        }
+        else if(m_previousYPos > m_origin.y)
+        {
+            m_falling = true;
+        }
+        else
+        {
+            m_falling = false;
         }
 
-        if(m_canApplyStartFallingImpulse && !m_playerOnGround && m_previousYPos > m_origin.y && (m_lastTimeOnGround + jumpExtendTime) < TimeStep::getSecFromStart())
+        if(m_canApplyStartFallingImpulse && m_falling)
         {
-            applyImpulse(glm::vec3{0.0f, -1.0f, 0.f} * moveSpeed * startFallingPower);
-            m_canApplyStartFallingImpulse = false;
+            if(m_jumped)
+            {
+                applyImpulse(glm::vec3{0.0f, -1.0f, 0.f} * moveSpeed * startFallingPower);
+                m_canApplyStartFallingImpulse = false;
+            }
+            else if((m_lastTimeOnGround + jumpExtendTime) < TimeStep::getSecFromStart())
+            {
+                applyImpulse(glm::vec3{0.0f, -1.0f, 0.f} * moveSpeed * startFallingPower);
+                m_canApplyStartFallingImpulse = false;
+            }
         }
 
         m_previousYPos = m_origin.y;
@@ -304,7 +309,7 @@ namespace Beryll
 
     void CollidingSimplePlayer::jump()
     {
-        if(!m_canJump) { return; }
+        if(m_jumped) { return; }
 
         if(m_playerOnGround || (m_lastTimeOnGround + jumpExtendTime) > TimeStep::getSecFromStart())
         {
@@ -319,7 +324,7 @@ namespace Beryll
             }
 
             applyImpulse(glm::normalize(m_jumpDirection) * moveSpeed * startJumpPower);
-            m_canJump = false;
+            m_jumped = true;
         }
     }
 }

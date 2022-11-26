@@ -13,9 +13,6 @@ namespace Beryll
         AndroidGLESVertexBuffer() = delete;
         ~AndroidGLESVertexBuffer() override;
 
-        void bind() override;
-        void unBind() override;
-
     private:
         friend class Renderer;
         // add constructor with proper vector for different buffer
@@ -23,6 +20,10 @@ namespace Beryll
         AndroidGLESVertexBuffer(const std::vector<glm::vec3>& data);
         AndroidGLESVertexBuffer(const std::vector<glm::vec4>& data);
         AndroidGLESVertexBuffer(const std::vector<glm::ivec4>& data);
+
+        friend class AndroidGLESVertexArray;
+        void bind() override; // Must be called only inside VAO
+        void unBind() override; // Must be called only inside VAO
 
         uint32_t m_VBO = 0;
     };

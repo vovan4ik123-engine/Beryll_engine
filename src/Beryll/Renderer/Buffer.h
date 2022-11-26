@@ -17,8 +17,8 @@ namespace Beryll
     public:
         virtual ~VertexBuffer() {}
 
-        virtual void bind() = 0;
-        virtual void unBind() = 0;
+        virtual void bind() = 0; // Must be called only inside VAO
+        virtual void unBind() = 0; // Must be called only inside VAO
 
         VertexAttribType getAttribType() { return m_vertAttribType; }
         VertexAttribSize getAttribSize() { return m_vertAttribSyze; }

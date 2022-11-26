@@ -32,17 +32,6 @@ namespace Beryll
                                     glm::vec3 gravity,
                                     float speed) = 0;
 
-        virtual void EmitQuadsExplosion(int particlesCount,
-                                   float lifeTime,
-                                   float sizeBegin,
-                                   float sizeEnd,
-                                   glm::vec3 cloudStartSize,
-                                   glm::vec4 colorBegin,
-                                   glm::vec4 colorEnd,
-                                   glm::vec3 pos,
-                                   glm::vec3 gravity,
-                                   float speed) = 0;
-
         virtual void EmitCubesFromCenter(int particlesCount,
                                     float lifeTime,
                                     float sizeBegin,
@@ -52,17 +41,6 @@ namespace Beryll
                                     glm::vec3 pos,
                                     glm::vec3 gravity,
                                     float speed) = 0;
-
-        virtual void EmitCubesExplosion(int particlesCount,
-                                   float lifeTime,
-                                   float sizeBegin,
-                                   float sizeEnd,
-                                   glm::vec3 cloudStartSize,
-                                   glm::vec4 colorBegin,
-                                   glm::vec4 colorEnd,
-                                   glm::vec3 pos,
-                                   glm::vec3 gravity,
-                                   float speed) = 0;
 
         virtual int getActiveCount() = 0;
 

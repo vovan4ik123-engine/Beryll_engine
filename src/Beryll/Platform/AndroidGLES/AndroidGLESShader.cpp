@@ -311,11 +311,11 @@ namespace Beryll
 
     void AndroidGLESShader::activateSkyBoxTexture()
     {
-        glUniform1i(glGetUniformLocation(*m_shaderProgramID, "skyBoxTexture"), 10);
+        glUniform1i(glGetUniformLocation(*m_shaderProgramID, "skyBoxTexture"), 5);
     }
 
     void AndroidGLESShader::activateShadowMapTexture()
     {
-        glUniform1i(glGetUniformLocation(*m_shaderProgramID, "shadowMapTexture"), 11);
+        glUniform1i(glGetUniformLocation(*m_shaderProgramID, "shadowMapTexture"), 6);
     }
 }

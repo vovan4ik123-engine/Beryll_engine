@@ -13,7 +13,7 @@ namespace Beryll
 {
     AndroidGLESParticleSystem::AndroidGLESParticleSystem()
     {
-        m_quadParticles.resize(50000);
+        m_quadParticles.resize(100000);
         m_currentQuadParticlesIndex = static_cast<int>(m_quadParticles.size()) - 1;
 
         std::vector<glm::vec3> quadVertices{glm::vec3(-1.0f, -1.0f, 0.0f),
@@ -63,7 +63,7 @@ namespace Beryll
             }
         };
 
-        m_cubeParticles.resize(25000);
+        m_cubeParticles.resize(70000);
         m_currentCubeParticlesIndex = static_cast<int>(m_cubeParticles.size()) - 1;
 
         std::vector<glm::vec3> cubeVertices;
@@ -148,48 +148,54 @@ namespace Beryll
 
     void AndroidGLESParticleSystem::draw()
     {
-        if(!m_anyParticleIsActive) { return; }
-
         m_activeCount = 0;
 
-        Beryll::AsyncRun::Run(m_quadParticles, AndroidGLESParticleSystem::updateQuadParticles);
-
-        m_internalShader->bind();
-        m_quadVertexArray->bind();
-
-        for(const Particle& particle : m_quadParticles)
+        if(m_anyQuadParticleIsActive)
         {
-            if(!particle.isActive)
-                continue;
+            Beryll::AsyncRun::Run(m_quadParticles, AndroidGLESParticleSystem::updateQuadParticles);
 
-            ++m_activeCount;
+            m_internalShader->bind();
+            m_quadVertexArray->bind();
 
-            m_internalShader->set4Float("color", particle.finalColor);
-            m_internalShader->setMatrix4x4Float("MVPMatrix", particle.MVPMatrix);
+            for(const Particle& particle : m_quadParticles)
+            {
+                if(!particle.isActive)
+                    continue;
 
-            m_quadVertexArray->draw();
+                ++m_activeCount;
+
+                m_internalShader->set4Float("color", particle.finalColor);
+                m_internalShader->setMatrix4x4Float("MVPMatrix", particle.MVPMatrix);
+
+                m_quadVertexArray->draw();
+            }
         }
 
-        Beryll::AsyncRun::Run(m_cubeParticles, AndroidGLESParticleSystem::updateCubeParticles);
-
-        m_cubeVertexArray->bind();
-
-        for(const Particle& particle : m_cubeParticles)
+        if(m_anyCubeParticleIsActive)
         {
-            if(!particle.isActive)
-                continue;
+            Beryll::AsyncRun::Run(m_cubeParticles, AndroidGLESParticleSystem::updateCubeParticles);
 
-            ++m_activeCount;
+            m_internalShader->bind();
+            m_cubeVertexArray->bind();
 
-            m_internalShader->set4Float("color", particle.finalColor);
-            m_internalShader->setMatrix4x4Float("MVPMatrix", particle.MVPMatrix);
+            for(const Particle& particle : m_cubeParticles)
+            {
+                if(!particle.isActive)
+                    continue;
 
-            m_cubeVertexArray->draw();
+                ++m_activeCount;
+
+                m_internalShader->set4Float("color", particle.finalColor);
+                m_internalShader->setMatrix4x4Float("MVPMatrix", particle.MVPMatrix);
+
+                m_cubeVertexArray->draw();
+            }
         }
 
         if(m_activeCount == 0)
         {
-            m_anyParticleIsActive = false;
+            m_anyQuadParticleIsActive = false;
+            m_anyCubeParticleIsActive = false;
         }
     }
 
@@ -205,7 +211,7 @@ namespace Beryll
     {
         for(int i = 0; i < particlesCount; ++i)
         {
-            m_anyParticleIsActive = true;
+            m_anyQuadParticleIsActive = true;
 
             Particle& particle = m_quadParticles[m_currentQuadParticlesIndex];
             --m_currentQuadParticlesIndex;
@@ -227,66 +233,9 @@ namespace Beryll
 
             particle.pos = pos;
 
-            particle.moveDir.x = (RandomGenerator::getFloat() * 2.0f - 1.0f) + gravity.x * std::max(RandomGenerator::getFloat(), 0.2f);
-            particle.moveDir.y = (RandomGenerator::getFloat() * 2.0f - 1.0f) + gravity.y * std::max(RandomGenerator::getFloat(), 0.2f);
-            particle.moveDir.z = (RandomGenerator::getFloat() * 2.0f - 1.0f) + gravity.z * std::max(RandomGenerator::getFloat(), 0.2f);
-            particle.moveDir = glm::normalize(particle.moveDir);
-
-            particle.moveSpeed = speed * RandomGenerator::getFloat();
-            particle.rotation = RandomGenerator::getFloat() * 3.1416f;
-            particle.rotationSpeed = RandomGenerator::getFloat();
-
-            if(RandomGenerator::getFloat() < 0.5f)
-                particle.rotationSide = -1.0f;
-            else
-                particle.rotationSide = 1.0f;
-        }
-    }
-
-    void AndroidGLESParticleSystem::EmitQuadsExplosion(int particlesCount,
-                                                        float lifeTime,
-                                                        float sizeBegin,
-                                                        float sizeEnd,
-                                                        glm::vec3 cloudStartSize,
-                                                        glm::vec4 colorBegin,
-                                                        glm::vec4 colorEnd,
-                                                        glm::vec3 pos,
-                                                        glm::vec3 gravity,
-                                                        float speed)
-    {
-        for(int i = 0; i < particlesCount; ++i)
-        {
-            m_anyParticleIsActive = true;
-
-            Particle& particle = m_quadParticles[m_currentQuadParticlesIndex];
-            --m_currentQuadParticlesIndex;
-            if(m_currentQuadParticlesIndex < 0)
-            {
-                m_currentQuadParticlesIndex = static_cast<int>(m_quadParticles.size()) - 1;
-            }
-
-            particle.isActive = true;
-
-            particle.lifeTimeFull = lifeTime;
-            particle.lifeTimePassed = 0.0f;
-
-            particle.sizeBegin = sizeBegin + sizeBegin * (RandomGenerator::getFloat() - 0.5f);
-            particle.sizeEnd = sizeEnd;
-
-            particle.colorBegin = colorBegin + colorBegin * (RandomGenerator::getFloat() - 0.5f) * 0.2f;
-            particle.colorEnd = colorEnd;
-
-            glm::vec3 posInCloud;
-            posInCloud.x = (RandomGenerator::getFloat() - 0.5f) * cloudStartSize.x;
-            posInCloud.y = (RandomGenerator::getFloat() - 0.5f) * cloudStartSize.y;
-            posInCloud.z = (RandomGenerator::getFloat() - 0.5f) * cloudStartSize.z;
-
-            particle.pos = pos + posInCloud;
-
-            particle.moveDir = glm::normalize(posInCloud);
-            particle.moveDir.x = particle.moveDir.x + gravity.x * std::max(RandomGenerator::getFloat(), 0.2f);
-            particle.moveDir.y = particle.moveDir.y + gravity.y * std::max(RandomGenerator::getFloat(), 0.2f);
-            particle.moveDir.z = particle.moveDir.z + gravity.z * std::max(RandomGenerator::getFloat(), 0.2f);
+            particle.moveDir.x = (RandomGenerator::getFloat() - 0.5f) * 2.0f + gravity.x * std::max(RandomGenerator::getFloat(), 0.2f);
+            particle.moveDir.y = (RandomGenerator::getFloat() - 0.5f) * 2.0f + gravity.y * std::max(RandomGenerator::getFloat(), 0.2f);
+            particle.moveDir.z = (RandomGenerator::getFloat() - 0.5f) * 2.0f + gravity.z * std::max(RandomGenerator::getFloat(), 0.2f);
             particle.moveDir = glm::normalize(particle.moveDir);
 
             particle.moveSpeed = speed * RandomGenerator::getFloat();
@@ -312,7 +261,7 @@ namespace Beryll
     {
         for(int i = 0; i < particlesCount; ++i)
         {
-            m_anyParticleIsActive = true;
+            m_anyCubeParticleIsActive = true;
 
             Particle& particle = m_cubeParticles[m_currentCubeParticlesIndex];
             --m_currentCubeParticlesIndex;
@@ -334,70 +283,9 @@ namespace Beryll
 
             particle.pos = pos;
 
-            particle.moveDir.x = (RandomGenerator::getFloat() * 2.0f - 1.0f) + gravity.x * std::max(RandomGenerator::getFloat(), 0.2f);
-            particle.moveDir.y = (RandomGenerator::getFloat() * 2.0f - 1.0f) + gravity.y * std::max(RandomGenerator::getFloat(), 0.2f);
-            particle.moveDir.z = (RandomGenerator::getFloat() * 2.0f - 1.0f) + gravity.z * std::max(RandomGenerator::getFloat(), 0.2f);
-            particle.moveDir = glm::normalize(particle.moveDir);
-
-            particle.moveSpeed = speed * RandomGenerator::getFloat();
-
-            glm::vec3 rotationAxis{0.0f};
-            float rotationAngle = RandomGenerator::getFloat() * 3.1416f;
-            while(glm::length(rotationAxis) < 0.1f)
-            {
-                rotationAxis.x = RandomGenerator::getFloat();
-                rotationAxis.y = RandomGenerator::getFloat();
-                rotationAxis.z = RandomGenerator::getFloat();
-            }
-            rotationAxis = glm::normalize(rotationAxis);
-            particle.rotationMatrix = glm::rotate(glm::mat4{1.0f}, rotationAngle, rotationAxis);
-        }
-    }
-
-    void AndroidGLESParticleSystem::EmitCubesExplosion(int particlesCount,
-                                                        float lifeTime,
-                                                        float sizeBegin,
-                                                        float sizeEnd,
-                                                        glm::vec3 cloudStartSize,
-                                                        glm::vec4 colorBegin,
-                                                        glm::vec4 colorEnd,
-                                                        glm::vec3 pos,
-                                                        glm::vec3 gravity,
-                                                        float speed)
-    {
-        for(int i = 0; i < particlesCount; ++i)
-        {
-            m_anyParticleIsActive = true;
-
-            Particle& particle = m_cubeParticles[m_currentCubeParticlesIndex];
-            --m_currentCubeParticlesIndex;
-            if(m_currentCubeParticlesIndex < 0)
-            {
-                m_currentCubeParticlesIndex = static_cast<int>(m_cubeParticles.size()) - 1;
-            }
-
-            particle.isActive = true;
-
-            particle.lifeTimeFull = lifeTime;
-            particle.lifeTimePassed = 0.0f;
-
-            particle.sizeBegin = sizeBegin + sizeBegin * (RandomGenerator::getFloat() - 0.5f);
-            particle.sizeEnd = sizeEnd;
-
-            particle.colorBegin = colorBegin + colorBegin * (RandomGenerator::getFloat() - 0.5f) * 0.2f;
-            particle.colorEnd = colorEnd;
-
-            glm::vec3 posInCloud;
-            posInCloud.x = (RandomGenerator::getFloat() - 0.5f) * cloudStartSize.x;
-            posInCloud.y = (RandomGenerator::getFloat() - 0.5f) * cloudStartSize.y;
-            posInCloud.z = (RandomGenerator::getFloat() - 0.5f) * cloudStartSize.z;
-
-            particle.pos = pos + posInCloud;
-
-            particle.moveDir = glm::normalize(posInCloud);
-            particle.moveDir.x = particle.moveDir.x + gravity.x * std::max(RandomGenerator::getFloat(), 0.2f);
-            particle.moveDir.y = particle.moveDir.y + gravity.y * std::max(RandomGenerator::getFloat(), 0.2f);
-            particle.moveDir.z = particle.moveDir.z + gravity.z * std::max(RandomGenerator::getFloat(), 0.2f);
+            particle.moveDir.x = (RandomGenerator::getFloat() - 0.5f) * 2.0f + gravity.x * std::max(RandomGenerator::getFloat(), 0.2f);
+            particle.moveDir.y = (RandomGenerator::getFloat() - 0.5f) * 2.0f + gravity.y * std::max(RandomGenerator::getFloat(), 0.2f);
+            particle.moveDir.z = (RandomGenerator::getFloat() - 0.5f) * 2.0f + gravity.z * std::max(RandomGenerator::getFloat(), 0.2f);
             particle.moveDir = glm::normalize(particle.moveDir);
 
             particle.moveSpeed = speed * RandomGenerator::getFloat();

@@ -151,11 +151,11 @@ namespace Beryll
             m_internalShader->setMatrix4x4Float("VPMatrix", m_perspView);
         }
 
-        if(GLESStateVariables::currentTexture10 != m_openGLID)
+        if(GLESStateVariables::currentTexture5 != m_openGLID)
         {
-            glActiveTexture(GL_TEXTURE10);
+            glActiveTexture(GL_TEXTURE5);
             glBindTexture(GL_TEXTURE_CUBE_MAP, m_openGLID);
-            GLESStateVariables::currentTexture10 = m_openGLID;
+            GLESStateVariables::currentTexture5 = m_openGLID;
         }
 
         m_vertexArray->bind();

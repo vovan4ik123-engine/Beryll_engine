@@ -75,7 +75,7 @@ namespace Beryll
         m_timer.reset();
         m_dynamicsWorldMT->stepSimulation(m_timeStep,
                                      m_resolutionFactor + 1,
-                                     m_timeStep / m_resolutionFactor);
+                                     m_timeStep / static_cast<float>(m_resolutionFactor));
 
         //BR_INFO("Simulation objects count:%d", m_dynamicsWorldMT->getNumCollisionObjects());
         //BR_INFO("Simulation time millisec:%d", timer.elapsedMilliSec());

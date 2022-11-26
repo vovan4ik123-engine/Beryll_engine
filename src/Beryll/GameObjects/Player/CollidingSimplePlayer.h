@@ -44,7 +44,6 @@ namespace Beryll
         float startJumpPower = 1.0f;
         float startFallingPower = 1.0f; // -y axis impulse when stat falling
         float airControlFactor = 0.3f; // factor to multiply moveSpeed if player not on ground
-        float fallingGravityFactor = 1.0f; // gravity multiplayer when falling down
         float jumpExtendTime = 0.0f; // in seconds. time when player moved from ground edge to air but still can jump
 
     private:
@@ -67,7 +66,8 @@ namespace Beryll
         glm::vec3 m_leftDirectionXZ{0.0f, 0.0f, 0.0f};
 
         glm::vec3 m_jumpDirection{0.0f, 1.0f, 0.0f};
-        bool m_canJump = false;
+        bool m_jumped = false;
+        bool m_falling = false;
         bool m_canApplyStartFallingImpulse = false;
 
         std::vector<int> m_collidingStaticObjects; // prevent creation and deletion every frame

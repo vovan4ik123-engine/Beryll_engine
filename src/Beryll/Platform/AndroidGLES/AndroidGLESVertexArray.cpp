@@ -48,9 +48,9 @@ namespace Beryll
             BR_ASSERT(false, "%s", "Unknown vertex buffer data type or size.");
         }
 
-        uint32_t size = 0;
+        int size = 0;
         uint32_t type = 0;
-        uint32_t stride = 0;
+        int stride = 0;
 
         if(vertBuff->getAttribSize() == VertexAttribSize::ONE) { size = 1; }
         else if(vertBuff->getAttribSize() == VertexAttribSize::TWO) { size = 2; }
@@ -59,7 +59,6 @@ namespace Beryll
 
         if(vertBuff->getAttribType() == VertexAttribType::FLOAT) { type = GL_FLOAT; stride = sizeof(float) * size; }
         else if(vertBuff->getAttribType() == VertexAttribType::INT) { type = GL_INT; stride = sizeof(int) * size; }
-
 
         bind();
         vertBuff->bind();

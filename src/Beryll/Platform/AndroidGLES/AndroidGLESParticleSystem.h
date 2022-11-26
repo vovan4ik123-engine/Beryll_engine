@@ -23,17 +23,6 @@ namespace Beryll
                                  glm::vec3 gravity,
                                  float speed) override;
 
-        void EmitQuadsExplosion(int particlesCount,
-                                float lifeTime,
-                                float sizeBegin,
-                                float sizeEnd,
-                                glm::vec3 cloudStartSize,
-                                glm::vec4 colorBegin,
-                                glm::vec4 colorEnd,
-                                glm::vec3 pos,
-                                glm::vec3 gravity,
-                                float speed) override;
-
         void EmitCubesFromCenter(int particlesCount,
                                  float lifeTime,
                                  float sizeBegin,
@@ -44,17 +33,6 @@ namespace Beryll
                                  glm::vec3 gravity,
                                  float speed) override;
 
-        void EmitCubesExplosion(int particlesCount,
-                                float lifeTime,
-                                float sizeBegin,
-                                float sizeEnd,
-                                glm::vec3 cloudStartSize,
-                                glm::vec4 colorBegin,
-                                glm::vec4 colorEnd,
-                                glm::vec3 pos,
-                                glm::vec3 gravity,
-                                float speed) override;
-
         int getActiveCount() override { return m_activeCount; };
 
     private:
@@ -62,11 +40,11 @@ namespace Beryll
         AndroidGLESParticleSystem();
 
         int m_activeCount = 0;
-        bool m_anyParticleIsActive = false; // use to avoid update and draw if no active particles
         std::shared_ptr<Shader> m_internalShader;
 
         std::vector<Particle> m_quadParticles;
         int m_currentQuadParticlesIndex = 0;
+        bool m_anyQuadParticleIsActive = false; // use to avoid update and draw if no active particles
         std::shared_ptr<VertexBuffer> m_quadVertexPosBuffer;
         std::shared_ptr<IndexBuffer> m_quadIndexBuffer;
         std::unique_ptr<VertexArray> m_quadVertexArray;
@@ -74,6 +52,7 @@ namespace Beryll
 
         std::vector<Particle> m_cubeParticles;
         int m_currentCubeParticlesIndex = 0;
+        bool m_anyCubeParticleIsActive = false; // use to avoid update and draw if no active particles
         std::shared_ptr<VertexBuffer> m_cubeVertexPosBuffer;
         std::shared_ptr<IndexBuffer> m_cubeIndexBuffer;
         std::unique_ptr<VertexArray> m_cubeVertexArray;
