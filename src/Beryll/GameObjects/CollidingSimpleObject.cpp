@@ -64,6 +64,20 @@ namespace Beryll
                         m_biggestZ = scene->mMeshes[i]->mVertices[g].z;
                 }
 
+                glm::vec3 scale{1.0f, 1.0f, 1.0f};
+                const aiNode* collisionNode = Utils::Common::findAinodeForAimesh(scene, scene->mRootNode, scene->mMeshes[i]->mName);
+                if(collisionNode)
+                {
+                    glm::mat4 collisionTransforms = Utils::Matrix::aiToGlm(collisionNode->mTransformation);
+                    scale = Utils::Matrix::getScaleFrom4x4Glm(collisionTransforms);
+                }
+                m_mostTopVertex *= scale.y;
+                m_mostBottomVertex *= scale.y;
+                m_biggestX *= scale.x;
+                m_smallestX *= scale.x;
+                m_biggestZ *= scale.z;
+                m_smallestZ *= scale.z;
+
                 m_hasCollisionObject = true;
                 m_isEnabledInPhysicsSimulation = true;
                 m_collisionGroup = collGroup;

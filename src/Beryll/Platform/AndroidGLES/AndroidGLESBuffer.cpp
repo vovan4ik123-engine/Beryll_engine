@@ -66,6 +66,7 @@ namespace Beryll
     }
 
     AndroidGLESDynamicVertexBuffer::AndroidGLESDynamicVertexBuffer(VertexAttribType type, VertexAttribSize size, uint32_t maxSizeBytes)
+        : m_originalSizeBytes(maxSizeBytes)
     {
         glGenBuffers(1, &m_VBO);
         glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
@@ -81,9 +82,28 @@ namespace Beryll
         glDeleteBuffers(1, &m_VBO);
     }
 
-    void AndroidGLESDynamicVertexBuffer::setDynamicBufferData(const std::vector<float>& data)
+    void AndroidGLESDynamicVertexBuffer::setDynamicBufferData(const std::vector<glm::vec3>& data, uint32_t elementsCount)
     {
-        glBufferSubData(GL_ARRAY_BUFFER, 0, data.size() * sizeof(float), data.data());
+        BR_ASSERT((m_vertAttribType == VertexAttribType::FLOAT && m_vertAttribSyze == VertexAttribSize::THREE),
+                  "%s", "Dynamic buffer was created with different data type or size");
+
+        BR_ASSERT((elementsCount * sizeof(glm::vec3) <= m_originalSizeBytes),
+                  "%s", "You copy more data than buffer can store");
+
+        glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, elementsCount * sizeof(glm::vec3), data.data());
+    }
+
+    void AndroidGLESDynamicVertexBuffer::setDynamicBufferData(const std::vector<glm::vec4>& data, uint32_t elementsCount)
+    {
+        BR_ASSERT((m_vertAttribType == VertexAttribType::FLOAT && m_vertAttribSyze == VertexAttribSize::FOUR),
+                  "%s", "Dynamic buffer was created with different data type or size");
+
+        BR_ASSERT((elementsCount * sizeof(glm::vec4) <= m_originalSizeBytes),
+                  "%s", "You copy more data than buffer can store");
+
+        glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, elementsCount * sizeof(glm::vec4), data.data());
     }
 
     void AndroidGLESDynamicVertexBuffer::bind()

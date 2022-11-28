@@ -19,11 +19,10 @@ namespace Beryll
                                                   collMask)
     {
         // player described by collision mesh
-
-        m_playerHeight = m_mostTopVertex - m_mostBottomVertex;
-        m_XZradius = (m_biggestX - m_smallestX) / 2.0f;
-        m_fromOriginToBottom = 0 - m_mostBottomVertex;
-        m_fromOriginToTop = m_mostTopVertex - 0;
+        m_fromOriginToTop = std::abs(m_mostTopVertex);
+        m_fromOriginToBottom = std::abs(m_mostBottomVertex);
+        m_playerHeight = m_fromOriginToTop + m_fromOriginToBottom;
+        m_XZradius = (std::abs(m_biggestX) + std::abs(m_smallestX)) * 0.5f;
         BR_ASSERT(((m_fromOriginToBottom > 0.0f) && (m_fromOriginToTop > 0.0f) && (m_XZradius > 0.0f) && (m_playerHeight > 0.0f)), "%s", "Players XYZ dimensions are 0.");
 
         BR_INFO("m_fromOriginToTop:%f, m_fromOriginToBottom:%f, m_playerHeight:%f", m_fromOriginToTop, m_fromOriginToBottom, m_playerHeight);
@@ -204,7 +203,7 @@ namespace Beryll
 
             glm::vec3 playerLegs = m_origin;
             BR_ASSERT((m_fromOriginToBottom > m_XZradius), "%s", "Player origin should be inside cylinder of capsule. Not in bottom semi sphere.");
-            playerLegs.y -= (m_fromOriginToBottom - m_XZradius * 0.97f); // playerLegs.y - distance from origin to capsules cinder bottom
+            playerLegs.y -= (m_fromOriginToBottom - m_XZradius * 0.97f); // playerLegs.y - distance from origin to capsules cylinder bottom
             glm::vec3 playerLegsNextPos = playerLegs + scaledMoveDirectionByRadius;
             RayClosestHit legsWallHit = Physics::castRayClosestHit(playerLegs,
                                                                    playerLegsNextPos,

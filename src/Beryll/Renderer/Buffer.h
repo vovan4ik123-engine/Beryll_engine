@@ -1,5 +1,8 @@
 #pragma once
 
+#include "CppHeaders.h"
+#include "LibsHeaders.h"
+
 namespace Beryll
 {
     enum class VertexAttribSize
@@ -20,7 +23,10 @@ namespace Beryll
         virtual void bind() = 0; // Must be called only inside VAO
         virtual void unBind() = 0; // Must be called only inside VAO
 
-        virtual void setDynamicBufferData(const std::vector<float>& data) = 0; // Only for dynamic buffer
+        // Only for dynamic buffer
+        // elementsCount = data.size() for copy all buffer
+        virtual void setDynamicBufferData(const std::vector<glm::vec3>& data, uint32_t elementsCount) = 0;
+        virtual void setDynamicBufferData(const std::vector<glm::vec4>& data, uint32_t elementsCount) = 0;
 
         VertexAttribType getAttribType() { return m_vertAttribType; }
         VertexAttribSize getAttribSize() { return m_vertAttribSyze; }

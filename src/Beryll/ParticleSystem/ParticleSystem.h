@@ -72,10 +72,15 @@ namespace Beryll
 
             float rotation = 0.0f;
             float rotationSpeed = 0.0f;
+            float rotationSide = 0.0f; // rotate to left or to right. set to -1.0f or +1.0f
+
+            const glm::vec3 faceDir{0.0f, 0.0f, 1.0f};
 
             glm::mat4 MVPMatrix{1.0f};
-            const glm::vec3 faceDir{0.0f, 0.0f, 1.0f};
-            float rotationSide = 0.0f; // rotate to left or to right. set to -1.0f or +1.0f
+            glm::vec4 finalVertex0{0.0f}; // quad original vertices multiplied by MVPMatrix
+            glm::vec4 finalVertex1{0.0f};
+            glm::vec4 finalVertex2{0.0f};
+            glm::vec4 finalVertex3{0.0f};
         };
 
         struct CubeParticle
@@ -99,6 +104,15 @@ namespace Beryll
 
             glm::mat4 rotationMatrix{1.0f};
             glm::mat4 MVPMatrix{1.0f};
+            glm::vec4 finalVertex0{0.0f}; // cube original vertices multiplied by MVPMatrix
+            glm::vec4 finalVertex1{0.0f};
+            glm::vec4 finalVertex2{0.0f};
+            glm::vec4 finalVertex3{0.0f};
+
+            glm::vec4 finalVertex4{0.0f};
+            glm::vec4 finalVertex5{0.0f};
+            glm::vec4 finalVertex6{0.0f};
+            glm::vec4 finalVertex7{0.0f};
         };
 
     private:

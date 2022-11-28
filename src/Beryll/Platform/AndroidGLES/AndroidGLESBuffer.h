@@ -1,8 +1,5 @@
 #pragma once
 
-#include "LibsHeaders.h"
-#include "CppHeaders.h"
-
 #include "Beryll/Renderer/Buffer.h"
 #include "Beryll/Core/Log.h"
 
@@ -17,7 +14,11 @@ namespace Beryll
         void bind() override; // Must be called only inside VAO
         void unBind() override; // Must be called only inside VAO
 
-        void setDynamicBufferData(const std::vector<float>& data) override
+        void setDynamicBufferData(const std::vector<glm::vec3>& data, uint32_t elementsCount) override
+        {
+            BR_ASSERT(false, "%s", "Can not set data into static vertex buffer");
+        };
+        void setDynamicBufferData(const std::vector<glm::vec4>& data, uint32_t elementsCount) override
         {
             BR_ASSERT(false, "%s", "Can not set data into static vertex buffer");
         };
@@ -42,13 +43,17 @@ namespace Beryll
         void bind() override; // Must be called only inside VAO
         void unBind() override; // Must be called only inside VAO
 
-        void setDynamicBufferData(const std::vector<float>& data) override;
+        // Only for dynamic buffer
+        // elementsCount = data.size() for copy all buffer
+        void setDynamicBufferData(const std::vector<glm::vec3>& data, uint32_t elementsCount) override;
+        void setDynamicBufferData(const std::vector<glm::vec4>& data, uint32_t elementsCount) override;
 
     private:
         friend class Renderer;
         AndroidGLESDynamicVertexBuffer(VertexAttribType type, VertexAttribSize size, uint32_t maxSizeBytes);
 
         uint32_t m_VBO = 0;
+        const uint32_t m_originalSizeBytes = 0;
     };
 
     // Dynamic index buffer can be achieved by changing m_count inside setCount(uint32_t count)
