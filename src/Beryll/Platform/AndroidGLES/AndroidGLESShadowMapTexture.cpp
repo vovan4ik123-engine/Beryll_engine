@@ -37,8 +37,10 @@ namespace Beryll
         GLESStateVariables::currentTexture0 = m_openGLID;
         glBindFramebuffer(GL_FRAMEBUFFER, m_defaultFBO);
 
-        m_shaderSimple = Beryll::Renderer::createShader("shaders/GLES/shadowMap/Simple.vert", "shaders/GLES/shadowMap/Simple.frag");
-        m_shaderAnimated = Beryll::Renderer::createShader("shaders/GLES/shadowMap/Animation.vert", "shaders/GLES/shadowMap/Animation.frag");
+        m_shaderSimple = Beryll::Renderer::createShader(BeryllConstants::simpleObjShadowMapVertexPath.data(),
+                                                        BeryllConstants::simpleObjShadowMapFragmentPath.data());
+        m_shaderAnimated = Beryll::Renderer::createShader(BeryllConstants::animatedObjShadowMapVertexPath.data(),
+                                                          BeryllConstants::animatedObjShadowMapFragmentPath.data());
     }
 
     AndroidGLESShadowMapTexture::~AndroidGLESShadowMapTexture()

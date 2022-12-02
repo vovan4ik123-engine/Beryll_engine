@@ -84,7 +84,8 @@ namespace Beryll
         SDL_FreeSurface(surfaceBack);
         SDL_FreeSurface(surfaceFront);
 
-        m_internalShader = Renderer::createShader("shaders/GLES/default/SkyBox.vert", "shaders/GLES/default/SkyBox.frag");
+        m_internalShader = Renderer::createShader(BeryllConstants::skyBoxVertexPath.data(),
+                                                  BeryllConstants::skyBoxFragmentPath.data());
         m_internalShader->bind();
         m_internalShader->activateSkyBoxTexture();
 

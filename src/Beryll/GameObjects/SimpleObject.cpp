@@ -108,7 +108,8 @@ namespace Beryll
         m_vertexArray->addVertexBuffer(m_vertexTangentsBuffer);
         m_vertexArray->setIndexBuffer(m_indexBuffer);
 
-        m_internalShader = Renderer::createShader("shaders/GLES/default/Simple.vert", "shaders/GLES/default/Simple.frag");
+        m_internalShader = Renderer::createShader(BeryllConstants::simpleObjDefaultVertexPath.data(),
+                                                  BeryllConstants::simpleObjDefaultFragmentPath.data());
         m_internalShader->bind();
 
         // material

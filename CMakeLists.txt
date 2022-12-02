@@ -42,7 +42,6 @@ if(ANDROID)
             src/Beryll/Platform/AndroidGLES/AndroidGLESSkyBox.cpp
             src/Beryll/Platform/AndroidGLES/AndroidGLESShadowMapTexture.cpp
             src/Beryll/Platform/AndroidGLES/AndroidGLESGlobal.cpp
-            src/Beryll/Platform/AndroidGLES/AndroidGLESParticleSystem.cpp
             )
 elseif(APPLE)
     #set(IOSMetal_SRC src/Beryll/Platform/...)
