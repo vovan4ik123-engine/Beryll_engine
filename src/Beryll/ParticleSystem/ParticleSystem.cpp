@@ -60,6 +60,8 @@ namespace Beryll
 
     void ParticleSystem::create()
     {
+        if(!m_quadParticles.empty() && !m_cubeParticles.empty()) { return; }
+
         m_quadParticles.resize(m_maxQuadCount);
         m_currentQuadParticlesIndex = static_cast<int>(m_quadParticles.size()) - 1;
 

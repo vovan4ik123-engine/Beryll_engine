@@ -7,13 +7,19 @@ namespace Beryll
 
     std::map<std::string, std::unique_ptr<Mix_Music, decltype(&Mix_FreeMusic)>> SoundsManager::m_MP3s;
 
+    bool SoundsManager::m_created = false;
+
     void SoundsManager::create()
     {
+        if(m_created) { return; }
+
         // MIX_DEFAULT_FREQUENCY = sample rate = frequency = speed playing				// size (speed playing )
         if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, MIX_CHANNELS, 1024) == -1)
         {
             BR_ASSERT(false, "%s", "SDL mixer init error");
         }
+
+        m_created = true;
     }
 
     void SoundsManager::loadWAV(const char* path)

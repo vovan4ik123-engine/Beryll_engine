@@ -26,6 +26,8 @@ namespace Beryll
 
     void Physics::create()
     {
+        if(m_dynamicsWorldMT) { return; }
+
         btSetTaskScheduler(btCreateDefaultTaskScheduler());
 
         BR_INFO("Number of threads on device:%d", btGetTaskScheduler()->getNumThreads());
@@ -46,7 +48,7 @@ namespace Beryll
                                                                         m_collisionConfiguration.get());
 
         m_dynamicsWorldMT->setGravity(m_gravity);
-        //m_dynamicsWorldMT->getSolverInfo().m_numIterations = 5;
+        m_dynamicsWorldMT->getSolverInfo().m_numIterations = 5;
 
         // set collisions call backs to bullet
         gContactAddedCallback = collisionsCallBack;

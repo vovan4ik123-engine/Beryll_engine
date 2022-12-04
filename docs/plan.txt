@@ -1,6 +1,5 @@
 ---------------------plan:---------------------
 
-batch rendering for particles
 add loading screen
 use tangent vector only if specular map is in materials
 

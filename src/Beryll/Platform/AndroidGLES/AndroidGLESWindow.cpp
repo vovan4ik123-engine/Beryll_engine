@@ -67,9 +67,12 @@ namespace Beryll
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // src alpha for src color, 1 - src alpha for destination color
 
-        int maxTextureUnits = 0;
-        glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &maxTextureUnits);
-        BR_INFO("GL_MAX_TEXTURE_IMAGE_UNITS:%d", maxTextureUnits);
+        int check = 0;
+        glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &check);
+        BR_INFO("GL_MAX_TEXTURE_IMAGE_UNITS:%d", check);
+
+        glGetIntegerv(GL_MAX_TEXTURE_SIZE, &check);
+        BR_INFO("GL_MAX_TEXTURE_SIZE:%d", check);
 
         BR_INFO("AndroidGLESWindow created and initialized. width:%d, height:%d", m_screenWidth, m_screenHeight);
     }

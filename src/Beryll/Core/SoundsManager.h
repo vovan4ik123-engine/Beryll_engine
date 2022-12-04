@@ -32,5 +32,7 @@ namespace Beryll
         static std::map<std::string, std::unique_ptr<Mix_Chunk, decltype(&Mix_FreeChunk)>> m_WAVs; // with custom deleter
 
         static std::map<std::string, std::unique_ptr<Mix_Music, decltype(&Mix_FreeMusic)>> m_MP3s;
+
+        static bool m_created;
     };
 }
