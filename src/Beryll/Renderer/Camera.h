@@ -26,15 +26,13 @@ namespace Beryll
             return m_view;
         }
 
-        /*
-        static glm::mat4 getCamera2D(const float screnWidth, const float screenHeight)
+        static glm::mat4 getLoadingScreenCamera()
         {
-            // for 2D objects:
-            // near plan: Z = 1.0f
-            // far plan: Z = 0.0f (NOT -100.0 !!!!!!!)
-            return glm::ortho(0.0f, screnWidth, 0.0f, screenHeight, -1.1f, 100.0f);
+            // loading image near plan: Z = 1.0f
+            // loading image far plan: Z = 0.0f
+            return glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 100.0f) *
+                   glm::lookAt(glm::vec3(0.0f, 0.0f, 2.1f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));;
         }
-        */
 
         // call before getViewProjection() / getProjection() / getView()
         static void update3DCamera()

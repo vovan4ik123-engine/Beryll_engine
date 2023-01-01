@@ -9,6 +9,7 @@
 #include "Beryll/Physics/Physics.h"
 #include "Beryll/Renderer/Camera.h"
 #include "Beryll/ParticleSystem/ParticleSystem.h"
+#include "Beryll/LoadingScreen/LoadingScreen.h"
 
 namespace Beryll
 {
@@ -18,7 +19,7 @@ namespace Beryll
     uint32_t GameLoop::m_frameStart = 0;
     uint32_t GameLoop::m_frameTime = 0;
 
-    uint32_t GameLoop::m_maxFPS = 300;
+    uint32_t GameLoop::m_maxFPS = 250;
 
     uint32_t GameLoop::calcStart = 0;
     uint32_t GameLoop::calcTime = 0;
@@ -29,6 +30,8 @@ namespace Beryll
     {
         Window::create();
         Window::getInstance()->setClearColor(0.8f, 0.0f, 0.8f, 1.0f);
+        Window::getInstance()->clear();
+        Window::getInstance()->swapWindow();
 
         MainImGUI::create();
 
@@ -37,6 +40,8 @@ namespace Beryll
         Physics::create();
 
         ParticleSystem::create();
+
+        LoadingScreen::create();
     }
 
     uint32_t GameLoop::getFPS()

@@ -1,6 +1,8 @@
 ---------------------plan:---------------------
 
-add loading screen
+run on xiaomi
+update renderer
+draw thread
 use tangent vector only if specular map is in materials
 
 update IMGui to 1.88+

@@ -3,7 +3,6 @@
 #include "CppHeaders.h"
 #include "LibsHeaders.h"
 
-#include "Beryll/Core/Log.h"
 #include "Beryll/Core/GameLoop.h"
 #include "Beryll/Renderer/Shader.h"
 #include "Beryll/Renderer/Buffer.h"
@@ -43,6 +42,9 @@ namespace Beryll
         static int getActiveCount() { return m_activeCount; };
 
     private:
+        friend class GameLoop;
+        static void create();
+
         static int m_activeCount;
         static std::shared_ptr<Shader> m_internalShader;
 
@@ -143,9 +145,5 @@ namespace Beryll
         static std::vector<glm::vec4> m_cubeVertexPosDynamicVector;
         static std::vector<glm::vec4> m_cubeVertexColorDynamicVector;
         static std::function<void(std::vector<CubeParticle>&, int, int)> updateCubeParticles;
-
-    private:
-        friend class GameLoop;
-        static void create();
     };
 }

@@ -25,6 +25,9 @@ namespace BeryllConstants
 
     const std::string_view particleVertexPath = "shaders/GLES/default/Particle.vert";
     const std::string_view particleFragmentPath = "shaders/GLES/default/Particle.frag";
+
+    const std::string_view loadingScreenVertexPath = "shaders/GLES/default/LoadingScreen.vert";
+    const std::string_view loadingScreenFragmentPath = "shaders/GLES/default/LoadingScreen.frag";
 #elif defined(APPLE)
     const std::string_view simpleObjDefaultVertexPath = "";
     const std::string_view simpleObjDefaultFragmentPath = "";
@@ -43,6 +46,9 @@ namespace BeryllConstants
 
     const std::string_view particleVertexPath = "";
     const std::string_view particleFragmentPath = "";
+
+    const std::string_view loadingScreenVertexPath = "";
+    const std::string_view loadingScreenFragmentPath = "";
 #endif
 
 

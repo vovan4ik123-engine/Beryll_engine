@@ -11,9 +11,10 @@ namespace Beryll
         GameLoop() = delete;
         ~GameLoop() = delete;
 
+        // allowed FPS [5 ... 250]
         static void setMaxFPS(uint32_t fps)
         {
-            if(fps >= 5 && fps <= 300)
+            if(fps >= 5 && fps <= 250)
             {
                 m_maxFPS = fps;
                 m_loopTime = 1000 / m_maxFPS;

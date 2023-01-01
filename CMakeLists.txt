@@ -82,6 +82,8 @@ set(Common_SRC
         src/Beryll/Async/AsyncRun.cpp
 
         src/Beryll/ParticleSystem/ParticleSystem.cpp
+
+        src/Beryll/LoadingScreen/LoadingScreen.cpp
 )
 
 add_library(Beryll-static STATIC ${AndroidGLES_SRC} ${IOSMetal_SRC} ${Common_SRC})

@@ -41,3 +41,5 @@
 #include "Beryll/Async/AsyncRun.h"
 
 #include "Beryll/ParticleSystem/ParticleSystem.h"
+
+#include "Beryll/LoadingScreen/LoadingScreen.h"
