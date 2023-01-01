@@ -1,6 +1,5 @@
 ---------------------plan:---------------------
 
-run on xiaomi
 update renderer
 draw thread
 use tangent vector only if specular map is in materials

@@ -34,7 +34,8 @@ namespace Beryll
 
 #endif
 
-        std::vector<uint32_t> indices{0,1,2,    2,3,0};
+        std::vector<uint32_t> indices{0,1,2,
+                                      2,3,0};
 
         m_vertexPosBuffer = Renderer::createStaticVertexBuffer(vertices);
         m_textureCoordsBuffer = Renderer::createStaticVertexBuffer(textureCoords);
