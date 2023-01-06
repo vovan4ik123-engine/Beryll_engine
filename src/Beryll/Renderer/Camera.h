@@ -30,8 +30,7 @@ namespace Beryll
         {
             // loading image near plan: Z = 1.0f
             // loading image far plan: Z = 0.0f
-            return glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 100.0f) *
-                   glm::lookAt(glm::vec3(0.0f, 0.0f, 2.1f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));;
+            return m_loadingScreenCamera;
         }
 
         // call before getViewProjection() / getProjection() / getView()
@@ -123,6 +122,8 @@ namespace Beryll
         static glm::mat4 m_viewProjection;
         static glm::mat4 m_projection;
         static glm::mat4 m_view;
+
+        static glm::mat4 m_loadingScreenCamera;
 
         static void updateCameraVectors()
         {

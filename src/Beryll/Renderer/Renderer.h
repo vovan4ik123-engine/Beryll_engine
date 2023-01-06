@@ -39,5 +39,11 @@ namespace Beryll
         static std::unique_ptr<Texture> createShadowMapTexture(int width, int height);
 
         static std::unique_ptr<SkyBox> createSkyBox(const char* folderPath);
+
+        // These 2 methods will set BaseSimpleObject and BaseAnimatedObject specific uniform variables
+        // which shader must have for draw them.
+        // If shader has some extra uniform variables they should be set before this methods call.
+        static void drawObject(const std::shared_ptr<Beryll::BaseSimpleObject>& obj, const std::shared_ptr<Shader>& shader = nullptr);
+        static void drawObject(const std::shared_ptr<Beryll::BaseAnimatedObject>& obj, const std::shared_ptr<Shader>& shader = nullptr);
     };
 }

@@ -28,4 +28,7 @@ namespace Beryll
     glm::mat4 Camera::m_viewProjection{1.0f};
     glm::mat4 Camera::m_projection{1.0f};
     glm::mat4 Camera::m_view{1.0f};
+
+    glm::mat4 Camera::m_loadingScreenCamera = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 100.0f) *
+                                              glm::lookAt(glm::vec3(0.0f, 0.0f, 2.1f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 }

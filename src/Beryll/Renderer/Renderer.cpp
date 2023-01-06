@@ -1,6 +1,7 @@
 #include "Renderer.h"
 #include "Beryll/Core/Log.h"
 #include "Beryll/Core/GameLoop.h"
+#include "Beryll/Renderer/Camera.h"
 
 #if defined(ANDROID)
     #include "Beryll/Platform/AndroidGLES/AndroidGLESBuffer.h"
@@ -145,5 +146,51 @@ namespace Beryll
         BR_ASSERT(false, "%s", "Can not create SkyBox. Unknown platform.");
         return nullptr;
 #endif
+    }
+
+    void Renderer::drawObject(const std::shared_ptr<Beryll::BaseSimpleObject>& obj, const std::shared_ptr<Shader>& shader)
+    {
+        if(shader)
+        {
+            shader->bind();
+            shader->setMatrix4x4Float("MVPMatrix", Beryll::Camera::getViewProjection() * obj->getModelMatrix());
+
+            obj->useInternalShader = false;
+            obj->draw();
+        }
+        else
+        {
+            obj->useInternalShader = true;
+            obj->draw();
+        }
+    }
+
+    void Renderer::drawObject(const std::shared_ptr<Beryll::BaseAnimatedObject>& obj, const std::shared_ptr<Shader>& shader)
+    {
+        if(shader)
+        {
+            static std::string boneMatrixNameInShader;
+            static uint32_t boneCount = 0;
+
+            shader->bind();
+            shader->setMatrix4x4Float("MVPMatrix", Beryll::Camera::getViewProjection() * obj->getModelMatrix());
+
+            boneCount = obj->getBoneCount();
+            for(int i = 0; i < boneCount; ++i)
+            {
+                boneMatrixNameInShader = "bonesMatrices[";
+                boneMatrixNameInShader += std::to_string(i);
+                boneMatrixNameInShader += "]";
+                shader->setMatrix4x4Float(boneMatrixNameInShader.c_str(), obj->getBoneMatrices()[i].finalWorldTransform);
+            }
+
+            obj->useInternalShader = false;
+            obj->draw();
+        }
+        else
+        {
+            obj->useInternalShader = true;
+            obj->draw();
+        }
     }
 }

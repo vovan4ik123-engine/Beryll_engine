@@ -100,6 +100,8 @@ namespace Beryll
                 so->useInternalShader = false;
                 so->useInternalTextures = false;
                 so->draw();
+                so->useInternalShader = true;
+                so->useInternalTextures = true;
             }
         }
 
@@ -122,6 +124,8 @@ namespace Beryll
                 ao->useInternalShader = false;
                 ao->useInternalTextures = false;
                 ao->draw();
+                ao->useInternalShader = true;
+                ao->useInternalTextures = true;
             }
         }
 
