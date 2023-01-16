@@ -234,7 +234,7 @@ namespace Beryll
                             // probably we found stair step
                             // calculate where should be player if that is not stair step, but only ground slope
                             float oppositeSideLength = glm::tan(surfaceSlopeRadians) * glm::length(scaledMoveDirectionByRadius);
-                            oppositeSideLength *= 1.02; // + 2%
+                            oppositeSideLength *= 1.02f; // + 2%
                             if(oppositeSideLength == 0.0f) { oppositeSideLength += 0.02f; } // add 2 cm
                             float nextYOfPlayer = m_bottomCollisionPoint.first.y + oppositeSideLength; // after move on this ground slope(if not stair step)
                             if(potentialStepHit.hitPoint.y > nextYOfPlayer)
@@ -271,7 +271,7 @@ namespace Beryll
                 // approximate next allowed collision points on Y axis(up and bottom) after player move based on walkableFloorAngle
                 // if m_playerOnGround == true, m_bottomCollisionPoint.first.y < std::numeric_limits<float>::max() also should be true
                 float approximatedAllowedPositionOnY = glm::tan(walkableFloorAngleRadians) * moveVectorLength;
-                approximatedAllowedPositionOnY *= 1.05f; // + 5%
+                approximatedAllowedPositionOnY *= 1.01f; // + 1%
 
                 glm::vec3 newPosApproximatedUp = m_bottomCollisionPoint.first + moveVector;
                 newPosApproximatedUp.y += approximatedAllowedPositionOnY;
@@ -293,6 +293,10 @@ namespace Beryll
                     {
                         moveVector.y = newPosYHit.hitPoint.y - m_bottomCollisionPoint.first.y;
                     }
+                }
+                else
+                {
+                    BR_INFO("%s", "Not walkable floor angle.");
                 }
             }
         }

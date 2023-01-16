@@ -44,9 +44,9 @@ namespace Beryll
         BULLET = 1 << 5,
         WALL = 1 << 6,
         GROUND = 1 << 7,
-        YOU_CANN_ADD_YOUR_GROUP = 1 << 8,
+        YOU_CAN_ADD_YOUR_GROUP = 1 << 8,
 
-        YOU_CANN_COMBINE_GROUPS_WHEN_USE = STATIC_ENVIRONMENT | CAMERA | WALL,
+        YOU_CAN_COMBINE_GROUPS_WHEN_USE = STATIC_ENVIRONMENT | CAMERA | WALL,
 
         ALL_GROUPS = -1 // all bits = 1
     };
