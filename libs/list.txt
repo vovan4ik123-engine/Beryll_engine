@@ -2,7 +2,7 @@ SDL2        2.24.0
 SDL2 mixer  2.6.1
 SDL2 image  2.6.1
 SDL2 net    2.0.1
-ImGUI
+ImGUI       1.89.2
 glm         0.9.9.8
 assimp      5.2.4
 bullet      3.2.4

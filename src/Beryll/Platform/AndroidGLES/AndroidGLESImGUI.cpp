@@ -25,6 +25,7 @@ namespace Beryll
             return;
         }
 
+        IMGUI_CHECKVERSION();
         ImGui::CreateContext();
         ImGuiIO &io = ImGui::GetIO();
         ImGui::StyleColorsClassic();

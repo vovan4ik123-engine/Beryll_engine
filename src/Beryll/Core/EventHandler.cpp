@@ -17,6 +17,7 @@ namespace Beryll
 
         while(SDL_PollEvent(&event))
         {
+            ImGui_ImplSDL2_ProcessEvent(&event);
             switch (event.type)
             {
 //MOBILE APP LIFECYCLE

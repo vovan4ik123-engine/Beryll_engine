@@ -4,10 +4,6 @@ update renderer 2 ?
 draw thread
 use tangent vector only if specular map is in materials
 
-update IMGui to 1.88+
-
-
-
 #include <android/log.h>
 __android_log_print(ANDROID_LOG_DEBUG, "TAG", "message");
 __android_log_print(ANDROID_LOG_DEBUG, "MANIFOLDS", "size: %d", (int)m_manifoldsPtr.size());

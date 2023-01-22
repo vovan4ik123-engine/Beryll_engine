@@ -39,7 +39,8 @@ namespace Beryll
         m_window = SDL_CreateWindow("MainWindow",
                                     SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
                                     m_screenWidth, m_screenHeight,
-                                    SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN | SDL_WINDOW_RESIZABLE);
+                                    SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN |
+                                         SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
 
         if(m_window == nullptr)
         {
@@ -49,7 +50,8 @@ namespace Beryll
             m_window = SDL_CreateWindow("MainWindow",
                                         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
                                         m_screenWidth, m_screenHeight,
-                                        SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN | SDL_WINDOW_RESIZABLE);
+                                        SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN |
+                                             SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
         }
 
         BR_ASSERT((m_window != nullptr), "%s", "m_window == nullptr");
