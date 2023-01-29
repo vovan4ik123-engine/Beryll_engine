@@ -22,6 +22,8 @@ namespace Beryll
         void setFontColor(float r, float g, float b, float a) { m_fontColor = ImVec4{ r, g, b, a }; }
         void setBackgroundColor(float r, float g, float b, float a) { m_backgroundColor = ImVec4{ r, g, b, a }; }
 
+        std::string text; // can be set outside
+
     private:
         friend class AndroidGLESImGUI;
 
@@ -31,7 +33,6 @@ namespace Beryll
 
         int32_t m_flags = 0;
 
-        std::string m_text;
         float m_leftPos; // in range 0 = 0%...1 = 100% of screen size
         float m_topPos;
 

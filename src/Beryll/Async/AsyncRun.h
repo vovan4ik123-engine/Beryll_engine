@@ -42,7 +42,7 @@ namespace Beryll
                 {
                     int chunkEnd = std::min(i + oneChunkSize, numberElements);
 
-                    // without std::cref(v) std::async() will COPY all parameters !!!
+                    // without std::cref(v)/std::ref(v) std::async() will COPY all parameters !!!
                     m_futuresVoid.emplace_back(std::async(std::launch::async, func, std::ref(v), i, chunkEnd));
                 }
 

@@ -5,7 +5,7 @@
 namespace Beryll
 {
     Text::Text(std::string text, float left, float top, bool background)
-        : m_text(std::move(text)), m_leftPos(left / 100.0f), m_topPos(top / 100.0f)
+        : text(std::move(text)), m_leftPos(left / 100.0f), m_topPos(top / 100.0f)
     {
         BR_ASSERT((left >= 0 && left <= 100) && (top >= 0 && top <= 100), "%s", "Wrong Text position")
 
@@ -43,12 +43,12 @@ namespace Beryll
         if(font)
         {
             ImGui::PushFont(font);
-            ImGui::Text("%s", m_text.c_str());
+            ImGui::Text("%s", text.c_str());
             ImGui::PopFont();
         }
         else
         {
-            ImGui::Text("%s", m_text.c_str());
+            ImGui::Text("%s", text.c_str());
         }
 
         ImGui::End();
