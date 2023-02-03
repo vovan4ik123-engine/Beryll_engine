@@ -46,7 +46,7 @@ namespace Beryll
     protected:
         MainImGUI() {}
         std::string m_defaultFontPath;
-        float m_defaultFontHeight = 0.03f; // in range 0...1 (0%...100% of screen size). 0.03f = 3% of screen
+        float m_defaultFontHeight = 3.0f / 100.0f; // in range 0...1 (0%...100% of screen size). 3.0f / 100.0f = 3% of screen
 
     private:
         friend class GameLoop;

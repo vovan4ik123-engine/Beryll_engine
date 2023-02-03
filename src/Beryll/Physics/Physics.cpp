@@ -8,9 +8,10 @@ namespace Beryll
     Timer Physics::m_timer;
     float Physics::m_timeStep = 0.0f;
     bool Physics::m_simulationEnabled = true;
+    float Physics::m_simulationTime = 0.0f;
     int Physics::m_resolutionFactor = 1;
     std::mutex Physics::m_mutex;
-    std::set<std::pair<const int, const int>> Physics::m_collisionPairs;
+    std::vector<std::pair<const int, const int>> Physics::m_collisionPairs;
 
     std::vector<std::shared_ptr<btCollisionShape>> Physics::m_collisionShapes;
     std::vector<std::shared_ptr<btTriangleMesh>> Physics::m_triangleMeshes;
@@ -52,6 +53,8 @@ namespace Beryll
 
         // set collisions call backs to bullet
         gContactAddedCallback = collisionsCallBack;
+
+        m_collisionPairs.reserve(5000);
     }
 
     void Physics::simulate()
@@ -79,6 +82,7 @@ namespace Beryll
                                      m_resolutionFactor + 1,
                                      m_timeStep / static_cast<float>(m_resolutionFactor));
 
+        m_simulationTime = m_timer.elapsedMilliSec();
         //BR_INFO("Simulation objects count:%d", m_dynamicsWorldMT->getNumCollisionObjects());
         //BR_INFO("Simulation time millisec:%d", timer.elapsedMilliSec());
     }
@@ -455,8 +459,8 @@ namespace Beryll
         {
             std::scoped_lock<std::mutex> lock (m_mutex);
 
-            m_collisionPairs.emplace(ob1->getCollisionObject()->beryllEngineObjectID,
-                                     ob2->getCollisionObject()->beryllEngineObjectID);
+            m_collisionPairs.emplace_back(ob1->getCollisionObject()->beryllEngineObjectID,
+                                          ob2->getCollisionObject()->beryllEngineObjectID);
         }
 
         return false;
@@ -466,9 +470,14 @@ namespace Beryll
     {
         if(ID1 == ID2) { return false; }
 
-        if(m_collisionPairs.find(std::make_pair(ID1, ID2)) != m_collisionPairs.end()) { return true; }
-
-        if(m_collisionPairs.find(std::make_pair(ID2, ID1)) != m_collisionPairs.end()) { return true; }
+        for(const std::pair<const int, const int>& pair : m_collisionPairs)
+        {
+            if((pair.first == ID1 && pair.second == ID2) ||
+               (pair.first == ID2 && pair.second == ID1))
+            {
+                return true;
+            }
+        }
 
         return false;
     }

@@ -28,7 +28,7 @@ namespace GLESStateVariables
     extern unsigned int currentTexture5; // GL_TEXTURE5 booked for SkyBox. Dont use this ID for other textures
     extern unsigned int currentTexture6; // GL_TEXTURE6 booked for ShadowMap. Dont use this ID for other textures
 
-    // Use more than 8 textures unit can be dangerous. Not all phones support that.
+    // Use more than 8 textures unit (0-7 index) can be dangerous. Not all phones support that.
     // Also for some phones 4k is max supported texture resolution
 
     // framebuffer

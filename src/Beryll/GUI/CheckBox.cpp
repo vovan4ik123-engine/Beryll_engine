@@ -15,9 +15,9 @@ namespace Beryll
 
     }
 
-    ImFont* CheckBox::font = nullptr;
-    std::string CheckBox::fontPath;
-    float CheckBox::fontHeight = 0.0f;
+    ImFont* CheckBox::m_font = nullptr;
+    std::string CheckBox::m_fontPath;
+    float CheckBox::m_fontHeight = 0.0f;
 
     void CheckBox::updateBeforePhysics()
     {
@@ -45,9 +45,9 @@ namespace Beryll
         ImGui::SetNextWindowPos(ImVec2(m_leftPos * MainImGUI::getInstance()->getGUIWidth(), m_topPos * MainImGUI::getInstance()->getGUIHeight()));
         ImGui::Begin(m_stringID.c_str(), nullptr, m_noBackgroundNoFrame);
 
-        if(font)
+        if(m_font)
         {
-            ImGui::PushFont(font);
+            ImGui::PushFont(m_font);
             if(ImGui::Checkbox(m_text.c_str(), &m_checked) && m_checked) // true only if marked. false if unmarked
             {
                 m_checking = true;

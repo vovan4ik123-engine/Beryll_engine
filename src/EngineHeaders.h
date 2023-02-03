@@ -33,7 +33,6 @@
 #include "Beryll/GUI/Button.h"
 #include "Beryll/GUI/CheckBox.h"
 #include "Beryll/GUI/Text.h"
-#include "Beryll/GUI/DrawAnyFunction.h"
 #include "Beryll/GUI/Slider.h"
 
 #include "Beryll/Physics/Physics.h"

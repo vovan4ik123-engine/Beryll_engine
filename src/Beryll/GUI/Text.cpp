@@ -18,9 +18,9 @@ namespace Beryll
 
     }
 
-    ImFont* Text::font = nullptr;
-    std::string Text::fontPath;
-    float Text::fontHeight = 0.0f;
+    ImFont* Text::m_font = nullptr;
+    std::string Text::m_fontPath;
+    float Text::m_fontHeight = 0.0f;
 
     void Text::updateBeforePhysics()
     {
@@ -40,9 +40,9 @@ namespace Beryll
         ImGui::SetNextWindowPos(ImVec2(m_leftPos * MainImGUI::getInstance()->getGUIWidth(), m_topPos * MainImGUI::getInstance()->getGUIHeight()));
         ImGui::Begin(m_stringID.c_str(), nullptr, m_flags);
 
-        if(font)
+        if(m_font)
         {
-            ImGui::PushFont(font);
+            ImGui::PushFont(m_font);
             ImGui::Text("%s", text.c_str());
             ImGui::PopFont();
         }

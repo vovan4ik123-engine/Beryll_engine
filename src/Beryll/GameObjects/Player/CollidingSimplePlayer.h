@@ -36,7 +36,7 @@ namespace Beryll
         void move(MoveDirection direction);
         void jump();
 
-        float moveSpeed = 15.0f; // meters in second.
+        float moveSpeed = 13.0f; // meters in second.
         float backwardMoveFactor = 0.6f; // factor to multiply moveSpeed if player move backward
         float walkableFloorAngleRadians = glm::radians(60.0f);
         float maxStepHeight = 2.0f; // in meters. MUST be less than m_playerHeight

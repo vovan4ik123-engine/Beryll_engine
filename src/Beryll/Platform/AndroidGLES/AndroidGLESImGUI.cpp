@@ -64,65 +64,65 @@ namespace Beryll
             io.FontDefault = fontDefault;
         }
 
-        if(!Button::fontPath.empty() && Button::fontHeight != 0.0f)
+        if(!Button::m_fontPath.empty() && Button::m_fontHeight != 0.0f)
         {
-            buffer = Utils::File::readToBuffer(Button::fontPath.c_str(), &bufferSize);
-            ImFont* f = io.Fonts->AddFontFromMemoryTTF(buffer, bufferSize, Button::fontHeight * ImGui::GetIO().DisplaySize.y);
+            buffer = Utils::File::readToBuffer(Button::m_fontPath.c_str(), &bufferSize);
+            ImFont* f = io.Fonts->AddFontFromMemoryTTF(buffer, bufferSize, Button::m_fontHeight * ImGui::GetIO().DisplaySize.y);
             BR_ASSERT((f != nullptr), "%s", "font nullptr");
             ImGui_ImplOpenGL3_CreateFontsTexture();
-            Button::font = f;
+            Button::m_font = f;
         }
         else
         {
-            Button::font = nullptr;
+            Button::m_font = nullptr;
         }
 
-        if(!CheckBox::fontPath.empty() && CheckBox::fontHeight != 0.0f)
+        if(!CheckBox::m_fontPath.empty() && CheckBox::m_fontHeight != 0.0f)
         {
-            buffer = Utils::File::readToBuffer(CheckBox::fontPath.c_str(), &bufferSize);
-            ImFont* f = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(buffer, bufferSize, CheckBox::fontHeight * ImGui::GetIO().DisplaySize.y);
+            buffer = Utils::File::readToBuffer(CheckBox::m_fontPath.c_str(), &bufferSize);
+            ImFont* f = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(buffer, bufferSize, CheckBox::m_fontHeight * ImGui::GetIO().DisplaySize.y);
             BR_ASSERT((f != nullptr), "%s", "font nullptr");
             ImGui_ImplOpenGL3_CreateFontsTexture();
-            CheckBox::font = f;
+            CheckBox::m_font = f;
         }
         else
         {
-            CheckBox::font = nullptr;
+            CheckBox::m_font = nullptr;
         }
 
-        if(!Text::fontPath.empty() && Text::fontHeight != 0.0f)
+        if(!Text::m_fontPath.empty() && Text::m_fontHeight != 0.0f)
         {
-            buffer = Utils::File::readToBuffer(Text::fontPath.c_str(), &bufferSize);
-            ImFont* f = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(buffer, bufferSize, Text::fontHeight * ImGui::GetIO().DisplaySize.y);
+            buffer = Utils::File::readToBuffer(Text::m_fontPath.c_str(), &bufferSize);
+            ImFont* f = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(buffer, bufferSize, Text::m_fontHeight * ImGui::GetIO().DisplaySize.y);
             BR_ASSERT((f != nullptr), "%s", "font nullptr");
             ImGui_ImplOpenGL3_CreateFontsTexture();
-            Text::font = f;
+            Text::m_font = f;
         }
         else
         {
-            Text::font = nullptr;
+            Text::m_font = nullptr;
         }
 
-        if(!Slider::fontPath.empty() && Slider::fontHeight != 0.0f)
+        if(!Slider::m_fontPath.empty() && Slider::m_fontHeight != 0.0f)
         {
-            buffer = Utils::File::readToBuffer(Slider::fontPath.c_str(), &bufferSize);
-            ImFont* f = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(buffer, bufferSize, Slider::fontHeight * ImGui::GetIO().DisplaySize.y);
+            buffer = Utils::File::readToBuffer(Slider::m_fontPath.c_str(), &bufferSize);
+            ImFont* f = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(buffer, bufferSize, Slider::m_fontHeight * ImGui::GetIO().DisplaySize.y);
             BR_ASSERT((f != nullptr), "%s", "font nullptr");
             ImGui_ImplOpenGL3_CreateFontsTexture();
-            Slider::font = f;
+            Slider::m_font = f;
         }
         else
         {
-            Slider::font = nullptr;
+            Slider::m_font = nullptr;
         }
     }
 
     void AndroidGLESImGUI::destroy()
     {
-        Button::font = nullptr;
-        CheckBox::font = nullptr;
-        Text::font = nullptr;
-        Slider::font = nullptr;
+        Button::m_font = nullptr;
+        CheckBox::m_font = nullptr;
+        Text::m_font = nullptr;
+        Slider::m_font = nullptr;
 
         ImGui::GetIO().Fonts->Clear();
 
@@ -189,53 +189,53 @@ namespace Beryll
 
     void AndroidGLESImGUI::setButtonsFont(const char* path, float heightInPercent)
     {
-        Button::fontPath = path;
-        Button::fontHeight = heightInPercent / 100.0f;
+        Button::m_fontPath = path;
+        Button::m_fontHeight = heightInPercent / 100.0f;
 
         uint32_t bufferSize = 0;
-        char *buffer = Utils::File::readToBuffer(Button::fontPath.c_str(), &bufferSize);
-        ImFont* f = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(buffer, bufferSize, Button::fontHeight * ImGui::GetIO().DisplaySize.y);
+        char *buffer = Utils::File::readToBuffer(Button::m_fontPath.c_str(), &bufferSize);
+        ImFont* f = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(buffer, bufferSize, Button::m_fontHeight * ImGui::GetIO().DisplaySize.y);
         BR_ASSERT((f != nullptr), "%s", "font nullptr");
         ImGui_ImplOpenGL3_CreateFontsTexture();
-        Button::font = f;
+        Button::m_font = f;
     }
 
     void AndroidGLESImGUI::setCheckBoxesFont(const char* path, float heightInPercent)
     {
-        CheckBox::fontPath = path;
-        CheckBox::fontHeight = heightInPercent / 100.0f;
+        CheckBox::m_fontPath = path;
+        CheckBox::m_fontHeight = heightInPercent / 100.0f;
 
         uint32_t bufferSize = 0;
-        char *buffer = Utils::File::readToBuffer(CheckBox::fontPath.c_str(), &bufferSize);
-        ImFont* f = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(buffer, bufferSize, CheckBox::fontHeight * ImGui::GetIO().DisplaySize.y);
+        char *buffer = Utils::File::readToBuffer(CheckBox::m_fontPath.c_str(), &bufferSize);
+        ImFont* f = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(buffer, bufferSize, CheckBox::m_fontHeight * ImGui::GetIO().DisplaySize.y);
         BR_ASSERT((f != nullptr), "%s", "font nullptr");
         ImGui_ImplOpenGL3_CreateFontsTexture();
-        CheckBox::font = f;
+        CheckBox::m_font = f;
     }
 
     void AndroidGLESImGUI::setTextsFont(const char* path, float heightInPercent)
     {
-        Text::fontPath = path;
-        Text::fontHeight = heightInPercent / 100.0f;
+        Text::m_fontPath = path;
+        Text::m_fontHeight = heightInPercent / 100.0f;
 
         uint32_t bufferSize = 0;
-        char *buffer = Utils::File::readToBuffer(Text::fontPath.c_str(), &bufferSize);
-        ImFont* f = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(buffer, bufferSize, Text::fontHeight * ImGui::GetIO().DisplaySize.y);
+        char *buffer = Utils::File::readToBuffer(Text::m_fontPath.c_str(), &bufferSize);
+        ImFont* f = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(buffer, bufferSize, Text::m_fontHeight * ImGui::GetIO().DisplaySize.y);
         BR_ASSERT((f != nullptr), "%s", "font nullptr");
         ImGui_ImplOpenGL3_CreateFontsTexture();
-        Text::font = f;
+        Text::m_font = f;
     }
 
     void AndroidGLESImGUI::setSlidersFont(const char* path, float heightInPercent)
     {
-        Slider::fontPath = path;
-        Slider::fontHeight = heightInPercent / 100.0f;
+        Slider::m_fontPath = path;
+        Slider::m_fontHeight = heightInPercent / 100.0f;
 
         uint32_t bufferSize = 0;
-        char *buffer = Utils::File::readToBuffer(Slider::fontPath.c_str(), &bufferSize);
-        ImFont* f = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(buffer, bufferSize, Slider::fontHeight * ImGui::GetIO().DisplaySize.y);
+        char *buffer = Utils::File::readToBuffer(Slider::m_fontPath.c_str(), &bufferSize);
+        ImFont* f = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(buffer, bufferSize, Slider::m_fontHeight * ImGui::GetIO().DisplaySize.y);
         BR_ASSERT((f != nullptr), "%s", "font nullptr");
         ImGui_ImplOpenGL3_CreateFontsTexture();
-        Slider::font = f;
+        Slider::m_font = f;
     }
 }

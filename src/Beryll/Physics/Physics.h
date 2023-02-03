@@ -57,9 +57,10 @@ namespace Beryll
 
     enum class CollisionFlags
     {
-        DYNAMIC = 0, // mass > 0
-        STATIC = 1, // mass = 0
-        KINEMATIC = 2 // use if you want move object with mass = 0
+        NONE = 0,
+        DYNAMIC = 1, // mass > 0
+        STATIC = 2, // mass = 0
+        KINEMATIC = 3 // use if you want move object with mass = 0, BUT maybe move DYNAMIC object
     };
 
     struct RigidBodyData
@@ -130,6 +131,11 @@ namespace Beryll
             m_simulationEnabled = true;
         }
 
+        static float getSimulationTime()
+        {
+            return m_simulationTime;
+        }
+
         static void addObject(const std::vector<glm::vec3>& vertices,
                               const std::vector<uint32_t>& indices,
                               const glm::mat4& transforms,
@@ -174,7 +180,7 @@ namespace Beryll
 
         static bool getIsCollision(const int ID1, const int ID2);
         static std::vector<int> getCollisionsWithGroup(const int id, const CollisionGroups group); // return IDs of all colliding objects in specific group
-        static const std::set<std::pair<const int, const int>>& getAllCollisions() { return m_collisionPairs; }
+        static const std::vector<std::pair<const int, const int>>& getAllCollisions() { return m_collisionPairs; }
         static std::vector<std::pair<glm::vec3, glm::vec3>> getAllCollisionPoints(const int ID1, const int ID2); // return point + his normal
         static std::vector<std::pair<glm::vec3, glm::vec3>> getAllCollisionPoints(const int ID1, const std::vector<int>& IDs); // return point + his normal
         static glm::vec3 getDefaultGravity() { return glm::vec3(m_gravity.x(), m_gravity.y(), m_gravity.z()); }
@@ -190,7 +196,7 @@ namespace Beryll
 
         static bool collisionsCallBack(btManifoldPoint& cp, const btCollisionObjectWrapper* ob1, int ID1, int index1,
                                                             const btCollisionObjectWrapper* ob2, int ID2, int index2);
-        static std::set<std::pair<const int, const int>> m_collisionPairs;
+        static std::vector<std::pair<const int, const int>> m_collisionPairs;
 
         static btVector3 m_gravity;
         static Timer m_timer;
@@ -218,6 +224,7 @@ namespace Beryll
 
         static float m_timeStep;
         static bool m_simulationEnabled;
+        static float m_simulationTime; // simulation time in milli sec
 
         static void resetVelocitiesForObject(const std::shared_ptr<btRigidBody>& b, bool reset);
 

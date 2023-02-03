@@ -21,11 +21,6 @@ namespace Beryll
 
     uint32_t GameLoop::m_maxFPS = 250;
 
-    uint32_t GameLoop::calcStart = 0;
-    uint32_t GameLoop::calcTime = 0;
-    uint32_t GameLoop::drawStart = 0;
-    uint32_t GameLoop::drawTime = 0;
-
     void GameLoop::create()
     {
         Window::create();
@@ -61,7 +56,6 @@ namespace Beryll
         {
             TimeStep::fixateTime(); // fixate time of last finished game loop
             m_frameStart = TimeStep::getMillisecFromStart();
-            calcStart = TimeStep::getMillisecFromStart();
 
         // Check user input
             EventHandler::resetEvents(EventID::ALL_EVENTS);
@@ -84,8 +78,6 @@ namespace Beryll
             // Dont set any camera attributes after this call (set in updateAfterPhysics())
             Camera::update3DCamera();
 
-            calcTime = TimeStep::getMillisecFromStart() - calcStart;
-            drawStart = TimeStep::getMillisecFromStart();
         // Draw start    DONT CALL ANY DRAW COMMANDS before this point !!!!!!!!
             // First finish draw previous frame
             //Window::getInstance()->finishDraw(); // very slow
@@ -99,7 +91,6 @@ namespace Beryll
             GameStateMachine::draw();
 
             MainImGUI::getInstance()->endFrame();
-            drawTime = TimeStep::getMillisecFromStart() - drawStart;
         // Draw finish
 
         // PlaySound start

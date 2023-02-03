@@ -27,9 +27,9 @@ namespace Beryll
     private:
         friend class AndroidGLESImGUI;
 
-        static ImFont* font; // one font for all texts
-        static std::string fontPath;
-        static float fontHeight; // in range 0 = 0%...1 = 100% of screen size
+        static ImFont* m_font; // one font for all texts
+        static std::string m_fontPath;
+        static float m_fontHeight; // in range 0 = 0%...1 = 100% of screen size
 
         int32_t m_flags = 0;
 

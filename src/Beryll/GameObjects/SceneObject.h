@@ -187,6 +187,7 @@ namespace Beryll
         bool getHasCollisionMesh() { return m_hasCollisionObject; }
         bool getIsEnabledCollisionMesh() { return m_isEnabledInPhysicsSimulation; }
         CollisionGroups getCollisionGroup() { return m_collisionGroup; }
+        CollisionFlags getCollisionFlag() { return m_collisionFlag; }
 
         void enableOnScene()
         {
@@ -243,6 +244,7 @@ namespace Beryll
 
         bool m_hasCollisionObject = false; // set true for all collision objects
         CollisionGroups m_collisionGroup = CollisionGroups::NONE; // set inside colliding objects
+        CollisionFlags m_collisionFlag = CollisionFlags::NONE; // set inside colliding objects
         bool m_isEnabledInPhysicsSimulation = false; // set inside colliding objects
     };
 }

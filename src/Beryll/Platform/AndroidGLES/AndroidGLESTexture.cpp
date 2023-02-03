@@ -83,18 +83,21 @@ namespace Beryll
         // dont bind if m_openGLID already bound
         if(m_type == TextureType::DIFFUSE_TEXTURE && GLESStateVariables::currentTexture0 != *m_openGLID)
         {
+            //BR_INFO("%s", "bind diffuse texture");
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, *m_openGLID);
             GLESStateVariables::currentTexture0 = *m_openGLID;
         }
         else if(m_type == TextureType::SPECULAR_TEXTURE && GLESStateVariables::currentTexture1 != *m_openGLID)
         {
+            //BR_INFO("%s", "bind specular texture");
             glActiveTexture(GL_TEXTURE1);
             glBindTexture(GL_TEXTURE_2D, *m_openGLID);
             GLESStateVariables::currentTexture1 = *m_openGLID;
         }
         else if(m_type == TextureType::NORMAL_MAP_TEXTURE && GLESStateVariables::currentTexture2 != *m_openGLID)
         {
+            //BR_INFO("%s", "bind normal map texture");
             glActiveTexture(GL_TEXTURE2);
             glBindTexture(GL_TEXTURE_2D, *m_openGLID);
             GLESStateVariables::currentTexture2 = *m_openGLID;

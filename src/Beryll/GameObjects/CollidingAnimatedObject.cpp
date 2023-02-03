@@ -104,6 +104,7 @@ namespace Beryll
 
                 m_hasCollisionObject = true;
                 m_isEnabledInPhysicsSimulation = true;
+                m_collisionFlag = collFlag;
                 m_collisionGroup = collGroup;
 
                 processCollisionMesh(m_scene->mMeshes[i], meshName, collisionMass, wantCollisionCallBack, collFlag, collGroup, collMask);
@@ -350,6 +351,8 @@ namespace Beryll
 
     void CollidingAnimatedObject::updateAfterPhysics()
     {
+        if(m_collisionFlag == CollisionFlags::STATIC) { return; }
+
         m_physicsTransforms = Physics::getTransforms(m_ID);
 
         m_origin = m_physicsTransforms.origin;

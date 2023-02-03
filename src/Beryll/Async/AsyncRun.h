@@ -26,7 +26,7 @@ namespace Beryll
         {
             const int numberElements = v.size();
 
-            if(numberElements <= 10 || m_numThreads == 1)
+            if(numberElements <= 50 || m_numThreads == 1)
             {
                 // run on main thread
                 func(v, 0, numberElements);

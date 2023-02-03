@@ -20,9 +20,9 @@ namespace Beryll
 
     }
 
-    ImFont* Slider::font = nullptr;
-    std::string Slider::fontPath;
-    float Slider::fontHeight = 0.0f;
+    ImFont* Slider::m_font = nullptr;
+    std::string Slider::m_fontPath;
+    float Slider::m_fontHeight = 0.0f;
 
     void Slider::updateBeforePhysics()
     {
@@ -64,9 +64,9 @@ namespace Beryll
         ImGui::SetNextWindowPos(ImVec2(m_leftPos * MainImGUI::getInstance()->getGUIWidth(), m_topPos * MainImGUI::getInstance()->getGUIHeight()));
         ImGui::Begin(m_stringID.c_str(), nullptr, m_flags);
 
-        if(font)
+        if(m_font)
         {
-            ImGui::PushFont(font);
+            ImGui::PushFont(m_font);
             ImGui::SliderFloat(m_text.c_str(),
                                ImVec2(m_width * MainImGUI::getInstance()->getGUIWidth(), m_height * MainImGUI::getInstance()->getGUIHeight()),
                                &m_sliderValue,

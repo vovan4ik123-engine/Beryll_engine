@@ -71,7 +71,6 @@ set(Common_SRC
         src/Beryll/GUI/Button.cpp
         src/Beryll/GUI/CheckBox.cpp
         src/Beryll/GUI/Text.cpp
-        src/Beryll/GUI/DrawAnyFunction.cpp
         src/Beryll/GUI/Slider.cpp
 
         src/Beryll/Renderer/Camera.cpp

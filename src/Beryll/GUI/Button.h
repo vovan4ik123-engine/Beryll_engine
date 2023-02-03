@@ -28,9 +28,9 @@ namespace Beryll
     private:
         friend class AndroidGLESImGUI;
 
-        static ImFont* font; // one font for all buttons
-        static std::string fontPath;
-        static float fontHeight; // in range 0 = 0%...1 = 100% of screen size
+        static ImFont* m_font; // one font for all buttons
+        static std::string m_fontPath;
+        static float m_fontHeight; // in range 0 = 0%...1 = 100% of screen size
 
         // if action is set m_action() will called when clicked
         // can be called many times if m_flags contains ImGuiButtonFlags_Repeat

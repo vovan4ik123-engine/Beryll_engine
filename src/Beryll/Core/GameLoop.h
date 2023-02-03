@@ -26,12 +26,6 @@ namespace Beryll
         static uint32_t getFrameTime() { return m_frameTime; }
         static void stopLoop() { m_isRun = false; }
 
-        // for statistics
-        static uint32_t calcStart;
-        static uint32_t calcTime;
-        static uint32_t drawStart;
-        static uint32_t drawTime;
-
     private:
         friend int ::main(int argc, char *argv[]);
 

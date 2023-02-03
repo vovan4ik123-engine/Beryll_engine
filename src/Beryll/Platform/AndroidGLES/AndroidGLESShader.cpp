@@ -101,6 +101,7 @@ namespace Beryll
     {
         if(GLESStateVariables::currentShaderProgram != *m_shaderProgramID)
         {
+            //BR_INFO("%s", "bind shader");
             glUseProgram(*m_shaderProgramID);
             GLESStateVariables::currentShaderProgram = *m_shaderProgramID;
         }

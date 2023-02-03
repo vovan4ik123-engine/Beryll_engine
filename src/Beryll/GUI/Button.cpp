@@ -20,9 +20,9 @@ namespace Beryll
 
     }
 
-    ImFont* Button::font = nullptr;
-    std::string Button::fontPath;
-    float Button::fontHeight = 0.0f;
+    ImFont* Button::m_font = nullptr;
+    std::string Button::m_fontPath;
+    float Button::m_fontHeight = 0.0f;
 
     void Button::updateBeforePhysics()
     {
@@ -94,9 +94,9 @@ namespace Beryll
         ImGui::SetNextWindowPos(ImVec2(m_leftPos * MainImGUI::getInstance()->getGUIWidth(), m_topPos * MainImGUI::getInstance()->getGUIHeight()));
         ImGui::Begin(m_stringID.c_str(), nullptr, m_noBackgroundNoFrame);
 
-        if(font)
+        if(m_font)
         {
-            ImGui::PushFont(font);
+            ImGui::PushFont(m_font);
             ImGui::Button(m_text.c_str(),
                           ImVec2(m_width * MainImGUI::getInstance()->getGUIWidth(), m_height * MainImGUI::getInstance()->getGUIHeight()),
                           ImGuiButtonFlags_PressedOnClick,
