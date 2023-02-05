@@ -14,7 +14,8 @@ namespace Beryll
                                                  bool wantCollisionCallBack,
                                                  CollisionFlags collFlag,
                                                  CollisionGroups collGroup,
-                                                 CollisionGroups collMask)
+                                                 CollisionGroups collMask,
+                                                 SceneObjectGroups objGroup)
     {
         BR_INFO("Loading colliding simple object:%s", modelPath);
 
@@ -34,6 +35,8 @@ namespace Beryll
 
         BR_ASSERT((scene->mNumMeshes == 2),
                   "Colliding simple object:%s MUST contain 2 meshes. For draw and physics simulation", modelPath);
+
+        m_sceneObjectGroup = objGroup;
 
         for(int i = 0; i < scene->mNumMeshes; ++i)
         {

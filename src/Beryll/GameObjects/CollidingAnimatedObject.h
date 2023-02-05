@@ -22,13 +22,15 @@ namespace Beryll
          * collFlag - type of collision object in physics world
          * collGroup - group or groups of current object in physics world
          * collMask - should contain collGroup or groups with which you want collisions
+         * objGroup - game specific group to which this scene object belong
          */
         CollidingAnimatedObject(const char* modelPath,  // common params
                                 float collisionMass,    // physics params
                                 bool wantCollisionCallBack,
                                 CollisionFlags collFlag,
                                 CollisionGroups collGroup,
-                                CollisionGroups collMask);
+                                CollisionGroups collMask,
+                                SceneObjectGroups objGroup = SceneObjectGroups::NONE);
         ~CollidingAnimatedObject() override;
 
         void updateBeforePhysics() override;

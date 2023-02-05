@@ -11,6 +11,26 @@ namespace Beryll
         FORWARD = 0, BACKWARD = 1, RIGHT = 2, LEFT = 3
     };
 
+    // this enum game dependent.
+    // when you create game you can add here groups and mark objects with them
+    // then check these groups in game loop for specific actions
+    enum class SceneObjectGroups
+    {
+        NONE = 0,
+        GROUND = 1,
+        PLAYER = 2,
+        ENEMY = 3,
+        TREE = 4,
+        GRASS = 5,
+        STONE = 6,
+        ROCK = 7,
+        BULLET = 8,
+        ROOT = 9,
+        MUSHROOM = 10,
+        WALL = 11,
+        YOUR_GAME_GROUP = 12
+    };
+
     class SceneObject : public Beryll::GameObject
     {
     public:
@@ -188,6 +208,7 @@ namespace Beryll
         bool getIsEnabledCollisionMesh() { return m_isEnabledInPhysicsSimulation; }
         CollisionGroups getCollisionGroup() { return m_collisionGroup; }
         CollisionFlags getCollisionFlag() { return m_collisionFlag; }
+        SceneObjectGroups getSceneObjectGroup() { return m_sceneObjectGroup; }
 
         void enableOnScene()
         {
@@ -246,5 +267,7 @@ namespace Beryll
         CollisionGroups m_collisionGroup = CollisionGroups::NONE; // set inside colliding objects
         CollisionFlags m_collisionFlag = CollisionFlags::NONE; // set inside colliding objects
         bool m_isEnabledInPhysicsSimulation = false; // set inside colliding objects
+
+        SceneObjectGroups m_sceneObjectGroup = SceneObjectGroups::NONE; // any scene object can belong to specific group
     };
 }

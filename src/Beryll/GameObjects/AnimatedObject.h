@@ -15,8 +15,10 @@ namespace Beryll
         AnimatedObject() = delete;
         /*
          * modelPath - path to model file (.DAE or .FBX). start path from first folder inside assets/
+         * objGroup - game specific group to which this scene object belong
          */
-        AnimatedObject(const char* modelPath);
+        AnimatedObject(const char* modelPath,
+                       SceneObjectGroups objGroup = SceneObjectGroups::NONE);
         ~AnimatedObject() override;
 
         void updateBeforePhysics() override;

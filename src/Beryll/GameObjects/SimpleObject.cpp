@@ -9,7 +9,8 @@
 
 namespace Beryll
 {
-    SimpleObject::SimpleObject(const char* modelPath)
+    SimpleObject::SimpleObject(const char* modelPath,
+                               SceneObjectGroups objGroup)
     {
         BR_INFO("Loading simple object:%s", modelPath);
 
@@ -29,6 +30,8 @@ namespace Beryll
 
         BR_ASSERT((scene->mNumMeshes == 1),
                 "Simple object:%s MUST contain only 1 mesh. Combine into one if you have many", modelPath);
+
+        m_sceneObjectGroup = objGroup;
 
         // prepare vectors
         std::vector<glm::vec3> vertices;

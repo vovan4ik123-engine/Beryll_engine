@@ -4,12 +4,14 @@ Name of MVP matrix in shader must be MVPMatrix
 Name of model matrix in shader must be M_matrix
     uniform mat4 M_matrix;
 
-Fragment shader can contain 5 sampler2D for textures.
-    uniform sampler2D diffuseTexture;   // name and order are important
-    uniform sampler2D specularTexture;  // name and order are important
-    uniform sampler2D shadowMapTexture; // name and order are important
-    uniform sampler2D normalMapTexture; // name and order are important
-    uniform sampler2D heightMapTexture; // name and order are important
+Fragment shader can contains set of:
+    uniform sampler2D diffuseTexture;
+    uniform sampler2D specularTexture;
+    uniform sampler2D normalMapTexture;
+    uniform sampler2D shadowMapTexture;
+
+precision highp float; // highp mediump lowp
+    In shaders is important. Can reduce Z-fighting in 3D scene
 
 Vertex shader example:
     #version 300 es
@@ -40,8 +42,8 @@ Fragment shader example:
 
     out vec4 outColor;
 
-    uniform sampler2D diffuseTexture;   // first in shader !!!
-    uniform sampler2D specularTexture;  // second in shader !!!
+    uniform sampler2D diffuseTexture;
+    uniform sampler2D specularTexture;
 
     void main()
     {

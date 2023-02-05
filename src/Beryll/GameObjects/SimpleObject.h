@@ -15,8 +15,10 @@ namespace Beryll
         SimpleObject() = delete;
         /*
          * modelPath - path to model file (.DAE or .FBX). start path from first folder inside assets/
+         * objGroup - game specific group to which this scene object belong
          */
-        SimpleObject(const char* modelPath);
+        SimpleObject(const char* modelPath,
+                     SceneObjectGroups objGroup = SceneObjectGroups::NONE);
         ~SimpleObject() override;
 
         void updateBeforePhysics() override;

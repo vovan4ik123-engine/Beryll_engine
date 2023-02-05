@@ -5,18 +5,20 @@
 namespace Beryll
 {
     CollidingSimplePlayer::CollidingSimplePlayer(const char* modelPath,  // common params
-                          float collisionMass,    // physics params
-                          bool wantCollisionCallBack,
-                          CollisionFlags collFlag,
-                          CollisionGroups collGroup,
-                          CollisionGroups collMask)
-                          // call base class constructor
-                          : CollidingSimpleObject(modelPath,
-                                                  collisionMass,
-                                                  wantCollisionCallBack,
-                                                  collFlag,
-                                                  collGroup,
-                                                  collMask)
+                                                 float collisionMass,    // physics params
+                                                 bool wantCollisionCallBack,
+                                                 CollisionFlags collFlag,
+                                                 CollisionGroups collGroup,
+                                                 CollisionGroups collMask,
+                                                 SceneObjectGroups objGroup)
+                                                 // call base class constructor
+                                                 : CollidingSimpleObject(modelPath,
+                                                                         collisionMass,
+                                                                         wantCollisionCallBack,
+                                                                         collFlag,
+                                                                         collGroup,
+                                                                         collMask,
+                                                                         objGroup)
     {
         // player described by collision mesh
         m_fromOriginToTop = std::abs(m_mostTopVertex);
