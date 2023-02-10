@@ -1,11 +1,11 @@
------------------Android-----------------
-1. In case of memory addresses fault
-    Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0 in tid 24484 (SDLThread), pid 24372 (SDLActivity)
-    App closes sometimes or frozen sometimes
-    Restart smartphone (physical device).
-    If you are using Android Studio, then go to file --> Invalidate Cache & Restart.
-    <application android:hardwareAccelerated="false" >
-    synchronize multithreading
 
-2.
+1. In case of memory addresses fault:
+   Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x0 in tid 24484 (SDLThread), pid 24372 (SDLActivity)
+   SIGSEGV means a signal for memory access violation, trying to read or write memory area that your process does not have access.
+   A segfault basically means you did something bad with pointers or memory addresses.
+   For example dereference nullptr or write to out fo range memory, or to not allocated memory.
+   synchronize multithreading
+
+2. In Android Studio go to file --> Invalidate Cache & Restart.
+   Restart smartphone (physical device)
 

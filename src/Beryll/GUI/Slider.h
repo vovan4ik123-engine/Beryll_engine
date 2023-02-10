@@ -17,6 +17,7 @@ namespace Beryll
         void playSound() override;
 
         float getValue() { return m_sliderValue; }
+        bool getIsValueChanged() { return m_valueChanged; }
         void setValue(const float val)
         {
             if(val >= 0.0f && val <= 1.0f)
@@ -41,6 +42,7 @@ namespace Beryll
 
         std::string m_text;
         float m_sliderValue = 0.0f; // in range 0.0f...1.0f
+        bool m_valueChanged = false;
 
         float m_leftPos; // in range 0 = 0%...1 = 100% of screen size
         float m_topPos;

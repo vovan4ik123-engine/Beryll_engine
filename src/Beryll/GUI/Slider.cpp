@@ -67,20 +67,20 @@ namespace Beryll
         if(m_font)
         {
             ImGui::PushFont(m_font);
-            ImGui::SliderFloat(m_text.c_str(),
-                               ImVec2(m_width * MainImGUI::getInstance()->getGUIWidth(), m_height * MainImGUI::getInstance()->getGUIHeight()),
-                               &m_sliderValue,
-                               0.0f,
-                               1.0f);
+            m_valueChanged = ImGui::SliderFloat(m_text.c_str(),
+                                               ImVec2(m_width * MainImGUI::getInstance()->getGUIWidth(), m_height * MainImGUI::getInstance()->getGUIHeight()),
+                                               &m_sliderValue,
+                                               0.0f,
+                                               1.0f);
             ImGui::PopFont();
         }
         else
         {
-            ImGui::SliderFloat(m_text.c_str(),
-                               ImVec2(m_width * MainImGUI::getInstance()->getGUIWidth(), m_height * MainImGUI::getInstance()->getGUIHeight()),
-                               &m_sliderValue,
-                               0.0f,
-                               1.0f);
+            m_valueChanged = ImGui::SliderFloat(m_text.c_str(),
+                                               ImVec2(m_width * MainImGUI::getInstance()->getGUIWidth(), m_height * MainImGUI::getInstance()->getGUIHeight()),
+                                               &m_sliderValue,
+                                               0.0f,
+                                               1.0f);
         }
 
         ImGui::End();
