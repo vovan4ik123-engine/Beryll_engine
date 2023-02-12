@@ -45,20 +45,26 @@ namespace Beryll
         }
 
         // check does camera see object or object is out of view
-        static bool getIsSeeObject(const glm::vec3& objectPos, float maxViewDistance = m_objectsViewDistance)
+        static bool getIsSeeObject(const glm::vec3& objectPos, float fovMultiplier = 1.0f, float maxViewDistance = m_objectsViewDistance)
         {
             // check distance
             if(glm::distance(m_cameraPos, objectPos) > maxViewDistance) { return false; }
 
-            if(Window::getInstance()->currentOrientation == SDL_ORIENTATION_PORTRAIT ||
+            if(Window::getInstance()->currentOrientation == SDL_ORIENTATION_LANDSCAPE ||
+               Window::getInstance()->currentOrientation == SDL_ORIENTATION_LANDSCAPE_FLIPPED)
+            {
+                if(Utils::Common::getAngleInRadians(m_cameraDirectionXYZ, glm::normalize(objectPos - m_cameraPos)) > (m_fovRadians * fovMultiplier))
+                {
+                    return false;
+                }
+            }
+            else if(Window::getInstance()->currentOrientation == SDL_ORIENTATION_PORTRAIT ||
                Window::getInstance()->currentOrientation == SDL_ORIENTATION_PORTRAIT_FLIPPED)
             {
-                if(Utils::Common::getAngleInRadians(m_cameraDirectionXYZ, glm::normalize(objectPos - m_cameraPos)) > m_fovRadians) { return false; }
-            }
-            else if(Window::getInstance()->currentOrientation == SDL_ORIENTATION_LANDSCAPE ||
-                    Window::getInstance()->currentOrientation == SDL_ORIENTATION_LANDSCAPE_FLIPPED)
-            {
-                if(Utils::Common::getAngleInRadians(m_cameraDirectionXYZ, glm::normalize(objectPos - m_cameraPos)) > m_oneAndHalfFovRadians) { return false; }
+                if(Utils::Common::getAngleInRadians(m_cameraDirectionXYZ, glm::normalize(objectPos - m_cameraPos)) > (m_halfFovRadians * fovMultiplier))
+                {
+                    return false;
+                }
             }
             else
             {
@@ -81,7 +87,6 @@ namespace Beryll
         {
             m_fovRadians = glm::radians(fovDegrees);
             m_halfFovRadians = m_fovRadians * 0.5f;
-            m_oneAndHalfFovRadians = m_fovRadians * 1.5f;
         }
         static void setPerspectiveNearClipPlane(const float near) { m_perspNearClipPlane = near; }
         static void setPerspectiveFarClipPlane(const float far) { m_perspFarClipPlane = far; }
@@ -116,7 +121,6 @@ namespace Beryll
 
         static float m_fovRadians;
         static float m_halfFovRadians;
-        static float m_oneAndHalfFovRadians;
         static float m_perspNearClipPlane;
         static float m_perspFarClipPlane;
 

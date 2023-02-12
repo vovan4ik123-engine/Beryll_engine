@@ -34,7 +34,7 @@ namespace Beryll
         YOUR_GAME_GROUP = 14
     };
 
-    class SceneObject : public Beryll::GameObject
+    class SceneObject : public GameObject
     {
     public:
         ~SceneObject() override {}
