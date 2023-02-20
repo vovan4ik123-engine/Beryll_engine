@@ -21,7 +21,7 @@ namespace Beryll
 
     void CheckBox::updateBeforePhysics()
     {
-        if(m_checking && m_action)
+        if(m_valueChanging && m_action)
         {
             m_action();
         }
@@ -34,7 +34,7 @@ namespace Beryll
 
     void CheckBox::draw()
     {
-        m_checking = false;
+        m_valueChanging = false;
 
         ImGui::PushStyleColor(ImGuiCol_Text, m_fontColor);
         ImGui::PushStyleColor(ImGuiCol_CheckMark, m_checkMarkColor);
@@ -50,7 +50,7 @@ namespace Beryll
             ImGui::PushFont(m_font);
             if(ImGui::Checkbox(m_text.c_str(), &m_checked) && m_checked) // true only if marked. false if unmarked
             {
-                m_checking = true;
+                m_valueChanging = true;
                 m_needPlaySound = true;
             }
             ImGui::PopFont();
@@ -59,7 +59,7 @@ namespace Beryll
         {
             if(ImGui::Checkbox(m_text.c_str(), &m_checked) && m_checked) // true only if marked. false if unmarked
             {
-                m_checking = true;
+                m_valueChanging = true;
                 m_needPlaySound = true;
             }
         }

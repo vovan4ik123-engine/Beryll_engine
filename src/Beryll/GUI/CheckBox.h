@@ -18,6 +18,7 @@ namespace Beryll
         void playSound() override;
 
         bool getIsChecked() { return m_checked; }
+        bool getIsValueChanging() { return m_valueChanging; }
 
         void setAction(std::function<void()> fn) { m_action = fn; }
         void setFontColor(float r, float g, float b, float a) { m_fontColor = ImVec4{ r, g, b, a }; }
@@ -35,7 +36,7 @@ namespace Beryll
         // if action is set m_action() will called once when checked
         std::function<void()> m_action;
 
-        bool m_checking = false;
+        bool m_valueChanging = false;
         bool m_checked = false;
 
         std::string m_text;

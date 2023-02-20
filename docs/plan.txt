@@ -1,5 +1,8 @@
 ---------------------plan:---------------------
 
+buy animated player character
+animated player
+
 update renderer 2 ?
 draw thread
 use tangent vector only if specular map is in materials

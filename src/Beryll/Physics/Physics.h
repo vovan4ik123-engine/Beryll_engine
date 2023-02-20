@@ -179,6 +179,7 @@ namespace Beryll
         static void applyCentralImpulseForObject(const int ID, const glm::vec3& impulse);
 
         static bool getIsCollision(const int ID1, const int ID2);
+        static bool getIsCollision(const int ID, const CollisionGroups group);
         static std::vector<int> getCollisionsWithGroup(const int id, const CollisionGroups group); // return IDs of all colliding objects in specific group
         static const std::vector<std::pair<const int, const int>>& getAllCollisions() { return m_collisionPairs; }
         static std::vector<std::pair<glm::vec3, glm::vec3>> getAllCollisionPoints(const int ID1, const int ID2); // return point + his normal

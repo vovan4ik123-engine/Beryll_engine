@@ -482,6 +482,22 @@ namespace Beryll
         return false;
     }
 
+    bool Physics::getIsCollision(const int ID, const CollisionGroups group)
+    {
+        for(int i = 0; i < m_dynamicsWorldMT->getNumCollisionObjects(); ++i)
+        {
+            if(m_dynamicsWorldMT->getCollisionObjectArray()[i]->getBroadphaseHandle()->m_collisionFilterGroup & static_cast<int>(group))
+            {
+                if(getIsCollision(ID, m_dynamicsWorldMT->getCollisionObjectArray()[i]->beryllEngineObjectID))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     std::vector<int> Physics::getCollisionsWithGroup(const int ID, const CollisionGroups group)
     {
         std::vector<int> ids;
@@ -948,7 +964,7 @@ namespace Beryll
         btVector3 t(to.x, to.y, to.z);
         btCollisionWorld::ClosestRayResultCallback closestResults(fr, t);
         closestResults.m_flags |= btTriangleRaycastCallback::kF_FilterBackfaces;
-        closestResults.m_flags |= btTriangleRaycastCallback::kF_UseSubSimplexConvexCastRaytest;
+        closestResults.m_flags |= btTriangleRaycastCallback::kF_UseGjkConvexCastRaytest;
         closestResults.m_collisionFilterGroup = static_cast<int>(collGroup);
         closestResults.m_collisionFilterMask = static_cast<int>(collMask);
 
@@ -974,7 +990,7 @@ namespace Beryll
         btVector3 t(to.x, to.y, to.z);
         btCollisionWorld::AllHitsRayResultCallback allResults(fr, t);
         allResults.m_flags |= btTriangleRaycastCallback::kF_FilterBackfaces;
-        allResults.m_flags |= btTriangleRaycastCallback::kF_UseSubSimplexConvexCastRaytest;
+        allResults.m_flags |= btTriangleRaycastCallback::kF_UseGjkConvexCastRaytest;
         allResults.m_collisionFilterGroup = static_cast<int>(collGroup);
         allResults.m_collisionFilterMask = static_cast<int>(collMask);
 
