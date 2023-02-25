@@ -8,7 +8,7 @@ namespace Beryll
     {
     public:
         // position in percent 0...100% of screen
-        Slider(std::string text, float left, float top, float width, float height, bool background = false);
+        Slider(std::string text, float left, float top, float width, float height, float min = 0.0f, float max = 1.0f, bool background = false);
         ~Slider() override;
 
         void updateBeforePhysics() override;
@@ -20,7 +20,7 @@ namespace Beryll
         bool getIsValueChanging() { return m_valueChanging; }
         void setValue(const float val)
         {
-            if(val >= 0.0f && val <= 1.0f)
+            if(val >= m_min && val <= m_max)
             {
                 m_sliderValue = val;
             }
@@ -41,6 +41,8 @@ namespace Beryll
         int32_t m_flags = 0;
 
         std::string m_text;
+        float m_min = 0.0f;
+        float m_max = 1.0f;
         float m_sliderValue = 0.0f; // in range 0.0f...1.0f
         bool m_valueChanging = false;
 

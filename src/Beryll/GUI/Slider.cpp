@@ -5,8 +5,9 @@
 
 namespace Beryll
 {
-    Slider::Slider(std::string text, float left, float top, float width, float height, bool background)
-            : m_text(std::move(text)), m_leftPos(left / 100.0f), m_topPos(top / 100.0f), m_width(width / 100.0f), m_height(height / 100.0f)
+    Slider::Slider(std::string text, float left, float top, float width, float height, float min, float max, bool background)
+            : m_text(std::move(text)), m_leftPos(left / 100.0f), m_topPos(top / 100.0f), m_width(width / 100.0f), m_height(height / 100.0f),
+              m_min(min), m_max(max)
     {
         BR_ASSERT((left >= 0.0f && left <= 100.0f) && (top >= 0.0f && top <= 100.0f)
                   &&(width >= 0.0f && width <= 100.0f) && (height >= 0.0f && height <= 100.0f), "%s", "Wrong slider size or position")
@@ -70,8 +71,8 @@ namespace Beryll
             m_valueChanging = ImGui::SliderFloat(m_text.c_str(),
                                                  ImVec2(m_width * MainImGUI::getInstance()->getGUIWidth(), m_height * MainImGUI::getInstance()->getGUIHeight()),
                                                  &m_sliderValue,
-                                                 0.0f,
-                                                 1.0f);
+                                                 m_min,
+                                                 m_max);
             ImGui::PopFont();
         }
         else
@@ -79,8 +80,8 @@ namespace Beryll
             m_valueChanging = ImGui::SliderFloat(m_text.c_str(),
                                                  ImVec2(m_width * MainImGUI::getInstance()->getGUIWidth(), m_height * MainImGUI::getInstance()->getGUIHeight()),
                                                  &m_sliderValue,
-                                                 0.0f,
-                                                 1.0f);
+                                                 m_min,
+                                                 m_max);
         }
 
         ImGui::End();
