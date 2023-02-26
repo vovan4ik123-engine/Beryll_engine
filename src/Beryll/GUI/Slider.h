@@ -17,6 +17,8 @@ namespace Beryll
         void playSound() override;
 
         float getValue() { return m_sliderValue; }
+        float getMin() { return m_min; }
+        float getMax() { return m_max; }
         bool getIsValueChanging() { return m_valueChanging; }
         void setValue(const float val)
         {
