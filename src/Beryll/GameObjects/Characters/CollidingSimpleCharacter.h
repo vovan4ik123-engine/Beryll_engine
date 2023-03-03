@@ -4,10 +4,10 @@
 
 namespace Beryll
 {
-    class CollidingSimplePlayer : public CollidingSimpleObject
+    class CollidingSimpleCharacter : public CollidingSimpleObject
     {
     public:
-        CollidingSimplePlayer() = delete;
+        CollidingSimpleCharacter() = delete;
         /*
          * modelPath - path to model file (.DAE or .FBX). start path from first folder inside assets/
          * collisionMass - mass of this object for physics simulation. 0 for static objects
@@ -19,14 +19,14 @@ namespace Beryll
          * collMask - should contain collGroup or groups with which you want collisions
          * objGroup - game specific group to which this scene object belong
          */
-        CollidingSimplePlayer(const char* modelPath,  // common params
-                              float collisionMass,    // physics params
-                              bool wantCollisionCallBack,
-                              CollisionFlags collFlag,
-                              CollisionGroups collGroup,
-                              CollisionGroups collMask,
-                              SceneObjectGroups objGroup = SceneObjectGroups::NONE);
-        ~CollidingSimplePlayer() override;
+        CollidingSimpleCharacter(const char* modelPath,  // common params
+                                 float collisionMass,    // physics params
+                                 bool wantCollisionCallBack,
+                                 CollisionFlags collFlag,
+                                 CollisionGroups collGroup,
+                                 CollisionGroups collMask,
+                                 SceneObjectGroups objGroup = SceneObjectGroups::NONE);
+        ~CollidingSimpleCharacter() override;
 
         // methods from base class
         void updateBeforePhysics() override;
@@ -34,30 +34,34 @@ namespace Beryll
         void draw() override;
         void playSound() override;
 
-        // player controller
+        // character controller
         void move(MoveDirection direction);
         void jump();
+        bool getIsCanStay() { return m_characterCanStay; }
+        bool getIsMoving() { return m_characterMoving; }
+        bool getIsJumped() { return m_jumped; }
+        bool getIsFalling() { return m_falling; }
 
         float moveSpeed = 4.16f; // meters in second
-        float backwardMoveFactor = 0.6f; // factor to multiply moveSpeed if player move backward
+        float backwardMoveFactor = 0.6f; // factor to multiply moveSpeed if character move backward
         float walkableFloorAngleRadians = glm::radians(60.0f);
-        float maxStepHeight = 2.0f; // in meters. MUST be less than m_playerHeight
+        float maxStepHeight = 2.0f; // in meters. MUST be less than m_characterHeight
         float startJumpAngleRadians = glm::radians(50.0f);
         float startJumpPower = 1.0f;
         float startFallingPower = 1.0f; // -y axis impulse when stat falling
-        float airControlFactor = 0.3f; // factor to multiply moveSpeed if player not on ground
-        float jumpExtendTime = 0.0f; // in seconds. time when player moved from ground edge to air but still can jump
+        float airControlFactor = 0.3f; // factor to multiply moveSpeed if character not on ground
+        float jumpExtendTime = 0.0f; // in seconds. time when character moved from ground edge to air but still can jump
 
     private:
-        float m_fromOriginToTop = 0.0f; // distance between origin and player top
-        float m_fromOriginToBottom = 0.0f; // distance between origin and player bottom
+        float m_fromOriginToTop = 0.0f; // distance between origin and character top
+        float m_fromOriginToBottom = 0.0f; // distance between origin and character bottom
         float m_XZradius = 0.0f; // radius on X/Z axis. from collision mesh origin
-        float m_playerHeight = 0.0f;
-        float m_playerMass = 0.0f;
+        float m_characterHeight = 0.0f;
+        float m_characterMass = 0.0f;
 
-        bool m_playerOnGround = false;
-        float m_lastTimeOnGround = 0.0f;
-        bool m_playerMoving = false;
+        bool m_characterCanStay = false; // can stay on any colliding object from group m_collisionMask
+        float m_lastTimeCanStay = 0.0f;
+        bool m_characterMoving = false;
 
         float m_previousYPos = 0.0f;
 
@@ -72,11 +76,8 @@ namespace Beryll
         bool m_falling = false;
         bool m_canApplyStartFallingImpulse = false;
 
-        std::vector<int> m_collidingStaticObjects; // prevent creation and deletion every frame
-        std::vector<std::pair<glm::vec3, glm::vec3>> m_collidingStaticPoints; // prevent creation and deletion every frame
-
-        std::vector<int> m_collidingDynamicObjects; // prevent creation and deletion every frame
-        std::vector<std::pair<glm::vec3, glm::vec3>> m_collidingDynamicPoints; // prevent creation and deletion every frame
+        std::vector<int> m_collidingObjects; // prevent creation and deletion every frame
+        std::vector<std::pair<glm::vec3, glm::vec3>> m_collidingPoints; // prevent creation and deletion every frame
 
         std::pair<glm::vec3, glm::vec3> m_bottomCollisionPoint; // lowest collision point with ground ant its normal
     };

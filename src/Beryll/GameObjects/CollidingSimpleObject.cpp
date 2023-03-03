@@ -85,6 +85,7 @@ namespace Beryll
                 m_isEnabledInPhysicsSimulation = true;
                 m_collisionFlag = collFlag;
                 m_collisionGroup = collGroup;
+                m_collisionMask = collMask;
 
                 processCollisionMesh(scene, scene->mMeshes[i], meshName, collisionMass, wantCollisionCallBack, collFlag, collGroup, collMask);
                 continue;

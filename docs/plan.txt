@@ -1,7 +1,9 @@
 ---------------------plan:---------------------
 
-buy animated player character
-animated player
+buy animated character
+add animated character
+try calculate bones transforms on CPU
+
 
 update renderer 2 ?
 draw thread

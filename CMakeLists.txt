@@ -64,7 +64,8 @@ set(Common_SRC
         src/Beryll/GameObjects/CollidingSimpleObject.cpp
         src/Beryll/GameObjects/CollidingAnimatedObject.cpp
 
-        src/Beryll/GameObjects/Player/CollidingSimplePlayer.cpp
+        src/Beryll/GameObjects/Characters/CollidingSimpleCharacter.cpp
+        src/Beryll/GameObjects/Characters/CollidingAnimatedCharacter.cpp
 
         src/Beryll/GUI/MainImGUI.cpp
         src/Beryll/GUI/DemoImGUI.cpp

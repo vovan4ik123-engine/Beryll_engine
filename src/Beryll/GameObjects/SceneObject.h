@@ -258,6 +258,7 @@ namespace Beryll
 
         bool m_hasCollisionObject = false; // set true for all collision objects
         CollisionGroups m_collisionGroup = CollisionGroups::NONE; // set inside colliding objects
+        CollisionGroups m_collisionMask = CollisionGroups::NONE; // set inside colliding objects
         CollisionFlags m_collisionFlag = CollisionFlags::NONE; // set inside colliding objects
         bool m_isEnabledInPhysicsSimulation = false; // set inside colliding objects
 
