@@ -50,7 +50,7 @@ namespace Beryll
             BR_ASSERT((scene->mNumMeshes == 2),
                       "Colliding animated object:%s MUST contain 2 meshes. For draw and physics simulation", modelPath);
 
-            BR_ASSERT((scene->HasAnimations()) && (scene->mMeshes[0]->mNumBones > 0 || scene->mMeshes[1]->mNumBones > 0),
+            BR_ASSERT((scene->HasAnimations() && (scene->mMeshes[0]->mNumBones > 0 || scene->mMeshes[1]->mNumBones > 0)),
                       "%s", "Animated object must have animation + bone");
 
             m_scene = scene;
@@ -115,7 +115,7 @@ namespace Beryll
                 continue;
             }
 
-            BR_ASSERT((m_scene->HasAnimations()) && (m_scene->mMeshes[i]->mNumBones > 0),
+            BR_ASSERT((m_scene->HasAnimations() && m_scene->mMeshes[i]->mNumBones > 0),
                       "%s", "Colliding animated object must have animation + bone");
 
             // prepare vectors
@@ -187,22 +187,24 @@ namespace Beryll
             // bones
             m_boneCount = m_scene->mMeshes[i]->mNumBones;
             m_bonesMatrices.reserve(m_boneCount);
+            m_boneNameIndex.reserve(m_boneCount);
 
             for(int g = 0; g < m_boneCount; ++g)
             {
                 std::string boneName = m_scene->mMeshes[i]->mBones[g]->mName.C_Str();
+                BR_ASSERT((boneName[0] == 'B' &&
+                           boneName[1] == 'o' &&
+                           boneName[2] == 'n' &&
+                           boneName[3] == 'e'), "%s", "Bone name must starts with Bone......");
 
-                auto iter = m_boneNameIndex.find(boneName);
-                if(iter != m_boneNameIndex.end())
+                for(const std::pair<std::string, uint32_t>& element : m_boneNameIndex)
                 {
-                    BR_ASSERT(false, "Many bones have same name in one model:%s", modelPath);
+                    BR_ASSERT((element.first != boneName), "Many bones have same name in one model:%s", modelPath);
                 }
-                else
-                {
-                    m_bonesMatrices.emplace_back(); // add empty element to back
-                    m_bonesMatrices.back().offsetMatrix = m_scene->mMeshes[i]->mBones[g]->mOffsetMatrix;
-                    m_boneNameIndex.insert(std::make_pair(boneName, g));
-                }
+
+                m_bonesMatrices.emplace_back(); // add empty element to back
+                m_bonesMatrices.back().offsetMatrix = m_scene->mMeshes[i]->mBones[g]->mOffsetMatrix;
+                m_boneNameIndex.emplace_back(boneName, g);
 
                 // collect all vertices to which bone has impact
                 for(int j = 0; j < m_scene->mMeshes[i]->mBones[g]->mNumWeights; ++j)
@@ -328,8 +330,15 @@ namespace Beryll
             // animations
             for(int g = 0; g < m_scene->mNumAnimations; ++g)
             {
-                m_animationNameIndex.insert(std::make_pair(m_scene->mAnimations[g]->mName.C_Str(), g));
-                BR_INFO("Have animation %d with name:%s", g, m_scene->mAnimations[g]->mName.C_Str());
+                std::string animName = m_scene->mAnimations[g]->mName.C_Str();
+                std::string::size_type startNameIndex = animName.find_last_of('|');
+                if(startNameIndex != std::string::npos)
+                {
+                    animName = animName.substr(startNameIndex + 1);
+                }
+
+                m_animationNameIndex.emplace_back(animName, g);
+                BR_INFO("Have animation:%d with name:%s", g, animName.c_str());
             }
 
             const aiNode *node = Utils::Common::findAinodeForAimesh(m_scene, m_scene->mRootNode, m_scene->mMeshes[i]->mName);
@@ -355,16 +364,17 @@ namespace Beryll
 
     void CollidingAnimatedObject::updateAfterPhysics()
     {
-        if(m_collisionFlag == CollisionFlags::STATIC) { return; }
+        if(m_collisionFlag != CollisionFlags::STATIC)
+        {
+            m_physicsTransforms = Physics::getTransforms(m_ID);
 
-        m_physicsTransforms = Physics::getTransforms(m_ID);
+            m_origin = m_physicsTransforms.origin;
 
-        m_origin = m_physicsTransforms.origin;
+            m_translateMatrix = glm::translate(glm::mat4{1.0f}, m_physicsTransforms.origin);
+            m_rotateMatrix = glm::toMat4(m_physicsTransforms.rotation);
 
-        m_translateMatrix = glm::translate(glm::mat4{1.0f}, m_physicsTransforms.origin);
-        m_rotateMatrix = glm::toMat4(m_physicsTransforms.rotation);
-
-        m_modelMatrix = m_translateMatrix * m_rotateMatrix * m_scaleMatrix;
+            m_modelMatrix = m_translateMatrix * m_rotateMatrix * m_scaleMatrix;
+        }
 
         calculateTransforms();
     }
@@ -411,35 +421,45 @@ namespace Beryll
 
     void CollidingAnimatedObject::readNodeHierarchy(const float animationTime, const aiNode* node, const aiMatrix4x4& parentTransform)
     {
-        const aiNodeAnim* nodeAnim = findNodeAnim(m_scene->mAnimations[m_currentAnimIndex], node->mName);
+        aiMatrix4x4 nodeTransform; // identity
 
-        aiMatrix4x4 nodeTransform = node->mTransformation;
+        const aiNodeAnim* nodeAnim = findNodeAnim(m_scene->mAnimations[m_currentAnimIndex], node->mName);
 
         if(nodeAnim)
         {
             BR_ASSERT((nodeAnim->mNumScalingKeys == nodeAnim->mNumPositionKeys), "%s", "mNumScalingKeys != mNumPositionKeys");
             BR_ASSERT((nodeAnim->mNumScalingKeys == nodeAnim->mNumRotationKeys), "%s", "mNumScalingKeys != mNumRotationKeys");
 
-            int currentFrameIndex = 0;
-            for(int i = 0; i < nodeAnim->mNumPositionKeys - 1; ++i) // will use i + 1
+            uint32_t currentFrameIndex = 0;
+            for(uint32_t i = nodeAnim->mNumPositionKeys - 1; i >= 0; --i)
             {
-                if(animationTime < nodeAnim->mPositionKeys[i + 1].mTime) // less than next = actual frame did not finish
+                if(animationTime > nodeAnim->mPositionKeys[i].mTime || i == 0)
                 {
                     currentFrameIndex = i;
                     break;
                 }
             }
 
-            int nextFrameIndex = currentFrameIndex + 1;
-            BR_ASSERT((nextFrameIndex < nodeAnim->mNumPositionKeys), "%s", "nextFrameIndex ! < nodeAnim->mNumPositionKeys");
+            uint32_t nextFrameIndex = currentFrameIndex + 1;
+            if(nextFrameIndex >= nodeAnim->mNumPositionKeys)
+            {
+                nextFrameIndex = 0;
+            }
 
-            float deltaTime = static_cast<float>(nodeAnim->mPositionKeys[nextFrameIndex].mTime) -
-                              static_cast<float>(nodeAnim->mPositionKeys[currentFrameIndex].mTime);
+            float currentFrameStartTime = static_cast<float>(nodeAnim->mPositionKeys[currentFrameIndex].mTime);
+            float currentFrameEndTime = static_cast<float>(nodeAnim->mPositionKeys[nextFrameIndex].mTime);
+            if(currentFrameStartTime > currentFrameEndTime)
+            {
+                currentFrameEndTime = static_cast<float>(m_scene->mAnimations[m_currentAnimIndex]->mDuration);
+            }
+
+            BR_ASSERT((animationTime >= currentFrameStartTime && animationTime <= currentFrameEndTime),
+                      "animationTime must be between currentFrameStartTime and currentFrameEndTime animationTime:%f, currentFrameStartTime:%f, currentFrameEndTime:%f",
+                      animationTime, currentFrameStartTime, currentFrameEndTime);
+
+            float deltaTime = currentFrameEndTime - currentFrameStartTime;
             // factor = how much time passed between current and next frame in range 0...1
             float factor = (animationTime - static_cast<float>(nodeAnim->mPositionKeys[currentFrameIndex].mTime)) / deltaTime;
-            BR_ASSERT((factor >= 0.0f && factor <= 1.0f),
-                      "Translation factor must be in range 0...1. Factor:%f, mTime:%f, currentFrameIndex:%d",
-                      factor, nodeAnim->mPositionKeys[currentFrameIndex].mTime, currentFrameIndex);
 
             aiMatrix4x4 scalingMatr = interpolateScaling(nodeAnim, currentFrameIndex, nextFrameIndex, factor);
             aiMatrix4x4 rotationMatr = interpolateRotation(nodeAnim, currentFrameIndex, nextFrameIndex, factor);
@@ -451,11 +471,14 @@ namespace Beryll
         aiMatrix4x4 globalTransform = parentTransform * nodeTransform;
 
         // node_name = bone_name = animation->chanel->node_name(nodeAnim contains node_name of affected node)
-        auto iter = m_boneNameIndex.find(node->mName.C_Str());
-        if(iter != m_boneNameIndex.end())
+        for(const std::pair<std::string, uint32_t>& element : m_boneNameIndex)
         {
-            // iter->second = boneIndex
-            m_bonesMatrices[iter->second].finalWorldTransform = m_globalInverseMatrix * globalTransform * m_bonesMatrices[iter->second].offsetMatrix;
+            if(element.first == node->mName.C_Str())
+            {
+                // element.second = boneIndex
+                m_bonesMatrices[element.second].finalWorldTransform = m_globalInverseMatrix * globalTransform * m_bonesMatrices[element.second].offsetMatrix;
+                break;
+            }
         }
 
         for(int i = 0; i < node->mNumChildren; ++i)
@@ -471,6 +494,16 @@ namespace Beryll
         // sequential frame number is index for these arrays
         // nodeAnim->mScalingKeys[0].mValue = scaling transform for frame 0 for node/bone named same as nodeAnim->mNodeName
         // numChannels == numBones
+
+        if(nodeName.length < 4 || // use only aiNodeAnim which belong to bones
+           nodeName.data[0] != 'B' || // Bones names must start from Bone.......
+           nodeName.data[1] != 'o' ||
+           nodeName.data[2] != 'n' ||
+           nodeName.data[3] != 'e')
+        {
+            return nullptr;
+        }
+
         for(int i = 0; i < animation->mNumChannels; ++i)
         {
             const aiNodeAnim* nodeAnim = animation->mChannels[i];
@@ -479,10 +512,11 @@ namespace Beryll
                 return nodeAnim;
             }
         }
+
         return nullptr;
     }
 
-    aiMatrix4x4 CollidingAnimatedObject::interpolatePosition(const aiNodeAnim* nodeAnim, const int currentFrameIndex, const int nextFrameIndex, const float factor)
+    aiMatrix4x4 CollidingAnimatedObject::interpolatePosition(const aiNodeAnim* nodeAnim, const uint32_t currentFrameIndex, const uint32_t nextFrameIndex, const float factor)
     {
         aiMatrix4x4 posMatr;
 
@@ -507,7 +541,7 @@ namespace Beryll
         return posMatr;
     }
 
-    aiMatrix4x4 CollidingAnimatedObject::interpolateRotation(const aiNodeAnim* nodeAnim, const int currentFrameIndex, const int nextFrameIndex, const float factor)
+    aiMatrix4x4 CollidingAnimatedObject::interpolateRotation(const aiNodeAnim* nodeAnim, const uint32_t currentFrameIndex, const uint32_t nextFrameIndex, const float factor)
     {
         if(nodeAnim->mNumRotationKeys == 1)
             return aiMatrix4x4(nodeAnim->mRotationKeys[0].mValue.GetMatrix());
@@ -525,7 +559,7 @@ namespace Beryll
         return aiMatrix4x4(Utils::Quaternion::nlerp(start, end, factor).GetMatrix());
     }
 
-    aiMatrix4x4 CollidingAnimatedObject::interpolateScaling(const aiNodeAnim* nodeAnim, const int currentFrameIndex, const int nextFrameIndex, const float factor)
+    aiMatrix4x4 CollidingAnimatedObject::interpolateScaling(const aiNodeAnim* nodeAnim, const uint32_t currentFrameIndex, const uint32_t nextFrameIndex, const float factor)
     {
         aiMatrix4x4 scaleMatrix;
 
@@ -552,14 +586,13 @@ namespace Beryll
 
     void CollidingAnimatedObject::setAnimation(const char* name)
     {
-        const auto iter = m_animationNameIndex.find(name);
-        if(iter != m_animationNameIndex.end())
+        for(const std::pair<std::string, uint32_t>& anim : m_animationNameIndex)
         {
-            m_currentAnimIndex = iter->second;
-        }
-        else
-        {
-            BR_ASSERT(false, "Animation with name:%s does not exist", name);
+            if(anim.first == name)
+            {
+                m_currentAnimIndex = anim.second;
+                return;
+            }
         }
     }
 

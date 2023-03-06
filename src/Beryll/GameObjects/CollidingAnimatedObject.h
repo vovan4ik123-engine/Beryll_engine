@@ -54,18 +54,18 @@ namespace Beryll
         // animation data
         static constexpr uint32_t NUM_BONES_PER_VERTEX = 4; // one vertex can be affected maximum by 4 bones
         uint32_t m_boneCount = 0;
-        std::map<std::string, uint32_t> m_boneNameIndex;
+        std::vector<std::pair<std::string, uint32_t>> m_boneNameIndex;
         std::vector<BoneMatrix> m_bonesMatrices;
         std::string m_boneMatrixNameInShader;
-        std::map<std::string, uint32_t> m_animationNameIndex;
+        std::vector<std::pair<std::string, uint32_t>> m_animationNameIndex;
         uint32_t m_currentAnimIndex = 0;
 
         void calculateTransforms();
         void readNodeHierarchy(const float animationTime, const aiNode* node, const aiMatrix4x4& parentTransform);
         const aiNodeAnim* findNodeAnim(const aiAnimation* animation, const aiString& nodeName);
-        aiMatrix4x4 interpolatePosition(const aiNodeAnim* nodeAnim, const int currentFrameIndex, const int nextFrameIndex, const float factor);
-        aiMatrix4x4 interpolateRotation(const aiNodeAnim* nodeAnim, const int currentFrameIndex, const int nextFrameIndex, const float factor);
-        aiMatrix4x4 interpolateScaling(const aiNodeAnim* nodeAnim, const int currentFrameIndex, const int nextFrameIndex, const float factor);
+        aiMatrix4x4 interpolatePosition(const aiNodeAnim* nodeAnim, const uint32_t currentFrameIndex, const uint32_t nextFrameIndex, const float factor);
+        aiMatrix4x4 interpolateRotation(const aiNodeAnim* nodeAnim, const uint32_t currentFrameIndex, const uint32_t nextFrameIndex, const float factor);
+        aiMatrix4x4 interpolateScaling(const aiNodeAnim* nodeAnim, const uint32_t currentFrameIndex, const uint32_t nextFrameIndex, const float factor);
 
         aiMatrix4x4 m_globalInverseMatrix;
         // animation data end
