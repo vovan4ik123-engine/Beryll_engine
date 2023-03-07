@@ -47,6 +47,7 @@ namespace Beryll
         std::string m_boneMatrixNameInShader;
         std::vector<std::pair<std::string, uint32_t>> m_animationNameIndex;
         uint32_t m_currentAnimIndex = 0;
+        std::string m_currentAnimName;
 
         void calculateTransforms();
         void readNodeHierarchy(const float animationTime, const aiNode* node, const aiMatrix4x4& parentTransform);

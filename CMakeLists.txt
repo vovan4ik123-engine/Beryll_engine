@@ -61,11 +61,11 @@ set(Common_SRC
 
         src/Beryll/GameObjects/SimpleObject.cpp
         src/Beryll/GameObjects/AnimatedObject.cpp
-        src/Beryll/GameObjects/CollidingSimpleObject.cpp
-        src/Beryll/GameObjects/CollidingAnimatedObject.cpp
+        src/Beryll/GameObjects/SimpleCollidingObject.cpp
+        src/Beryll/GameObjects/AnimatedCollidingObject.cpp
 
-        src/Beryll/GameObjects/Characters/CollidingSimpleCharacter.cpp
-        src/Beryll/GameObjects/Characters/CollidingAnimatedCharacter.cpp
+        src/Beryll/GameObjects/Characters/SimpleCollidingCharacter.cpp
+        src/Beryll/GameObjects/Characters/AnimatedCollidingCharacter.cpp
 
         src/Beryll/GUI/MainImGUI.cpp
         src/Beryll/GUI/DemoImGUI.cpp

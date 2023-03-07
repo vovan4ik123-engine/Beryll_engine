@@ -9,10 +9,10 @@
 namespace Beryll
 {
     // Animated object, participates in physics simulation
-    class CollidingAnimatedObject : public BaseAnimatedObject
+    class AnimatedCollidingObject : public BaseAnimatedObject
     {
     public:
-        CollidingAnimatedObject() = delete;
+        AnimatedCollidingObject() = delete;
         /*
          * modelPath - path to model file (.DAE or .FBX). start path from first folder inside assets/
          * collisionMass - mass of this object for physics simulation. 0 for static objects
@@ -24,14 +24,14 @@ namespace Beryll
          * collMask - should contain collGroup or groups with which you want collisions
          * objGroup - game specific group to which this scene object belong
          */
-        CollidingAnimatedObject(const char* modelPath,  // common params
+        AnimatedCollidingObject(const char* modelPath,  // common params
                                 float collisionMass,    // physics params
                                 bool wantCollisionCallBack,
                                 CollisionFlags collFlag,
                                 CollisionGroups collGroup,
                                 CollisionGroups collMask,
                                 SceneObjectGroups objGroup = SceneObjectGroups::NONE);
-        ~CollidingAnimatedObject() override;
+        ~AnimatedCollidingObject() override;
 
         void updateBeforePhysics() override;
         void updateAfterPhysics() override;
@@ -59,6 +59,7 @@ namespace Beryll
         std::string m_boneMatrixNameInShader;
         std::vector<std::pair<std::string, uint32_t>> m_animationNameIndex;
         uint32_t m_currentAnimIndex = 0;
+        std::string m_currentAnimName;
 
         void calculateTransforms();
         void readNodeHierarchy(const float animationTime, const aiNode* node, const aiMatrix4x4& parentTransform);

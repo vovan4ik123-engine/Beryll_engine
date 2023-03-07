@@ -1,4 +1,4 @@
-#include "CollidingAnimatedObject.h"
+#include "AnimatedCollidingObject.h"
 #include "Beryll/Utils/File.h"
 #include "Beryll/Utils/Matrix.h"
 #include "Beryll/Utils/Quaternion.h"
@@ -11,9 +11,9 @@
 
 namespace Beryll
 {
-    std::map<const std::string, std::pair<std::shared_ptr<Assimp::Importer>, const aiScene*>> CollidingAnimatedObject::m_importersScenes;
+    std::map<const std::string, std::pair<std::shared_ptr<Assimp::Importer>, const aiScene*>> AnimatedCollidingObject::m_importersScenes;
 
-    CollidingAnimatedObject::CollidingAnimatedObject(const char* modelPath,
+    AnimatedCollidingObject::AnimatedCollidingObject(const char* modelPath,
                                                      float collisionMass,
                                                      bool wantCollisionCallBack,
                                                      CollisionFlags collFlag,
@@ -192,7 +192,8 @@ namespace Beryll
             for(int g = 0; g < m_boneCount; ++g)
             {
                 std::string boneName = m_scene->mMeshes[i]->mBones[g]->mName.C_Str();
-                BR_ASSERT((boneName[0] == 'B' &&
+                BR_ASSERT((boneName.length() > 3 &&
+                           boneName[0] == 'B' &&
                            boneName[1] == 'o' &&
                            boneName[2] == 'n' &&
                            boneName[3] == 'e'), "%s", "Bone name must starts with Bone......");
@@ -338,7 +339,7 @@ namespace Beryll
                 }
 
                 m_animationNameIndex.emplace_back(animName, g);
-                BR_INFO("Have animation:%d with name:%s", g, animName.c_str());
+                BR_INFO("Animation index:%d Name:%s Duration:%f", g, animName.c_str(), m_scene->mAnimations[g]->mDuration);
             }
 
             const aiNode *node = Utils::Common::findAinodeForAimesh(m_scene, m_scene->mRootNode, m_scene->mMeshes[i]->mName);
@@ -352,17 +353,17 @@ namespace Beryll
         }
     }
 
-    CollidingAnimatedObject::~CollidingAnimatedObject()
+    AnimatedCollidingObject::~AnimatedCollidingObject()
     {
         disableCollisionMesh();
     }
 
-    void CollidingAnimatedObject::updateBeforePhysics()
+    void AnimatedCollidingObject::updateBeforePhysics()
     {
 
     }
 
-    void CollidingAnimatedObject::updateAfterPhysics()
+    void AnimatedCollidingObject::updateAfterPhysics()
     {
         if(m_collisionFlag != CollisionFlags::STATIC)
         {
@@ -379,7 +380,7 @@ namespace Beryll
         calculateTransforms();
     }
 
-    void CollidingAnimatedObject::draw()
+    void AnimatedCollidingObject::draw()
     {
         if(useInternalShader)
         {
@@ -404,12 +405,12 @@ namespace Beryll
         m_vertexArray->draw();
      }
 
-    void CollidingAnimatedObject::playSound()
+    void AnimatedCollidingObject::playSound()
     {
 
     }
 
-    void CollidingAnimatedObject::calculateTransforms()
+    void AnimatedCollidingObject::calculateTransforms()
     {
         float tickPerSecond = static_cast<float>(m_scene->mAnimations[m_currentAnimIndex]->mTicksPerSecond);
         float timeInTicks = TimeStep::getSecFromStart() * ((tickPerSecond == 0.0f) ? 24 : tickPerSecond);
@@ -419,7 +420,7 @@ namespace Beryll
         readNodeHierarchy(animTime, m_scene->mRootNode, identity);
     }
 
-    void CollidingAnimatedObject::readNodeHierarchy(const float animationTime, const aiNode* node, const aiMatrix4x4& parentTransform)
+    void AnimatedCollidingObject::readNodeHierarchy(const float animationTime, const aiNode* node, const aiMatrix4x4& parentTransform)
     {
         aiMatrix4x4 nodeTransform; // identity
 
@@ -487,7 +488,7 @@ namespace Beryll
         }
     }
 
-    const aiNodeAnim* CollidingAnimatedObject::findNodeAnim(const aiAnimation* animation, const aiString& nodeName)
+    const aiNodeAnim* AnimatedCollidingObject::findNodeAnim(const aiAnimation* animation, const aiString& nodeName)
     {
         // channel in animation it is aiNodeAnim (aiNodeAnim has transformation for node/bone with same name)
         // contains 3 arrays (scale/rotations/translations) for transform one node/bone in all frames
@@ -496,7 +497,7 @@ namespace Beryll
         // numChannels == numBones
 
         if(nodeName.length < 4 || // use only aiNodeAnim which belong to bones
-           nodeName.data[0] != 'B' || // Bones names must start from Bone.......
+           nodeName.data[0] != 'B' || // Bones names must start with Bone.......
            nodeName.data[1] != 'o' ||
            nodeName.data[2] != 'n' ||
            nodeName.data[3] != 'e')
@@ -516,7 +517,7 @@ namespace Beryll
         return nullptr;
     }
 
-    aiMatrix4x4 CollidingAnimatedObject::interpolatePosition(const aiNodeAnim* nodeAnim, const uint32_t currentFrameIndex, const uint32_t nextFrameIndex, const float factor)
+    aiMatrix4x4 AnimatedCollidingObject::interpolatePosition(const aiNodeAnim* nodeAnim, const uint32_t currentFrameIndex, const uint32_t nextFrameIndex, const float factor)
     {
         aiMatrix4x4 posMatr;
 
@@ -541,7 +542,7 @@ namespace Beryll
         return posMatr;
     }
 
-    aiMatrix4x4 CollidingAnimatedObject::interpolateRotation(const aiNodeAnim* nodeAnim, const uint32_t currentFrameIndex, const uint32_t nextFrameIndex, const float factor)
+    aiMatrix4x4 AnimatedCollidingObject::interpolateRotation(const aiNodeAnim* nodeAnim, const uint32_t currentFrameIndex, const uint32_t nextFrameIndex, const float factor)
     {
         if(nodeAnim->mNumRotationKeys == 1)
             return aiMatrix4x4(nodeAnim->mRotationKeys[0].mValue.GetMatrix());
@@ -559,7 +560,7 @@ namespace Beryll
         return aiMatrix4x4(Utils::Quaternion::nlerp(start, end, factor).GetMatrix());
     }
 
-    aiMatrix4x4 CollidingAnimatedObject::interpolateScaling(const aiNodeAnim* nodeAnim, const uint32_t currentFrameIndex, const uint32_t nextFrameIndex, const float factor)
+    aiMatrix4x4 AnimatedCollidingObject::interpolateScaling(const aiNodeAnim* nodeAnim, const uint32_t currentFrameIndex, const uint32_t nextFrameIndex, const float factor)
     {
         aiMatrix4x4 scaleMatrix;
 
@@ -584,25 +585,28 @@ namespace Beryll
         return scaleMatrix;
     }
 
-    void CollidingAnimatedObject::setAnimation(const char* name)
+    void AnimatedCollidingObject::setAnimation(const char* name)
     {
+        if(m_currentAnimName == name) { return; }
+
         for(const std::pair<std::string, uint32_t>& anim : m_animationNameIndex)
         {
             if(anim.first == name)
             {
                 m_currentAnimIndex = anim.second;
+                m_currentAnimName = name;
                 return;
             }
         }
     }
 
-    void CollidingAnimatedObject::processCollisionMesh(const aiMesh* mesh,
-                                                     const std::string& meshName,
-                                                     float mass,
-                                                     bool wantCallBack,
-                                                     CollisionFlags collFlag,
-                                                     CollisionGroups collGroup,
-                                                     CollisionGroups collMask)
+    void AnimatedCollidingObject::processCollisionMesh(const aiMesh* mesh,
+                                                       const std::string& meshName,
+                                                       float mass,
+                                                       bool wantCallBack,
+                                                       CollisionFlags collFlag,
+                                                       CollisionGroups collGroup,
+                                                       CollisionGroups collMask)
     {
         glm::mat4 collisionTransforms{1.0f};
 

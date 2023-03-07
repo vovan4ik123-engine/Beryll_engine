@@ -1,10 +1,10 @@
-#include "CollidingSimpleCharacter.h"
+#include "SimpleCollidingCharacter.h"
 #include "Beryll/Renderer/Camera.h"
 #include "Beryll/Core/TimeStep.h"
 
 namespace Beryll
 {
-    CollidingSimpleCharacter::CollidingSimpleCharacter(const char* modelPath,  // common params
+    SimpleCollidingCharacter::SimpleCollidingCharacter(const char* modelPath,  // common params
                                                        float collisionMass,    // physics params
                                                        bool wantCollisionCallBack,
                                                        CollisionFlags collFlag,
@@ -12,7 +12,7 @@ namespace Beryll
                                                        CollisionGroups collMask,
                                                        SceneObjectGroups objGroup)
                                                        // call base class constructor
-                                                       : CollidingSimpleObject(modelPath,
+                                                       : SimpleCollidingObject(modelPath,
                                                                                collisionMass,
                                                                                wantCollisionCallBack,
                                                                                collFlag,
@@ -33,23 +33,23 @@ namespace Beryll
         m_previousYPos = m_origin.y;
     }
 
-    CollidingSimpleCharacter::~CollidingSimpleCharacter()
+    SimpleCollidingCharacter::~SimpleCollidingCharacter()
     {
 
     }
 
-    void CollidingSimpleCharacter::updateBeforePhysics()
+    void SimpleCollidingCharacter::updateBeforePhysics()
     {
         // call base class method first
-        CollidingSimpleObject::updateBeforePhysics();
+        SimpleCollidingObject::updateBeforePhysics();
 
 
     }
 
-    void CollidingSimpleCharacter::updateAfterPhysics()
+    void SimpleCollidingCharacter::updateAfterPhysics()
     {
         // call base class method first
-        CollidingSimpleObject::updateAfterPhysics();
+        SimpleCollidingObject::updateAfterPhysics();
 
         //BR_INFO("origin X:%d Y:%d Z:%d", m_origin.x, m_origin.y, m_origin.z);
         if(!getIsActive())
@@ -124,19 +124,19 @@ namespace Beryll
         m_previousYPos = m_origin.y;
     }
 
-    void CollidingSimpleCharacter::draw()
+    void SimpleCollidingCharacter::draw()
     {
         // call base class method
-        CollidingSimpleObject::draw();
+        SimpleCollidingObject::draw();
     }
 
-    void CollidingSimpleCharacter::playSound()
+    void SimpleCollidingCharacter::playSound()
     {
         // call base class method
-        CollidingSimpleObject::playSound();
+        SimpleCollidingObject::playSound();
     }
 
-    void CollidingSimpleCharacter::move(MoveDirection direction)
+    void SimpleCollidingCharacter::move(MoveDirection direction)
     {
         glm::quat rotationCharacterToCamera = glm::rotation(m_eyeDirectionXZ, Camera::getCameraDirectionXZ());
         addToRotation(rotationCharacterToCamera);
@@ -301,7 +301,7 @@ namespace Beryll
         m_characterMoving = true;
     }
 
-    void CollidingSimpleCharacter::jump()
+    void SimpleCollidingCharacter::jump()
     {
         if(m_jumped) { return; }
 

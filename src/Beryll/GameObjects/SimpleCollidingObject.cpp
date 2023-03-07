@@ -1,4 +1,4 @@
-#include "CollidingSimpleObject.h"
+#include "SimpleCollidingObject.h"
 #include "Beryll/Core/Log.h"
 #include "Beryll/Utils/File.h"
 #include "Beryll/Utils/Matrix.h"
@@ -9,7 +9,7 @@
 
 namespace Beryll
 {
-    CollidingSimpleObject::CollidingSimpleObject(const char* modelPath,
+    SimpleCollidingObject::SimpleCollidingObject(const char* modelPath,
                                                  float collisionMass,
                                                  bool wantCollisionCallBack,
                                                  CollisionFlags collFlag,
@@ -264,17 +264,17 @@ namespace Beryll
         }
     }
 
-    CollidingSimpleObject::~CollidingSimpleObject()
+    SimpleCollidingObject::~SimpleCollidingObject()
     {
         disableCollisionMesh();
     }
 
-    void CollidingSimpleObject::updateBeforePhysics()
+    void SimpleCollidingObject::updateBeforePhysics()
     {
 
     }
 
-    void CollidingSimpleObject::updateAfterPhysics()
+    void SimpleCollidingObject::updateAfterPhysics()
     {
         if(m_collisionFlag == CollisionFlags::STATIC) { return; }
 
@@ -288,7 +288,7 @@ namespace Beryll
         m_modelMatrix = m_translateMatrix * m_rotateMatrix * m_scaleMatrix;
     }
 
-    void CollidingSimpleObject::draw()
+    void SimpleCollidingObject::draw()
     {
         if(useInternalShader)
         {
@@ -305,12 +305,12 @@ namespace Beryll
         m_vertexArray->draw();
     }
 
-    void CollidingSimpleObject::playSound()
+    void SimpleCollidingObject::playSound()
     {
 
     }
 
-    void CollidingSimpleObject::processCollisionMesh(const aiScene* scene,
+    void SimpleCollidingObject::processCollisionMesh(const aiScene* scene,
                                                      const aiMesh* mesh,
                                                      const std::string& meshName,
                                                      float mass,

@@ -1,13 +1,13 @@
 #pragma once
 
-#include "Beryll/GameObjects/CollidingSimpleObject.h"
+#include "Beryll/GameObjects/SimpleCollidingObject.h"
 
 namespace Beryll
 {
-    class CollidingSimpleCharacter : public CollidingSimpleObject
+    class SimpleCollidingCharacter : public SimpleCollidingObject
     {
     public:
-        CollidingSimpleCharacter() = delete;
+        SimpleCollidingCharacter() = delete;
         /*
          * modelPath - path to model file (.DAE or .FBX). start path from first folder inside assets/
          * collisionMass - mass of this object for physics simulation. 0 for static objects
@@ -19,14 +19,14 @@ namespace Beryll
          * collMask - should contain collGroup or groups with which you want collisions
          * objGroup - game specific group to which this scene object belong
          */
-        CollidingSimpleCharacter(const char* modelPath,  // common params
+        SimpleCollidingCharacter(const char* modelPath,  // common params
                                  float collisionMass,    // physics params
                                  bool wantCollisionCallBack,
                                  CollisionFlags collFlag,
                                  CollisionGroups collGroup,
                                  CollisionGroups collMask,
                                  SceneObjectGroups objGroup = SceneObjectGroups::NONE);
-        ~CollidingSimpleCharacter() override;
+        ~SimpleCollidingCharacter() override;
 
         // methods from base class
         void updateBeforePhysics() override;

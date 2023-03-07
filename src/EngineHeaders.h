@@ -22,12 +22,12 @@
 #include "Beryll/GameObjects/BaseSimpleObject.h"
 #include "Beryll/GameObjects/BaseAnimatedObject.h"
 #include "Beryll/GameObjects/SimpleObject.h"
-#include "Beryll/GameObjects/CollidingSimpleObject.h"
+#include "Beryll/GameObjects/SimpleCollidingObject.h"
 #include "Beryll/GameObjects/AnimatedObject.h"
-#include "Beryll/GameObjects/CollidingAnimatedObject.h"
+#include "Beryll/GameObjects/AnimatedCollidingObject.h"
 
-#include "Beryll/GameObjects/Characters/CollidingSimpleCharacter.h"
-#include "Beryll/GameObjects/Characters/CollidingAnimatedCharacter.h"
+#include "Beryll/GameObjects/Characters/SimpleCollidingCharacter.h"
+#include "Beryll/GameObjects/Characters/AnimatedCollidingCharacter.h"
 
 #include "Beryll/GUI/MainImGUI.h"
 #include "Beryll/GUI/DemoImGUI.h"

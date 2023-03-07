@@ -9,10 +9,10 @@
 namespace Beryll
 {
     // Not animated object, participates in physics simulation
-    class CollidingSimpleObject : public BaseSimpleObject
+    class SimpleCollidingObject : public BaseSimpleObject
     {
     public:
-        CollidingSimpleObject() = delete;
+        SimpleCollidingObject() = delete;
         /*
          * modelPath - path to model file (.DAE or .FBX). start path from first folder inside assets/
          * collisionMass - mass of this object for physics simulation. 0 for static objects
@@ -24,14 +24,14 @@ namespace Beryll
          * collMask - should contain collGroup or groups with which you want collisions
          * objGroup - game specific group to which this scene object belong
          */
-        CollidingSimpleObject(const char* modelPath,  // common params
+        SimpleCollidingObject(const char* modelPath,  // common params
                               float collisionMass,    // physics params
                               bool wantCollisionCallBack,
                               CollisionFlags collFlag,
                               CollisionGroups collGroup,
                               CollisionGroups collMask,
                               SceneObjectGroups objGroup = SceneObjectGroups::NONE);
-        ~CollidingSimpleObject() override;
+        ~SimpleCollidingObject() override;
 
         void updateBeforePhysics() override;
         void updateAfterPhysics() override;

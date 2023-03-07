@@ -131,7 +131,8 @@ namespace Beryll
         for(int i = 0; i < m_boneCount; ++i)
         {
             std::string boneName = m_scene->mMeshes[0]->mBones[i]->mName.C_Str();
-            BR_ASSERT((boneName[0] == 'B' &&
+            BR_ASSERT((boneName.length() > 3 &&
+                       boneName[0] == 'B' &&
                        boneName[1] == 'o' &&
                        boneName[2] == 'n' &&
                        boneName[3] == 'e'), "Bone name must starts with Bone...... :%s", boneName.c_str());
@@ -277,7 +278,7 @@ namespace Beryll
             }
 
             m_animationNameIndex.emplace_back(animName, i);
-            BR_INFO("Have animation:%d with name:%s", i, animName.c_str());
+            BR_INFO("Animation index:%d Name:%s Duration:%f", i, animName.c_str(), m_scene->mAnimations[i]->mDuration);
         }
 
         const aiNode* node = Utils::Common::findAinodeForAimesh(m_scene, m_scene->mRootNode, m_scene->mMeshes[0]->mName);
@@ -422,7 +423,7 @@ namespace Beryll
         // numChannels == numBones
 
         if(nodeName.length < 4 || // use only aiNodeAnim which belong to bones
-           nodeName.data[0] != 'B' || // Bones names must start from Bone.......
+           nodeName.data[0] != 'B' || // Bones names must start with Bone.......
            nodeName.data[1] != 'o' ||
            nodeName.data[2] != 'n' ||
            nodeName.data[3] != 'e')
@@ -512,11 +513,14 @@ namespace Beryll
 
     void AnimatedObject::setAnimation(const char* name)
     {
+        if(m_currentAnimName == name) { return; }
+
         for(const std::pair<std::string, uint32_t>& anim : m_animationNameIndex)
         {
             if(anim.first == name)
             {
                 m_currentAnimIndex = anim.second;
+                m_currentAnimName = name;
                 return;
             }
         }
