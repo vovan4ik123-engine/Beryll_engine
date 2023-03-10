@@ -1,8 +1,10 @@
 ---------------------plan:---------------------
 
+
+try calculate bones transforms on CPU + use everywhere GLM matrices with low precision
+
 buy animated character
 add animated character
-try calculate bones transforms on CPU
 
 
 update renderer 2 ?

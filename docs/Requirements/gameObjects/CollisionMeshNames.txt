@@ -1,0 +1,15 @@
+Names which must be as a part of colliders name:
+
+    CollisionConcaveMesh    - concave mesh only for static objects
+
+    CollisionConvexMesh     - convex mesh for static and dynamic objects
+    CollisionBox            - box for static and dynamic objects
+    CollisionSphere         - sphere for static and dynamic objects
+    CollisionCapsule        - capsule for static and dynamic objects
+
+Colliders names example:
+    Cube1 - model name
+    Cube1CollisionBox - collider name for Cube1
+
+    Ball1 - model name
+    Ball1CollisionSphere - collider name for Ball1
