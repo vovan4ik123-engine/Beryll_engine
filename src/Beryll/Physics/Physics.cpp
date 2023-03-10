@@ -31,7 +31,7 @@ namespace Beryll
 
         btSetTaskScheduler(btCreateDefaultTaskScheduler());
 
-        BR_INFO("Number of threads on device:%d", btGetTaskScheduler()->getNumThreads());
+        BR_INFO("Number of threads on device: %d", btGetTaskScheduler()->getNumThreads());
 
         btDefaultCollisionConstructionInfo cci;
         cci.m_defaultMaxPersistentManifoldPoolSize = 50000;
@@ -83,8 +83,8 @@ namespace Beryll
                                      m_timeStep / static_cast<float>(m_resolutionFactor));
 
         m_simulationTime = m_timer.elapsedMilliSec();
-        //BR_INFO("Simulation objects count:%d", m_dynamicsWorldMT->getNumCollisionObjects());
-        //BR_INFO("Simulation time millisec:%d", timer.elapsedMilliSec());
+        //BR_INFO("Simulation objects count: %d", m_dynamicsWorldMT->getNumCollisionObjects());
+        //BR_INFO("Simulation time millisec: %d", timer.elapsedMilliSec());
     }
 
     void Physics::addObject(const std::vector<glm::vec3>& vertices,
@@ -98,7 +98,7 @@ namespace Beryll
                             CollisionGroups collGroup,
                             CollisionGroups collMask)
     {
-        BR_INFO("Physics::addObject name:%s, mass:%f, ID:%d", meshName.c_str(), mass, objectID);
+        BR_INFO("Physics::addObject name: %s, mass: %f, ID: %d", meshName.c_str(), mass, objectID);
 
         if(meshName.find("CollisionConcaveMesh") != std::string::npos)
         {
@@ -122,7 +122,7 @@ namespace Beryll
         }
         else
         {
-            BR_ASSERT(false, "Collision shape not supported:%s", meshName.c_str());
+            BR_ASSERT(false, "Collision shape not supported: %s", meshName.c_str());
         }
     }
 
@@ -635,7 +635,7 @@ namespace Beryll
         }
         else
         {
-            BR_ASSERT(false, "Can not set origin for ID:%d", ID);
+            BR_ASSERT(false, "Can not set origin for ID: %d", ID);
         }
     }
 
@@ -664,37 +664,7 @@ namespace Beryll
         }
         else
         {
-            BR_ASSERT(false, "Can not add to origin for ID:%d", ID);
-        }
-    }
-
-    void Physics::setRotation(const int ID, const glm::quat& rot, bool resetVelocities)
-    {
-        auto iter = m_rigidBodiesMap.find(ID);
-        if(iter != m_rigidBodiesMap.end())
-        {
-            std::scoped_lock<std::mutex> lock (m_mutex);
-
-            btTransform t;
-            if(iter->second->rb->getMotionState())
-                iter->second->rb->getMotionState()->getWorldTransform(t);
-            else
-                t = iter->second->rb->getWorldTransform();
-
-            glm::quat rotationToSet = glm::normalize(rot);
-            t.setRotation(btQuaternion(rotationToSet.x, rotationToSet.y, rotationToSet.z, rotationToSet.w));
-
-            iter->second->rb->setWorldTransform(t);
-            if(iter->second->rb->getMotionState())
-                iter->second->rb->getMotionState()->setWorldTransform(t);
-
-            resetVelocitiesForObject(iter->second->rb, resetVelocities);
-
-            iter->second->rb->activate(true);
-        }
-        else
-        {
-            BR_ASSERT(false, "Can not set rotation for ID:%d", ID);
+            BR_ASSERT(false, "Can not add to origin for ID: %d", ID);
         }
     }
 
@@ -725,7 +695,7 @@ namespace Beryll
         }
         else
         {
-            BR_ASSERT(false, "Can not set rotation for ID:%d", ID);
+            BR_ASSERT(false, "Can not set rotation for ID: %d", ID);
         }
     }
 
@@ -752,7 +722,7 @@ namespace Beryll
         }
         else
         {
-            BR_ASSERT(false, "Can not find transforms for ID:%d", ID);
+            BR_ASSERT(false, "Can not find transforms for ID: %d", ID);
         }
 
         return physicsTransforms;
@@ -794,7 +764,7 @@ namespace Beryll
     {
         m_collisionPairs.clear();
 
-        BR_INFO("Count before hard delete %d", m_dynamicsWorldMT->getCollisionObjectArray().size());
+        BR_INFO("Count before hard delete: %d", m_dynamicsWorldMT->getCollisionObjectArray().size());
         // in reverse order
         while(!m_motionStates.empty())
         {
@@ -815,7 +785,7 @@ namespace Beryll
         m_collisionShapes.clear();
         m_triangleMeshes.clear();
 
-        BR_INFO("Count after hard delete %d", m_dynamicsWorldMT->getCollisionObjectArray().size());
+        BR_INFO("Count after hard delete: %d", m_dynamicsWorldMT->getCollisionObjectArray().size());
     }
 
     void Physics::activateObject(const int ID)
@@ -851,7 +821,7 @@ namespace Beryll
         }
         else
         {
-            BR_ASSERT(false, "Object:%d not in simulation", ID);
+            BR_ASSERT(false, "Object: %d not in simulation", ID);
         }
 
         return false;

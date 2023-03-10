@@ -26,7 +26,7 @@ namespace Beryll
         }
         else
         {
-            BR_ASSERT(false, "Dont push layer with same ID again:%d", static_cast<int>(layer->getLayerID()));
+            BR_ASSERT(false, "Dont push layer with same ID again: %d", static_cast<int>(layer->getLayerID()));
         }
     }
 
@@ -41,7 +41,7 @@ namespace Beryll
         }
         else
         {
-            BR_ASSERT(false, "Dont push layer with same ID again:%d", static_cast<int>(overlay->getLayerID()));
+            BR_ASSERT(false, "Dont push layer with same ID again: %d", static_cast<int>(overlay->getLayerID()));
         }
     }
 

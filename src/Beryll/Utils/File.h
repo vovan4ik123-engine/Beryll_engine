@@ -17,10 +17,10 @@ namespace Utils
         static char* readToBuffer(const char* filepath, uint32_t* size = nullptr)
         {
             SDL_RWops *rw = SDL_RWFromFile(filepath, "rb"); // read binary
-            BR_ASSERT((rw != nullptr), "File loading error:%s", filepath);
+            BR_ASSERT((rw != nullptr), "File loading error: %s", filepath);
 
             uint32_t resSize = SDL_RWsize(rw);
-            BR_ASSERT((resSize != 0), "File loading size = 0:%s", filepath);
+            BR_ASSERT((resSize != 0), "File loading size = 0: %s", filepath);
             char* res = new char[resSize + 1];
 
             uint32_t  readTotal = 0, read = 1;
@@ -37,7 +37,7 @@ namespace Utils
             if (readTotal != resSize)
             {
                 delete[] res;
-                BR_ASSERT(false, "readTotal != resSize after loading:%s", filepath);
+                BR_ASSERT(false, "readTotal != resSize after loading: %s", filepath);
             }
 
             res[resSize] = '\0';

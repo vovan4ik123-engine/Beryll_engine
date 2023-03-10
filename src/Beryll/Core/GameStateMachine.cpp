@@ -55,7 +55,7 @@ namespace Beryll
         }
         else
         {
-            BR_ASSERT(false, "Dont push game state with same ID again:%d", static_cast<int>(state->ID));
+            BR_ASSERT(false, "Dont push game state with same ID again: %d", static_cast<int>(state->ID));
         }
     }
 

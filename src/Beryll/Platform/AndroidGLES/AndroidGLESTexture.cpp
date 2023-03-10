@@ -22,23 +22,23 @@ namespace Beryll
             return;
         }
 
-        BR_ASSERT((m_ID.find_last_of('.') != std::string::npos), "Texture does not have extension:%s", m_ID.c_str());
+        BR_ASSERT((m_ID.find_last_of('.') != std::string::npos), "Texture does not have extension: %s", m_ID.c_str());
 
         BR_ASSERT(((m_ID.substr(m_ID.find_last_of('.')) == ".png") ||
                    (m_ID.substr(m_ID.find_last_of('.')) == ".jpg")),
-                  "Supported only .png or .jpg textures:%s", m_ID.c_str());
+                  "Supported only .png or .jpg textures: %s", m_ID.c_str());
 
         BR_ASSERT(((type == TextureType::DIFFUSE_TEXTURE) ||
                    (type == TextureType::SPECULAR_TEXTURE) ||
                    (type == TextureType::NORMAL_MAP_TEXTURE)), "%s", "Wrong texture type");
 
         SDL_RWops* rw = SDL_RWFromFile(m_ID.c_str(), "rb");
-        BR_ASSERT((rw != nullptr), "Load texture failed:%s", m_ID.c_str());
+        BR_ASSERT((rw != nullptr), "Load texture failed: %s", m_ID.c_str());
 
         SDL_Surface* surface = IMG_Load_RW(rw, 1);
-        BR_ASSERT((surface != nullptr), "Create surface failed:%s", m_ID.c_str());
+        BR_ASSERT((surface != nullptr), "Create surface failed: %s", m_ID.c_str());
 
-        BR_ASSERT((surface->format->BytesPerPixel > 0 && surface->format->BytesPerPixel <= 4), "Load texture failed:%s. Depth = 0 or > 4", m_ID.c_str());
+        BR_ASSERT((surface->format->BytesPerPixel > 0 && surface->format->BytesPerPixel <= 4), "Load texture failed: %s. Depth = 0 or > 4", m_ID.c_str());
 
         int pixelFormat = GL_RGB;
         if(4 == surface->format->BytesPerPixel) pixelFormat = GL_RGBA;

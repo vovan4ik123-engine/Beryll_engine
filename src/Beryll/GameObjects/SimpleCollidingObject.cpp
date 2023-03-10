@@ -17,7 +17,7 @@ namespace Beryll
                                                  CollisionGroups collMask,
                                                  SceneObjectGroups objGroup)
     {
-        BR_INFO("Loading colliding simple object:%s", modelPath);
+        BR_INFO("Loading colliding simple object: %s", modelPath);
 
         uint32_t bufferSize = 0;
         char* buffer = Utils::File::readToBuffer(modelPath, &bufferSize);
@@ -30,18 +30,17 @@ namespace Beryll
         delete[] buffer;
         if( !scene || !scene->mRootNode || scene->mFlags == AI_SCENE_FLAGS_INCOMPLETE)
         {
-            BR_ASSERT(false, "Scene loading error for file:%s", modelPath);
+            BR_ASSERT(false, "Scene loading error for file: %s", modelPath);
         }
 
         BR_ASSERT((scene->mNumMeshes == 2),
-                  "Colliding simple object:%s MUST contain 2 meshes. For draw and physics simulation", modelPath);
+                  "Colliding simple object: %s MUST contain 2 meshes. For draw and physics simulation", modelPath);
 
         m_sceneObjectGroup = objGroup;
 
         for(int i = 0; i < scene->mNumMeshes; ++i)
         {
             std::string meshName = scene->mMeshes[i]->mName.C_Str();
-            BR_INFO("mesh name %s", scene->mMeshes[i]->mName.C_Str());
 
             if(meshName.find("Collision") != std::string::npos)
             {
@@ -179,7 +178,7 @@ namespace Beryll
                 aiMaterial* material = scene->mMaterials[scene->mMeshes[i]->mMaterialIndex];
 
                 const std::string mP = modelPath;
-                BR_ASSERT((mP.find_last_of('/') != std::string::npos), "Texture + model must be in folder:%s", mP.c_str());
+                BR_ASSERT((mP.find_last_of('/') != std::string::npos), "Texture + model must be in folder: %s", mP.c_str());
 
                 std::string texturePath;
 
@@ -200,7 +199,7 @@ namespace Beryll
                     texturePath = mP.substr(0, mP.find_last_of('/'));
                     texturePath += '/';
                     texturePath += textName2;
-                    BR_INFO("Diffuse texture here:%s", texturePath.c_str());
+                    BR_INFO("Diffuse texture here: %s", texturePath.c_str());
 
                     m_diffTexture = Renderer::createTexture(texturePath.c_str(), TextureType::DIFFUSE_TEXTURE);
                     m_internalShader->activateDiffuseTexture();
@@ -223,7 +222,7 @@ namespace Beryll
                     texturePath = mP.substr(0, mP.find_last_of('/'));
                     texturePath += '/';
                     texturePath += textName2;
-                    BR_INFO("Specular texture here:%s", texturePath.c_str());
+                    BR_INFO("Specular texture here: %s", texturePath.c_str());
 
                     m_specTexture = Renderer::createTexture(texturePath.c_str(), TextureType::SPECULAR_TEXTURE);
                     m_internalShader->activateSpecularTexture();
@@ -246,7 +245,7 @@ namespace Beryll
                     texturePath = mP.substr(0, mP.find_last_of('/'));
                     texturePath += '/';
                     texturePath += textName2;
-                    BR_INFO("Normal map texture here:%s", texturePath.c_str());
+                    BR_INFO("Normal map texture here: %s", texturePath.c_str());
 
                     m_normalMapTexture = Renderer::createTexture(texturePath.c_str(), TextureType::NORMAL_MAP_TEXTURE);
                     m_internalShader->activateNormalMapTexture();
@@ -257,10 +256,12 @@ namespace Beryll
             if(node)
             {
                 m_modelMatrix = Utils::Matrix::aiToGlm(node->mTransformation);
-            }
 
-            m_scaleMatrix = glm::scale(glm::mat4{1.0f}, Utils::Matrix::getScaleFrom4x4Glm(m_modelMatrix));
-            m_origin = Utils::Matrix::getTranslationFrom4x4Glm(m_modelMatrix);
+                m_scaleMatrix = glm::scale(glm::mat4{1.0f}, Utils::Matrix::getScaleFrom4x4Glm(m_modelMatrix));
+                m_rotateMatrix = glm::toMat4(Utils::Matrix::getRotationFrom4x4Glm(m_modelMatrix));
+                m_origin = Utils::Matrix::getTranslationFrom4x4Glm(m_modelMatrix);
+                m_translateMatrix = glm::translate(glm::mat4{1.0f}, m_origin);
+            }
         }
     }
 

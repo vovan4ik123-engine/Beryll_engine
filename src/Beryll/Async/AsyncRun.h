@@ -26,7 +26,7 @@ namespace Beryll
         {
             const int numberElements = v.size();
 
-            //BR_INFO("m_numThreads %d, numberElements %d, oneChunkSize %d", m_numThreads, numberElements, int(numberElements / m_numThreads) + 1);
+            //BR_INFO("m_numThreads: %d, numberElements: %d, oneChunkSize: %d", m_numThreads, numberElements, int(numberElements / m_numThreads) + 1);
 
             if(numberElements <= 50 || m_numThreads == 1)
             {

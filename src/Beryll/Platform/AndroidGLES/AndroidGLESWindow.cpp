@@ -71,12 +71,12 @@ namespace Beryll
 
         int check = 0;
         glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &check);
-        BR_INFO("GL_MAX_TEXTURE_IMAGE_UNITS:%d", check);
+        BR_INFO("GL_MAX_TEXTURE_IMAGE_UNITS: %d", check);
 
         glGetIntegerv(GL_MAX_TEXTURE_SIZE, &check);
-        BR_INFO("GL_MAX_TEXTURE_SIZE:%d", check);
+        BR_INFO("GL_MAX_TEXTURE_SIZE: %d", check);
 
-        BR_INFO("AndroidGLESWindow created and initialized. width:%d, height:%d", m_screenWidth, m_screenHeight);
+        BR_INFO("AndroidGLESWindow created and initialized. width: %d, height: %d", m_screenWidth, m_screenHeight);
     }
 
     AndroidGLESWindow::~AndroidGLESWindow()
@@ -117,7 +117,7 @@ namespace Beryll
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        BR_INFO("AndroidGLESWindow re created. width:%d, height:%d", m_screenWidth, m_screenHeight);
+        BR_INFO("AndroidGLESWindow re created. width: %d, height: %d", m_screenWidth, m_screenHeight);
     }
 
     void AndroidGLESWindow::checkOrientationChange()

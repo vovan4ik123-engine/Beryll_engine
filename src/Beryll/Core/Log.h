@@ -92,7 +92,7 @@
 
 // max number of argument in format string = 5
 // example of string with 3 arguments
-// format string: "str:%s int:%d float:%f, "qwe", 12, 4.1234
+// format string: "str: %s int: %d float: %f, "qwe", 12, 4.1234
 
 // %s = const char*
 // %f = float

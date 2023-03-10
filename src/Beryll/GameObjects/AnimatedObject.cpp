@@ -27,7 +27,7 @@ namespace Beryll
             std::shared_ptr<Assimp::Importer> importer = std::make_shared<Assimp::Importer>();
             const aiScene* scene = nullptr;
 
-            BR_INFO("Loading animated object:%s", modelPath);
+            BR_INFO("Loading animated object: %s", modelPath);
             uint32_t bufferSize = 0;
             char *buffer = Utils::File::readToBuffer(modelPath, &bufferSize);
 
@@ -38,11 +38,11 @@ namespace Beryll
             delete[] buffer;
             if(!scene || !scene->mRootNode || scene->mFlags == AI_SCENE_FLAGS_INCOMPLETE)
             {
-                BR_ASSERT(false, "Scene loading error for file:%s", modelPath);
+                BR_ASSERT(false, "Scene loading error for file: %s", modelPath);
             }
 
             BR_ASSERT((scene->mNumMeshes == 1),
-                      "Animated object:%s MUST contain only 1 mesh. Combine into one if you have many", modelPath);
+                      "Animated object: %s MUST contain only 1 mesh. Combine into one if you have many", modelPath);
 
             BR_ASSERT((scene->HasAnimations() && scene->mMeshes[0]->mNumBones > 0),
                       "%s", "Animated object must have animation + bone");
@@ -135,11 +135,11 @@ namespace Beryll
                        boneName[0] == 'B' &&
                        boneName[1] == 'o' &&
                        boneName[2] == 'n' &&
-                       boneName[3] == 'e'), "Bone name must starts with Bone...... :%s", boneName.c_str());
+                       boneName[3] == 'e'), "Bone name must starts with Bone...... : %s", boneName.c_str());
 
             for(const std::pair<std::string, uint32_t>& element : m_boneNameIndex)
             {
-                BR_ASSERT((element.first != boneName), "Many bones have same name in one model:%s", modelPath);
+                BR_ASSERT((element.first != boneName), "Many bones have same name in one model: %s", modelPath);
             }
 
             m_bonesMatrices.emplace_back(); // add empty element to back
@@ -152,13 +152,16 @@ namespace Beryll
                 uint32_t vertexIndex = m_scene->mMeshes[0]->mBones[i]->mWeights[j].mVertexId;
                 float weight = m_scene->mMeshes[0]->mBones[i]->mWeights[j].mWeight;
 
-                for(int k = 0; k < NUM_BONES_PER_VERTEX; ++k)
+                if(weight > 0.0f)
                 {
-                    if(boneIDs[vertexIndex][k] == -1 && boneWeights[vertexIndex][k] == -1.0f)
+                    for(int k = 0; k < NUM_BONES_PER_VERTEX; ++k)
                     {
-                        boneIDs[vertexIndex][k] = i;
-                        boneWeights[vertexIndex][k] = weight;
-                        break;
+                        if(boneIDs[vertexIndex][k] == -1 && boneWeights[vertexIndex][k] == -1.0f)
+                        {
+                            boneIDs[vertexIndex][k] = i;
+                            boneWeights[vertexIndex][k] = weight;
+                            break;
+                        }
                     }
                 }
             }
@@ -193,7 +196,7 @@ namespace Beryll
         {
             aiMaterial *material = m_scene->mMaterials[m_scene->mMeshes[0]->mMaterialIndex];
 
-            BR_ASSERT((m_modelPath.find_last_of('/') != std::string::npos), "Texture + model must be in folder:%s", m_modelPath.c_str());
+            BR_ASSERT((m_modelPath.find_last_of('/') != std::string::npos), "Texture + model must be in folder: %s", m_modelPath.c_str());
 
             std::string texturePath;
 
@@ -214,7 +217,7 @@ namespace Beryll
                 texturePath = m_modelPath.substr(0, m_modelPath.find_last_of('/'));
                 texturePath += '/';
                 texturePath += textName2;
-                BR_INFO("Diffuse texture here:%s", texturePath.c_str());
+                BR_INFO("Diffuse texture here: %s", texturePath.c_str());
 
                 m_diffTexture = Renderer::createTexture(texturePath.c_str(), TextureType::DIFFUSE_TEXTURE);
                 m_internalShader->activateDiffuseTexture();
@@ -237,7 +240,7 @@ namespace Beryll
                 texturePath = m_modelPath.substr(0, m_modelPath.find_last_of('/'));
                 texturePath += '/';
                 texturePath += textName2;
-                BR_INFO("Specular texture here:%s", texturePath.c_str());
+                BR_INFO("Specular texture here: %s", texturePath.c_str());
 
                 m_specTexture = Renderer::createTexture(texturePath.c_str(), TextureType::SPECULAR_TEXTURE);
                 m_internalShader->activateSpecularTexture();
@@ -260,7 +263,7 @@ namespace Beryll
                 texturePath = m_modelPath.substr(0, m_modelPath.find_last_of('/'));
                 texturePath += '/';
                 texturePath += textName2;
-                BR_INFO("Normal map texture here:%s", texturePath.c_str());
+                BR_INFO("Normal map texture here: %s", texturePath.c_str());
 
                 m_normalMapTexture = Renderer::createTexture(texturePath.c_str(), TextureType::NORMAL_MAP_TEXTURE);
                 m_internalShader->activateNormalMapTexture();
@@ -278,16 +281,19 @@ namespace Beryll
             }
 
             m_animationNameIndex.emplace_back(animName, i);
-            BR_INFO("Animation index:%d Name:%s Duration:%f", i, animName.c_str(), m_scene->mAnimations[i]->mDuration);
+            BR_INFO("Animation index: %d Name: %s Duration: %f", i, animName.c_str(), m_scene->mAnimations[i]->mDuration);
         }
 
         const aiNode* node = Utils::Common::findAinodeForAimesh(m_scene, m_scene->mRootNode, m_scene->mMeshes[0]->mName);
         if(node)
         {
             m_modelMatrix = Utils::Matrix::aiToGlm(node->mTransformation);
-        }
 
-        m_origin = Utils::Matrix::getTranslationFrom4x4Glm(m_modelMatrix);
+            m_scaleMatrix = glm::scale(glm::mat4{1.0f}, Utils::Matrix::getScaleFrom4x4Glm(m_modelMatrix));
+            m_rotateMatrix = glm::toMat4(Utils::Matrix::getRotationFrom4x4Glm(m_modelMatrix));
+            m_origin = Utils::Matrix::getTranslationFrom4x4Glm(m_modelMatrix);
+            m_translateMatrix = glm::translate(glm::mat4{1.0f}, m_origin);
+        }
     }
 
     AnimatedObject::~AnimatedObject()
@@ -381,7 +387,7 @@ namespace Beryll
             }
 
             BR_ASSERT((animationTime >= currentFrameStartTime && animationTime <= currentFrameEndTime),
-                      "animationTime must be between currentFrameStartTime and currentFrameEndTime animationTime:%f, currentFrameStartTime:%f, currentFrameEndTime:%f",
+                      "animationTime must be between currentFrameStartTime and currentFrameEndTime animationTime: %f, currentFrameStartTime: %f, currentFrameEndTime: %f",
                       animationTime, currentFrameStartTime, currentFrameEndTime);
 
             float deltaTime = currentFrameEndTime - currentFrameStartTime;

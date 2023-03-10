@@ -44,6 +44,7 @@ namespace Beryll
             if(m_origin == orig) { return; }
 
             m_origin = orig;
+            m_translateMatrix = glm::translate(glm::mat4{1.0f}, m_origin);
 
             m_modelMatrix[3][0] = m_origin.x;
             m_modelMatrix[3][1] = m_origin.y;
@@ -73,26 +74,12 @@ namespace Beryll
             }
         }
 
-        void setRotation(float angleRad, const glm::vec3& axis, bool resetVelocities = false)
-        {
-            m_scaleMatrix = glm::scale(glm::mat4{1.0f}, Utils::Matrix::getScaleFrom4x4Glm(m_modelMatrix));
-            m_rotateMatrix = glm::rotate(glm::mat4{1.0f}, angleRad, axis);
-            m_translateMatrix = glm::translate(glm::mat4{1.0f}, Utils::Matrix::getTranslationFrom4x4Glm(m_modelMatrix));
-
-            m_modelMatrix = m_translateMatrix * m_rotateMatrix * m_scaleMatrix;
-
-            if(m_hasCollisionObject)
-            {
-                // game object with collision object will take transforms from physics module after simulation
-                Beryll::Physics::setRotation(m_ID, glm::angleAxis(angleRad, axis), resetVelocities);
-            }
-        }
-
         void addToRotation(float angleRad, const glm::vec3& axis, bool resetVelocities = false)
         {
-            if(angleRad < 0.0017f) { return; } // less that 0.1 degree
+            if(angleRad < 0.0008f) { return; } // less that 0.05 degree
 
             m_modelMatrix = glm::rotate(m_modelMatrix, angleRad, axis);
+            m_rotateMatrix = glm::toMat4(glm::quat(m_modelMatrix));
 
             if(m_hasCollisionObject)
             {
@@ -105,10 +92,8 @@ namespace Beryll
         {
             if(rot.w == 1.0f) { return; } // no rotation. quaternion must be unit !!!
 
-            m_scaleMatrix = glm::scale(glm::mat4{1.0f}, Utils::Matrix::getScaleFrom4x4Glm(m_modelMatrix));
             m_rotateMatrix = glm::toMat4(rot * glm::quat(m_modelMatrix));
-            m_translateMatrix = glm::translate(glm::mat4{1.0f}, Utils::Matrix::getTranslationFrom4x4Glm(m_modelMatrix));
-
+            // translate and scale matrices should be same
             m_modelMatrix = m_translateMatrix * m_rotateMatrix * m_scaleMatrix;
 
             if(m_hasCollisionObject)

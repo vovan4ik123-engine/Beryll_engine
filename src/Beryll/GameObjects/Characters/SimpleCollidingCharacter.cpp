@@ -27,7 +27,7 @@ namespace Beryll
         m_XZradius = (std::abs(m_biggestX) + std::abs(m_smallestX)) * 0.5f;
         BR_ASSERT(((m_fromOriginToBottom > 0.0f) && (m_fromOriginToTop > 0.0f) && (m_XZradius > 0.0f) && (m_characterHeight > 0.0f)), "%s", "characters XYZ dimensions are 0.");
 
-        BR_INFO("m_fromOriginToTop:%f, m_fromOriginToBottom:%f, m_characterHeight:%f", m_fromOriginToTop, m_fromOriginToBottom, m_characterHeight);
+        BR_INFO("m_fromOriginToTop: %f, m_fromOriginToBottom: %f, m_characterHeight: %f", m_fromOriginToTop, m_fromOriginToBottom, m_characterHeight);
 
         m_characterMass = collisionMass;
         m_previousYPos = m_origin.y;
@@ -51,7 +51,7 @@ namespace Beryll
         // call base class method first
         SimpleCollidingObject::updateAfterPhysics();
 
-        //BR_INFO("origin X:%d Y:%d Z:%d", m_origin.x, m_origin.y, m_origin.z);
+        //BR_INFO("origin X: %d Y: %d Z: %d", m_origin.x, m_origin.y, m_origin.z);
         if(!getIsActive())
         {
             return;
@@ -166,7 +166,7 @@ namespace Beryll
             moveVector = (m_rightDirectionXZ * moveSpeed) * TimeStep::getTimeStepSec();
         }
 
-        //BR_INFO("origin X:%f Y:%f Z:%f", m_origin.x, m_origin.y, m_origin.z);
+        //BR_INFO("origin X: %f Y: %f Z: %f", m_origin.x, m_origin.y, m_origin.z);
         float moveVectorLength = glm::length(moveVector);
         glm::vec3 scaledMoveDirectionByRadius = ((m_XZradius * 1.3f) / moveVectorLength) * moveVector;
 
@@ -218,7 +218,7 @@ namespace Beryll
 
                     if(potentialStepHit.hit)
                     {
-                        BR_INFO("potentialStepHit y:%f", potentialStepHit.hitPoint.y);
+                        BR_INFO("potentialStepHit y: %f", potentialStepHit.hitPoint.y);
                         float surfaceSlopeRadians = Utils::Common::getAngleInRadians(BeryllConstants::worldUp, potentialStepHit.hitNormal);
                         if(surfaceSlopeRadians < glm::radians(3.0f)) // allow stair step surface be slope 0-3 degrees
                         {
@@ -235,14 +235,14 @@ namespace Beryll
                                 if(diffcharacterYStepY <= maxStepHeight)
                                 {
                                     // character can move to this stair step
-                                    BR_INFO("%s h:%f", "character moved to stair step", diffcharacterYStepY);
+                                    BR_INFO("%s h: %f", "character moved to stair step", diffcharacterYStepY);
                                     allowedStairStepFound = true;
                                     moveVector.y = diffcharacterYStepY;
                                 }
                                 else
                                 {
                                     // legs hit wall in front but stair step in front is too height
-                                    BR_INFO("%s h:%f", "legs hit wall in front but stair step in front is too height", diffcharacterYStepY);
+                                    BR_INFO("%s h: %f", "legs hit wall in front but stair step in front is too height", diffcharacterYStepY);
                                     return;
                                 }
                             }

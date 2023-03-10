@@ -18,34 +18,34 @@ namespace Beryll
         std::string frontSide = folderPath + "/front.jpg";
 
         SDL_RWops* rwRight = SDL_RWFromFile(rightSide.c_str(), "rb");
-        BR_ASSERT((rwRight != nullptr), "Load cube texture failed:%s", rightSide.c_str());
+        BR_ASSERT((rwRight != nullptr), "Load cube texture failed: %s", rightSide.c_str());
         SDL_Surface* surfaceRight = IMG_Load_RW(rwRight, 1);
-        BR_ASSERT((surfaceRight != nullptr), "Create surface failed:%s", rightSide.c_str());
+        BR_ASSERT((surfaceRight != nullptr), "Create surface failed: %s", rightSide.c_str());
 
         SDL_RWops* rwLeft = SDL_RWFromFile(leftSide.c_str(), "rb");
-        BR_ASSERT((rwLeft != nullptr), "Load cube texture failed:%s", leftSide.c_str());
+        BR_ASSERT((rwLeft != nullptr), "Load cube texture failed: %s", leftSide.c_str());
         SDL_Surface* surfaceLeft = IMG_Load_RW(rwLeft, 1);
-        BR_ASSERT((surfaceLeft != nullptr), "Create surface failed:%s", leftSide.c_str());
+        BR_ASSERT((surfaceLeft != nullptr), "Create surface failed: %s", leftSide.c_str());
 
         SDL_RWops* rwTop = SDL_RWFromFile(topSide.c_str(), "rb");
-        BR_ASSERT((rwTop != nullptr), "Load cube texture failed:%s", topSide.c_str());
+        BR_ASSERT((rwTop != nullptr), "Load cube texture failed: %s", topSide.c_str());
         SDL_Surface* surfaceTop = IMG_Load_RW(rwTop, 1);
-        BR_ASSERT((surfaceTop != nullptr), "Create surface failed:%s", topSide.c_str());
+        BR_ASSERT((surfaceTop != nullptr), "Create surface failed: %s", topSide.c_str());
 
         SDL_RWops* rwBottom = SDL_RWFromFile(bottomSide.c_str(), "rb");
-        BR_ASSERT((rwBottom != nullptr), "Load cube texture failed:%s", bottomSide.c_str());
+        BR_ASSERT((rwBottom != nullptr), "Load cube texture failed: %s", bottomSide.c_str());
         SDL_Surface* surfaceBottom = IMG_Load_RW(rwBottom, 1);
-        BR_ASSERT((surfaceBottom != nullptr), "Create surface failed:%s", bottomSide.c_str());
+        BR_ASSERT((surfaceBottom != nullptr), "Create surface failed: %s", bottomSide.c_str());
 
         SDL_RWops* rwBack = SDL_RWFromFile(backSide.c_str(), "rb");
-        BR_ASSERT((rwBack != nullptr), "Load cube texture failed:%s", backSide.c_str());
+        BR_ASSERT((rwBack != nullptr), "Load cube texture failed: %s", backSide.c_str());
         SDL_Surface* surfaceBack = IMG_Load_RW(rwBack, 1);
-        BR_ASSERT((surfaceBack != nullptr), "Create surface failed:%s", backSide.c_str());
+        BR_ASSERT((surfaceBack != nullptr), "Create surface failed: %s", backSide.c_str());
 
         SDL_RWops* rwFront = SDL_RWFromFile(frontSide.c_str(), "rb");
-        BR_ASSERT((rwFront != nullptr), "Load cube texture failed:%s", frontSide.c_str());
+        BR_ASSERT((rwFront != nullptr), "Load cube texture failed: %s", frontSide.c_str());
         SDL_Surface* surfaceFront = IMG_Load_RW(rwFront, 1);
-        BR_ASSERT((surfaceFront != nullptr), "Create surface failed:%s", frontSide.c_str());
+        BR_ASSERT((surfaceFront != nullptr), "Create surface failed: %s", frontSide.c_str());
 
         BR_ASSERT(((surfaceRight->format->BytesPerPixel == 3 || surfaceRight->format->BytesPerPixel == 4) &&
                    (surfaceLeft->format->BytesPerPixel == 3 || surfaceLeft->format->BytesPerPixel == 4) &&
@@ -53,7 +53,7 @@ namespace Beryll
                    (surfaceBottom->format->BytesPerPixel == 3 || surfaceBottom->format->BytesPerPixel == 4) &&
                    (surfaceBack->format->BytesPerPixel == 3 || surfaceBack->format->BytesPerPixel == 4) &&
                    (surfaceFront->format->BytesPerPixel == 3 || surfaceFront->format->BytesPerPixel == 4))
-        , "Load cube texture failed:%s. Use 24 or 32 bit depth", folderPath.c_str());
+        , "Load cube texture failed: %s. Use 24 or 32 bit depth", folderPath.c_str());
 
         int pixelFormat = GL_RGB;
         if(4 == surfaceRight->format->BytesPerPixel) pixelFormat = GL_RGBA;

@@ -99,7 +99,7 @@ namespace Beryll
 
             // sleep if we finished work faster than m_loopTime
             m_frameTime = TimeStep::getMillisecFromStart() - m_frameStart;
-            //BR_INFO("m_frameTime %d", m_frameTime);
+            //BR_INFO("m_frameTime: %d", m_frameTime);
             if(m_frameTime < m_loopTime)
             {
                 TimeStep::sleep(m_loopTime - m_frameTime);
