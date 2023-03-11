@@ -11,10 +11,10 @@ namespace Beryll
     int ParticleSystem::m_activeCount = 0;
     std::shared_ptr<Shader> ParticleSystem::m_internalShader;
 
-    const std::vector<glm::vec4> ParticleSystem::m_quadVertices{glm::vec4(-1.0f, -1.0f, 0.0f, 1.0f),
-                                                              glm::vec4(1.0f, -1.0f, 0.0f, 1.0f),
-                                                              glm::vec4(1.0f, 1.0f, 0.0f, 1.0f),
-                                                              glm::vec4(-1.0f, 1.0f, 0.0f, 1.0f)};
+    const std::vector<glm::vec4> ParticleSystem::m_quadVertices{glm::vec4{-1.0f, -1.0f, 0.0f, 1.0f},
+                                                                glm::vec4{1.0f, -1.0f, 0.0f, 1.0f},
+                                                                glm::vec4{1.0f, 1.0f, 0.0f, 1.0f},
+                                                                glm::vec4{-1.0f, 1.0f, 0.0f, 1.0f}};
     const uint32_t ParticleSystem::m_maxQuadCount = 100000;
     const uint32_t ParticleSystem::m_quadVerticesCount = 4; // 4 vertices per quad
     const uint32_t ParticleSystem::m_quadIndicesCount = 6;  // 6 indices per quad
@@ -32,15 +32,15 @@ namespace Beryll
     std::vector<glm::vec4> ParticleSystem::m_quadVertexColorDynamicVector;
     std::function<void(std::vector<ParticleSystem::QuadParticle>&, int, int)> ParticleSystem::updateQuadParticles;
 
-    const std::vector<glm::vec4> ParticleSystem::m_cubeVertices{glm::vec4(-1.0f, -1.0f, 1.0f, 1.0f), // front side +Z
-                                                              glm::vec4(1.0f, -1.0f, 1.0f, 1.0f),
-                                                              glm::vec4(1.0f, 1.0f, 1.0f, 1.0f),
-                                                              glm::vec4(-1.0f, 1.0f, 1.0f, 1.0f),
+    const std::vector<glm::vec4> ParticleSystem::m_cubeVertices{glm::vec4{-1.0f, -1.0f, 1.0f, 1.0f}, // front side +Z
+                                                                glm::vec4{1.0f, -1.0f, 1.0f, 1.0f},
+                                                                glm::vec4{1.0f, 1.0f, 1.0f, 1.0f},
+                                                                glm::vec4{-1.0f, 1.0f, 1.0f, 1.0f},
 
-                                                              glm::vec4(-1.0f, -1.0f, -1.0f, 1.0f), // back side -Z
-                                                              glm::vec4(1.0f, -1.0f, -1.0f, 1.0f),
-                                                              glm::vec4(1.0f, 1.0f, -1.0f, 1.0f),
-                                                              glm::vec4(-1.0f, 1.0f, -1.0f, 1.0f)};
+                                                                glm::vec4{-1.0f, -1.0f, -1.0f, 1.0f}, // back side -Z
+                                                                glm::vec4{1.0f, -1.0f, -1.0f, 1.0f},
+                                                                glm::vec4{1.0f, 1.0f, -1.0f, 1.0f},
+                                                                glm::vec4{-1.0f, 1.0f, -1.0f, 1.0f}};
     const uint32_t ParticleSystem::m_maxCubeCount = 100000;
     const uint32_t ParticleSystem::m_cubeVerticesCount = 8; // 8 vertices per cube
     const uint32_t ParticleSystem::m_cubeIndicesCount = 36;  // 36 indices per quad

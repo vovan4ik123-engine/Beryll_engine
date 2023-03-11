@@ -64,6 +64,18 @@ namespace Beryll
 #endif
     }
 
+    std::shared_ptr<VertexBuffer> Renderer::createStaticVertexBuffer(const std::vector<glm::mat4>& data)
+    {
+#if defined(ANDROID)
+        return std::shared_ptr<VertexBuffer>(new AndroidGLESStaticVertexBuffer(data));
+#elif defined(APPLE)
+
+#else
+        BR_ASSERT(false, "%s", "Can not create VertexBuffer. Unknown platform.");
+        return nullptr;
+#endif
+    }
+
     std::shared_ptr<VertexBuffer> Renderer::createDynamicVertexBuffer(VertexAttribType type, VertexAttribSize size, uint32_t maxSizeBytes)
     {
 #if defined(ANDROID)

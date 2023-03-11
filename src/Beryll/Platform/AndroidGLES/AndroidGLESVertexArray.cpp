@@ -54,6 +54,7 @@ namespace Beryll
         else if(vertBuff->getAttribSize() == VertexAttribSize::TWO) { size = 2; }
         else if(vertBuff->getAttribSize() == VertexAttribSize::THREE) { size = 3; }
         else if(vertBuff->getAttribSize() == VertexAttribSize::FOUR) { size = 4; }
+        else if(vertBuff->getAttribSize() == VertexAttribSize::MATRIX4x4) { size = 16; }
 
         if(vertBuff->getAttribType() == VertexAttribType::FLOAT) { type = GL_FLOAT; stride = sizeof(float) * size; }
         else if(vertBuff->getAttribType() == VertexAttribType::INT) { type = GL_INT; stride = sizeof(int) * size; }
@@ -61,9 +62,35 @@ namespace Beryll
         bind();
         vertBuff->bind();
 
-        glEnableVertexAttribArray(m_indexNumber);
-        glVertexAttribPointer(m_indexNumber, size, type, GL_FALSE, stride, (void*)0);
-        ++m_indexNumber;
+        if(vertBuff->getAttribType() == VertexAttribType::FLOAT &&
+           vertBuff->getAttribSize() == VertexAttribSize::MATRIX4x4)
+        {
+            // Be carefully. Vertex shader can not accept mat4 into one layout(location = ...)
+            // Max data structure accepted in one layout(location = ...) is vec4
+            // So, mat4 will occupy 4 * layout(location = ...) with vec4 for every matrix column
+
+            glEnableVertexAttribArray(m_indexNumber);
+            glVertexAttribPointer(m_indexNumber, 4, type, GL_FALSE, stride, (void*)0);
+            ++m_indexNumber;
+
+            glEnableVertexAttribArray(m_indexNumber);
+            glVertexAttribPointer(m_indexNumber, 4, type, GL_FALSE, stride, (void*)16);
+            ++m_indexNumber;
+
+            glEnableVertexAttribArray(m_indexNumber);
+            glVertexAttribPointer(m_indexNumber, 4, type, GL_FALSE, stride, (void*)32);
+            ++m_indexNumber;
+
+            glEnableVertexAttribArray(m_indexNumber);
+            glVertexAttribPointer(m_indexNumber, 4, type, GL_FALSE, stride, (void*)48);
+            ++m_indexNumber;
+        }
+        else
+        {
+            glEnableVertexAttribArray(m_indexNumber);
+            glVertexAttribPointer(m_indexNumber, size, type, GL_FALSE, stride, (void*)0);
+            ++m_indexNumber;
+        }
 
         vertBuff->unBind();
         unBind();

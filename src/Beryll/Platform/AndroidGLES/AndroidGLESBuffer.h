@@ -22,6 +22,10 @@ namespace Beryll
         {
             BR_ASSERT(false, "%s", "Can not set data into static vertex buffer");
         };
+        void setDynamicBufferData(const std::vector<glm::mat4>& data, uint32_t elementsCount) override
+        {
+            BR_ASSERT(false, "%s", "Can not set data into static vertex buffer");
+        };
 
     private:
         friend class Renderer;
@@ -30,6 +34,7 @@ namespace Beryll
         AndroidGLESStaticVertexBuffer(const std::vector<glm::vec3>& data);
         AndroidGLESStaticVertexBuffer(const std::vector<glm::vec4>& data);
         AndroidGLESStaticVertexBuffer(const std::vector<glm::ivec4>& data);
+        AndroidGLESStaticVertexBuffer(const std::vector<glm::mat4>& data);
 
         uint32_t m_VBO = 0;
     };
@@ -47,6 +52,7 @@ namespace Beryll
         // elementsCount = data.size() for copy all buffer
         void setDynamicBufferData(const std::vector<glm::vec3>& data, uint32_t elementsCount) override;
         void setDynamicBufferData(const std::vector<glm::vec4>& data, uint32_t elementsCount) override;
+        void setDynamicBufferData(const std::vector<glm::mat4>& data, uint32_t elementsCount) override;
 
     private:
         friend class Renderer;

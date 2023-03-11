@@ -69,8 +69,8 @@ namespace Beryll
         normals.reserve(m_scene->mMeshes[0]->mNumVertices);
         tangents.reserve(m_scene->mMeshes[0]->mNumVertices);
         textureCoords.reserve(m_scene->mMeshes[0]->mNumVertices);
-        boneIDs.resize(m_scene->mMeshes[0]->mNumVertices, glm::ivec4(-1, -1, -1, -1)); // NUM_BONES_PER_VERTEX
-        boneWeights.resize(m_scene->mMeshes[0]->mNumVertices, glm::vec4(-1.0f, -1.0f, -1.0f, -1.0f)); // NUM_BONES_PER_VERTEX
+        boneIDs.resize(m_scene->mMeshes[0]->mNumVertices, glm::ivec4{-1, -1, -1, -1}); // NUM_BONES_PER_VERTEX
+        boneWeights.resize(m_scene->mMeshes[0]->mNumVertices, glm::vec4{-1.0f, -1.0f, -1.0f, -1.0f}); // NUM_BONES_PER_VERTEX
         indices.reserve(m_scene->mMeshes[0]->mNumFaces * 3);
 
         // vertices

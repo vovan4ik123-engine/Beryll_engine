@@ -130,8 +130,8 @@ namespace Beryll
             normals.reserve(m_scene->mMeshes[i]->mNumVertices);
             tangents.reserve(m_scene->mMeshes[i]->mNumVertices);
             textureCoords.reserve(m_scene->mMeshes[i]->mNumVertices);
-            boneIDs.resize(m_scene->mMeshes[i]->mNumVertices, glm::ivec4(-1, -1, -1, -1)); // NUM_BONES_PER_VERTEX
-            boneWeights.resize(m_scene->mMeshes[i]->mNumVertices,glm::vec4(-1.0f, -1.0f, -1.0f, -1.0f)); // NUM_BONES_PER_VERTEX
+            boneIDs.resize(m_scene->mMeshes[i]->mNumVertices, glm::ivec4{-1, -1, -1, -1}); // NUM_BONES_PER_VERTEX
+            boneWeights.resize(m_scene->mMeshes[i]->mNumVertices,glm::vec4{-1.0f, -1.0f, -1.0f, -1.0f}); // NUM_BONES_PER_VERTEX
             indices.reserve(m_scene->mMeshes[i]->mNumFaces * 3);
 
             // vertices

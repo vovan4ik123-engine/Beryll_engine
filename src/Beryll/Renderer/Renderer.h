@@ -24,6 +24,7 @@ namespace Beryll
         static std::shared_ptr<VertexBuffer> createStaticVertexBuffer(const std::vector<glm::vec3>& data);
         static std::shared_ptr<VertexBuffer> createStaticVertexBuffer(const std::vector<glm::vec4>& data);
         static std::shared_ptr<VertexBuffer> createStaticVertexBuffer(const std::vector<glm::ivec4>& data);
+        static std::shared_ptr<VertexBuffer> createStaticVertexBuffer(const std::vector<glm::mat4>& data);
 
         static std::shared_ptr<VertexBuffer> createDynamicVertexBuffer(VertexAttribType type, VertexAttribSize size, uint32_t maxSizeBytes);
 

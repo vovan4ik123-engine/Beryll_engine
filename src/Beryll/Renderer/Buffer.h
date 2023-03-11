@@ -7,7 +7,7 @@ namespace Beryll
 {
     enum class VertexAttribSize
     {
-        UNKNOWN, ONE, TWO, THREE, FOUR
+        UNKNOWN, ONE, TWO, THREE, FOUR, MATRIX4x4
     };
 
     enum class VertexAttribType
@@ -27,13 +27,14 @@ namespace Beryll
         // elementsCount = data.size() for copy all buffer
         virtual void setDynamicBufferData(const std::vector<glm::vec3>& data, uint32_t elementsCount) = 0;
         virtual void setDynamicBufferData(const std::vector<glm::vec4>& data, uint32_t elementsCount) = 0;
+        virtual void setDynamicBufferData(const std::vector<glm::mat4>& data, uint32_t elementsCount) = 0;
 
         VertexAttribType getAttribType() { return m_vertAttribType; }
-        VertexAttribSize getAttribSize() { return m_vertAttribSyze; }
+        VertexAttribSize getAttribSize() { return m_vertAttribSize; }
 
     protected:
         VertexAttribType m_vertAttribType = VertexAttribType::UNKNOWN;
-        VertexAttribSize m_vertAttribSyze = VertexAttribSize::UNKNOWN;
+        VertexAttribSize m_vertAttribSize = VertexAttribSize::UNKNOWN;
     };
 
     // Dynamic index buffer can be achieved by changing m_count inside setCount(uint32_t count)
