@@ -38,7 +38,8 @@ namespace Beryll
         void draw() override;
         void playSound() override;
 
-        void setAnimation(const char* name) override; // animations should be loaded from model
+        void setAnimationByName(const char* name) override; // animations should be loaded from model
+        void setAnimationByIndex(uint32_t index) override;
 
         uint32_t getBoneCount() override
         {

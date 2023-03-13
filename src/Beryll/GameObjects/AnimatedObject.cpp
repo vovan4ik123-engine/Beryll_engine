@@ -517,7 +517,7 @@ namespace Beryll
         return scaleMatrix;
     }
 
-    void AnimatedObject::setAnimation(const char* name)
+    void AnimatedObject::setAnimationByName(const char* name)
     {
         if(m_currentAnimName == name) { return; }
 
@@ -529,6 +529,16 @@ namespace Beryll
                 m_currentAnimName = name;
                 return;
             }
+        }
+    }
+
+    void AnimatedObject::setAnimationByIndex(uint32_t index)
+    {
+        if(m_currentAnimIndex == index) { return; }
+
+        if(index < m_animationNameIndex.size())
+        {
+            m_currentAnimIndex = index;
         }
     }
 }

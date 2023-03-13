@@ -136,35 +136,16 @@ namespace Beryll
         SimpleCollidingObject::playSound();
     }
 
-    void SimpleCollidingCharacter::move(MoveDirection direction)
+    void SimpleCollidingCharacter::move(glm::vec3 direction)
     {
-        glm::quat rotationCharacterToCamera = glm::rotation(m_eyeDirectionXZ, Camera::getCameraDirectionXZ());
-        addToRotation(rotationCharacterToCamera);
+        glm::vec3 directionXZ = glm::normalize(glm::vec3{direction.x, 0.0f, direction.z});
+        glm::quat rotationCharacterToDirection = glm::rotation(m_eyeDirectionXZ, directionXZ);
+        addToRotation(rotationCharacterToDirection);
         // after rotation
-        m_eyeDirectionXZ = Camera::getCameraDirectionXZ(); // should be unit
-        m_eyeDirectionXYZ = Camera::getCameraDirectionXYZ();
-        m_backDirectionXZ = Camera::getCameraBackDirectionXZ();
-        m_rightDirectionXZ = Camera::getCameraRightXZ();
-        m_leftDirectionXZ = Camera::getCameraLeftXZ();
+        m_eyeDirectionXZ = directionXZ;
+        m_backDirectionXZ = -directionXZ;
 
-        glm::vec3 moveVector{0.0f, 0.0f, 0.0f};
-
-        if(direction == MoveDirection::FORWARD)
-        {
-            moveVector = (m_eyeDirectionXZ * moveSpeed) * TimeStep::getTimeStepSec();
-        }
-        else if(direction == MoveDirection::BACKWARD)
-        {
-            moveVector = (m_backDirectionXZ * moveSpeed * backwardMoveFactor) * TimeStep::getTimeStepSec();
-        }
-        else if(direction == MoveDirection::LEFT)
-        {
-            moveVector = (m_leftDirectionXZ * moveSpeed) * TimeStep::getTimeStepSec();
-        }
-        else if(direction == MoveDirection::RIGHT)
-        {
-            moveVector = (m_rightDirectionXZ * moveSpeed) * TimeStep::getTimeStepSec();
-        }
+        glm::vec3 moveVector = (m_eyeDirectionXZ * moveSpeed) * TimeStep::getTimeStepSec();
 
         //BR_INFO("origin X: %f Y: %f Z: %f", m_origin.x, m_origin.y, m_origin.z);
         float moveVectorLength = glm::length(moveVector);

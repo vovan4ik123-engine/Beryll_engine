@@ -35,7 +35,7 @@ namespace Beryll
         void playSound() override;
 
         // character controller
-        void move(MoveDirection direction);
+        void move(glm::vec3 direction);
         void jump();
         bool getIsCanStay() { return m_characterCanStay; }
         bool getIsMoving() { return m_characterMoving; }
@@ -65,11 +65,8 @@ namespace Beryll
 
         float m_previousYPos = 0.0f;
 
-        glm::vec3 m_eyeDirectionXYZ{1.0f, 0.0f, 0.0f}; // start position = looking along +X axis
         glm::vec3 m_eyeDirectionXZ{1.0f, 0.0f, 0.0f};
         glm::vec3 m_backDirectionXZ{-1.0f, 0.0f, 0.0f};
-        glm::vec3 m_rightDirectionXZ{0.0f, 0.0f, 0.0f};
-        glm::vec3 m_leftDirectionXZ{0.0f, 0.0f, 0.0f};
 
         glm::vec3 m_jumpDirection{0.0f, 1.0f, 0.0f};
         bool m_jumped = false;

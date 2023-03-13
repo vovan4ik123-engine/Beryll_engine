@@ -6,11 +6,6 @@
 
 namespace Beryll
 {
-    enum class MoveDirection
-    {
-        FORWARD = 0, BACKWARD = 1, RIGHT = 2, LEFT = 3
-    };
-
     // this enum game dependent.
     // when you create game you can add here groups and mark objects with them
     // then check these groups in game loop for specific actions/rendering

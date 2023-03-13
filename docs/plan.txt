@@ -1,15 +1,13 @@
 ---------------------plan:---------------------
 
-
-try calculate bones transforms on CPU + use everywhere GLM matrices with low precision
-
 buy animated character
 add animated character
 
+use tangent vector only if specular map is in materials
+read bitangents from model. Dont calculate in shader
 
 update renderer 2 ?
 draw thread
-use tangent vector only if specular map is in materials
 
 #include <android/log.h>
 __android_log_print(ANDROID_LOG_DEBUG, "TAG", "message");

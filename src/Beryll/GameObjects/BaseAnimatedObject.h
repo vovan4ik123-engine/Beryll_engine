@@ -18,6 +18,7 @@ namespace Beryll
 
         virtual uint32_t getBoneCount() = 0;
         virtual const std::vector<BoneMatrix>& getBoneMatrices() = 0;
-        virtual void setAnimation(const char* name) = 0;
+        virtual void setAnimationByName(const char* name) = 0;
+        virtual void setAnimationByIndex(uint32_t index) = 0;
     };
 }
