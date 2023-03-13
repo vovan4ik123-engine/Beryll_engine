@@ -237,6 +237,7 @@ namespace Beryll
                 indices.emplace_back(m_scene->mMeshes[i]->mFaces[g].mIndices[1]);
                 indices.emplace_back(m_scene->mMeshes[i]->mFaces[g].mIndices[2]);
             }
+            BR_INFO("Indices count: %d", indices.size());
             m_indexBuffer = Renderer::createStaticIndexBuffer(indices);
 
             m_vertexArray = Renderer::createVertexArray();
