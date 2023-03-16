@@ -116,7 +116,7 @@ namespace Beryll
             }
 
             BR_ASSERT((m_scene->HasAnimations() && m_scene->mMeshes[i]->mNumBones > 0),
-                      "%s", "Colliding animated object must have animation + bone");
+                      "Colliding animated object must have animation + bone:%s" , m_scene->mMeshes[i]->mName.C_Str());
 
             // prepare vectors
             std::vector<glm::vec3> vertices;

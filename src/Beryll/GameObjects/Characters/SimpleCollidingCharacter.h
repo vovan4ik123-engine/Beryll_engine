@@ -42,6 +42,11 @@ namespace Beryll
         bool getIsJumped() { return m_jumped; }
         bool getIsFalling() { return m_falling; }
 
+        float getFromOriginToTop() { return m_fromOriginToTop; }
+        float getFromOriginToBottom() { return m_fromOriginToBottom; }
+        float getXZRadius() { return m_XZRadius; }
+        float getHeight() { return m_characterHeight; }
+
         float moveSpeed = 4.16f; // meters in second
         float backwardMoveFactor = 0.6f; // factor to multiply moveSpeed if character move backward
         float walkableFloorAngleRadians = glm::radians(60.0f);
@@ -55,7 +60,7 @@ namespace Beryll
     private:
         float m_fromOriginToTop = 0.0f; // distance between origin and character top
         float m_fromOriginToBottom = 0.0f; // distance between origin and character bottom
-        float m_XZradius = 0.0f; // radius on X/Z axis. from collision mesh origin
+        float m_XZRadius = 0.0f; // radius on X/Z axis. from collision mesh origin
         float m_characterHeight = 0.0f;
         float m_characterMass = 0.0f;
 

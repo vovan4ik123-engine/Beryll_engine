@@ -1,8 +1,5 @@
 ---------------------plan:---------------------
 
-buy animated character
-add animated character
-
 use tangent vector only if specular map is in materials
 read bitangents from model. Dont calculate in shader
 

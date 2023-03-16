@@ -1,5 +1,4 @@
 #include "SimpleCollidingCharacter.h"
-#include "Beryll/Renderer/Camera.h"
 #include "Beryll/Core/TimeStep.h"
 
 namespace Beryll
@@ -24,8 +23,8 @@ namespace Beryll
         m_fromOriginToTop = std::abs(m_mostTopVertex);
         m_fromOriginToBottom = std::abs(m_mostBottomVertex);
         m_characterHeight = m_fromOriginToTop + m_fromOriginToBottom;
-        m_XZradius = (std::abs(m_biggestX) + std::abs(m_smallestX)) * 0.5f;
-        BR_ASSERT(((m_fromOriginToBottom > 0.0f) && (m_fromOriginToTop > 0.0f) && (m_XZradius > 0.0f) && (m_characterHeight > 0.0f)), "%s", "characters XYZ dimensions are 0.");
+        m_XZRadius = (std::abs(m_biggestX) + std::abs(m_smallestX)) * 0.5f;
+        BR_ASSERT((m_fromOriginToBottom > 0.0f && m_fromOriginToTop > 0.0f && m_XZRadius > 0.0f && m_characterHeight > 0.0f), "%s", "characters XYZ dimensions are 0.");
 
         BR_INFO("m_fromOriginToTop: %f, m_fromOriginToBottom: %f, m_characterHeight: %f", m_fromOriginToTop, m_fromOriginToBottom, m_characterHeight);
 
@@ -69,25 +68,28 @@ namespace Beryll
 
         m_bottomCollisionPoint = std::make_pair(glm::vec3(0.0f, std::numeric_limits<float>::max(), 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 
-        m_collidingObjects = Physics::getCollisionsWithGroup(m_ID, m_collisionMask);
-        if(!m_collidingObjects.empty())
+        if(m_collisionMask != CollisionGroups::NONE)
         {
-            m_collidingPoints = Physics::getAllCollisionPoints(m_ID, m_collidingObjects);
-            for(const std::pair<glm::vec3, glm::vec3>& point : m_collidingPoints)
+            m_collidingObjects = Physics::getCollisionsWithGroup(m_ID, m_collisionMask);
+            if(!m_collidingObjects.empty())
             {
-                if(point.first.y < m_bottomCollisionPoint.first.y)
+                m_collidingPoints = Physics::getAllCollisionPoints(m_ID, m_collidingObjects);
+                for(const std::pair<glm::vec3, glm::vec3>& point : m_collidingPoints)
                 {
-                    m_bottomCollisionPoint = point;
-                }
+                    if(point.first.y < m_bottomCollisionPoint.first.y)
+                    {
+                        m_bottomCollisionPoint = point;
+                    }
 
-                // point.second is normal vector on collision point
-                float floorAngleRadians = Utils::Common::getAngleInRadians(BeryllConstants::worldUp, point.second);
-                if(floorAngleRadians < walkableFloorAngleRadians)
-                {
-                    //BR_INFO("%s", "characterOnGround = true");
-                    // character stay on allowed floor angle
-                    m_characterCanStay = true;
-                    // DONT break loop here !!! continue collect m_bottomCollisionPoint
+                    // point.second is normal vector on collision point
+                    float floorAngleRadians = Utils::Common::getAngleInRadians(BeryllConstants::worldUp, point.second);
+                    if(floorAngleRadians < walkableFloorAngleRadians)
+                    {
+                        //BR_INFO("%s", "characterOnGround = true");
+                        // character stay on allowed floor angle
+                        m_characterCanStay = true;
+                        // DONT break loop here !!! continue collect m_bottomCollisionPoint
+                    }
                 }
             }
         }
@@ -149,7 +151,7 @@ namespace Beryll
 
         //BR_INFO("origin X: %f Y: %f Z: %f", m_origin.x, m_origin.y, m_origin.z);
         float moveVectorLength = glm::length(moveVector);
-        glm::vec3 scaledMoveDirectionByRadius = ((m_XZradius * 1.3f) / moveVectorLength) * moveVector;
+        glm::vec3 scaledMoveDirectionByRadius = ((m_XZRadius * 1.3f) / moveVectorLength) * moveVector;
 
         glm::vec3 characterHeadUp = m_origin;
         characterHeadUp.y += m_fromOriginToTop;
@@ -174,8 +176,8 @@ namespace Beryll
             bool allowedStairStepFound = false;
 
             glm::vec3 characterLegs = m_origin;
-            BR_ASSERT((m_fromOriginToBottom > m_XZradius), "%s", "character origin should be inside cylinder of capsule. Not in bottom semi sphere.");
-            characterLegs.y -= (m_fromOriginToBottom - m_XZradius * 0.97f); // characterLegs.y - distance from origin to capsules cylinder bottom
+            BR_ASSERT((m_fromOriginToBottom >= m_XZRadius), "%s", "character origin should be inside cylinder of capsule. Not in bottom semi sphere.");
+            characterLegs.y -= (m_fromOriginToBottom - m_XZRadius * 0.97f); // characterLegs.y - distance from origin to capsules cylinder bottom
             glm::vec3 characterLegsNextPos = characterLegs + scaledMoveDirectionByRadius;
             RayClosestHit legsWallHit = Physics::castRayClosestHit(characterLegs,
                                                                    characterLegsNextPos,

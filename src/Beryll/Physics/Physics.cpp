@@ -54,7 +54,7 @@ namespace Beryll
         // set collisions call backs to bullet
         gContactAddedCallback = collisionsCallBack;
 
-        m_collisionPairs.reserve(5000);
+        m_collisionPairs.reserve(10000);
     }
 
     void Physics::simulate()
