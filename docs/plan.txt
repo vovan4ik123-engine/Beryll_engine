@@ -1,10 +1,16 @@
 ---------------------plan:---------------------
 
-use tangent vector only if specular map is in materials
-read bitangents from model. Dont calculate in shader
+delete play sound method
+
+enable/dissable draw
+enable/dissable update
+enable/dissable collisionMesh
 
 update renderer 2 ?
-draw thread
+draw thread ?
+
+
+
 
 #include <android/log.h>
 __android_log_print(ANDROID_LOG_DEBUG, "TAG", "message");

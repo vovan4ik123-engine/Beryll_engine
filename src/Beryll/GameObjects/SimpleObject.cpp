@@ -92,8 +92,8 @@ namespace Beryll
         BR_INFO("Vertex count: %d", vertices.size());
         m_vertexPosBuffer = Renderer::createStaticVertexBuffer(vertices);
         m_vertexNormalsBuffer = Renderer::createStaticVertexBuffer(normals);
-        m_vertexTangentsBuffer = Renderer::createStaticVertexBuffer(tangents);
         m_textureCoordsBuffer = Renderer::createStaticVertexBuffer(textureCoords);
+        // tangents buffer will created if model has normal map
 
         // indices
         for(int i = 0; i < scene->mMeshes[0]->mNumFaces; ++i) // every face MUST be a triangle !!!!
@@ -102,13 +102,14 @@ namespace Beryll
             indices.emplace_back(scene->mMeshes[0]->mFaces[i].mIndices[1]);
             indices.emplace_back(scene->mMeshes[0]->mFaces[i].mIndices[2]);
         }
+        BR_INFO("Indices count: %d", indices.size());
         m_indexBuffer = Renderer::createStaticIndexBuffer(indices);
 
         m_vertexArray = Renderer::createVertexArray();
         m_vertexArray->addVertexBuffer(m_vertexPosBuffer);
         m_vertexArray->addVertexBuffer(m_vertexNormalsBuffer);
         m_vertexArray->addVertexBuffer(m_textureCoordsBuffer);
-        m_vertexArray->addVertexBuffer(m_vertexTangentsBuffer);
+        // tangents buffer will added if model has normal map
         m_vertexArray->setIndexBuffer(m_indexBuffer);
 
         m_internalShader = Renderer::createShader(BeryllConstants::simpleObjDefaultVertexPath.data(),
@@ -192,6 +193,11 @@ namespace Beryll
 
                 m_normalMapTexture = Renderer::createTexture(texturePath.c_str(), TextureType::NORMAL_MAP_TEXTURE);
                 m_internalShader->activateNormalMapTexture();
+
+                BR_INFO("%s", "Create tangents buffer because model has normal map");
+                m_vertexTangentsBuffer = Renderer::createStaticVertexBuffer(tangents);
+
+                m_vertexArray->addVertexBuffer(m_vertexTangentsBuffer);
             }
         }
 

@@ -120,8 +120,8 @@ namespace Beryll
         BR_INFO("Vertex count: %d", vertices.size());
         m_vertexPosBuffer = Renderer::createStaticVertexBuffer(vertices);
         m_vertexNormalsBuffer = Renderer::createStaticVertexBuffer(normals);
-        m_vertexTangentsBuffer = Renderer::createStaticVertexBuffer(tangents);
         m_textureCoordsBuffer = Renderer::createStaticVertexBuffer(textureCoords);
+        // tangents buffer will created if model has normal map
 
         // bones
         m_boneCount = m_scene->mMeshes[0]->mNumBones;
@@ -185,7 +185,7 @@ namespace Beryll
         m_vertexArray->addVertexBuffer(m_textureCoordsBuffer);
         m_vertexArray->addVertexBuffer(m_boneIDsBuffer);
         m_vertexArray->addVertexBuffer(m_boneWeightsBuffer);
-        m_vertexArray->addVertexBuffer(m_vertexTangentsBuffer);
+        // tangents buffer will added if model has normal map
         m_vertexArray->setIndexBuffer(m_indexBuffer);
 
         m_internalShader = Renderer::createShader(BeryllConstants::animatedObjDefaultVertexPath.data(),
@@ -268,6 +268,11 @@ namespace Beryll
 
                 m_normalMapTexture = Renderer::createTexture(texturePath.c_str(), TextureType::NORMAL_MAP_TEXTURE);
                 m_internalShader->activateNormalMapTexture();
+
+                BR_INFO("%s", "Create tangents buffer because model has normal map");
+                m_vertexTangentsBuffer = Renderer::createStaticVertexBuffer(tangents);
+
+                m_vertexArray->addVertexBuffer(m_vertexTangentsBuffer);
             }
         }
 
