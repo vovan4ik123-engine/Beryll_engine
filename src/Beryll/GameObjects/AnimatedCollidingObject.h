@@ -36,7 +36,6 @@ namespace Beryll
         void updateBeforePhysics() override;
         void updateAfterPhysics() override;
         void draw() override;
-        void playSound() override;
 
         void setAnimationByName(const char* name) override; // animations should be loaded from model
         void setAnimationByIndex(uint32_t index) override;

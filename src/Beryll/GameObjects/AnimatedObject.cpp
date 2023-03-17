@@ -343,11 +343,6 @@ namespace Beryll
         m_vertexArray->draw();
     }
 
-    void AnimatedObject::playSound()
-    {
-
-    }
-
     void AnimatedObject::calculateTransforms()
     {
         float tickPerSecond = static_cast<float>(m_scene->mAnimations[m_currentAnimIndex]->mTicksPerSecond);

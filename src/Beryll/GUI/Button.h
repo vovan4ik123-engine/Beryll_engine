@@ -1,7 +1,6 @@
 #pragma once
 
 #include "GUIObject.h"
-#include "Beryll/Core/SoundsManager.h"
 
 namespace Beryll
 {
@@ -15,7 +14,6 @@ namespace Beryll
         void updateBeforePhysics() override;
         void updateAfterPhysics() override;
         void draw() override;
-        void playSound() override;
 
         bool getIsPressed() { return m_pressed; }
 
@@ -23,7 +21,6 @@ namespace Beryll
         void setColor(float r, float g, float b, float a) { m_color = ImVec4{ r, g, b, a }; }
         void setClickedColor(float r, float g, float b, float a)  { m_clickedColor = ImVec4{ r, g, b, a }; }
         void setFontColor(float r, float g, float b, float a) { m_fontColor = ImVec4{ r, g, b, a }; }
-        void setSoundWAV(const char* path) { SoundsManager::loadWAV(path);  m_soundID = path;  }
 
     private:
         friend class AndroidGLESImGUI;

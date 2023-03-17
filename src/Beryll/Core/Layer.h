@@ -22,7 +22,6 @@ namespace Beryll
         virtual void updateBeforePhysics() = 0; // handle users input, move objects here
         virtual void updateAfterPhysics() = 0; // update positions after simulation, resolve collisions, Physics::getTransforms() here
         virtual void draw() = 0; // draw game objects
-        virtual void playSound() = 0; // play sounds
 
         const LayerID getLayerID() const { return m_ID; };
 

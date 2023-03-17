@@ -14,7 +14,6 @@ namespace Beryll
         void updateBeforePhysics() override;
         void updateAfterPhysics() override;
         void draw() override;
-        void playSound() override;
 
         float getValue() { return m_sliderValue; }
         float getMin() { return m_min; }

@@ -1,6 +1,5 @@
 ---------------------plan:---------------------
 
-delete play sound method
 start animation with choice: play one time or repeat
 add check if animation finished
 

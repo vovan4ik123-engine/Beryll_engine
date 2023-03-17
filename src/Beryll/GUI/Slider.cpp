@@ -88,9 +88,4 @@ namespace Beryll
 
         ImGui::PopStyleColor(7);
     }
-
-    void Slider::playSound()
-    {
-
-    }
 }

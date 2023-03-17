@@ -416,11 +416,6 @@ namespace Beryll
         m_vertexArray->draw();
      }
 
-    void AnimatedCollidingObject::playSound()
-    {
-
-    }
-
     void AnimatedCollidingObject::calculateTransforms()
     {
         float tickPerSecond = static_cast<float>(m_scene->mAnimations[m_currentAnimIndex]->mTicksPerSecond);

@@ -51,7 +51,6 @@ namespace Beryll
             if(ImGui::Checkbox(m_text.c_str(), &m_checked) && m_checked) // true only if marked. false if unmarked
             {
                 m_valueChanging = true;
-                m_needPlaySound = true;
             }
             ImGui::PopFont();
         }
@@ -60,7 +59,6 @@ namespace Beryll
             if(ImGui::Checkbox(m_text.c_str(), &m_checked) && m_checked) // true only if marked. false if unmarked
             {
                 m_valueChanging = true;
-                m_needPlaySound = true;
             }
         }
 
@@ -68,14 +66,4 @@ namespace Beryll
 
         ImGui::PopStyleColor(5);
     }
-
-    void CheckBox::playSound()
-    {
-        if(!m_soundID.empty() && m_needPlaySound)
-        {
-            m_needPlaySound = false;
-            SoundsManager::playWAV(m_soundID);
-        }
-    }
 }
-

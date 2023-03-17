@@ -312,11 +312,6 @@ namespace Beryll
         m_vertexArray->draw();
     }
 
-    void SimpleCollidingObject::playSound()
-    {
-
-    }
-
     void SimpleCollidingObject::processCollisionMesh(const aiScene* scene,
                                                      const aiMesh* mesh,
                                                      const std::string& meshName,

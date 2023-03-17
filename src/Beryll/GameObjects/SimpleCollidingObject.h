@@ -36,7 +36,6 @@ namespace Beryll
         void updateBeforePhysics() override;
         void updateAfterPhysics() override;
         void draw() override;
-        void playSound() override;
 
     protected:
         std::shared_ptr<VertexBuffer> m_vertexPosBuffer;

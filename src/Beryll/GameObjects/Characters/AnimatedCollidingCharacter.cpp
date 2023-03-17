@@ -132,12 +132,6 @@ namespace Beryll
         AnimatedCollidingObject::draw();
     }
 
-    void AnimatedCollidingCharacter::playSound()
-    {
-        // call base class method
-        AnimatedCollidingObject::playSound();
-    }
-
     void AnimatedCollidingCharacter::move(glm::vec3 direction)
     {
         glm::vec3 directionXZ = glm::normalize(glm::vec3{direction.x, 0.0f, direction.z});

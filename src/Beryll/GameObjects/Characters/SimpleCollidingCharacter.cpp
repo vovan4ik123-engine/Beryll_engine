@@ -132,12 +132,6 @@ namespace Beryll
         SimpleCollidingObject::draw();
     }
 
-    void SimpleCollidingCharacter::playSound()
-    {
-        // call base class method
-        SimpleCollidingObject::playSound();
-    }
-
     void SimpleCollidingCharacter::move(glm::vec3 direction)
     {
         glm::vec3 directionXZ = glm::normalize(glm::vec3{direction.x, 0.0f, direction.z});

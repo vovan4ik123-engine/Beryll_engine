@@ -52,14 +52,6 @@ namespace Beryll
             }
         }
 
-        void playSound()
-        {
-            for(const std::shared_ptr<Layer>& layer : layerStack)
-            {
-                layer->playSound();
-            }
-        }
-
         LayerStack layerStack;
         GameStateID ID = GameStateID::UNKNOWN;
     };

@@ -66,7 +66,6 @@ namespace Beryll
                     {
                         f.handled = true;
                         m_pressed = true;
-                        m_needPlaySound = true;
                     }
                 }
             }
@@ -114,14 +113,5 @@ namespace Beryll
         ImGui::End();
 
         ImGui::PopStyleColor(4);
-    }
-
-    void Button::playSound()
-    {
-        if( !m_soundID.empty() && m_needPlaySound)
-        {
-            m_needPlaySound = false;
-            SoundsManager::playWAV(m_soundID);
-        }
     }
 }

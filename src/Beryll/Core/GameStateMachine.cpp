@@ -36,14 +36,6 @@ namespace Beryll
         }
     }
 
-    void GameStateMachine::playSound()
-    {
-        if(!m_gameStates.empty())
-        {
-            m_gameStates.back()->playSound();
-        }
-    }
-
     void GameStateMachine::pushState(std::shared_ptr<GameState> state)
     {
         auto it = std::find_if(m_gameStates.begin(), m_gameStates.end(),

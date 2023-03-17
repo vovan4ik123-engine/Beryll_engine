@@ -55,9 +55,4 @@ namespace Beryll
 
         ImGui::PopStyleColor(2);
     }
-
-    void Text::playSound()
-    {
-
-    }
 }

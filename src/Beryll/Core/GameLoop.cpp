@@ -78,7 +78,7 @@ namespace Beryll
             // Dont set any camera attributes after this call (set in updateAfterPhysics())
             Camera::update3DCamera();
 
-        // Draw start    DONT CALL ANY DRAW COMMANDS before this point !!!!!!!!
+        // Draw start DONT CALL ANY DRAW COMMANDS before this point !!!!!!!!
             // First finish draw previous frame
             //Window::getInstance()->finishDraw(); // very slow
             //Window::getInstance()->flushDraw(); // potentially can be called but not necessary
@@ -92,10 +92,6 @@ namespace Beryll
 
             MainImGUI::getInstance()->endFrame();
         // Draw finish
-
-        // PlaySound start
-            GameStateMachine::playSound();
-        // PlaySound finish
 
             // sleep if we finished work faster than m_loopTime
             m_frameTime = TimeStep::getMillisecFromStart() - m_frameStart;

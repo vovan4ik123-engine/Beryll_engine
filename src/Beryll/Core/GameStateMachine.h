@@ -15,7 +15,6 @@ namespace Beryll
         static void updateBeforePhysics();
         static void updateAfterPhysics();
         static void draw();
-        static void playSound();
 
         static void pushState(std::shared_ptr<GameState> state);
         static void changeState(std::shared_ptr<GameState> state);

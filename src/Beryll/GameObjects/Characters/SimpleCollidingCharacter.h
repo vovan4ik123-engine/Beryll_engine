@@ -32,7 +32,6 @@ namespace Beryll
         void updateBeforePhysics() override;
         void updateAfterPhysics() override;
         void draw() override;
-        void playSound() override;
 
         // character controller
         void move(glm::vec3 direction);

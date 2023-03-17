@@ -27,9 +27,4 @@ namespace Beryll
         bool showDemo = true;
         ImGui::ShowDemoWindow(&showDemo);
     }
-
-    void DemoImGUI::playSound()
-    {
-
-    }
 }

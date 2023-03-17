@@ -244,9 +244,4 @@ namespace Beryll
         m_vertexArray->bind();
         m_vertexArray->draw();
     }
-
-    void SimpleObject::playSound()
-    {
-
-    }
 }

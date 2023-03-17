@@ -19,7 +19,6 @@ namespace Beryll
         virtual void updateBeforePhysics() = 0; // handle users input, move objects here
         virtual void updateAfterPhysics() = 0; // update positions after simulation, resolve collisions, Physics::getTransforms() here
         virtual void draw() = 0; // subclass graphics
-        virtual void playSound() = 0; // subclass sounds
 
         int getID() { return m_ID; }
 
