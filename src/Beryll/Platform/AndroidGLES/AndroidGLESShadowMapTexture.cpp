@@ -94,7 +94,7 @@ namespace Beryll
 
         for(const std::shared_ptr<Beryll::BaseSimpleObject>& so: simpleObj)
         {
-            if(so->getIsEnabledOnScene())
+            if(so->getIsEnabledDraw())
             {
                 m_shaderSimple->setMatrix4x4Float("MVPMatrix", VPMatrix * so->getModelMatrix());
                 so->useInternalShader = false;
@@ -109,7 +109,7 @@ namespace Beryll
         m_shaderAnimated->bind();
         for(const std::shared_ptr<Beryll::BaseAnimatedObject>& ao: animatedObj)
         {
-            if(ao->getIsEnabledOnScene())
+            if(ao->getIsEnabledDraw())
             {
                 m_shaderAnimated->setMatrix4x4Float("MVPMatrix", VPMatrix * ao->getModelMatrix());
 

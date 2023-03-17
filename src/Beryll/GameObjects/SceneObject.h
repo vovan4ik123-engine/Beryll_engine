@@ -176,16 +176,22 @@ namespace Beryll
         }
 
         const glm::vec3& getOrigin() { return m_origin; }
-        bool getIsEnabledOnScene() { return m_isEnabledOnScene; } // use it for disable object from update/draw/sound loops
+        bool getIsEnabledDraw() { return m_isEnabledDraw; } // use it for disable object from draw
+        bool getIsEnabledUpdate() { return m_isEnabledUpdate; } // use it for disable object from updates
         bool getHasCollisionMesh() { return m_hasCollisionObject; }
         bool getIsEnabledCollisionMesh() { return m_isEnabledInPhysicsSimulation; }
         CollisionGroups getCollisionGroup() { return m_collisionGroup; }
         CollisionFlags getCollisionFlag() { return m_collisionFlag; }
         SceneObjectGroups getSceneObjectGroup() { return m_sceneObjectGroup; }
 
-        void enableOnScene()
+        void enableDraw()
         {
-            m_isEnabledOnScene = true;
+            m_isEnabledDraw = true;
+        }
+
+        void enableUpdate()
+        {
+            m_isEnabledUpdate = true;
         }
 
         void enableCollisionMesh(bool resetVelocities = false)
@@ -197,9 +203,14 @@ namespace Beryll
             }
         }
 
-        void disableOnScene()
+        void disableDraw()
         {
-            m_isEnabledOnScene = false;
+            m_isEnabledDraw = false;
+        }
+
+        void disableUpdate()
+        {
+            m_isEnabledUpdate = false;
         }
 
         void disableCollisionMesh()
@@ -234,7 +245,8 @@ namespace Beryll
 
         glm::vec3 m_origin{0.0f};
 
-        bool m_isEnabledOnScene = true; // disable object for performance
+        bool m_isEnabledDraw = true; // for method draw()
+        bool m_isEnabledUpdate = true; // for methods updateBeforePhysics() + updateAfterPhysics()
 
         bool m_hasCollisionObject = false; // set true for all collision objects
         CollisionGroups m_collisionGroup = CollisionGroups::NONE; // set inside colliding objects
