@@ -69,9 +69,6 @@ namespace Beryll
 
         float m_previousYPos = 0.0f;
 
-        glm::vec3 m_eyeDirectionXZ{1.0f, 0.0f, 0.0f};
-        glm::vec3 m_backDirectionXZ{-1.0f, 0.0f, 0.0f};
-
         glm::vec3 m_jumpDirection{0.0f, 1.0f, 0.0f};
         bool m_jumped = false;
         bool m_falling = false;

@@ -19,6 +19,11 @@ namespace Utils
             return m_id;
         }
 
+        static int getLastGeneratedID()
+        {
+            return m_id;
+        }
+
         static const aiNode* findAinodeForAimesh(const aiScene* scene, const aiNode* rootNode, const aiString& name)
         {
             for(int i = 0; i < rootNode->mNumMeshes; ++i)

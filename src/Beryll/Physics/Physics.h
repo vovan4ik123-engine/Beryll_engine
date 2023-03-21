@@ -131,6 +131,7 @@ namespace Beryll
             m_simulationEnabled = true;
         }
 
+        // Simulation time in milli sec
         static float getSimulationTime()
         {
             return m_simulationTime;

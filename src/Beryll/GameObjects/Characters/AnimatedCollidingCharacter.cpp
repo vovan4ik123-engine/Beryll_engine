@@ -135,13 +135,11 @@ namespace Beryll
     void AnimatedCollidingCharacter::move(glm::vec3 direction)
     {
         glm::vec3 directionXZ = glm::normalize(glm::vec3{direction.x, 0.0f, direction.z});
-        glm::quat rotationCharacterToDirection = glm::rotation(m_eyeDirectionXZ, directionXZ);
+        glm::vec3 faceDirectionXZ = getFaceDirXZ();
+        glm::quat rotationCharacterToDirection = glm::rotation(faceDirectionXZ, directionXZ);
         addToRotation(rotationCharacterToDirection);
-        // after rotation
-        m_eyeDirectionXZ = directionXZ;
-        m_backDirectionXZ = -directionXZ;
 
-        glm::vec3 moveVector = (m_eyeDirectionXZ * moveSpeed) * TimeStep::getTimeStepSec();
+        glm::vec3 moveVector = (faceDirectionXZ * moveSpeed) * TimeStep::getTimeStepSec();
 
         //BR_INFO("origin X: %f Y: %f Z: %f", m_origin.x, m_origin.y, m_origin.z);
         float moveVectorLength = glm::length(moveVector);
@@ -286,7 +284,7 @@ namespace Beryll
         {
             if(m_characterMoving)
             {
-                m_jumpDirection = m_eyeDirectionXZ;
+                m_jumpDirection = getFaceDirXZ();
                 m_jumpDirection.y = glm::tan(startJumpAngleRadians);
             }
             else

@@ -1,5 +1,6 @@
 ---------------------plan:---------------------
 
+fix character hit static or dynamic object = add STATIC/DYNAMIC, weight to Ray...Hit
 start animation with choice: play one time or repeat
 add check if animation finished
 

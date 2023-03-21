@@ -183,6 +183,19 @@ namespace Beryll
         CollisionGroups getCollisionGroup() { return m_collisionGroup; }
         CollisionFlags getCollisionFlag() { return m_collisionFlag; }
         SceneObjectGroups getSceneObjectGroup() { return m_sceneObjectGroup; }
+        glm::vec3 getFaceDirXYZ()
+        {
+            return glm::normalize(glm::vec3(m_rotateMatrix * glm::vec4(m_gameObjectFaceDir, 1.0f)));
+        }
+        glm::vec3 getFaceDirXZ()
+        {
+            glm::vec3 dirXYZ = getFaceDirXYZ();
+            return glm::normalize(glm::vec3{dirXYZ.x, 0.0f, dirXYZ.z});
+        }
+        glm::vec3 getUpDirXYZ()
+        {
+            return glm::normalize(glm::vec3(m_rotateMatrix * glm::vec4(m_gameObjectUpDir, 1.0f)));
+        }
 
         void enableDraw()
         {
@@ -238,11 +251,6 @@ namespace Beryll
         glm::mat4 m_translateMatrix{1.0f};
         PhysicsTransforms m_physicsTransforms;
 
-        bool m_gravityEnabled = true;
-        glm::vec3 m_gravity{0.0f};
-        glm::vec3 m_linearFactor = glm::vec3(1.0f, 1.0f, 1.0f);
-        glm::vec3 m_angularFactor = glm::vec3(1.0f, 1.0f, 1.0f);
-
         glm::vec3 m_origin{0.0f};
 
         bool m_isEnabledDraw = true; // for method draw()
@@ -255,5 +263,20 @@ namespace Beryll
         bool m_isEnabledInPhysicsSimulation = false; // set inside colliding objects
 
         SceneObjectGroups m_sceneObjectGroup = SceneObjectGroups::NONE; // any scene object can belong to specific group
+
+    private:
+        // only for internal checks inside this file
+        bool m_gravityEnabled = true;
+        glm::vec3 m_gravity{0.0f, -9999.0f, 0.0f};
+        glm::vec3 m_linearFactor{1.0f, 1.0f, 1.0f};
+        glm::vec3 m_angularFactor{1.0f, 1.0f, 1.0f};
+
+        // If objects on scene has face it should be created in Blender with face directed along +X axis.
+        // Engine assume you create 3D models in tool where up axis is +Z (like Blender)
+        // and during exporting model you change axis to: up +Y, forward -Z.
+        // That will add rotation to exported model: 90 degrees around -X axis or 270 degrees around +X axis
+        // If you want take models faceDir or upDir just multiply these vectors by m_rotateMatrix
+        const glm::vec3 m_gameObjectFaceDir{1.0f, 0.0f, 0.0f};
+        const glm::vec3 m_gameObjectUpDir{0.0f, 0.0f, 1.0f};
     };
 }
