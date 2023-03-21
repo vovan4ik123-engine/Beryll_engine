@@ -184,7 +184,7 @@ namespace Beryll
         btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState.get(), shape.get(), localInertia);
         std::shared_ptr<btRigidBody> body = std::make_shared<btRigidBody>(rbInfo, objectID);
 
-        std::shared_ptr<RigidBodyData> rigidBodyData = std::make_shared<RigidBodyData>(objectID, body, true, collGroup, collMask);
+        std::shared_ptr<RigidBodyData> rigidBodyData = std::make_shared<RigidBodyData>(objectID, body, true, collGroup, collMask, collFlag, mass);
         body->setUserPointer(rigidBodyData.get()); // then we can fetch this rigidBodyData from CollisionObject ->getUserPointer()
 
         if(collFlag == CollisionFlags::KINEMATIC)
@@ -242,7 +242,7 @@ namespace Beryll
         btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState.get(), shape.get(), localInertia);
         std::shared_ptr<btRigidBody> body = std::make_shared<btRigidBody>(rbInfo, objectID);
 
-        std::shared_ptr<RigidBodyData> rigidBodyData = std::make_shared<RigidBodyData>(objectID, body, true, collGroup, collMask);
+        std::shared_ptr<RigidBodyData> rigidBodyData = std::make_shared<RigidBodyData>(objectID, body, true, collGroup, collMask, collFlag, mass);
         body->setUserPointer(rigidBodyData.get()); // then we can fetch this rigidBodyData from CollisionObject ->getUserPointer()
 
         if(collFlag == CollisionFlags::KINEMATIC)
@@ -315,7 +315,7 @@ namespace Beryll
         btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState.get(), boxShape.get(), localInertia);
         std::shared_ptr<btRigidBody> body = std::make_shared<btRigidBody>(rbInfo, objectID);
 
-        std::shared_ptr<RigidBodyData> rigidBodyData = std::make_shared<RigidBodyData>(objectID, body, true, collGroup, collMask);
+        std::shared_ptr<RigidBodyData> rigidBodyData = std::make_shared<RigidBodyData>(objectID, body, true, collGroup, collMask, collFlag, mass);
         body->setUserPointer(rigidBodyData.get()); // then we can fetch this rigidBodyData from CollisionObject ->getUserPointer()
 
         if(collFlag == CollisionFlags::KINEMATIC)
@@ -367,7 +367,7 @@ namespace Beryll
         btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState.get(), sphereShape.get(), localInertia);
         std::shared_ptr<btRigidBody> body = std::make_shared<btRigidBody>(rbInfo, objectID);
 
-        std::shared_ptr<RigidBodyData> rigidBodyData = std::make_shared<RigidBodyData>(objectID, body, true, collGroup, collMask);
+        std::shared_ptr<RigidBodyData> rigidBodyData = std::make_shared<RigidBodyData>(objectID, body, true, collGroup, collMask, collFlag, mass);
         body->setUserPointer(rigidBodyData.get()); // then we can fetch this rigidBodyData from CollisionObject ->getUserPointer()
 
         if(collFlag == CollisionFlags::KINEMATIC)
@@ -437,7 +437,7 @@ namespace Beryll
         btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState.get(), capsuleShape.get(), localInertia);
         std::shared_ptr<btRigidBody> body = std::make_shared<btRigidBody>(rbInfo, objectID);
 
-        std::shared_ptr<RigidBodyData> rigidBodyData = std::make_shared<RigidBodyData>(objectID, body, true, collGroup, collMask);
+        std::shared_ptr<RigidBodyData> rigidBodyData = std::make_shared<RigidBodyData>(objectID, body, true, collGroup, collMask, collFlag, mass);
         body->setUserPointer(rigidBodyData.get()); // then we can fetch this rigidBodyData from CollisionObject ->getUserPointer()
 
         if(collFlag == CollisionFlags::KINEMATIC)
@@ -944,6 +944,8 @@ namespace Beryll
         {
             return RayClosestHit{true,
                                  static_cast<RigidBodyData*>(closestResults.m_collisionObject->getUserPointer())->bodyID,
+                                 static_cast<RigidBodyData*>(closestResults.m_collisionObject->getUserPointer())->collFlag,
+                                 static_cast<RigidBodyData*>(closestResults.m_collisionObject->getUserPointer())->mass,
                                  glm::vec3(closestResults.m_hitPointWorld.x(), closestResults.m_hitPointWorld.y(), closestResults.m_hitPointWorld.z()),
                                  glm::vec3(closestResults.m_hitNormalWorld.x(), closestResults.m_hitNormalWorld.y(), closestResults.m_hitNormalWorld.z()),
                                  closestResults.m_closestHitFraction
@@ -981,6 +983,8 @@ namespace Beryll
                 res.hitNormals.emplace_back(allResults.m_hitNormalWorld[i].x(), allResults.m_hitNormalWorld[i].y(), allResults.m_hitNormalWorld[i].z());
                 res.hitFractions.emplace_back(allResults.m_hitFractions[i]);
                 res.objectsID.emplace_back(static_cast<RigidBodyData*>(allResults.m_collisionObjects[i]->getUserPointer())->bodyID);
+                res.objectsCollFlags.emplace_back(static_cast<RigidBodyData*>(allResults.m_collisionObjects[i]->getUserPointer())->collFlag);
+                res.objectsMass.emplace_back(static_cast<RigidBodyData*>(allResults.m_collisionObjects[i]->getUserPointer())->mass);
             }
 
             return res;

@@ -148,17 +148,18 @@ namespace Beryll
         glm::vec3 characterHeadUp = m_origin;
         characterHeadUp.y += m_fromOriginToTop;
         glm::vec3 characterHeadUpNextPos = characterHeadUp + scaledMoveDirectionByRadius;
-        RayClosestHit headWallHit = Physics::castRayClosestHit(characterHeadUp,
+        RayClosestHit headSomethingHit = Physics::castRayClosestHit(characterHeadUp,
                                                                characterHeadUpNextPos,
                                                                m_collisionGroup,
                                                                m_collisionMask);
-        if(headWallHit.hit)
+        if(headSomethingHit.hit)
         {
             glm::vec3 headBackwardMoveVector = glm::normalize(characterHeadUp - characterHeadUpNextPos);
-            if(Utils::Common::getAngleInRadians(headBackwardMoveVector, headWallHit.hitNormal) < 0.698f) // < than 40 degrees
+            if(Utils::Common::getAngleInRadians(headBackwardMoveVector, headSomethingHit.hitNormal) < 0.698f &&  // < than 40 degrees
+               headSomethingHit.collFlag != CollisionFlags::DYNAMIC)
             {
-                // characters head moving directly into wall = can not move
-                BR_INFO("%s", "headWallHit return");
+                // characters head moving directly into static wall = can not move
+                BR_INFO("%s", "headSomethingHit not DYNAMIC object. return");
                 return;
             }
         }
@@ -169,20 +170,21 @@ namespace Beryll
 
             glm::vec3 characterLegs = m_origin;
             BR_ASSERT((m_fromOriginToBottom >= m_XZRadius), "%s", "character origin should be inside cylinder of capsule. Not in bottom semi sphere.");
-            characterLegs.y -= (m_fromOriginToBottom - m_XZRadius * 0.97f); // characterLegs.y - distance from origin to capsules cylinder bottom
+            characterLegs.y -= (m_fromOriginToBottom - m_XZRadius * 0.98f); // characterLegs.y - distance from origin to capsules cylinder bottom
             glm::vec3 characterLegsNextPos = characterLegs + scaledMoveDirectionByRadius;
-            RayClosestHit legsWallHit = Physics::castRayClosestHit(characterLegs,
+            RayClosestHit legsSomethingHit = Physics::castRayClosestHit(characterLegs,
                                                                    characterLegsNextPos,
                                                                    m_collisionGroup,
                                                                    m_collisionMask);
-            if(legsWallHit.hit)
+            if(legsSomethingHit.hit)
             {
-                BR_INFO("%s", "legsWallHit");
+                BR_INFO("%s", "legsSomethingHit");
                 glm::vec3 legsBackwardMoveVector = glm::normalize(characterLegs - characterLegsNextPos);
-                if(Utils::Common::getAngleInRadians(legsBackwardMoveVector, legsWallHit.hitNormal) < 0.698f) // < than 40 degrees
+                if(Utils::Common::getAngleInRadians(legsBackwardMoveVector, legsSomethingHit.hitNormal) < 0.698f && // < than 40 degrees
+                   legsSomethingHit.collFlag != CollisionFlags::DYNAMIC)
                 {
-                    BR_INFO("%s", "legsWallHit < than 40 degrees");
-                    // legs hit wall in front
+                    BR_INFO("%s", "legsSomethingHit < than 40 degrees");
+                    // legs hit something static in front
                     // search for stair step
                     glm::vec3 stepCheckUp = glm::vec3(characterLegsNextPos.x, m_origin.y + m_fromOriginToTop, characterLegsNextPos.z);
                     glm::vec3 stepCheckBottom = glm::vec3(characterLegsNextPos.x, m_origin.y - m_fromOriginToBottom, characterLegsNextPos.z);
@@ -202,22 +204,22 @@ namespace Beryll
                             float oppositeSideLength = glm::tan(surfaceSlopeRadians) * glm::length(scaledMoveDirectionByRadius);
                             oppositeSideLength *= 1.02f; // + 2%
                             if(oppositeSideLength == 0.0f) { oppositeSideLength += 0.02f; } // add 2 cm
-                            float nextYOfcharacter = m_bottomCollisionPoint.first.y + oppositeSideLength; // after move on this ground slope(if not stair step)
-                            if(potentialStepHit.hitPoint.y > nextYOfcharacter)
+                            float nextYOfCharacter = m_bottomCollisionPoint.first.y + oppositeSideLength; // after move on this ground slope(if not stair step)
+                            if(potentialStepHit.hitPoint.y > nextYOfCharacter)
                             {
                                 // assume stair step in front
-                                float diffcharacterYStepY = potentialStepHit.hitPoint.y - m_bottomCollisionPoint.first.y;
-                                if(diffcharacterYStepY <= maxStepHeight)
+                                float diffCharacterYStepY = potentialStepHit.hitPoint.y - m_bottomCollisionPoint.first.y;
+                                if(diffCharacterYStepY <= maxStepHeight)
                                 {
                                     // character can move to this stair step
-                                    BR_INFO("%s h: %f", "character moved to stair step", diffcharacterYStepY);
+                                    BR_INFO("%s h: %f", "character moved to stair step", diffCharacterYStepY);
                                     allowedStairStepFound = true;
-                                    moveVector.y = diffcharacterYStepY;
+                                    moveVector.y = diffCharacterYStepY;
                                 }
                                 else
                                 {
-                                    // legs hit wall in front but stair step in front is too height
-                                    BR_INFO("%s h: %f", "legs hit wall in front but stair step in front is too height", diffcharacterYStepY);
+                                    // legs hit static wall in front but stair step in front is too height
+                                    BR_INFO("%s h: %f", "legs hit static wall in front but stair step in front is too height", diffCharacterYStepY);
                                     return;
                                 }
                             }
@@ -225,8 +227,8 @@ namespace Beryll
                     }
                     else
                     {
-                        // legs hit wall in front but no stair step in front
-                        BR_INFO("%s", "legs hit wall in front but no stair step in front");
+                        // legs hit static wall in front but no stair step in front
+                        BR_INFO("%s", "legs hit static wall in front but no stair step in front");
                         return;
                     }
                 }

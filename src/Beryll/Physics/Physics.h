@@ -65,15 +65,24 @@ namespace Beryll
 
     struct RigidBodyData
     {
-        RigidBodyData(int id, const std::shared_ptr<btRigidBody>& b, const bool exist, CollisionGroups collGr, CollisionGroups collMs)
-        : bodyID(id), rb(b), existInDynamicWorld(exist), collGroup(collGr), collMask(collMs)  {}
+        RigidBodyData(int id,
+                      const std::shared_ptr<btRigidBody>& b,
+                      const bool exist,
+                      CollisionGroups collGr,
+                      CollisionGroups collMs,
+                      CollisionFlags collFl,
+                      float ms)
+        : bodyID(id), rb(b), existInDynamicWorld(exist), collGroup(collGr), collMask(collMs), collFlag(collFl), mass(ms)  {}
 
         const int bodyID;
         const std::shared_ptr<btRigidBody> rb;
         bool existInDynamicWorld = false;
 
-        CollisionGroups collGroup;
-        CollisionGroups collMask;
+        CollisionGroups collGroup = CollisionGroups::NONE;
+        CollisionGroups collMask = CollisionGroups::NONE;
+
+        CollisionFlags collFlag = CollisionFlags::NONE;
+        float mass = -1.0f;
     };
 
     struct PhysicsTransforms
@@ -84,11 +93,13 @@ namespace Beryll
 
     struct RayClosestHit
     {
-        bool hit = false;
-        const int objectID; // if something was hitted
-        glm::vec3 hitPoint = glm::vec3(0.0f);
-        glm::vec3 hitNormal = glm::vec3(0.0f);
-        float hitFraction = 0.0f; // hit distance in range 0...1 between start and end points
+        const bool hit = false;
+        const int objectID = -1; // if something was hitted
+        const CollisionFlags collFlag = CollisionFlags::NONE;
+        const float mass = -1.0f;
+        const glm::vec3 hitPoint{0.0f};
+        const glm::vec3 hitNormal{0.0f};
+        const float hitFraction = 0.0f; // hit distance in range 0...1 between start and end points
 
         operator bool() const { return hit; }
     };
@@ -96,6 +107,8 @@ namespace Beryll
     {
         bool hit = false;
         std::vector<int> objectsID; // all hitted
+        std::vector<CollisionFlags> objectsCollFlags;
+        std::vector<float> objectsMass;
         std::vector<glm::vec3> hitPoints;
         std::vector<glm::vec3> hitNormals;
         std::vector<float> hitFractions; // hit distances in range 0...1 between start and end points
