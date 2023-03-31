@@ -20,11 +20,6 @@ namespace Beryll
             return static_cast<float>(getMillisecFromStart()) * 0.001f; // same as / 1000.0f;
         }
 
-        static void sleep(uint32_t millisec)
-        {
-            SDL_Delay(millisec);
-        }
-
         static uint32_t getTimeStepMilliSec()
         {
             return m_timeStepMIlliSec;

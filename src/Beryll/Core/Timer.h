@@ -16,12 +16,17 @@ namespace Beryll
             m_start = std::chrono::system_clock::now();
         }
 
-        float elapsedMilliSec()
+        float getElapsedMicroSec()
+        {
+            return std::chrono::duration<float, std::micro>(std::chrono::system_clock::now() - m_start).count();
+        }
+
+        float getElapsedMilliSec()
         {
             return std::chrono::duration<float, std::milli>(std::chrono::system_clock::now() - m_start).count();
         }
 
-        float elapsedSec()
+        float getElapsedSec()
         {
             return std::chrono::duration<float>(std::chrono::system_clock::now() - m_start).count();
         }

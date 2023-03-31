@@ -2,6 +2,7 @@
 
 #include "LibsHeaders.h"
 #include "CppHeaders.h"
+#include "Beryll/Core/Timer.h"
 
 namespace Beryll
 {
@@ -12,18 +13,21 @@ namespace Beryll
         ~GameLoop() = delete;
 
         // allowed FPS [5 ... 250]
-        static void setMaxFPS(uint32_t fps)
+        static void setMaxFPS(float fps)
         {
-            if(fps >= 5 && fps <= 250)
+            if(fps >= 5.0f && fps <= 250.0f)
             {
                 m_maxFPS = fps;
-                m_loopTime = 1000 / m_maxFPS;
+                m_loopTime = 1000000.0f / m_maxFPS; // in microSec
             }
         }
 
-        static uint32_t getFPS();
-        static uint32_t getMaxFPS() { return m_maxFPS; }
-        static uint32_t getFrameTime() { return m_frameTime; }
+        static float getFPS();
+        static float getMaxFPS() { return m_maxFPS; }
+
+        static float getFrameTime() { return m_frameTime * 0.001; } // in milliSec
+        static float getCPUTime() { return m_CPUTime * 0.001; } // in milliSec
+        static float getGPUTime() { return m_GPUTime * 0.001; } // draw calls + GPU synchronization // in milliSec
         static void stopLoop() { m_isRun = false; }
 
     private:
@@ -34,10 +38,15 @@ namespace Beryll
 
         static bool m_isRun;
 
-        static uint32_t m_loopTime; // in millisec
-        static uint32_t m_frameStart;
-        static uint32_t m_frameTime;
+        static float m_loopTime; // in microSec
+        static float m_frameStart;
+        static float m_frameTime;
+        static float m_CPUTimeStart;
+        static float m_CPUTime;
+        static float m_GPUTimeStart;
+        static float m_GPUTime;
+        static Timer m_timer;
 
-        static uint32_t m_maxFPS;
+        static float m_maxFPS;
     };
 }

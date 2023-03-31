@@ -63,7 +63,7 @@ namespace Beryll
 
         // dont simulate if disabled or no objects
         // or time after m_timer.reset() is very short (for example we return from state (pause, ...) where simulation was disabled)
-        if(!m_simulationEnabled || m_timer.elapsedSec() < 0.003f || m_dynamicsWorldMT->getNumCollisionObjects() == 0)
+        if(!m_simulationEnabled || m_timer.getElapsedSec() < 0.003f || m_dynamicsWorldMT->getNumCollisionObjects() == 0)
         {
             return;
         }
@@ -76,15 +76,15 @@ namespace Beryll
         // maxSubSteps: timeStep < maxSubSteps * fixedTimeStep
         // fixedTimeStep: simulation resolution increases as this value decreases.
         //                If your balls penetrates your walls instead of colliding with them decrease it
-        m_timeStep = std::min(m_timer.elapsedSec(), 0.07f); // protection from lag (FPS dropped down and is < 14 FPS)
+        m_timeStep = std::min(m_timer.getElapsedSec(), 0.07f); // protection from lag (FPS dropped down and is < 14 FPS)
         m_timer.reset();
         m_dynamicsWorldMT->stepSimulation(m_timeStep,
                                      m_resolutionFactor + 1,
                                      m_timeStep / static_cast<float>(m_resolutionFactor));
 
-        m_simulationTime = m_timer.elapsedMilliSec();
+        m_simulationTime = m_timer.getElapsedMilliSec();
         //BR_INFO("Simulation objects count: %d", m_dynamicsWorldMT->getNumCollisionObjects());
-        //BR_INFO("Simulation time millisec: %d", timer.elapsedMilliSec());
+        //BR_INFO("Simulation time millisec: %d", timer.getElapsedMilliSec());
     }
 
     void Physics::addObject(const std::vector<glm::vec3>& vertices,
