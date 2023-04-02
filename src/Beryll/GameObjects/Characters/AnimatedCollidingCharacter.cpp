@@ -26,7 +26,7 @@ namespace Beryll
         m_XZRadius = (std::abs(m_biggestX) + std::abs(m_smallestX)) * 0.5f;
         BR_ASSERT((m_fromOriginToBottom > 0.0f && m_fromOriginToTop > 0.0f && m_XZRadius > 0.0f && m_characterHeight > 0.0f), "%s", "characters XYZ dimensions are 0.");
 
-        BR_INFO("m_fromOriginToTop: %f, m_fromOriginToBottom: %f, m_characterHeight: %f", m_fromOriginToTop, m_fromOriginToBottom, m_characterHeight);
+        BR_INFO("m_fromOriginToTop: %f, m_fromOriginToBottom: %f, m_XZRadius: %f, m_characterHeight: %f", m_fromOriginToTop, m_fromOriginToBottom, m_XZRadius, m_characterHeight);
 
         m_characterMass = collisionMass;
         m_previousYPos = m_origin.y;
@@ -169,7 +169,6 @@ namespace Beryll
             bool allowedStairStepFound = false;
 
             glm::vec3 characterLegs = m_origin;
-            BR_ASSERT((m_fromOriginToBottom >= m_XZRadius), "%s", "character origin should be inside cylinder of capsule. Not in bottom semi sphere.");
             characterLegs.y -= (m_fromOriginToBottom - m_XZRadius * 0.98f); // characterLegs.y - distance from origin to capsules cylinder bottom
             glm::vec3 characterLegsNextPos = characterLegs + scaledMoveDirectionByRadius;
             RayClosestHit legsSomethingHit = Physics::castRayClosestHit(characterLegs,
