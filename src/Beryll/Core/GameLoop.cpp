@@ -69,7 +69,6 @@ namespace Beryll
             EventHandler::loadEvents();
 
         // Update layers start
-            Window::getInstance()->checkOrientationChange();
             // first react to user input, set positions of objects, move objects: player->move()
             // then update objects (let themselves prepare to simulation): GameObject->updateBeforePhysics();
             GameStateMachine::updateBeforePhysics();
@@ -90,17 +89,18 @@ namespace Beryll
 
         // Draw start DONT CALL ANY DRAW COMMANDS before this point !!!!!!!!
             // First finish draw previous frame
+            MainImGUI::getInstance()->endFrame();
             //Window::getInstance()->finishDraw(); // very slow
             //Window::getInstance()->flushDraw(); // potentially can be called but not necessary
             Window::getInstance()->swapWindow();
+
+            Window::getInstance()->checkOrientationChange();
 
             // Next start draw new frame
             Window::getInstance()->clear();
             MainImGUI::getInstance()->beginFrame();
 
             GameStateMachine::draw();
-
-            MainImGUI::getInstance()->endFrame();
         // Draw finish
 
             m_GPUTime = m_timer.getElapsedMicroSec() - m_GPUTimeStart;
