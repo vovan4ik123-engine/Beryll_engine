@@ -32,4 +32,6 @@ namespace GLESStateVariables
     // Also for some phones 4k is max supported texture resolution
 
     // framebuffer
+
+    extern bool faceCullingEnabled;
 }

@@ -14,4 +14,6 @@ namespace GLESStateVariables
 
     unsigned int currentTexture5 = 0;
     unsigned int currentTexture6 = 0;
+
+    bool faceCullingEnabled = false;
 }

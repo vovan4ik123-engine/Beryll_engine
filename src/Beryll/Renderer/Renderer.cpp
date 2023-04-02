@@ -4,12 +4,17 @@
 #include "Beryll/Renderer/Camera.h"
 
 #if defined(ANDROID)
+    #include <GLES3/gl32.h>
+    #include <GLES3/gl3ext.h>
+
     #include "Beryll/Platform/AndroidGLES/AndroidGLESBuffer.h"
     #include "Beryll/Platform/AndroidGLES/AndroidGLESVertexArray.h"
     #include "Beryll/Platform/AndroidGLES/AndroidGLESShader.h"
     #include "Beryll/Platform/AndroidGLES/AndroidGLESTexture.h"
     #include "Beryll/Platform/AndroidGLES/AndroidGLESShadowMapTexture.h"
     #include "Beryll/Platform/AndroidGLES/AndroidGLESSkyBox.h"
+
+    #include "Beryll/Platform/AndroidGLES/AndroidGLESGlobal.h"
 #elif defined(APPLE)
 
 #endif
@@ -204,5 +209,31 @@ namespace Beryll
             obj->useInternalShader = true;
             obj->draw();
         }
+    }
+
+    void Renderer::enableFaceCulling()
+    {
+#if defined(ANDROID)
+        if(!GLESStateVariables::faceCullingEnabled)
+        {
+            glEnable(GL_CULL_FACE);
+            GLESStateVariables::faceCullingEnabled = true;
+        }
+#elif defined(APPLE)
+
+#endif
+    }
+
+    void Renderer::disableFaceCulling()
+    {
+#if defined(ANDROID)
+        if(GLESStateVariables::faceCullingEnabled)
+        {
+            glDisable(GL_CULL_FACE);
+            GLESStateVariables::faceCullingEnabled = false;
+        }
+#elif defined(APPLE)
+
+#endif
     }
 }
