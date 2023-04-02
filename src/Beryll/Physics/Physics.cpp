@@ -668,7 +668,7 @@ namespace Beryll
         }
     }
 
-    void Physics::addToRotation(const int ID, const glm::quat& rot, bool resetVelocities)
+    void Physics::addToRotation(const int ID, const glm::quat& qua, bool resetVelocities)
     {
         auto iter = m_rigidBodiesMap.find(ID);
         if(iter != m_rigidBodiesMap.end())
@@ -683,7 +683,7 @@ namespace Beryll
 
             btQuaternion originalRotation = t.getRotation();
             // rotations will be combined from right to left(originalRotation first, then btQuaternion(.....)
-            t.setRotation(btQuaternion(rot.x, rot.y, rot.z, rot.w) * originalRotation);
+            t.setRotation(btQuaternion(qua.x, qua.y, qua.z, qua.w) * originalRotation);
 
             iter->second->rb->setWorldTransform(t);
             if(iter->second->rb->getMotionState())

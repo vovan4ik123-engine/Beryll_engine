@@ -179,7 +179,7 @@ namespace Beryll
 
         static void setOrigin(const int ID, const glm::vec3& orig, bool resetVelocities = false);
         static void addToOrigin(const int ID, const glm::vec3& dist, bool resetVelocities = false);
-        static void addToRotation(const int ID, const glm::quat& rot, bool resetVelocities = false);
+        static void addToRotation(const int ID, const glm::quat& qua, bool resetVelocities = false);
         static void setAngularFactor(const int ID, const glm::vec3& angFactor, bool resetVelocities = false); // affect objects rotation speed during collisions
         static void setLinearFactor(const int ID, const glm::vec3& linFactor, bool resetVelocities = false); // affect objects translation speed during collisions
         static void setAngularVelocity(const int ID, const glm::vec3& angVelocity, bool resetVelocities = false); // set rotation velocity

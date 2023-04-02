@@ -57,6 +57,7 @@ namespace Beryll
             if(distance.x == 0.0f && distance.y == 0.0f && distance.z == 0.0f) { return; }
 
             m_origin += distance;
+            m_translateMatrix = glm::translate(glm::mat4{1.0f}, m_origin);
 
             m_modelMatrix[3][0] = m_origin.x;
             m_modelMatrix[3][1] = m_origin.y;
@@ -73,8 +74,9 @@ namespace Beryll
         {
             if(angleRad < 0.0008f) { return; } // less that 0.05 degree
 
-            m_modelMatrix = glm::rotate(m_modelMatrix, angleRad, axis);
-            m_rotateMatrix = glm::toMat4(glm::quat(m_modelMatrix));
+            m_rotateMatrix = glm::rotate(glm::mat4{1.0f}, angleRad, axis) * m_rotateMatrix;
+            // translate and scale matrices should be same
+            m_modelMatrix = m_translateMatrix * m_rotateMatrix * m_scaleMatrix;
 
             if(m_hasCollisionObject)
             {
@@ -83,18 +85,18 @@ namespace Beryll
             }
         }
 
-        void addToRotation(const glm::quat& rot, bool resetVelocities = false)
+        void addToRotation(const glm::quat& qua, bool resetVelocities = false)
         {
-            if(rot.w == 1.0f) { return; } // no rotation. quaternion must be unit !!!
+            if(qua.w == 1.0f) { return; } // no rotation. quaternion must be unit !!!
 
-            m_rotateMatrix = glm::toMat4(rot * glm::quat(m_modelMatrix));
+            m_rotateMatrix = glm::toMat4(qua * glm::quat(m_rotateMatrix));
             // translate and scale matrices should be same
             m_modelMatrix = m_translateMatrix * m_rotateMatrix * m_scaleMatrix;
 
             if(m_hasCollisionObject)
             {
                 // game object with collision object will take transforms from physics module after simulation
-                Physics::addToRotation(m_ID, rot, resetVelocities);
+                Physics::addToRotation(m_ID, qua, resetVelocities);
             }
         }
 
