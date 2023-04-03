@@ -13,7 +13,7 @@
 
 namespace Beryll
 {
-    bool GameLoop::m_isRun = false;
+    bool GameLoop::m_isRun = true;
 
     float GameLoop::m_loopTime = 0.0f;
     float GameLoop::m_frameStart = 0.0f;
@@ -51,7 +51,6 @@ namespace Beryll
     {
         BR_INFO("%s", "GameLoop started");
 
-        m_isRun = true;
         m_loopTime = 1000000.0f / m_maxFPS; // microSec
         m_timer.reset();
         Physics::enableSimulation(); // also reset timer inside Physics

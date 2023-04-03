@@ -100,6 +100,7 @@ namespace Beryll
         const glm::vec3 hitPoint{0.0f};
         const glm::vec3 hitNormal{0.0f};
         const float hitFraction = 0.0f; // hit distance in range 0...1 between start and end points
+        const glm::vec3 hittedObjectOrigin{0.0f, 0.0f, 0.0f};
 
         operator bool() const { return hit; }
     };
@@ -112,6 +113,7 @@ namespace Beryll
         std::vector<glm::vec3> hitPoints;
         std::vector<glm::vec3> hitNormals;
         std::vector<float> hitFractions; // hit distances in range 0...1 between start and end points
+        std::vector<glm::vec3> hittedObjectsOrigins;
 
         operator bool() const { return hit; }
     };

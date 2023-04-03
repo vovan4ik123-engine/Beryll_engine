@@ -178,10 +178,11 @@ namespace Beryll
         }
 
         const glm::vec3& getOrigin() { return m_origin; }
-        bool getIsEnabledDraw() { return m_isEnabledDraw; } // use it for disable object from draw
-        bool getIsEnabledUpdate() { return m_isEnabledUpdate; } // use it for disable object from updates
+        bool getIsDisabledForEver() { return m_disabledForEver; } // use it for disable object from draw
+        bool getIsEnabledDraw() { return m_isEnabledDraw && !m_disabledForEver; } // use it for disable object from draw
+        bool getIsEnabledUpdate() { return m_isEnabledUpdate && !m_disabledForEver; } // use it for disable object from updates
         bool getHasCollisionMesh() { return m_hasCollisionObject; }
-        bool getIsEnabledCollisionMesh() { return m_isEnabledInPhysicsSimulation; }
+        bool getIsEnabledCollisionMesh() { return m_isEnabledInPhysicsSimulation && !m_disabledForEver; }
         CollisionGroups getCollisionGroup() { return m_collisionGroup; }
         CollisionFlags getCollisionFlag() { return m_collisionFlag; }
         SceneObjectGroups getSceneObjectGroup() { return m_sceneObjectGroup; }
@@ -201,17 +202,17 @@ namespace Beryll
 
         void enableDraw()
         {
-            m_isEnabledDraw = true;
+            m_isEnabledDraw = !m_disabledForEver;
         }
 
         void enableUpdate()
         {
-            m_isEnabledUpdate = true;
+            m_isEnabledUpdate = !m_disabledForEver;
         }
 
         void enableCollisionMesh(bool resetVelocities = false)
         {
-            if(m_hasCollisionObject && !m_isEnabledInPhysicsSimulation)
+            if(m_hasCollisionObject && !m_isEnabledInPhysicsSimulation && !m_disabledForEver)
             {
                 Beryll::Physics::restoreObject(m_ID, resetVelocities);
                 m_isEnabledInPhysicsSimulation = true;
@@ -237,6 +238,15 @@ namespace Beryll
             }
         }
 
+        void disableForEver()
+        {
+            m_disabledForEver = true;
+
+            disableDraw();
+            disableUpdate();
+            disableCollisionMesh();
+        }
+
         /*
          * inherited pure virtual methods are here
          */
@@ -255,9 +265,6 @@ namespace Beryll
 
         glm::vec3 m_origin{0.0f};
 
-        bool m_isEnabledDraw = true; // for method draw()
-        bool m_isEnabledUpdate = true; // for methods updateBeforePhysics() + updateAfterPhysics()
-
         bool m_hasCollisionObject = false; // set true for all collision objects
         CollisionGroups m_collisionGroup = CollisionGroups::NONE; // set inside colliding objects
         CollisionGroups m_collisionMask = CollisionGroups::NONE; // set inside colliding objects
@@ -272,6 +279,10 @@ namespace Beryll
         glm::vec3 m_gravity{0.0f, -9999.0f, 0.0f};
         glm::vec3 m_linearFactor{1.0f, 1.0f, 1.0f};
         glm::vec3 m_angularFactor{1.0f, 1.0f, 1.0f};
+
+        bool m_disabledForEver = false;
+        bool m_isEnabledDraw = true; // for method draw()
+        bool m_isEnabledUpdate = true; // for methods updateBeforePhysics() + updateAfterPhysics()
 
         // If objects on scene has face it should be created in Blender with face directed along +X axis.
         // Engine assume you create 3D models in tool where up axis is +Z (like Blender)
