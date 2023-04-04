@@ -34,7 +34,8 @@ namespace Beryll
         void draw() override;
 
         // character controller
-        void move(glm::vec3 direction);
+        void moveToDirection(glm::vec3 direction);
+        void moveToPosition(glm::vec3 position);
         void jump();
         bool getIsCanStay() { return m_characterCanStay; }
         bool getIsMoving() { return m_characterMoving; }

@@ -26,7 +26,10 @@ namespace Beryll
         TREE_SPRUCE = 12,
         TREE_PINE = 13,
 
-        YOUR_GAME_GROUP = 14
+        ARMY_1 = 14,
+        ARMY_2 = 15,
+
+        //YOUR_GAME_GROUP = 14
     };
 
     class SceneObject : public GameObject
@@ -72,7 +75,7 @@ namespace Beryll
 
         void addToRotation(float angleRad, const glm::vec3& axis, bool resetVelocities = false)
         {
-            if(angleRad < 0.0008f) { return; } // less that 0.05 degree
+            if(angleRad < 0.001f) { return; } // less that 0.058 degree
 
             m_rotateMatrix = glm::rotate(glm::mat4{1.0f}, angleRad, axis) * m_rotateMatrix;
             // translate and scale matrices should be same
@@ -89,7 +92,7 @@ namespace Beryll
         {
             if(qua.w == 1.0f) { return; } // no rotation. quaternion must be unit !!!
 
-            m_rotateMatrix = glm::toMat4(qua * glm::quat(m_rotateMatrix));
+            m_rotateMatrix = glm::toMat4(qua) * m_rotateMatrix;
             // translate and scale matrices should be same
             m_modelMatrix = m_translateMatrix * m_rotateMatrix * m_scaleMatrix;
 

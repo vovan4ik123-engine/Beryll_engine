@@ -132,7 +132,12 @@ namespace Beryll
         AnimatedCollidingObject::draw();
     }
 
-    void AnimatedCollidingCharacter::move(glm::vec3 direction)
+    void AnimatedCollidingCharacter::moveToPosition(glm::vec3 position)
+    {
+        moveToDirection(position - m_origin);
+    }
+
+    void AnimatedCollidingCharacter::moveToDirection(glm::vec3 direction)
     {
         glm::vec3 directionXZ = glm::normalize(glm::vec3{direction.x, 0.0f, direction.z});
         glm::vec3 faceDirectionXZ = getFaceDirXZ();

@@ -132,7 +132,12 @@ namespace Beryll
         SimpleCollidingObject::draw();
     }
 
-    void SimpleCollidingCharacter::move(glm::vec3 direction)
+    void SimpleCollidingCharacter::moveToPosition(glm::vec3 position)
+    {
+        moveToDirection(position - getOrigin());
+    }
+
+    void SimpleCollidingCharacter::moveToDirection(glm::vec3 direction)
     {
         glm::vec3 directionXZ = glm::normalize(glm::vec3{direction.x, 0.0f, direction.z});
         glm::vec3 faceDirectionXZ = getFaceDirXZ();
