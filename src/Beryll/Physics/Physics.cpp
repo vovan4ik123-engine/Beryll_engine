@@ -728,6 +728,8 @@ namespace Beryll
         return physicsTransforms;
     }
 
+    // is dangerous call softRemoveObject() from many threads especially during ray casts
+    // because this change world state
     void Physics::softRemoveObject(const int ID)
     {
         auto iter = m_rigidBodiesMap.find(ID);
@@ -928,6 +930,8 @@ namespace Beryll
     }
 
     // should be thread safe without mutex
+    // ONLY if you dont change m_dynamicsWorldMT during ray cast
+    // removing objects from world = change world
     RayClosestHit Physics::castRayClosestHit(const glm::vec3& from, const glm::vec3 to, CollisionGroups collGroup, CollisionGroups collMask)
     {
         btVector3 fr(from.x, from.y, from.z);
@@ -965,6 +969,8 @@ namespace Beryll
     }
 
     // should be thread safe without mutex
+    // ONLY if you dont change m_dynamicsWorldMT during ray cast
+    // removing objects from world = change world
     RayAllHits Physics::castRayAllHits(const glm::vec3& from, const glm::vec3 to, CollisionGroups collGroup, CollisionGroups collMask)
     {
         btVector3 fr(from.x, from.y, from.z);

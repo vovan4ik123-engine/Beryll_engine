@@ -50,6 +50,8 @@ namespace Beryll
         // call base class method first
         AnimatedCollidingObject::updateAfterPhysics();
 
+        if(m_collisionFlag != CollisionFlags::DYNAMIC) { return; }
+
         //BR_INFO("origin X: %d Y: %d Z: %d", m_origin.x, m_origin.y, m_origin.z);
         if(!getIsActive())
         {
@@ -145,6 +147,12 @@ namespace Beryll
         addToRotation(rotationCharacterToDirection);
 
         glm::vec3 moveVector = (faceDirectionXZ * moveSpeed) * TimeStep::getTimeStepSec();
+
+        if(m_collisionFlag != CollisionFlags::DYNAMIC)
+        {
+            addToOrigin(moveVector);
+            return;
+        }
 
         //BR_INFO("origin X: %f Y: %f Z: %f", m_origin.x, m_origin.y, m_origin.z);
         float moveVectorLength = glm::length(moveVector);
@@ -284,6 +292,8 @@ namespace Beryll
 
     void AnimatedCollidingCharacter::jump()
     {
+        if(m_collisionFlag != CollisionFlags::DYNAMIC) { return; }
+
         if(m_jumped) { return; }
 
         if(m_characterCanStay || (m_lastTimeCanStay + jumpExtendTime) > TimeStep::getSecFromStart())

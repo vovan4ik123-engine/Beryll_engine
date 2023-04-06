@@ -376,7 +376,7 @@ namespace Beryll
 
     void AnimatedCollidingObject::updateAfterPhysics()
     {
-        if(m_collisionFlag != CollisionFlags::STATIC)
+        if(m_collisionFlag == CollisionFlags::DYNAMIC)
         {
             m_physicsTransforms = Physics::getTransforms(m_ID);
 

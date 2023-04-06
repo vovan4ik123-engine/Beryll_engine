@@ -283,7 +283,7 @@ namespace Beryll
 
     void SimpleCollidingObject::updateAfterPhysics()
     {
-        if(m_collisionFlag == CollisionFlags::STATIC) { return; }
+        if(m_collisionFlag != CollisionFlags::DYNAMIC) { return; }
 
         m_physicsTransforms = Physics::getTransforms(m_ID);
 
