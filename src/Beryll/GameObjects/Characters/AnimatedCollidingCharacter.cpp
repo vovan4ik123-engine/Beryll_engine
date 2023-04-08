@@ -134,19 +134,16 @@ namespace Beryll
         AnimatedCollidingObject::draw();
     }
 
-    void AnimatedCollidingCharacter::moveToPosition(glm::vec3 position)
+    void AnimatedCollidingCharacter::moveToPosition(glm::vec3 position, bool ignoreYAxisWhenRotate)
     {
-        moveToDirection(position - m_origin);
+        moveToDirection(position - m_origin, ignoreYAxisWhenRotate);
     }
 
-    void AnimatedCollidingCharacter::moveToDirection(glm::vec3 direction)
+    void AnimatedCollidingCharacter::moveToDirection(glm::vec3 direction, bool ignoreYAxisWhenRotate)
     {
-        glm::vec3 directionXZ = glm::normalize(glm::vec3{direction.x, 0.0f, direction.z});
-        glm::vec3 faceDirectionXZ = getFaceDirXZ();
-        glm::quat rotationCharacterToDirection = glm::rotation(faceDirectionXZ, directionXZ);
-        addToRotation(rotationCharacterToDirection);
+        rotateToDirection(direction, ignoreYAxisWhenRotate);
 
-        glm::vec3 moveVector = (faceDirectionXZ * moveSpeed) * TimeStep::getTimeStepSec();
+        glm::vec3 moveVector = (getFaceDirXZ() * moveSpeed) * TimeStep::getTimeStepSec();
 
         if(m_collisionFlag != CollisionFlags::DYNAMIC)
         {

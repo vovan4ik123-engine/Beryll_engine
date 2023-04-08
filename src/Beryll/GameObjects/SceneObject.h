@@ -103,6 +103,26 @@ namespace Beryll
             }
         }
 
+        void rotateToPoint(const glm::vec3 point, bool ignoreYAxisWhenRotate = false)
+        {
+            rotateToDirection(point - m_origin, ignoreYAxisWhenRotate);
+        }
+
+        void rotateToDirection(const glm::vec3 dir, bool ignoreYAxisWhenRotate = false)
+        {
+            if(dir.x == 0.0f && dir.y == 0.0f && dir.z == 0.0f) { return; }
+
+            if(ignoreYAxisWhenRotate)
+            {
+                glm::vec3 dirXZ = glm::normalize(glm::vec3{dir.x, 0.0f, dir.z});
+                addToRotation(glm::rotation(getFaceDirXZ(), dirXZ));
+            }
+            else
+            {
+                addToRotation(glm::rotation(getFaceDirXYZ(), glm::normalize(dir)));
+            }
+        }
+
         void setAngularFactor(const glm::vec3& angFactor, bool resetVelocities = false)
         {
             if(m_angularFactor != angFactor && m_hasCollisionObject)
