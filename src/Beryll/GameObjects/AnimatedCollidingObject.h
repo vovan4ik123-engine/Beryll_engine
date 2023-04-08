@@ -37,8 +37,10 @@ namespace Beryll
         void updateAfterPhysics() override;
         void draw() override;
 
-        void setAnimationByName(const char* name) override; // animations should be loaded from model
-        void setAnimationByIndex(uint32_t index) override;
+        void setAnimationByName(const char* name, bool playOneTime) override; // animations should be loaded from model
+        void setAnimationByIndex(int index, bool playOneTime) override;
+        void setDefaultAnimationByName(const char* name) override;
+        void setDefaultAnimationByIndex(int index) override;
 
         uint32_t getBoneCount() override
         {
@@ -57,9 +59,13 @@ namespace Beryll
         std::vector<std::pair<std::string, uint32_t>> m_boneNameIndex;
         std::vector<BoneMatrix> m_bonesMatrices;
         std::string m_boneMatrixNameInShader;
-        std::vector<std::pair<std::string, uint32_t>> m_animationNameIndex;
-        uint32_t m_currentAnimIndex = 0;
+        std::vector<std::pair<std::string, int>> m_animationNameIndex;
+        int m_currentAnimIndex = 0;
+        int m_defaultAnimIndex = 0;
         std::string m_currentAnimName;
+        float m_animStartTimeInSec = 0.0f;
+        float m_animTimeInSec = 0.0f;
+        bool m_playAnimOneTime = false;
 
         void calculateTransforms();
         void readNodeHierarchy(const float animationTime, const aiNode* node, const aiMatrix4x4& parentTransform);

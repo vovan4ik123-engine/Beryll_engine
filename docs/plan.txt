@@ -1,7 +1,8 @@
 ---------------------plan:---------------------
 
-start animation with choice: play one time or repeat
-add check if animation finished
+add banner with progress
+add button with image
+add directional button control GUI element
 
 update renderer 2 ?
 draw thread ?

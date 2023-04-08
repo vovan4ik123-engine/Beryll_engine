@@ -136,7 +136,10 @@ namespace Beryll
 
     void SimpleCollidingCharacter::moveToPosition(glm::vec3 position, bool ignoreYAxisWhenRotate)
     {
-        moveToDirection(position - getOrigin(), ignoreYAxisWhenRotate);
+        if(position != m_origin)
+        {
+            moveToDirection(position - m_origin, ignoreYAxisWhenRotate);
+        }
     }
 
     void SimpleCollidingCharacter::moveToDirection(glm::vec3 direction, bool ignoreYAxisWhenRotate)

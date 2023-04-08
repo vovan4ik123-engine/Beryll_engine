@@ -290,6 +290,8 @@ namespace Beryll
             BR_INFO("Animation index: %d Name: %s Duration: %f", i, animName.c_str(), m_scene->mAnimations[i]->mDuration);
         }
 
+        m_animStartTimeInSec = TimeStep::getSecFromStart();
+
         const aiNode* node = Utils::Common::findAinodeForAimesh(m_scene, m_scene->mRootNode, m_scene->mMeshes[0]->mName);
         if(node)
         {
@@ -345,9 +347,21 @@ namespace Beryll
 
     void AnimatedObject::calculateTransforms()
     {
-        float tickPerSecond = static_cast<float>(m_scene->mAnimations[m_currentAnimIndex]->mTicksPerSecond);
-        float timeInTicks = TimeStep::getSecFromStart() * ((tickPerSecond == 0.0f) ? 24 : tickPerSecond);
-        float animTime = fmod(timeInTicks, static_cast<float>(m_scene->mAnimations[m_currentAnimIndex]->mDuration));
+        if(m_playAnimOneTime)
+        {
+            if(m_animStartTimeInSec + m_animTimeInSec < TimeStep::getSecFromStart())
+            {
+                m_playAnimOneTime = false;
+                m_currentAnimIndex = m_defaultAnimIndex;
+            }
+        }
+
+        float ticksPerSecond = static_cast<float>(m_scene->mAnimations[m_currentAnimIndex]->mTicksPerSecond);
+        if(ticksPerSecond == 0.0f)
+            ticksPerSecond = 24.0f;
+
+        float timeInTicks = (TimeStep::getSecFromStart() - m_animStartTimeInSec) * ticksPerSecond;
+        float animTime = std::fmodf(timeInTicks, static_cast<float>(m_scene->mAnimations[m_currentAnimIndex]->mDuration));
 
         aiMatrix4x4 identity;
         readNodeHierarchy(animTime, m_scene->mRootNode, identity);
@@ -518,28 +532,65 @@ namespace Beryll
         return scaleMatrix;
     }
 
-    void AnimatedObject::setAnimationByName(const char* name)
+    void AnimatedObject::setAnimationByName(const char* name, bool playOneTime)
     {
         if(m_currentAnimName == name) { return; }
 
-        for(const std::pair<std::string, uint32_t>& anim : m_animationNameIndex)
+        for(const std::pair<std::string, int>& anim : m_animationNameIndex)
         {
             if(anim.first == name)
             {
                 m_currentAnimIndex = anim.second;
                 m_currentAnimName = name;
+                m_playAnimOneTime = playOneTime;
+                m_animStartTimeInSec = TimeStep::getSecFromStart();
+                float ticksPerSecond = static_cast<float>(m_scene->mAnimations[m_currentAnimIndex]->mTicksPerSecond);
+                if(ticksPerSecond == 0.0f)
+                    ticksPerSecond = 24.0f;
+
+                m_animTimeInSec = static_cast<float>(m_scene->mAnimations[m_currentAnimIndex]->mDuration) / ticksPerSecond;
                 return;
             }
         }
     }
 
-    void AnimatedObject::setAnimationByIndex(uint32_t index)
+    void AnimatedObject::setAnimationByIndex(int index, bool playOneTime)
     {
         if(m_currentAnimIndex == index) { return; }
 
-        if(index < m_animationNameIndex.size())
+        if(index >= 0 && index < m_animationNameIndex.size())
         {
             m_currentAnimIndex = index;
+            m_playAnimOneTime = playOneTime;
+            m_animStartTimeInSec = TimeStep::getSecFromStart();
+            float ticksPerSecond = static_cast<float>(m_scene->mAnimations[m_currentAnimIndex]->mTicksPerSecond);
+            if(ticksPerSecond == 0.0f)
+                ticksPerSecond = 24.0f;
+
+            m_animTimeInSec = static_cast<float>(m_scene->mAnimations[m_currentAnimIndex]->mDuration) / ticksPerSecond;
+        }
+    }
+
+    void AnimatedObject::setDefaultAnimationByName(const char* name)
+    {
+        for(const std::pair<std::string, int>& anim : m_animationNameIndex)
+        {
+            if(anim.first == name)
+            {
+                m_defaultAnimIndex = anim.second;
+                m_currentAnimIndex = m_defaultAnimIndex;
+
+                return;
+            }
+        }
+    }
+
+    void AnimatedObject::setDefaultAnimationByIndex(int index)
+    {
+        if(index >= 0 && index < m_animationNameIndex.size())
+        {
+            m_defaultAnimIndex = index;
+            m_currentAnimIndex = m_defaultAnimIndex;
         }
     }
 }
