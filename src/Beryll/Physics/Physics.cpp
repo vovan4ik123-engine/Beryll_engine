@@ -193,8 +193,6 @@ namespace Beryll
         if(wantCallBack)
             body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
 
-        std::scoped_lock<std::mutex> lock (m_mutex);
-
         m_rigidBodiesMap.insert(std::make_pair(objectID, rigidBodyData));
         m_dynamicsWorldMT->addRigidBody(body.get(), static_cast<int>(collGroup), static_cast<int>(collMask));
     }
@@ -250,8 +248,6 @@ namespace Beryll
 
         if(wantCallBack)
             body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
-
-        std::scoped_lock<std::mutex> lock (m_mutex);
 
         m_rigidBodiesMap.insert(std::make_pair(objectID, rigidBodyData));
         m_dynamicsWorldMT->addRigidBody(body.get(), static_cast<int>(collGroup), static_cast<int>(collMask));
@@ -324,8 +320,6 @@ namespace Beryll
         if(wantCallBack)
             body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
 
-        std::scoped_lock<std::mutex> lock (m_mutex);
-
         m_rigidBodiesMap.insert(std::make_pair(objectID, rigidBodyData));
         m_dynamicsWorldMT->addRigidBody(body.get(), static_cast<int>(collGroup), static_cast<int>(collMask));
     }
@@ -375,8 +369,6 @@ namespace Beryll
 
         if(wantCallBack)
             body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
-
-        std::scoped_lock<std::mutex> lock (m_mutex);
 
         m_rigidBodiesMap.insert(std::make_pair(objectID, rigidBodyData));
         m_dynamicsWorldMT->addRigidBody(body.get(), static_cast<int>(collGroup), static_cast<int>(collMask));
@@ -445,8 +437,6 @@ namespace Beryll
 
         if(wantCallBack)
             body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
-
-        std::scoped_lock<std::mutex> lock (m_mutex);
 
         m_rigidBodiesMap.insert(std::make_pair(objectID, rigidBodyData));
         m_dynamicsWorldMT->addRigidBody(body.get(), static_cast<int>(collGroup), static_cast<int>(collMask));
@@ -608,9 +598,8 @@ namespace Beryll
         auto iter = m_rigidBodiesMap.find(ID);
         if(iter != m_rigidBodiesMap.end())
         {
-            std::scoped_lock<std::mutex> lock (m_mutex);
-
             btTransform t;
+
             if(iter->second->rb->getMotionState())
                 iter->second->rb->getMotionState()->getWorldTransform(t);
             else
@@ -644,9 +633,8 @@ namespace Beryll
         auto iter = m_rigidBodiesMap.find(ID);
         if(iter != m_rigidBodiesMap.end())
         {
-            std::scoped_lock<std::mutex> lock (m_mutex);
-
             btTransform t;
+
             if(iter->second->rb->getMotionState())
                 iter->second->rb->getMotionState()->getWorldTransform(t);
             else
@@ -673,9 +661,8 @@ namespace Beryll
         auto iter = m_rigidBodiesMap.find(ID);
         if(iter != m_rigidBodiesMap.end())
         {
-            std::scoped_lock<std::mutex> lock (m_mutex);
-
             btTransform t;
+
             if(iter->second->rb->getMotionState())
                 iter->second->rb->getMotionState()->getWorldTransform(t);
             else
@@ -708,14 +695,10 @@ namespace Beryll
         {
             btTransform t;
 
-            {
-                std::scoped_lock<std::mutex> lock (m_mutex);
-
-                if(iter->second->rb->getMotionState())
-                    iter->second->rb->getMotionState()->getWorldTransform(t);
-                else
-                    t = iter->second->rb->getWorldTransform();
-            }
+            if(iter->second->rb->getMotionState())
+                iter->second->rb->getMotionState()->getWorldTransform(t);
+            else
+                t = iter->second->rb->getWorldTransform();
 
             physicsTransforms.origin = glm::vec3(t.getOrigin().getX(), t.getOrigin().getY(), t.getOrigin().getZ());
             physicsTransforms.rotation = glm::quat(t.getRotation().getW(), t.getRotation().getX(), t.getRotation().getY(), t.getRotation().getZ());
@@ -794,8 +777,6 @@ namespace Beryll
     {
         auto iter = m_rigidBodiesMap.find(ID);
 
-        std::scoped_lock<std::mutex> lock (m_mutex);
-
         if(iter != m_rigidBodiesMap.end() && iter->second->existInDynamicWorld) // found object by ID and it exist in world
         {
             iter->second->rb->activate(true);
@@ -805,8 +786,6 @@ namespace Beryll
     bool Physics::getIsObjectActive(const int ID)
     {
         auto iter = m_rigidBodiesMap.find(ID);
-
-        std::scoped_lock<std::mutex> lock (m_mutex);
 
         if(iter != m_rigidBodiesMap.end() && iter->second->existInDynamicWorld) // found object by ID and it exist in world
         {
@@ -834,8 +813,6 @@ namespace Beryll
         auto iter = m_rigidBodiesMap.find(ID);
         if(iter != m_rigidBodiesMap.end())
         {
-            std::scoped_lock<std::mutex> lock (m_mutex);
-
             iter->second->rb->setAngularFactor(btVector3(angFactor.x, angFactor.y, angFactor.z));
 
             resetVelocitiesForObject(iter->second->rb, resetVelocities);
@@ -847,8 +824,6 @@ namespace Beryll
         auto iter = m_rigidBodiesMap.find(ID);
         if(iter != m_rigidBodiesMap.end())
         {
-            std::scoped_lock<std::mutex> lock (m_mutex);
-
             iter->second->rb->setLinearFactor(btVector3(linFactor.x, linFactor.y, linFactor.z));
 
             resetVelocitiesForObject(iter->second->rb, resetVelocities);
@@ -860,8 +835,6 @@ namespace Beryll
         auto iter = m_rigidBodiesMap.find(ID);
         if(iter != m_rigidBodiesMap.end())
         {
-            std::scoped_lock<std::mutex> lock (m_mutex);
-
             iter->second->rb->setAngularVelocity(btVector3(angVelocity.x, angVelocity.y, angVelocity.z));
 
             resetVelocitiesForObject(iter->second->rb, resetVelocities);
@@ -873,8 +846,6 @@ namespace Beryll
         auto iter = m_rigidBodiesMap.find(ID);
         if(iter != m_rigidBodiesMap.end())
         {
-            std::scoped_lock<std::mutex> lock (m_mutex);
-
             iter->second->rb->setLinearVelocity(btVector3(linVelocity.x, linVelocity.y, linVelocity.z));
 
             resetVelocitiesForObject(iter->second->rb, resetVelocities);
@@ -895,8 +866,6 @@ namespace Beryll
         auto iter = m_rigidBodiesMap.find(ID);
         if(iter != m_rigidBodiesMap.end())
         {
-            std::scoped_lock<std::mutex> lock (m_mutex);
-
             iter->second->rb->setGravity(btVector3(gravity.x, gravity.y, gravity.z));
 
             resetVelocitiesForObject(iter->second->rb, resetVelocities);
@@ -908,8 +877,6 @@ namespace Beryll
         auto iter = m_rigidBodiesMap.find(ID);
         if(iter != m_rigidBodiesMap.end())
         {
-            std::scoped_lock<std::mutex> lock (m_mutex);
-
             iter->second->rb->setGravity(btVector3(0.0f, 0.0f, 0.0f));
 
             resetVelocitiesForObject(iter->second->rb, resetVelocities);
@@ -921,8 +888,6 @@ namespace Beryll
         auto iter = m_rigidBodiesMap.find(ID);
         if(iter != m_rigidBodiesMap.end())
         {
-            std::scoped_lock<std::mutex> lock (m_mutex);
-
             iter->second->rb->setGravity(m_gravity);
 
             resetVelocitiesForObject(iter->second->rb, resetVelocities);
@@ -931,7 +896,7 @@ namespace Beryll
 
     // should be thread safe without mutex
     // ONLY if you dont change m_dynamicsWorldMT during ray cast
-    // removing objects from world = change world
+    // removing/add/restore/... objects from/to world = change world
     RayClosestHit Physics::castRayClosestHit(const glm::vec3& from, const glm::vec3 to, CollisionGroups collGroup, CollisionGroups collMask)
     {
         btVector3 fr(from.x, from.y, from.z);
@@ -970,7 +935,7 @@ namespace Beryll
 
     // should be thread safe without mutex
     // ONLY if you dont change m_dynamicsWorldMT during ray cast
-    // removing objects from world = change world
+    // removing/add/restore/... objects from/to world = change world
     RayAllHits Physics::castRayAllHits(const glm::vec3& from, const glm::vec3 to, CollisionGroups collGroup, CollisionGroups collMask)
     {
         btVector3 fr(from.x, from.y, from.z);
@@ -1032,8 +997,6 @@ namespace Beryll
         auto iter = m_rigidBodiesMap.find(ID);
         if(iter != m_rigidBodiesMap.end())
         {
-            std::scoped_lock<std::mutex> lock (m_mutex);
-
             iter->second->rb->setLinearVelocity(btVector3(0.0f, 0.0f, 0.0f));
             iter->second->rb->setAngularVelocity(btVector3(0.0f, 0.0f, 0.0f));
             iter->second->rb->clearForces();
@@ -1045,8 +1008,6 @@ namespace Beryll
         auto iter = m_rigidBodiesMap.find(ID);
         if(iter != m_rigidBodiesMap.end())
         {
-            std::scoped_lock<std::mutex> lock (m_mutex);
-
             iter->second->rb->activate(true);
             iter->second->rb->applyCentralImpulse(btVector3(impulse.x, impulse.y, impulse.z));
         }

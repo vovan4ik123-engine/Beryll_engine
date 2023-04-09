@@ -3,7 +3,6 @@
 #include "LibsHeaders.h"
 #include "CppHeaders.h"
 #include "Beryll/Core/Timer.h"
-#include "Beryll/Core/GameLoop.h"
 
 namespace Beryll
 {
@@ -44,7 +43,7 @@ namespace Beryll
         BULLET = 1 << 5,
         WALL = 1 << 6,
         GROUND = 1 << 7,
-        YOU_CAN_ADD_YOUR_GROUP = 1 << 8,
+        ARMY_RAY = 1 << 8,
 
         YOU_CAN_COMBINE_GROUPS_WHEN_USE = STATIC_ENVIRONMENT | CAMERA | WALL,
 
@@ -152,23 +151,7 @@ namespace Beryll
             return m_simulationTime;
         }
 
-        static void addObject(const std::vector<glm::vec3>& vertices,
-                              const std::vector<uint32_t>& indices,
-                              const glm::mat4& transforms,
-                              const std::string& meshName,
-                              const int objectID,
-                              float mass,
-                              bool wantCallBack,
-                              CollisionFlags collFlag,
-                              CollisionGroups collGroup,
-                              CollisionGroups collMask);
-
-        static void softRemoveObject(const int ID); // remove from simulation but keep in m_rigidBodiesMap
-        static void restoreObject(const int ID, bool resetVelocities = false); // restore from m_rigidBodiesMap to simulation
         static void hardRemoveAllObjects(); // remove from everywhere
-
-        static void activateObject(const int ID); // awake object in physics world
-        static bool getIsObjectActive(const int ID); // check if object is active
 
         static bool getIsCollisionGroupContainsOther(CollisionGroups gr1, CollisionGroups gr2)
         {
@@ -176,22 +159,9 @@ namespace Beryll
             return (static_cast<int>(gr1) & static_cast<int>(gr2)) > 0;
         }
 
-        // bullet physics dont store scale in transform. keep scale in model matrix/vector in model
-        static PhysicsTransforms getTransforms(const int ID);
-
-        static void setOrigin(const int ID, const glm::vec3& orig, bool resetVelocities = false);
-        static void addToOrigin(const int ID, const glm::vec3& dist, bool resetVelocities = false);
-        static void addToRotation(const int ID, const glm::quat& qua, bool resetVelocities = false);
-        static void setAngularFactor(const int ID, const glm::vec3& angFactor, bool resetVelocities = false); // affect objects rotation speed during collisions
-        static void setLinearFactor(const int ID, const glm::vec3& linFactor, bool resetVelocities = false); // affect objects translation speed during collisions
         static void setAngularVelocity(const int ID, const glm::vec3& angVelocity, bool resetVelocities = false); // set rotation velocity
         static void setLinearVelocity(const int ID, const glm::vec3& linVelocity, bool resetVelocities = false); // set translation velocity
         static void setGravityForAllWorld(const glm::vec3& gravity); // change gravity for whole physics world
-        static void setGravityForObject(const int ID, const glm::vec3& gravity, bool resetVelocities = false); // change gravity for object
-        static void disableGravityForObject(const int ID, bool resetVelocities = false);
-        static void enableDefaultGravityForObject(const int ID, bool resetVelocities = false);
-        static void resetVelocitiesForObject(const int ID);
-        static void applyCentralImpulseForObject(const int ID, const glm::vec3& impulse);
 
         static bool getIsCollision(const int ID1, const int ID2);
         static bool getIsCollision(const int ID, const CollisionGroups group);
@@ -243,6 +213,42 @@ namespace Beryll
         static float m_simulationTime; // simulation time in milli sec
 
         static void resetVelocitiesForObject(const std::shared_ptr<btRigidBody>& b, bool reset);
+
+        friend class SceneObject;
+        static void setOrigin(const int ID, const glm::vec3& orig, bool resetVelocities = false);
+        static void addToOrigin(const int ID, const glm::vec3& dist, bool resetVelocities = false);
+        static void addToRotation(const int ID, const glm::quat& qua, bool resetVelocities = false);
+        static void setAngularFactor(const int ID, const glm::vec3& angFactor, bool resetVelocities = false); // affect objects rotation speed during collisions
+        static void setLinearFactor(const int ID, const glm::vec3& linFactor, bool resetVelocities = false); // affect objects translation speed during collisions
+        static void disableGravityForObject(const int ID, bool resetVelocities = false);
+        static void enableDefaultGravityForObject(const int ID, bool resetVelocities = false);
+        static void setGravityForObject(const int ID, const glm::vec3& gravity, bool resetVelocities = false); // change gravity for object
+        static void activateObject(const int ID); // awake object in physics world
+        static bool getIsObjectActive(const int ID); // check if object is active
+        static void resetVelocitiesForObject(const int ID);
+        static void applyCentralImpulseForObject(const int ID, const glm::vec3& impulse);
+        static void softRemoveObject(const int ID); // remove from simulation but keep in m_rigidBodiesMap
+        static void restoreObject(const int ID, bool resetVelocities = false); // restore from m_rigidBodiesMap to simulation
+
+        // addObject() should be called only from
+        // SimpleCollidingObject/AnimatedCollidingObject and only from one thread
+        friend class SimpleCollidingObject;
+        friend class AnimatedCollidingObject;
+        // getTransforms() should be called only from
+        // SimpleCollidingObject/AnimatedCollidingObject and can be called from many threads
+        // bullet physics dont store scale in transform. keep scale in model matrix/vector in model
+        static PhysicsTransforms getTransforms(const int ID);
+
+        static void addObject(const std::vector<glm::vec3>& vertices,
+                              const std::vector<uint32_t>& indices,
+                              const glm::mat4& transforms,
+                              const std::string& meshName,
+                              const int objectID,
+                              float mass,
+                              bool wantCallBack,
+                              CollisionFlags collFlag,
+                              CollisionGroups collGroup,
+                              CollisionGroups collMask);
 
         static void addConcaveMesh(const std::vector<glm::vec3>& vertices,
                                    const std::vector<uint32_t>& indices,

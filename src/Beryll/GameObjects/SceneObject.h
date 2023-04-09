@@ -51,7 +51,7 @@ namespace Beryll
             if(m_hasCollisionObject)
             {
                 // game object with collision object will take transforms from physics module after simulation
-                Beryll::Physics::setOrigin(m_ID, orig, resetVelocities);
+                Physics::setOrigin(m_ID, orig, resetVelocities);
             }
         }
 
@@ -69,13 +69,13 @@ namespace Beryll
             if(m_hasCollisionObject)
             {
                 // game object with collision object will take transforms from physics module after simulation
-                Beryll::Physics::addToOrigin(m_ID, distance, resetVelocities);
+                Physics::addToOrigin(m_ID, distance, resetVelocities);
             }
         }
 
         void addToRotation(float angleRad, const glm::vec3& axis, bool resetVelocities = false)
         {
-            if(angleRad < 0.001f) { return; } // less that 0.058 degree
+            if(angleRad < 0.0035f) { return; } // less that 0.2 degree
 
             m_rotateMatrix = glm::rotate(glm::mat4{1.0f}, angleRad, axis) * m_rotateMatrix;
             // translate and scale matrices should be same
@@ -90,7 +90,7 @@ namespace Beryll
 
         void addToRotation(const glm::quat& qua, bool resetVelocities = false)
         {
-            if(qua.w == 1.0f) { return; } // no rotation. quaternion must be unit !!!
+            if(glm::angle(qua) < 0.0035f) { return; } // less that 0.2 degree
 
             m_rotateMatrix = glm::toMat4(qua) * m_rotateMatrix;
             // translate and scale matrices should be same
@@ -127,7 +127,7 @@ namespace Beryll
         {
             if(m_angularFactor != angFactor && m_hasCollisionObject)
             {
-                Beryll::Physics::setAngularFactor(m_ID, angFactor, resetVelocities);
+                Physics::setAngularFactor(m_ID, angFactor, resetVelocities);
                 m_angularFactor = angFactor;
             }
         }
@@ -136,7 +136,7 @@ namespace Beryll
         {
             if(m_linearFactor != linFactor && m_hasCollisionObject)
             {
-                Beryll::Physics::setLinearFactor(m_ID, linFactor, resetVelocities);
+                Physics::setLinearFactor(m_ID, linFactor, resetVelocities);
                 m_linearFactor = linFactor;
             }
         }
@@ -145,7 +145,7 @@ namespace Beryll
         {
             if(m_gravityEnabled && m_hasCollisionObject)
             {
-                Beryll::Physics::disableGravityForObject(m_ID, resetVelocities);
+                Physics::disableGravityForObject(m_ID, resetVelocities);
                 m_gravityEnabled = false;
             }
         }
@@ -154,8 +154,7 @@ namespace Beryll
         {
             if(!m_gravityEnabled && m_hasCollisionObject)
             {
-                Beryll::Physics::enableDefaultGravityForObject(m_ID, resetVelocities);
-
+                Physics::enableDefaultGravityForObject(m_ID, resetVelocities);
                 m_gravityEnabled = true;
             }
         }
@@ -164,8 +163,16 @@ namespace Beryll
         {
             if(m_gravity != grav && m_hasCollisionObject)
             {
-                Beryll::Physics::setGravityForObject(m_ID, grav, resetVelocities);
+                Physics::setGravityForObject(m_ID, grav, resetVelocities);
                 m_gravity = grav;
+            }
+        }
+
+        void activate()
+        {
+            if(m_hasCollisionObject)
+            {
+                Physics::activateObject(m_ID);
             }
         }
 
@@ -237,7 +244,7 @@ namespace Beryll
         {
             if(m_hasCollisionObject && !m_isEnabledInPhysicsSimulation && !m_disabledForEver)
             {
-                Beryll::Physics::restoreObject(m_ID, resetVelocities);
+                Physics::restoreObject(m_ID, resetVelocities);
                 m_isEnabledInPhysicsSimulation = true;
             }
         }
@@ -256,7 +263,7 @@ namespace Beryll
         {
             if (m_hasCollisionObject && m_isEnabledInPhysicsSimulation)
             {
-                Beryll::Physics::softRemoveObject(m_ID);
+                Physics::softRemoveObject(m_ID);
                 m_isEnabledInPhysicsSimulation = false;
             }
         }
