@@ -33,57 +33,57 @@ add_subdirectory(libs/bullet)
 
 if(ANDROID)
     set(AndroidGLES_SRC
-            src/Beryll/Platform/AndroidGLES/AndroidGLESWindow.cpp
-            src/Beryll/Platform/AndroidGLES/AndroidGLESImGUI.cpp
-            src/Beryll/Platform/AndroidGLES/AndroidGLESBuffer.cpp
-            src/Beryll/Platform/AndroidGLES/AndroidGLESVertexArray.cpp
-            src/Beryll/Platform/AndroidGLES/AndroidGLESShader.cpp
-            src/Beryll/Platform/AndroidGLES/AndroidGLESTexture.cpp
-            src/Beryll/Platform/AndroidGLES/AndroidGLESSkyBox.cpp
-            src/Beryll/Platform/AndroidGLES/AndroidGLESShadowMapTexture.cpp
-            src/Beryll/Platform/AndroidGLES/AndroidGLESGlobal.cpp
+            src/beryll/platform/androidGLES/AndroidGLESWindow.cpp
+            src/beryll/platform/androidGLES/AndroidGLESImGUI.cpp
+            src/beryll/platform/androidGLES/AndroidGLESBuffer.cpp
+            src/beryll/platform/androidGLES/AndroidGLESVertexArray.cpp
+            src/beryll/platform/androidGLES/AndroidGLESShader.cpp
+            src/beryll/platform/androidGLES/AndroidGLESTexture.cpp
+            src/beryll/platform/androidGLES/AndroidGLESSkyBox.cpp
+            src/beryll/platform/androidGLES/AndroidGLESShadowMapTexture.cpp
+            src/beryll/platform/androidGLES/AndroidGLESGlobal.cpp
             )
 elseif(APPLE)
-    #set(IOSMetal_SRC src/Beryll/Platform/...)
+    #set(IOSMetal_SRC src/beryll/platform/...)
 endif()
 
 set(Common_SRC
-        src/Beryll/Core/GameStateMachine.cpp
-        src/Beryll/Core/LayerStack.cpp
-        src/Beryll/Core/GameLoop.cpp
-        src/Beryll/Core/Window.cpp
-        src/Beryll/Core/EventHandler.cpp
-        src/Beryll/Core/SoundsManager.cpp
-        src/Beryll/Core/TimeStep.cpp
-        src/Beryll/Core/RandomGenerator.cpp
+        src/beryll/core/GameStateMachine.cpp
+        src/beryll/core/LayerStack.cpp
+        src/beryll/core/GameLoop.cpp
+        src/beryll/core/Window.cpp
+        src/beryll/core/EventHandler.cpp
+        src/beryll/core/SoundsManager.cpp
+        src/beryll/core/TimeStep.cpp
+        src/beryll/core/RandomGenerator.cpp
 
-        src/Beryll/Utils/CommonUtils.cpp
+        src/beryll/utils/CommonUtils.cpp
 
-        src/Beryll/GameObjects/SimpleObject.cpp
-        src/Beryll/GameObjects/AnimatedObject.cpp
-        src/Beryll/GameObjects/SimpleCollidingObject.cpp
-        src/Beryll/GameObjects/AnimatedCollidingObject.cpp
+        src/beryll/gameObjects/SimpleObject.cpp
+        src/beryll/gameObjects/AnimatedObject.cpp
+        src/beryll/gameObjects/SimpleCollidingObject.cpp
+        src/beryll/gameObjects/AnimatedCollidingObject.cpp
 
-        src/Beryll/GameObjects/Characters/SimpleCollidingCharacter.cpp
-        src/Beryll/GameObjects/Characters/AnimatedCollidingCharacter.cpp
+        src/beryll/gameObjects/characters/SimpleCollidingCharacter.cpp
+        src/beryll/gameObjects/characters/AnimatedCollidingCharacter.cpp
 
-        src/Beryll/GUI/MainImGUI.cpp
-        src/Beryll/GUI/DemoImGUI.cpp
-        src/Beryll/GUI/Button.cpp
-        src/Beryll/GUI/CheckBox.cpp
-        src/Beryll/GUI/Text.cpp
-        src/Beryll/GUI/Slider.cpp
+        src/beryll/GUI/MainImGUI.cpp
+        src/beryll/GUI/DemoImGUI.cpp
+        src/beryll/GUI/Button.cpp
+        src/beryll/GUI/CheckBox.cpp
+        src/beryll/GUI/Text.cpp
+        src/beryll/GUI/Slider.cpp
 
-        src/Beryll/Renderer/Camera.cpp
-        src/Beryll/Renderer/Renderer.cpp
+        src/beryll/renderer/Camera.cpp
+        src/beryll/renderer/Renderer.cpp
 
-        src/Beryll/Physics/Physics.cpp
+        src/beryll/physics/Physics.cpp
 
-        src/Beryll/Async/AsyncRun.cpp
+        src/beryll/async/AsyncRun.cpp
 
-        src/Beryll/ParticleSystem/ParticleSystem.cpp
+        src/beryll/particleSystem/ParticleSystem.cpp
 
-        src/Beryll/LoadingScreen/LoadingScreen.cpp
+        src/beryll/loadingScreen/LoadingScreen.cpp
 )
 
 add_library(Beryll-static STATIC ${AndroidGLES_SRC} ${IOSMetal_SRC} ${Common_SRC})

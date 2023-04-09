@@ -1,45 +1,45 @@
 #pragma once
 
 // include this file only outside of engine
-// inside engine include files directly (Beryll/Core/....)
+// inside engine include files directly (beryll/core/....)
 // add Beryll_engine/src to includes path to Cmake
 
-#include "Beryll/Core/GameLoop.h"
-#include "Beryll/Core/Layer.h"
-#include "Beryll/Core/GameState.h"
-#include "Beryll/Core/GameStateMachine.h"
-#include "Beryll/Core/Log.h"
-#include "Beryll/Core/EventHandler.h"
-#include "Beryll/Core/SoundsManager.h"
-#include "Beryll/Core/Window.h"
-#include "Beryll/Core/RandomGenerator.h"
-#include "Beryll/Core/TimeStep.h"
+#include "beryll/core/GameLoop.h"
+#include "beryll/core/Layer.h"
+#include "beryll/core/GameState.h"
+#include "beryll/core/GameStateMachine.h"
+#include "beryll/core/Log.h"
+#include "beryll/core/EventHandler.h"
+#include "beryll/core/SoundsManager.h"
+#include "beryll/core/Window.h"
+#include "beryll/core/RandomGenerator.h"
+#include "beryll/core/TimeStep.h"
 
-#include "Beryll/Renderer/Camera.h"
-#include "Beryll/Renderer/SkyBox.h"
-#include "Beryll/Renderer/Renderer.h"
+#include "beryll/renderer/Camera.h"
+#include "beryll/renderer/SkyBox.h"
+#include "beryll/renderer/Renderer.h"
 
-#include "Beryll/GameObjects/BaseSimpleObject.h"
-#include "Beryll/GameObjects/BaseAnimatedObject.h"
-#include "Beryll/GameObjects/SimpleObject.h"
-#include "Beryll/GameObjects/SimpleCollidingObject.h"
-#include "Beryll/GameObjects/AnimatedObject.h"
-#include "Beryll/GameObjects/AnimatedCollidingObject.h"
+#include "beryll/gameObjects/BaseSimpleObject.h"
+#include "beryll/gameObjects/BaseAnimatedObject.h"
+#include "beryll/gameObjects/SimpleObject.h"
+#include "beryll/gameObjects/SimpleCollidingObject.h"
+#include "beryll/gameObjects/AnimatedObject.h"
+#include "beryll/gameObjects/AnimatedCollidingObject.h"
 
-#include "Beryll/GameObjects/Characters/SimpleCollidingCharacter.h"
-#include "Beryll/GameObjects/Characters/AnimatedCollidingCharacter.h"
+#include "beryll/gameObjects/characters/SimpleCollidingCharacter.h"
+#include "beryll/gameObjects/characters/AnimatedCollidingCharacter.h"
 
-#include "Beryll/GUI/MainImGUI.h"
-#include "Beryll/GUI/DemoImGUI.h"
-#include "Beryll/GUI/Button.h"
-#include "Beryll/GUI/CheckBox.h"
-#include "Beryll/GUI/Text.h"
-#include "Beryll/GUI/Slider.h"
+#include "beryll/GUI/MainImGUI.h"
+#include "beryll/GUI/DemoImGUI.h"
+#include "beryll/GUI/Button.h"
+#include "beryll/GUI/CheckBox.h"
+#include "beryll/GUI/Text.h"
+#include "beryll/GUI/Slider.h"
 
-#include "Beryll/Physics/Physics.h"
+#include "beryll/physics/Physics.h"
 
-#include "Beryll/Async/AsyncRun.h"
+#include "beryll/async/AsyncRun.h"
 
-#include "Beryll/ParticleSystem/ParticleSystem.h"
+#include "beryll/particleSystem/ParticleSystem.h"
 
-#include "Beryll/LoadingScreen/LoadingScreen.h"
+#include "beryll/loadingScreen/LoadingScreen.h"
