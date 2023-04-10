@@ -12,7 +12,8 @@ namespace Beryll
          * modelPath - path to model file (.DAE or .FBX). start path from first folder inside assets/
          * collisionMass - mass of this object for physics simulation. 0 for static objects
          *                 for example map ground should be alwaus enabled
-         * wantCollisionCallBack - if true Physics module will store actual collisions for this object,
+         * wantCollisionCallBack - drop performance too much because call back use std::scoped_lock<std::mutex>
+         *                         if true Physics module will store actual collisions for this object,
          *                         you can check it with Physics::getIsCollision(id1, id2) or Physics::getAllCollisions()
          * collFlag - type of collision object in physics world
          * collGroup - group or groups of current object in physics world

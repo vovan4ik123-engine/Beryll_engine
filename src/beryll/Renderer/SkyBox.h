@@ -11,7 +11,5 @@ namespace Beryll
         virtual ~SkyBox() {}
 
         virtual void draw() = 0;
-
-        bool useInternalShader = true;
     };
 }

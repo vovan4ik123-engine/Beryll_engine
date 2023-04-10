@@ -67,6 +67,8 @@ set(Common_SRC
         src/beryll/gameObjects/characters/SimpleCollidingCharacter.cpp
         src/beryll/gameObjects/characters/AnimatedCollidingCharacter.cpp
 
+        src/beryll/gameObjects/banners/BannerProgressTwoColors.cpp
+
         src/beryll/GUI/MainImGUI.cpp
         src/beryll/GUI/DemoImGUI.cpp
         src/beryll/GUI/Button.cpp

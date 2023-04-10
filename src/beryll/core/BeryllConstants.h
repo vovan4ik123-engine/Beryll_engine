@@ -8,17 +8,17 @@ namespace BeryllConstants
 
     // Default shaders paths
 #if defined(ANDROID)
-    const std::string_view simpleObjDefaultVertexPath = "shaders/GLES/default/Simple.vert";
-    const std::string_view simpleObjDefaultFragmentPath = "shaders/GLES/default/Simple.frag";
+    const std::string_view simpleObjDefaultVertexPath = "shaders/GLES/default/SimpleObject.vert";
+    const std::string_view simpleObjDefaultFragmentPath = "shaders/GLES/default/SimpleObject.frag";
 
-    const std::string_view animatedObjDefaultVertexPath = "shaders/GLES/default/Animation.vert";
-    const std::string_view animatedObjDefaultFragmentPath = "shaders/GLES/default/Animation.frag";
+    const std::string_view animatedObjDefaultVertexPath = "shaders/GLES/default/AnimatedObject.vert";
+    const std::string_view animatedObjDefaultFragmentPath = "shaders/GLES/default/AnimatedObject.frag";
 
-    const std::string_view simpleObjShadowMapVertexPath = "shaders/GLES/shadowMap/Simple.vert";
-    const std::string_view simpleObjShadowMapFragmentPath = "shaders/GLES/shadowMap/Simple.frag";
+    const std::string_view simpleObjShadowMapVertexPath = "shaders/GLES/shadowMap/SimpleObject.vert";
+    const std::string_view simpleObjShadowMapFragmentPath = "shaders/GLES/shadowMap/SimpleObject.frag";
 
-    const std::string_view animatedObjShadowMapVertexPath = "shaders/GLES/shadowMap/Animation.vert";
-    const std::string_view animatedObjShadowMapFragmentPath = "shaders/GLES/shadowMap/Animation.frag";
+    const std::string_view animatedObjShadowMapVertexPath = "shaders/GLES/shadowMap/AnimatedObject.vert";
+    const std::string_view animatedObjShadowMapFragmentPath = "shaders/GLES/shadowMap/AnimatedObject.frag";
 
     const std::string_view skyBoxVertexPath = "shaders/GLES/default/SkyBox.vert";
     const std::string_view skyBoxFragmentPath = "shaders/GLES/default/SkyBox.frag";
@@ -28,6 +28,9 @@ namespace BeryllConstants
 
     const std::string_view loadingScreenVertexPath = "shaders/GLES/default/LoadingScreen.vert";
     const std::string_view loadingScreenFragmentPath = "shaders/GLES/default/LoadingScreen.frag";
+
+    const std::string_view bannerTwoColorsProgressVertexPath = "shaders/GLES/default/BannerTwoColorsProgress.vert";
+    const std::string_view bannerTwoColorsProgressFragmentPath = "shaders/GLES/default/BannerTwoColorsProgress.frag";
 #elif defined(APPLE)
     const std::string_view simpleObjDefaultVertexPath = "";
     const std::string_view simpleObjDefaultFragmentPath = "";

@@ -218,7 +218,7 @@ namespace Beryll
         SceneObjectGroups getSceneObjectGroup() { return m_sceneObjectGroup; }
         glm::vec3 getFaceDirXYZ()
         {
-            return glm::normalize(glm::vec3(m_rotateMatrix * glm::vec4(m_gameObjectFaceDir, 1.0f)));
+            return glm::normalize(glm::vec3(m_rotateMatrix * glm::vec4(m_sceneObjectFaceDir, 1.0f)));
         }
         glm::vec3 getFaceDirXZ()
         {
@@ -227,7 +227,7 @@ namespace Beryll
         }
         glm::vec3 getUpDirXYZ()
         {
-            return glm::normalize(glm::vec3(m_rotateMatrix * glm::vec4(m_gameObjectUpDir, 1.0f)));
+            return glm::normalize(glm::vec3(m_rotateMatrix * glm::vec4(m_sceneObjectUpDir, 1.0f)));
         }
 
         void enableDraw()
@@ -285,15 +285,16 @@ namespace Beryll
         bool useInternalTextures = true;
 
     protected:
-        glm::mat4 m_MVP{1.0f};
-        glm::mat4 m_modelMatrix{1.0f};
+        glm::vec3 m_origin{0.0f, 0.0f, 0.0f};
 
         glm::mat4 m_scaleMatrix{1.0f};
         glm::mat4 m_rotateMatrix{1.0f};
         glm::mat4 m_translateMatrix{1.0f};
-        PhysicsTransforms m_physicsTransforms;
 
-        glm::vec3 m_origin{0.0f};
+        glm::mat4 m_modelMatrix{1.0f};
+        glm::mat4 m_MVP{1.0f};
+
+        PhysicsTransforms m_physicsTransforms;
 
         bool m_hasCollisionObject = false; // set true for all collision objects
         CollisionGroups m_collisionGroup = CollisionGroups::NONE; // set inside colliding objects
@@ -319,7 +320,7 @@ namespace Beryll
         // and during exporting model you change axis to: up +Y, forward -Z.
         // That will add rotation to exported model: 90 degrees around -X axis or 270 degrees around +X axis
         // If you want take models faceDir or upDir just multiply these vectors by m_rotateMatrix
-        const glm::vec3 m_gameObjectFaceDir{1.0f, 0.0f, 0.0f};
-        const glm::vec3 m_gameObjectUpDir{0.0f, 0.0f, 1.0f};
+        const glm::vec3 m_sceneObjectFaceDir{1.0f, 0.0f, 0.0f};
+        const glm::vec3 m_sceneObjectUpDir{0.0f, 0.0f, 1.0f};
     };
 }

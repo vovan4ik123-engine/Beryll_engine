@@ -29,6 +29,8 @@
 #include "beryll/gameObjects/characters/SimpleCollidingCharacter.h"
 #include "beryll/gameObjects/characters/AnimatedCollidingCharacter.h"
 
+#include "beryll/gameObjects/banners/BannerProgressTwoColors.h"
+
 #include "beryll/GUI/MainImGUI.h"
 #include "beryll/GUI/DemoImGUI.h"
 #include "beryll/GUI/Button.h"
