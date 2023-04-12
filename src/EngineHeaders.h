@@ -33,7 +33,7 @@
 
 #include "beryll/GUI/MainImGUI.h"
 #include "beryll/GUI/DemoImGUI.h"
-#include "beryll/GUI/Button.h"
+#include "beryll/GUI/ButtonWithText.h"
 #include "beryll/GUI/CheckBox.h"
 #include "beryll/GUI/Text.h"
 #include "beryll/GUI/Slider.h"

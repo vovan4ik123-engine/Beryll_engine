@@ -4,12 +4,12 @@
 
 namespace Beryll
 {
-    class Button : public GUIObject
+    class ButtonWithText : public GUIObject
     {
     public:
         // position and size in percent 0...100% of screen
-        Button(std::string text, float left, float top, float width, float height, bool actRepeat = false);
-        ~Button() override;
+        ButtonWithText(std::string text, float left, float top, float width, float height, bool actRepeat = false);
+        ~ButtonWithText() override;
 
         void updateBeforePhysics() override;
         void updateAfterPhysics() override;

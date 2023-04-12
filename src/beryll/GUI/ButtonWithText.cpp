@@ -1,4 +1,4 @@
-#include "Button.h"
+#include "ButtonWithText.h"
 #include "beryll/core/Log.h"
 #include "beryll/core/EventHandler.h"
 #include "MainImGUI.h"
@@ -6,7 +6,7 @@
 
 namespace Beryll
 {
-    Button::Button(std::string text, float left, float top, float width, float height, bool actRepeat)
+    ButtonWithText::ButtonWithText(std::string text, float left, float top, float width, float height, bool actRepeat)
         : m_text(std::move(text)), m_leftPos(left / 100.0f), m_topPos(top / 100.0f), m_width(width / 100.0f), m_height(height / 100.0f)
     {
         BR_ASSERT((left >= 0.0f && left <= 100.0f) && (top >= 0.0f && top <= 100.0f)
@@ -15,16 +15,16 @@ namespace Beryll
         m_actRepeat = actRepeat;
     }
 
-    Button::~Button()
+    ButtonWithText::~ButtonWithText()
     {
 
     }
 
-    ImFont* Button::m_font = nullptr;
-    std::string Button::m_fontPath;
-    float Button::m_fontHeight = 0.0f;
+    ImFont* ButtonWithText::m_font = nullptr;
+    std::string ButtonWithText::m_fontPath;
+    float ButtonWithText::m_fontHeight = 0.0f;
 
-    void Button::updateBeforePhysics()
+    void ButtonWithText::updateBeforePhysics()
     {
         std::vector<Finger>& fingers = EventHandler::getFingers();
 
@@ -77,12 +77,12 @@ namespace Beryll
         }
     }
 
-    void Button::updateAfterPhysics()
+    void ButtonWithText::updateAfterPhysics()
     {
 
     }
 
-    void Button::draw()
+    void ButtonWithText::draw()
     {
         ImGui::PushStyleColor(ImGuiCol_Button, m_color); // lost focus
         ImGui::PushStyleColor(ImGuiCol_ButtonHovered, m_color); // on focus

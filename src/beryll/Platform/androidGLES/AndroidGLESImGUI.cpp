@@ -1,7 +1,7 @@
 #include "AndroidGLESImGUI.h"
 #include "beryll/core/Window.h"
 #include "beryll/utils/File.h"
-#include "beryll/GUI/Button.h"
+#include "beryll/GUI/ButtonWithText.h"
 #include "beryll/GUI/CheckBox.h"
 #include "beryll/GUI/Text.h"
 #include "beryll/GUI/Slider.h"
@@ -64,17 +64,17 @@ namespace Beryll
             io.FontDefault = fontDefault;
         }
 
-        if(!Button::m_fontPath.empty() && Button::m_fontHeight != 0.0f)
+        if(!ButtonWithText::m_fontPath.empty() && ButtonWithText::m_fontHeight != 0.0f)
         {
-            buffer = Utils::File::readToBuffer(Button::m_fontPath.c_str(), &bufferSize);
-            ImFont* f = io.Fonts->AddFontFromMemoryTTF(buffer, bufferSize, Button::m_fontHeight * ImGui::GetIO().DisplaySize.y);
+            buffer = Utils::File::readToBuffer(ButtonWithText::m_fontPath.c_str(), &bufferSize);
+            ImFont* f = io.Fonts->AddFontFromMemoryTTF(buffer, bufferSize, ButtonWithText::m_fontHeight * ImGui::GetIO().DisplaySize.y);
             BR_ASSERT((f != nullptr), "%s", "font nullptr");
             ImGui_ImplOpenGL3_CreateFontsTexture();
-            Button::m_font = f;
+            ButtonWithText::m_font = f;
         }
         else
         {
-            Button::m_font = nullptr;
+            ButtonWithText::m_font = nullptr;
         }
 
         if(!CheckBox::m_fontPath.empty() && CheckBox::m_fontHeight != 0.0f)
@@ -119,7 +119,7 @@ namespace Beryll
 
     void AndroidGLESImGUI::destroy()
     {
-        Button::m_font = nullptr;
+        ButtonWithText::m_font = nullptr;
         CheckBox::m_font = nullptr;
         Text::m_font = nullptr;
         Slider::m_font = nullptr;
@@ -189,15 +189,15 @@ namespace Beryll
 
     void AndroidGLESImGUI::setButtonsFont(const char* path, float heightInPercent)
     {
-        Button::m_fontPath = path;
-        Button::m_fontHeight = heightInPercent / 100.0f;
+        ButtonWithText::m_fontPath = path;
+        ButtonWithText::m_fontHeight = heightInPercent / 100.0f;
 
         uint32_t bufferSize = 0;
-        char *buffer = Utils::File::readToBuffer(Button::m_fontPath.c_str(), &bufferSize);
-        ImFont* f = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(buffer, bufferSize, Button::m_fontHeight * ImGui::GetIO().DisplaySize.y);
+        char *buffer = Utils::File::readToBuffer(ButtonWithText::m_fontPath.c_str(), &bufferSize);
+        ImFont* f = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(buffer, bufferSize, ButtonWithText::m_fontHeight * ImGui::GetIO().DisplaySize.y);
         BR_ASSERT((f != nullptr), "%s", "font nullptr");
         ImGui_ImplOpenGL3_CreateFontsTexture();
-        Button::m_font = f;
+        ButtonWithText::m_font = f;
     }
 
     void AndroidGLESImGUI::setCheckBoxesFont(const char* path, float heightInPercent)
