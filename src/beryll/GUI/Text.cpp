@@ -6,10 +6,11 @@ namespace Beryll
     Text::Text(std::string text, float left, float top, bool background)
         : text(std::move(text)), m_leftPos(left / 100.0f), m_topPos(top / 100.0f)
     {
-        BR_ASSERT((left >= 0 && left <= 100) && (top >= 0 && top <= 100), "%s", "Wrong Text position")
+        if(background)
+            m_flags = m_backgroundNoFrame;
+        else
+            m_flags = m_noBackgroundNoFrame;
 
-        if(background) { m_flags = m_backgroundNoFrame; }
-        else { m_flags = m_noBackgroundNoFrame; }
     }
 
     Text::~Text()
