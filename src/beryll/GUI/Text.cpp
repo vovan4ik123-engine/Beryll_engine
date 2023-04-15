@@ -1,6 +1,5 @@
 #include "Text.h"
 #include "MainImGUI.h"
-#include "beryll/core/Log.h"
 
 namespace Beryll
 {

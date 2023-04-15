@@ -1,28 +1,37 @@
-#include "ButtonWithText.h"
+#include "ButtonWithTexture.h"
+#include "beryll/renderer/Renderer.h"
 #include "beryll/core/EventHandler.h"
 #include "MainImGUI.h"
 
 namespace Beryll
 {
-    ButtonWithText::ButtonWithText(std::string text, float left, float top, float width, float height, bool actRepeat)
-        : m_text(std::move(text)), m_leftPos(left / 100.0f), m_topPos(top / 100.0f), m_width(width / 100.0f), m_height(height / 100.0f)
+    ButtonWithTexture::ButtonWithTexture(const char* defaultTexturePath,
+                                         const char* touchedTexturePath,
+                                         float left,
+                                         float top,
+                                         float width,
+                                         float height,
+                                         bool actRepeat)
+                                         : m_leftPos(left / 100.0f), m_topPos(top / 100.0f), m_width(width / 100.0f), m_height(height / 100.0f)
     {
+        BR_ASSERT((std::string(defaultTexturePath).empty() == false), "%s", "Path to default texture can not be empty");
         BR_ASSERT((left >= 0.0f && left <= 100.0f) && (top >= 0.0f && top <= 100.0f)
-                &&(width >= 0.0f && width <= 100.0f) && (height >= 0.0f && height <= 100.0f), "%s", "Wrong button size or position");
+                  &&(width >= 0.0f && width <= 100.0f) && (height >= 0.0f && height <= 100.0f), "%s", "Wrong button size or position");
 
         m_actRepeat = actRepeat;
+
+        m_defaultTexture = Renderer::createTexture(defaultTexturePath, TextureType::DIFFUSE_TEXTURE);
+
+        if(!std::string(touchedTexturePath).empty())
+            m_touchedTexture = Renderer::createTexture(touchedTexturePath, TextureType::DIFFUSE_TEXTURE);
     }
 
-    ButtonWithText::~ButtonWithText()
+    ButtonWithTexture::~ButtonWithTexture()
     {
 
     }
 
-    ImFont* ButtonWithText::m_font = nullptr;
-    std::string ButtonWithText::m_fontPath;
-    float ButtonWithText::m_fontHeight = 0.0f;
-
-    void ButtonWithText::updateBeforePhysics()
+    void ButtonWithTexture::updateBeforePhysics()
     {
         std::vector<Finger>& fingers = EventHandler::getFingers();
 
@@ -73,43 +82,32 @@ namespace Beryll
         {
             m_action();
         }
+
     }
 
-    void ButtonWithText::updateAfterPhysics()
+    void ButtonWithTexture::updateAfterPhysics()
     {
 
     }
 
-    void ButtonWithText::draw()
+    void ButtonWithTexture::draw()
     {
-        ImGui::PushStyleColor(ImGuiCol_Button, m_color); // lost focus
-        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, m_color); // on focus
-        ImGui::PushStyleColor(ImGuiCol_ButtonActive, m_clickedColor); // clicked
-        ImGui::PushStyleColor(ImGuiCol_Text, m_fontColor);
-
-
         ImGui::SetNextWindowPos(ImVec2(m_leftPos * MainImGUI::getInstance()->getGUIWidth(), m_topPos * MainImGUI::getInstance()->getGUIHeight()));
         ImGui::Begin(m_stringID.c_str(), nullptr, m_noBackgroundNoFrame);
 
-        if(m_font)
+        if(m_touched && m_touchedTexture)
         {
-            ImGui::PushFont(m_font);
-            ImGui::Button(m_text.c_str(),
-                          ImVec2(m_width * MainImGUI::getInstance()->getGUIWidth(), m_height * MainImGUI::getInstance()->getGUIHeight()),
-                          ImGuiButtonFlags_PressedOnClick,
-                          &m_touched);
-            ImGui::PopFont();
+            ImGui::ImageButton(m_stringID.c_str(),
+                               reinterpret_cast<ImTextureID>(m_touchedTexture->getID()),
+                               ImVec2(m_width * MainImGUI::getInstance()->getGUIWidth(), m_height * MainImGUI::getInstance()->getGUIHeight()));
         }
         else
         {
-            ImGui::Button(m_text.c_str(),
-                          ImVec2(m_width * MainImGUI::getInstance()->getGUIWidth(), m_height * MainImGUI::getInstance()->getGUIHeight()),
-                          ImGuiButtonFlags_PressedOnClick,
-                          &m_touched);
+            ImGui::ImageButton(m_stringID.c_str(),
+                               reinterpret_cast<ImTextureID>(m_defaultTexture->getID()),
+                               ImVec2(m_width * MainImGUI::getInstance()->getGUIWidth(), m_height * MainImGUI::getInstance()->getGUIHeight()));
         }
 
         ImGui::End();
-
-        ImGui::PopStyleColor(4);
     }
 }

@@ -1,7 +1,5 @@
 ---------------------plan:---------------------
 
-add banner with progress
-add button with image
 add directional button control GUI element
 
 update renderer 2 ?

@@ -16,6 +16,9 @@ namespace Beryll
 
         void bind() override;
         void unBind() override;
+        uint32_t getID() override { return *m_openGLID; }
+        int getWidth() override { return m_width; }
+        int getHeight() override { return m_height; }
 
         void drawIntoShadowMap(const std::vector<std::shared_ptr<Beryll::BaseSimpleObject>>& simpleObj,
                                const std::vector<std::shared_ptr<Beryll::BaseAnimatedObject>>& animatedObj,
@@ -42,5 +45,7 @@ namespace Beryll
 
         std::shared_ptr<uint32_t> m_openGLID; // ID in OpenGL
                                               // will copied across all objects with same m_ID
+        int m_width = 0;
+        int m_height = 0;
     };
 }

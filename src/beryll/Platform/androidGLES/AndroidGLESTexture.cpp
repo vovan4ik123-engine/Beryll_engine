@@ -45,6 +45,8 @@ namespace Beryll
         else if(1 == surface->format->BytesPerPixel) pixelFormat = GL_RED;
 
         m_openGLID = std::make_shared<uint32_t>();
+        m_width = surface->w;
+        m_height = surface->h;
 
         glGenTextures(1, m_openGLID.get());
         glBindTexture(GL_TEXTURE_2D, *m_openGLID);

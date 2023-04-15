@@ -1,5 +1,4 @@
 #include "Slider.h"
-#include "beryll/core/Log.h"
 #include "beryll/core/EventHandler.h"
 #include "MainImGUI.h"
 

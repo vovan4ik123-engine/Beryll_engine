@@ -1,11 +1,9 @@
 #include "SimpleObject.h"
-#include "beryll/core/Log.h"
 #include "beryll/utils/File.h"
 #include "beryll/utils/Matrix.h"
 #include "beryll/utils/CommonUtils.h"
 #include "beryll/renderer/Camera.h"
 #include "beryll/renderer/Renderer.h"
-#include "beryll/core/Window.h"
 
 namespace Beryll
 {

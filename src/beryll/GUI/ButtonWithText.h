@@ -29,9 +29,7 @@ namespace Beryll
         static std::string m_fontPath;
         static float m_fontHeight; // in range 0 = 0%...1 = 100% of screen size
 
-        // if action is set m_action() will called when clicked
-        // can be called many times if m_flags contains ImGuiButtonFlags_Repeat
-        // ImGuiButtonFlags_Repeat = button react on touch all time during finger is down
+        // if action is set m_action() will called when pressed
         std::function<void()> m_action;
 
         bool m_pressed = false; // if you want true all time during button touched pass actRepeat = true

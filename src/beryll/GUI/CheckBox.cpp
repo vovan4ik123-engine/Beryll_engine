@@ -1,5 +1,4 @@
 #include "CheckBox.h"
-#include "beryll/core/Log.h"
 #include "MainImGUI.h"
 
 namespace Beryll
