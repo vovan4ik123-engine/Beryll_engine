@@ -7,6 +7,7 @@ namespace Beryll
     class CheckBox : public GUIObject
     {
     public:
+        CheckBox() = delete;
         // position in percent 0...100% of screen
         CheckBox(std::string text, float left, float top);
         ~CheckBox() override;

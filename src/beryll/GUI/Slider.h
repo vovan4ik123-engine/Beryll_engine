@@ -7,6 +7,7 @@ namespace Beryll
     class Slider : public GUIObject
     {
     public:
+        Slider() = delete;
         // position in percent 0...100% of screen
         Slider(std::string text, float left, float top, float width, float height, float min = 0.0f, float max = 1.0f, bool background = false);
         ~Slider() override;

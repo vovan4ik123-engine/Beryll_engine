@@ -10,6 +10,7 @@ namespace Beryll
     class Text : public GUIObject
     {
     public:
+        Text() = delete;
         // position in percent 0...100% of screen
         Text(std::string text, float left, float top, bool background = false);
         ~Text() override;

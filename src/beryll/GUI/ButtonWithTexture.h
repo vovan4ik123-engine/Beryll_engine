@@ -8,6 +8,7 @@ namespace Beryll
     class ButtonWithTexture : public GUIObject
     {
     public:
+        ButtonWithTexture() = delete;
         /*
          * defaultTexturePath - default texture path on button. Cannot be empty
          * touchedTexturePath - texture shown when button touched. Can be empty.

@@ -7,6 +7,7 @@ namespace Beryll
     class ButtonWithText : public GUIObject
     {
     public:
+        ButtonWithText() = delete;
         // position and size in percent 0...100% of screen
         ButtonWithText(std::string text, float left, float top, float width, float height, bool actRepeat = false);
         ~ButtonWithText() override;
