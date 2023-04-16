@@ -12,6 +12,10 @@ namespace Beryll
             m_flags = m_backgroundNoFrame;
         else
             m_flags = m_noBackgroundNoFrame;
+
+        // m_text can not be empty because it is ID for slider window
+        if(m_text.empty())
+            m_text = "##SomeID" + std::to_string(Utils::Common::generateID());
     }
 
     Slider::~Slider()

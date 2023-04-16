@@ -36,7 +36,7 @@ namespace Beryll
         // true if finger was down at this game loop iteration.
         // will false in next game loop iteration (reset in loadEvents())
         bool downEvent;
-        long ID;
+        int ID;
     };
 
     class EventHandler

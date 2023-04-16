@@ -91,7 +91,7 @@ namespace Beryll
                                                  glm::vec2(event.tfinger.x * Window::getInstance()->getScreenWidth(), event.tfinger.y * Window::getInstance()->getScreenHeight()),
                                                   false,
                                                   true,
-                                                  static_cast<long>(event.tfinger.fingerId)});
+                                                  static_cast<int>(event.tfinger.fingerId)});
                     break;
 
                 case SDL_FINGERUP:

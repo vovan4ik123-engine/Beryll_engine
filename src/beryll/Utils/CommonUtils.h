@@ -3,6 +3,7 @@
 #include "LibsHeaders.h"
 #include "CppHeaders.h"
 #include "beryll/core/BeryllConstants.h"
+#include "beryll/core/Log.h"
 
 namespace Utils
 {
@@ -16,6 +17,7 @@ namespace Utils
         static int generateID()
         {
             ++m_id;
+            BR_ASSERT((m_id < std::numeric_limits<decltype(m_id)>::max()), "%s", "Reached limit of objects IDs");
             return m_id;
         }
 
