@@ -32,6 +32,7 @@ namespace Beryll
         float m_height;
         glm::vec2 m_joystickOrigin{0.0f};
         glm::vec2 m_touchedDirectionFromOrigin{0.0f};
+        const glm::vec2 m_joystickUp{0.0f, 1.0f};
 
         std::unique_ptr<Texture> m_defaultTexture;
         std::unique_ptr<Texture> m_touchedTexture;
