@@ -1,6 +1,5 @@
 #include "Renderer.h"
 #include "beryll/core/Log.h"
-#include "beryll/core/GameLoop.h"
 #include "beryll/renderer/Camera.h"
 
 #if defined(ANDROID)

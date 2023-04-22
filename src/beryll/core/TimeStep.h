@@ -3,8 +3,6 @@
 #include "LibsHeaders.h"
 #include "CppHeaders.h"
 
-#include "beryll/core/GameLoop.h"
-
 namespace Beryll
 {
     class TimeStep

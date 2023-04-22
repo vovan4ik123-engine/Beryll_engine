@@ -1,7 +1,6 @@
 #include "GameLoop.h"
 #include "beryll/core/Log.h"
 #include "beryll/core/TimeStep.h"
-#include "beryll/core/Window.h"
 #include "beryll/core/GameStateMachine.h"
 #include "beryll/core/EventHandler.h"
 #include "beryll/core/SoundsManager.h"
@@ -29,8 +28,9 @@ namespace Beryll
     int GameLoop::m_regulateFPSFramesCount = 0;
     float GameLoop::m_regulateFPSFramesSum = 0.0f;
 
-    void GameLoop::create()
+    void GameLoop::create(ScreenOrientation orientation)
     {
+        Window::setScreenOrientation(orientation);
         Window::create();
         Window::getInstance()->setClearColor(0.8f, 0.0f, 0.8f, 1.0f);
         Window::getInstance()->clear();
@@ -54,6 +54,9 @@ namespace Beryll
         m_loopTime = 1000000.0f / m_maxFPS; // microSec
         m_timer.reset();
         Physics::enableSimulation(); // also reset timer inside Physics
+
+        Window::getInstance()->reCreate();
+        MainImGUI::getInstance()->reCreate();
 
         while(m_isRun)
         {
@@ -92,8 +95,6 @@ namespace Beryll
             //Window::getInstance()->finishDraw(); // very slow
             //Window::getInstance()->flushDraw(); // potentially can be called but not necessary
             Window::getInstance()->swapWindow();
-
-            Window::getInstance()->checkOrientationChange();
 
             // Next start draw new frame
             Window::getInstance()->clear();

@@ -1,6 +1,6 @@
 ---------------------plan:---------------------
 
-add directional button control GUI element
+add scene banner with texture set and timer
 
 update renderer 2 ?
 draw thread ?

@@ -4,6 +4,7 @@
 // inside engine include files directly (beryll/core/....)
 // add Beryll_engine/src to includes path to Cmake
 
+#include "beryll/core/Window.h"
 #include "beryll/core/GameLoop.h"
 #include "beryll/core/Layer.h"
 #include "beryll/core/GameState.h"
@@ -11,7 +12,6 @@
 #include "beryll/core/Log.h"
 #include "beryll/core/EventHandler.h"
 #include "beryll/core/SoundsManager.h"
-#include "beryll/core/Window.h"
 #include "beryll/core/RandomGenerator.h"
 #include "beryll/core/TimeStep.h"
 

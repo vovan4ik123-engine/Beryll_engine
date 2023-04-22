@@ -22,4 +22,24 @@ namespace Beryll
         BR_ASSERT(false, "%s", "Can not create Window. Unknown platform.");
 #endif
     }
+
+    void Window::setScreenOrientation(ScreenOrientation orientation)
+    {
+        if(orientation == ScreenOrientation::MOBILE_PORTRAIT)
+        {
+            SDL_SetHint(SDL_HINT_ORIENTATIONS, "Portrait");
+        }
+        else if(orientation == ScreenOrientation::MOBILE_LANDSCAPE_AND_FLIPPED)
+        {
+            SDL_SetHint(SDL_HINT_ORIENTATIONS, "LandscapeLeft LandscapeRight");
+        }
+        else if(orientation == ScreenOrientation::MOBILE_ALL_ORIENTATIONS)
+        {
+            SDL_SetHint(SDL_HINT_ORIENTATIONS, "LandscapeLeft LandscapeRight Portrait PortraitUpsideDown");
+        }
+        else if(orientation == ScreenOrientation::DESKTOP)
+        {
+            // Should work without changes.
+        }
+    }
 }

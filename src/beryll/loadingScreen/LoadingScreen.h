@@ -3,7 +3,6 @@
 #include "CppHeaders.h"
 #include "LibsHeaders.h"
 
-#include "beryll/core/GameLoop.h"
 #include "beryll/renderer/Shader.h"
 #include "beryll/renderer/Buffer.h"
 #include "beryll/renderer/VertexArray.h"

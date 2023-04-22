@@ -3,6 +3,7 @@
 #include "LibsHeaders.h"
 #include "CppHeaders.h"
 #include "beryll/core/Timer.h"
+#include "beryll/core/Window.h"
 
 namespace Beryll
 {
@@ -27,15 +28,15 @@ namespace Beryll
         static float getFPS() { return 1000000.0f / m_frameTimeIncludeSleep; };
         static float getMaxFPS() { return m_maxFPS; }
 
-        static float getFrameTime() { return m_frameTime * 0.001; } // in milliSec
-        static float getCPUTime() { return m_CPUTime * 0.001; } // in milliSec
-        static float getGPUTime() { return m_GPUTime * 0.001; } // draw calls + GPU synchronization // in milliSec
+        static float getFrameTime() { return m_frameTime * 0.001; } // convert to milliSec
+        static float getCPUTime() { return m_CPUTime * 0.001; } // all logic + Physics simulation // convert to milliSec
+        static float getGPUTime() { return m_GPUTime * 0.001; } // draw calls + GPU synchronization // convert to milliSec
         static void stopLoop() { m_isRun = false; }
 
     private:
         friend int ::main(int argc, char *argv[]);
 
-        static void create();
+        static void create(ScreenOrientation orientation);
         static void run();
         static void regulateFPS();
 

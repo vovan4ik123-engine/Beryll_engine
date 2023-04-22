@@ -38,7 +38,7 @@ namespace Beryll
         {
             updateCameraVectors();
 
-            m_projection = getPerspective3D(Window::getInstance()->getScreenWidth(), Window::getInstance()->getScreenHeight());
+            m_projection = getProjectionPerspective3D(Window::getInstance()->getScreenWidth(), Window::getInstance()->getScreenHeight());
             m_view = getVeiw3D();
 
             m_viewProjection = m_projection * m_view;
@@ -89,11 +89,12 @@ namespace Beryll
             m_fovRadians = glm::radians(fovDegrees);
             m_halfFovRadians = m_fovRadians * 0.5f;
         }
-        static void setPerspectiveNearClipPlane(const float near) { m_perspNearClipPlane = near; }
-        static void setPerspectiveFarClipPlane(const float far) { m_perspFarClipPlane = far; }
+        static void setProjectionNearClipPlane(const float near) { m_projNearClipPlane = near; }
+        static void setProjectionFarClipPlane(const float far) { m_projFarClipPlane = far; }
         static void setObjectsViewDistance(const float viewDistance) { m_objectsViewDistance = viewDistance; }
 
         static float getObjectsViewDistance() { return m_objectsViewDistance; }
+        static float getProjectionFarClipPlane() { return m_projFarClipPlane; }
         static const glm::vec3& getCameraDirectionXYZ() { return m_cameraDirectionXYZ; }
         static const glm::vec3& getCameraDirectionXZ() { return m_cameraDirectionXZ; }
         static const glm::vec3& getCameraBackDirectionXYZ() { return m_cameraBackDirectionXYZ; }
@@ -122,8 +123,8 @@ namespace Beryll
 
         static float m_fovRadians;
         static float m_halfFovRadians;
-        static float m_perspNearClipPlane;
-        static float m_perspFarClipPlane;
+        static float m_projNearClipPlane;
+        static float m_projFarClipPlane;
 
         static float m_objectsViewDistance; // for method isSeeObject()
 
@@ -155,13 +156,13 @@ namespace Beryll
             return glm::lookAt(m_cameraPos, m_cameraPos + m_cameraDirectionXYZ, m_cameraUp);
         }
 
-        static glm::mat4 getPerspective3D(const float screenWidth, const float screenHeight)
+        static glm::mat4 getProjectionPerspective3D(const float screenWidth, const float screenHeight)
         {
             return glm::perspectiveFov(m_fovRadians,
                                        screenWidth,
                                        screenHeight,
-                                       m_perspNearClipPlane,
-                                       m_perspFarClipPlane);
+                                       m_projNearClipPlane,
+                                       m_projFarClipPlane);
         }
     };
 }

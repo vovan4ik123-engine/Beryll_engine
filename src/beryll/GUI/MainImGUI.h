@@ -4,7 +4,6 @@
 #include "CppHeaders.h"
 
 #include "beryll/core/Log.h"
-#include "beryll/core/GameLoop.h"
 
 namespace Beryll
 {

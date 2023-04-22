@@ -4,10 +4,21 @@
 #include "CppHeaders.h"
 
 #include "beryll/core/Log.h"
-#include "beryll/core/GameLoop.h"
 
 namespace Beryll
 {
+
+    enum class ScreenOrientation
+    {
+        // Use only on mobile.
+        MOBILE_PORTRAIT,
+        MOBILE_LANDSCAPE_AND_FLIPPED,
+        MOBILE_ALL_ORIENTATIONS, // Use Window::getInstance()->checkOrientationChange(); for recreate Window + ImGUI elements.
+
+        // Use for desktop.
+        DESKTOP
+    };
+
     class Window
     {
     public:
@@ -45,6 +56,7 @@ namespace Beryll
     private:
         friend class GameLoop;
         static void create(); // should be called only in GameLoop
+        static void setScreenOrientation(ScreenOrientation orientation);
 
         static std::unique_ptr<Window> m_window;
     };
