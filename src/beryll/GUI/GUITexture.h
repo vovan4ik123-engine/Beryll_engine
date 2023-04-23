@@ -17,11 +17,6 @@ namespace Beryll
         void draw() override;
 
     private:
-        float m_leftPos; // in range 0 = 0%...1 = 100% of screen size
-        float m_topPos;
-        float m_width;
-        float m_height;
-
         std::unique_ptr<Texture> m_texture;
     };
 }

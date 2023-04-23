@@ -33,9 +33,6 @@ namespace Beryll
 
         int32_t m_flags = 0;
 
-        float m_leftPos; // in range 0 = 0%...1 = 100% of screen size
-        float m_topPos;
-
         // color can be different for each text
         ImVec4 m_fontColor { 0.0f, 0.0f, 0.0f, 1.0f }; // 0.0f - 1.0f range
         ImVec4 m_backgroundColor { 1.0f, 1.0f, 1.0f, 1.0f };

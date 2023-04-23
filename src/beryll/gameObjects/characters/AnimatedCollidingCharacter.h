@@ -21,12 +21,12 @@ namespace Beryll
          * objGroup - game specific group to which this scene object belong
          */
         AnimatedCollidingCharacter(const char* modelPath,  // common params
-                                float collisionMass,    // physics params
-                                bool wantCollisionCallBack,
-                                CollisionFlags collFlag,
-                                CollisionGroups collGroup,
-                                CollisionGroups collMask,
-                                SceneObjectGroups objGroup = SceneObjectGroups::NONE);
+                                   float collisionMass,    // physics params
+                                   bool wantCollisionCallBack,
+                                   CollisionFlags collFlag,
+                                   CollisionGroups collGroup,
+                                   CollisionGroups collMask,
+                                   SceneObjectGroups objGroup = SceneObjectGroups::NONE);
         ~AnimatedCollidingCharacter() override;
 
         // methods from base class

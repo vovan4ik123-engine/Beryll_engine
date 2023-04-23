@@ -5,8 +5,13 @@
 namespace Beryll
 {
     ButtonWithText::ButtonWithText(std::string text, float left, float top, float width, float height, bool actRepeat)
-        : m_text(std::move(text)), m_leftPos(left / 100.0f), m_topPos(top / 100.0f), m_width(width / 100.0f), m_height(height / 100.0f)
+        : m_text(std::move(text))
     {
+        m_leftPos = left / 100.0f;
+        m_topPos = top / 100.0f;
+        m_width = width / 100.0f;
+        m_height = height / 100.0f;
+
         m_actRepeat = actRepeat;
     }
 

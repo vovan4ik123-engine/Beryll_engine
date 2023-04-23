@@ -19,7 +19,7 @@ namespace Beryll
                                          {0.0f - m_width * 0.5f, 0.0f + m_height * 0.5f, 0.0f} };
         m_vertexPosBuffer = Renderer::createStaticVertexBuffer(vertices);
 
-        // Counter clockwise winding order
+        // Counter clockwise winding order.
         std::vector<uint32_t> indices {0, 1, 3,
                                        1, 2, 3};
         m_indexBuffer = Renderer::createStaticIndexBuffer(indices);

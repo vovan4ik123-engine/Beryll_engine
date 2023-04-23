@@ -5,9 +5,13 @@
 namespace Beryll
 {
     GUITexture::GUITexture(const char* texturePath, float left, float top, float width, float height)
-            : m_leftPos(left / 100.0f), m_topPos(top / 100.0f), m_width(width / 100.0f), m_height(height / 100.0f)
     {
         BR_ASSERT((std::string(texturePath).empty() == false), "%s", "Path to texture can not be empty");
+
+        m_leftPos = left / 100.0f;
+        m_topPos = top / 100.0f;
+        m_width = width / 100.0f;
+        m_height = height / 100.0f;
 
         m_texture = Renderer::createTexture(texturePath, TextureType::DIFFUSE_TEXTURE);
     }

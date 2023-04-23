@@ -24,6 +24,8 @@ namespace Beryll
         void disable()
         {
             m_isEnabled = false;
+            m_pressed = false;
+            m_touched = false;
         }
 
     protected:
@@ -36,5 +38,12 @@ namespace Beryll
         const std::string m_stringID = std::to_string(m_ID); // only for GUI elements.
 
         bool m_isEnabled = true;
+        bool m_pressed = false;
+        bool m_touched = false;
+
+        float m_leftPos; // in range 0 = 0%...1 = 100% of screen size
+        float m_topPos;
+        float m_width;
+        float m_height;
     };
 }

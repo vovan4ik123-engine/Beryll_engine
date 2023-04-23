@@ -48,11 +48,6 @@ namespace Beryll
         float m_sliderValue = 0.0f; // in range 0.0f...1.0f
         bool m_valueChanging = false;
 
-        float m_leftPos; // in range 0 = 0%...1 = 100% of screen size
-        float m_topPos;
-        float m_width;
-        float m_height;
-
         // color can be different for each slider
         ImVec4 m_fontColor { 1.0f, 1.0f, 1.0f, 1.0f }; // 0.0f - 1.0f range
         ImVec4 m_sliderGrabColor { 0.0f, 1.0f, 0.0f, 1.0f };

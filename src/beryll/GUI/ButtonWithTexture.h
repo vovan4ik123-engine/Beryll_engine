@@ -35,14 +35,7 @@ namespace Beryll
         // if action is set m_action() will called when pressed
         std::function<void()> m_action;
 
-        bool m_pressed = false; // if you want true all time during button touched pass actRepeat = true
-        bool m_actRepeat = false;
-        bool m_touched = false;
-
-        float m_leftPos; // in range 0 = 0%...1 = 100% of screen size
-        float m_topPos;
-        float m_width;
-        float m_height;
+        bool m_actRepeat = false; // if you want m_pressed = true all time during button touched pass actRepeat = true
 
         std::unique_ptr<Texture> m_defaultTexture;
         std::unique_ptr<Texture> m_touchedTexture;

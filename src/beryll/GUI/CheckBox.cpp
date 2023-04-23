@@ -4,9 +4,10 @@
 namespace Beryll
 {
     CheckBox::CheckBox(std::string text, float left, float top)
-        : m_text(std::move(text)), m_leftPos(left / 100.0f), m_topPos(top / 100.0f)
+        : m_text(std::move(text))
     {
-
+        m_leftPos = left / 100.0f;
+        m_topPos = top / 100.0f;
     }
 
     CheckBox::~CheckBox()

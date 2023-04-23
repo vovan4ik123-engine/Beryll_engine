@@ -38,8 +38,6 @@ namespace Beryll
         bool m_checked = false;
 
         std::string m_text;
-        float m_leftPos; // in range 0 = 0%...1 = 100% of screen size
-        float m_topPos;
 
         // color can be different for each check box
         ImVec4 m_fontColor { 0.0f, 0.0f, 0.0f, 1.0f }; // 0.0f - 1.0f range

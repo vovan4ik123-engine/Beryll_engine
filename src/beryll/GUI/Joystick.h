@@ -24,12 +24,6 @@ namespace Beryll
         }
 
     private:
-        bool m_touched = false;
-
-        float m_leftPos; // in range 0 = 0%...1 = 100% of screen size
-        float m_topPos;
-        float m_width;
-        float m_height;
         glm::vec2 m_joystickOrigin{0.0f};
         glm::vec2 m_touchedDirectionFromOrigin{0.0f};
         const glm::vec2 m_joystickUp{0.0f, 1.0f};

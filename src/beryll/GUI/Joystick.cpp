@@ -6,9 +6,13 @@
 namespace Beryll
 {
     Joystick::Joystick(const char* defaultTexturePath, const char* touchedTexturePath, float left, float top, float width, float height)
-            : m_leftPos(left / 100.0f), m_topPos(top / 100.0f), m_width(width / 100.0f), m_height(height / 100.0f)
     {
         BR_ASSERT((std::string(defaultTexturePath).empty() == false), "%s", "Path to default texture can not be empty");
+
+        m_leftPos = left / 100.0f;
+        m_topPos = top / 100.0f;
+        m_width = width / 100.0f;
+        m_height = height / 100.0f;
 
         m_defaultTexture = Renderer::createTexture(defaultTexturePath, TextureType::DIFFUSE_TEXTURE);
 

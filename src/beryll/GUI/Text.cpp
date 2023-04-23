@@ -4,8 +4,11 @@
 namespace Beryll
 {
     Text::Text(std::string text, float left, float top, bool background)
-        : text(std::move(text)), m_leftPos(left / 100.0f), m_topPos(top / 100.0f)
+        : text(std::move(text))
     {
+        m_leftPos = left / 100.0f;
+        m_topPos = top / 100.0f;
+
         if(background)
             m_flags = m_backgroundNoFrame;
         else
