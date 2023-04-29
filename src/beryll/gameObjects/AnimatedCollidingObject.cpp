@@ -206,7 +206,7 @@ namespace Beryll
                 m_bonesMatrices.back().offsetMatrix = m_scene->mMeshes[i]->mBones[g]->mOffsetMatrix;
                 m_boneNameIndex.emplace_back(boneName, g);
 
-                // collect all vertices to which bone has impact
+                // Collect all vertices to which bone has impact.
                 for(int j = 0; j < m_scene->mMeshes[i]->mBones[g]->mNumWeights; ++j)
                 {
                     uint32_t vertexIndex = m_scene->mMeshes[i]->mBones[g]->mWeights[j].mVertexId;
@@ -222,6 +222,32 @@ namespace Beryll
                                 boneWeights[vertexIndex][k] = weight;
                                 break;
                             }
+                        }
+                    }
+                }
+            }
+
+            // Bubble sort boneIDs + boneWeights.
+            for(int g = 0; g < boneWeights.size(); ++g)
+            {
+                float tmpWeight = 0.0f;
+                int tmpBoneID = 0;
+
+                for(int j = 0; j < NUM_BONES_PER_VERTEX; ++j)
+                {
+                    for(int k = 0; k + 1 < NUM_BONES_PER_VERTEX; ++k)
+                    {
+                        if(boneWeights[g][k] < boneWeights[g][k + 1])
+                        {
+                            // boneIDs and boneWeights have same size and structure.
+                            tmpWeight = boneWeights[g][k];
+                            tmpBoneID = boneIDs[g][k];
+
+                            boneWeights[g][k] = boneWeights[g][k + 1];
+                            boneIDs[g][k] = boneIDs[g][k + 1];
+
+                            boneWeights[g][k + 1] = tmpWeight;
+                            boneIDs[g][k + 1] = tmpBoneID;
                         }
                     }
                 }
