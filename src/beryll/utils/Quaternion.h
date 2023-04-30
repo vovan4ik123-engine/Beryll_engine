@@ -37,25 +37,12 @@ namespace Utils
         ~Quaternion() = delete;
 
         // normalized linear interpolation. much faster than rotation on sphere
-        static aiQuaternion nlerp(aiQuaternion& a, aiQuaternion& b, const float blend)
+        static aiQuaternion nlerp(const aiQuaternion& a, const aiQuaternion& b, const float blend)
         {
-            // we can check without sqrt if length = 1. because sqrt(1) = 1. Oo
-            float aLength = a.x * a.x + a.y * a.y + a.z * a.z + a.w * a.w;
-            if( !(aLength > 0.9999f && aLength <  1.0001f) )
-            {
-                a.Normalize();
-            }
-
-            float bLength = b.x * b.x + b.y * b.y + b.z * b.z + b.w * b.w;
-            if( !(bLength > 0.9999f && bLength <  1.0001f) )
-            {
-                b.Normalize();
-            }
-
-            aiQuaternion result;
             float dotProduct = a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w;
             float oneMinusBlend = 1.0f - blend;
 
+            aiQuaternion result;
             if (dotProduct < 0.0f)
             {
                 result.x = a.x * oneMinusBlend + blend * -b.x;

@@ -38,8 +38,8 @@ namespace Beryll
         void updateAfterPhysics() override;
         void draw() override;
 
-        void setAnimationByName(const char* name, bool playOneTime) override; // animations should be loaded from model
-        void setAnimationByIndex(int index, bool playOneTime) override;
+        void setCurrentAnimationByName(const char* name, bool playOneTime) override; // animations should be loaded from model
+        void setCurrentAnimationByIndex(int index, bool playOneTime) override;
         void setDefaultAnimationByName(const char* name) override;
         void setDefaultAnimationByIndex(int index) override;
 

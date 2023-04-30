@@ -598,10 +598,13 @@ namespace Beryll
             return aiMatrix4x4(nodeAnim->mRotationKeys[currentFrameIndex].mValue.GetMatrix());
         }
 
-        aiQuaternion& start = nodeAnim->mRotationKeys[currentFrameIndex].mValue;
-        aiQuaternion& end = nodeAnim->mRotationKeys[nextFrameIndex].mValue;
+        const aiQuaternion& start = nodeAnim->mRotationKeys[currentFrameIndex].mValue;
+        const aiQuaternion& end = nodeAnim->mRotationKeys[nextFrameIndex].mValue;
 
-        // Utils::Quaternion::nlerp() will normalize quaternions it takes by reference if they not
+        BR_ASSERT((((start.x * start.x + start.y * start.y + start.z * start.z + start.w * start.w) > 0.9999f) &&
+                   ((start.x * start.x + start.y * start.y + start.z * start.z + start.w * start.w) < 1.0001f)), "%s", "start quaternion must be unit");
+        BR_ASSERT((((end.x * end.x + end.y * end.y + end.z * end.z + end.w * end.w) > 0.9999f) &&
+                   ((end.x * end.x + end.y * end.y + end.z * end.z + end.w * end.w) < 1.0001f)), "%s", "end quaternion must be unit");
         return aiMatrix4x4(Utils::Quaternion::nlerp(start, end, factor).GetMatrix());
     }
 
@@ -630,7 +633,7 @@ namespace Beryll
         return scaleMatrix;
     }
 
-    void AnimatedCollidingObject::setAnimationByName(const char* name, bool playOneTime)
+    void AnimatedCollidingObject::setCurrentAnimationByName(const char* name, bool playOneTime)
     {
         if(m_currentAnimName == name) { return; }
 
@@ -652,7 +655,7 @@ namespace Beryll
         }
     }
 
-    void AnimatedCollidingObject::setAnimationByIndex(int index, bool playOneTime)
+    void AnimatedCollidingObject::setCurrentAnimationByIndex(int index, bool playOneTime)
     {
         if(m_currentAnimIndex == index) { return; }
 
@@ -676,7 +679,6 @@ namespace Beryll
             if(anim.first == name)
             {
                 m_defaultAnimIndex = anim.second;
-                m_currentAnimIndex = m_defaultAnimIndex;
 
                 return;
             }
@@ -688,7 +690,6 @@ namespace Beryll
         if(index >= 0 && index < m_animationNameIndex.size())
         {
             m_defaultAnimIndex = index;
-            m_currentAnimIndex = m_defaultAnimIndex;
         }
     }
 
