@@ -165,7 +165,7 @@ namespace Beryll
                                                                characterHeadUpNextPos,
                                                                m_collisionGroup,
                                                                m_collisionMask);
-        if(headSomethingHit.hit)
+        if(headSomethingHit)
         {
             glm::vec3 headBackwardMoveVector = glm::normalize(characterHeadUp - characterHeadUpNextPos);
             if(Utils::Common::getAngleInRadians(headBackwardMoveVector, headSomethingHit.hitNormal) < 0.698f && // < than 40 degrees
@@ -189,7 +189,7 @@ namespace Beryll
                                                                    characterLegsNextPos,
                                                                    m_collisionGroup,
                                                                    m_collisionMask);
-            if(legsSomethingHit.hit)
+            if(legsSomethingHit)
             {
                 BR_INFO("%s", "legsSomethingHit");
                 glm::vec3 legsBackwardMoveVector = glm::normalize(characterLegs - characterLegsNextPos);
@@ -206,7 +206,7 @@ namespace Beryll
                                                                                 m_collisionGroup,
                                                                                 m_collisionMask);
 
-                    if(potentialStepHit.hit)
+                    if(potentialStepHit)
                     {
                         BR_INFO("potentialStepHit y: %f", potentialStepHit.hitPoint.y);
                         float surfaceSlopeRadians = Utils::Common::getAngleInRadians(BeryllConstants::worldUp, potentialStepHit.hitNormal);
@@ -263,7 +263,7 @@ namespace Beryll
                                                                       m_collisionGroup,
                                                                       m_collisionMask);
 
-                if(newPosYHit.hit)
+                if(newPosYHit)
                 {
                     //BR_INFO("%s", "walkable floor found");
                     if(m_bottomCollisionPoint.first.y > newPosYHit.hitPoint.y)

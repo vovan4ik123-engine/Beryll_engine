@@ -29,7 +29,9 @@ namespace Beryll
         ARMY_1 = 14,
         ARMY_2 = 15,
 
-        //YOUR_GAME_GROUP = 14
+        GROUP_FOOTMAN_1_1,
+        GROUP_FOOTMAN_1_2,
+        GROUP_FOOTMAN_1_3
     };
 
     class SceneObject : public GameObject

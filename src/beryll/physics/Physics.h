@@ -92,29 +92,29 @@ namespace Beryll
 
     struct RayClosestHit
     {
-        const bool hit = false;
+        const bool isHit = false;
         const int objectID = -1; // if something was hitted
         const CollisionFlags collFlag = CollisionFlags::NONE;
-        const float mass = -1.0f;
+        const float hittedObjectMass = -1.0f;
         const glm::vec3 hitPoint{0.0f};
         const glm::vec3 hitNormal{0.0f};
         const float hitFraction = 0.0f; // hit distance in range 0...1 between start and end points
         const glm::vec3 hittedObjectOrigin{0.0f, 0.0f, 0.0f};
 
-        operator bool() const { return hit; }
+        operator bool() const { return isHit; }
     };
     struct RayAllHits
     {
-        bool hit = false;
+        bool isHit = false;
         std::vector<int> objectsID; // all hitted
         std::vector<CollisionFlags> objectsCollFlags;
-        std::vector<float> objectsMass;
+        std::vector<float> hittedObjectsMass;
         std::vector<glm::vec3> hitPoints;
         std::vector<glm::vec3> hitNormals;
         std::vector<float> hitFractions; // hit distances in range 0...1 between start and end points
         std::vector<glm::vec3> hittedObjectsOrigins;
 
-        operator bool() const { return hit; }
+        operator bool() const { return isHit; }
     };
 
     class Physics

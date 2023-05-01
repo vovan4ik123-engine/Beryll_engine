@@ -951,7 +951,7 @@ namespace Beryll
         if(allResults.hasHit())
         {
             RayAllHits res;
-            res.hit = true;
+            res.isHit = true;
             res.hitPoints.reserve(allResults.m_hitPointWorld.size());
             res.hitNormals.reserve(allResults.m_hitPointWorld.size());
             res.hitFractions.reserve(allResults.m_hitPointWorld.size());
@@ -973,7 +973,7 @@ namespace Beryll
                 res.hitFractions.emplace_back(allResults.m_hitFractions[i]);
                 res.objectsID.emplace_back(static_cast<RigidBodyData*>(allResults.m_collisionObjects[i]->getUserPointer())->bodyID);
                 res.objectsCollFlags.emplace_back(static_cast<RigidBodyData*>(allResults.m_collisionObjects[i]->getUserPointer())->collFlag);
-                res.objectsMass.emplace_back(static_cast<RigidBodyData*>(allResults.m_collisionObjects[i]->getUserPointer())->mass);
+                res.hittedObjectsMass.emplace_back(static_cast<RigidBodyData*>(allResults.m_collisionObjects[i]->getUserPointer())->mass);
                 res.hittedObjectsOrigins.emplace_back(transforms.getOrigin().getX(), transforms.getOrigin().getY(), transforms.getOrigin().getZ());
             }
 
