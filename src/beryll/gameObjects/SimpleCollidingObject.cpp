@@ -13,7 +13,7 @@ namespace Beryll
                                                  CollisionFlags collFlag,
                                                  CollisionGroups collGroup,
                                                  CollisionGroups collMask,
-                                                 SceneObjectGroups objGroup)
+                                                 SceneObjectGroups sceneGroup)
     {
         BR_INFO("Loading colliding simple object: %s", modelPath);
 
@@ -34,7 +34,7 @@ namespace Beryll
         BR_ASSERT((scene->mNumMeshes == 2),
                   "Colliding simple object: %s MUST contain 2 meshes. For draw and physics simulation", modelPath);
 
-        m_sceneObjectGroup = objGroup;
+        m_sceneObjectGroup = sceneGroup;
 
         for(int i = 0; i < scene->mNumMeshes; ++i)
         {

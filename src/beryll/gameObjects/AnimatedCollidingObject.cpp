@@ -18,7 +18,7 @@ namespace Beryll
                                                      CollisionFlags collFlag,
                                                      CollisionGroups collGroup,
                                                      CollisionGroups collMask,
-                                                     SceneObjectGroups objGroup)  : m_modelPath(modelPath)
+                                                     SceneObjectGroups sceneGroup)  : m_modelPath(modelPath)
     {
         const auto search = m_importersScenes.find(m_modelPath);
         if(search != m_importersScenes.end())
@@ -57,7 +57,7 @@ namespace Beryll
             m_importersScenes.emplace(m_modelPath, std::make_pair(importer, scene));
         }
 
-        m_sceneObjectGroup = objGroup;
+        m_sceneObjectGroup = sceneGroup;
 
         m_globalInverseMatrix = m_scene->mRootNode->mTransformation;
         m_globalInverseMatrix.Inverse();

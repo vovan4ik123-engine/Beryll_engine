@@ -9,7 +9,7 @@ namespace Beryll
                                                        CollisionFlags collFlag,
                                                        CollisionGroups collGroup,
                                                        CollisionGroups collMask,
-                                                       SceneObjectGroups objGroup)
+                                                       SceneObjectGroups sceneGroup)
                                                        // call base class constructor
                                                        : SimpleCollidingObject(modelPath,
                                                                                collisionMass,
@@ -17,7 +17,7 @@ namespace Beryll
                                                                                collFlag,
                                                                                collGroup,
                                                                                collMask,
-                                                                               objGroup)
+                                                                               sceneGroup)
     {
         // colliding character described by collision mesh
         m_fromOriginToTop = std::abs(m_mostTopVertex);

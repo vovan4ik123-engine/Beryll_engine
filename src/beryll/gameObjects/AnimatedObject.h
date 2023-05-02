@@ -18,7 +18,7 @@ namespace Beryll
          * objGroup - game specific group to which this scene object belong
          */
         AnimatedObject(const char* modelPath,
-                       SceneObjectGroups objGroup = SceneObjectGroups::NONE);
+                       SceneObjectGroups sceneGroup = SceneObjectGroups::NONE);
         ~AnimatedObject() override;
 
         void updateBeforePhysics() override;

@@ -11,7 +11,6 @@ namespace Beryll
         /*
          * modelPath - path to model file (.DAE or .FBX). start path from first folder inside assets/
          * collisionMass - mass of this object for physics simulation. 0 for static objects
-         *                 for example map ground should be alwaus enabled
          * wantCollisionCallBack - drop performance too much because call back use std::scoped_lock<std::mutex>
          *                         if true Physics module will store actual collisions for this object,
          *                         you can check it with Physics::getIsCollision(id1, id2) or Physics::getAllCollisions()
@@ -26,7 +25,7 @@ namespace Beryll
                                    CollisionFlags collFlag,
                                    CollisionGroups collGroup,
                                    CollisionGroups collMask,
-                                   SceneObjectGroups objGroup = SceneObjectGroups::NONE);
+                                   SceneObjectGroups sceneGroup = SceneObjectGroups::NONE);
         ~AnimatedCollidingCharacter() override;
 
         // methods from base class
