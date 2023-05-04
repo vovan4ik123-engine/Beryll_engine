@@ -442,7 +442,7 @@ namespace Beryll
         m_dynamicsWorldMT->addRigidBody(body.get(), static_cast<int>(collGroup), static_cast<int>(collMask));
     }
 
-    // called from MANY threads !!!!!
+    // Called from MANY threads !!!!!
     bool Physics::collisionsCallBack(btManifoldPoint& cp, const btCollisionObjectWrapper* ob1, int ID1, int index1,
                                                           const btCollisionObjectWrapper* ob2, int ID2, int index2)
     {

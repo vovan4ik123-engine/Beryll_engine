@@ -29,9 +29,11 @@ namespace Beryll
         ARMY_1 = 14,
         ARMY_2 = 15,
 
-        GROUP_FOOTMAN_1_1,
-        GROUP_FOOTMAN_1_2,
-        GROUP_FOOTMAN_1_3
+        ARMY_PLAYER_FOOTMAN_GROUP_1,
+        ARMY_PLAYER_FOOTMAN_GROUP_2,
+        ARMY_PLAYER_FOOTMAN_GROUP_3,
+        ARMY_ENEMY_FOOTMAN_GROUP_1,
+        ARMY_ENEMY_FOOTMAN_GROUP_2
     };
 
     class SceneObject : public GameObject
@@ -105,12 +107,12 @@ namespace Beryll
             }
         }
 
-        void rotateToPoint(const glm::vec3 point, bool ignoreYAxisWhenRotate = false)
+        void rotateToPoint(const glm::vec3 point, bool ignoreYAxisWhenRotate)
         {
             rotateToDirection(point - m_origin, ignoreYAxisWhenRotate);
         }
 
-        void rotateToDirection(const glm::vec3 dir, bool ignoreYAxisWhenRotate = false)
+        void rotateToDirection(const glm::vec3 dir, bool ignoreYAxisWhenRotate)
         {
             if(dir.x == 0.0f && dir.y == 0.0f && dir.z == 0.0f) { return; }
 
@@ -227,6 +229,15 @@ namespace Beryll
             glm::vec3 dirXYZ = getFaceDirXYZ();
             return glm::normalize(glm::vec3{dirXYZ.x, 0.0f, dirXYZ.z});
         }
+        glm::vec3 getRightDirXYZ()
+        {
+            return glm::normalize(glm::vec3(m_rotateMatrix * glm::vec4(m_sceneObjectRightDir, 1.0f)));
+        }
+        glm::vec3 getRightDirXZ()
+        {
+            glm::vec3 dirXYZ = getRightDirXYZ();
+            return glm::normalize(glm::vec3{dirXYZ.x, 0.0f, dirXYZ.z});
+        }
         glm::vec3 getUpDirXYZ()
         {
             return glm::normalize(glm::vec3(m_rotateMatrix * glm::vec4(m_sceneObjectUpDir, 1.0f)));
@@ -323,6 +334,7 @@ namespace Beryll
         // That will add rotation to exported model: 90 degrees around -X axis or 270 degrees around +X axis
         // If you want take models faceDir or upDir just multiply these vectors by m_rotateMatrix
         const glm::vec3 m_sceneObjectFaceDir{1.0f, 0.0f, 0.0f};
+        const glm::vec3 m_sceneObjectRightDir{0.0f, -1.0f, 0.0f};
         const glm::vec3 m_sceneObjectUpDir{0.0f, 0.0f, 1.0f};
     };
 }
