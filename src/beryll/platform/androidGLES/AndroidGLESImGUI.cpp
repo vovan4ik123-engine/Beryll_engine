@@ -115,6 +115,8 @@ namespace Beryll
         {
             Slider::m_font = nullptr;
         }
+
+        ImGui::GetCurrentContext()->Style.FramePadding = ImVec2{1.0f, 1.0f};
     }
 
     void AndroidGLESImGUI::destroy()

@@ -79,5 +79,7 @@ namespace Beryll
         std::vector<std::pair<glm::vec3, glm::vec3>> m_collidingPoints; // prevent creation and deletion every frame
 
         std::pair<glm::vec3, glm::vec3> m_bottomCollisionPoint; // lowest collision point with ground ant its normal
+
+        void move(glm::vec3 moveVector);
     };
 }

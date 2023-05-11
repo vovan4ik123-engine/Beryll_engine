@@ -136,10 +136,19 @@ namespace Beryll
 
     void AnimatedCollidingCharacter::moveToPosition(glm::vec3 position, bool ignoreYAxisWhenRotate)
     {
-        if(position != m_origin)
-        {
-            moveToDirection(position - m_origin, ignoreYAxisWhenRotate);
-        }
+        if(position == m_origin)
+            return;
+
+        glm::vec3 needToMove = position - m_origin;
+        rotateToDirection(needToMove, ignoreYAxisWhenRotate);
+
+        glm::vec3 moveVector = (getFaceDirXZ() * moveSpeed) * TimeStep::getTimeStepSec();
+
+        if(glm::length(moveVector) > glm::length(needToMove))
+            // Object should move less distance than he can.
+            moveVector = needToMove;
+
+        move(moveVector);
     }
 
     void AnimatedCollidingCharacter::moveToDirection(glm::vec3 direction, bool ignoreYAxisWhenRotate)
@@ -148,6 +157,11 @@ namespace Beryll
 
         glm::vec3 moveVector = (getFaceDirXZ() * moveSpeed) * TimeStep::getTimeStepSec();
 
+        move(moveVector);
+    }
+
+    void AnimatedCollidingCharacter::move(glm::vec3 moveVector)
+    {
         if(m_collisionFlag != CollisionFlags::DYNAMIC)
         {
             addToOrigin(moveVector);
@@ -162,9 +176,9 @@ namespace Beryll
         characterHeadUp.y += m_fromOriginToTop;
         glm::vec3 characterHeadUpNextPos = characterHeadUp + scaledMoveDirectionByRadius;
         RayClosestHit headSomethingHit = Physics::castRayClosestHit(characterHeadUp,
-                                                               characterHeadUpNextPos,
-                                                               m_collisionGroup,
-                                                               m_collisionMask);
+                                                                    characterHeadUpNextPos,
+                                                                    m_collisionGroup,
+                                                                    m_collisionMask);
         if(headSomethingHit)
         {
             glm::vec3 headBackwardMoveVector = glm::normalize(characterHeadUp - characterHeadUpNextPos);
@@ -185,9 +199,9 @@ namespace Beryll
             characterLegs.y -= (m_fromOriginToBottom - m_XZRadius * 0.98f); // characterLegs.y - distance from origin to capsules cylinder bottom
             glm::vec3 characterLegsNextPos = characterLegs + scaledMoveDirectionByRadius;
             RayClosestHit legsSomethingHit = Physics::castRayClosestHit(characterLegs,
-                                                                   characterLegsNextPos,
-                                                                   m_collisionGroup,
-                                                                   m_collisionMask);
+                                                                        characterLegsNextPos,
+                                                                        m_collisionGroup,
+                                                                        m_collisionMask);
             if(legsSomethingHit)
             {
                 BR_INFO("%s", "legsSomethingHit");
