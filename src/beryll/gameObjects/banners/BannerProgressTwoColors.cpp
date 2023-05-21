@@ -39,8 +39,6 @@ namespace Beryll
 
     void BannerProgressTwoColors::draw()
     {
-        BR_ASSERT(((progress >= 0.0f) && (progress <= 1.0f)), "%s", "Progress should be in range 0.0f...1.0f")
-
         m_internalShader->bind();
         m_MVP = Camera::getViewProjection() * m_modelMatrix;
         m_internalShader->setMatrix4x4Float("MVPMatrix", m_MVP);

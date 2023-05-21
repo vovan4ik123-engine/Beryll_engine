@@ -23,17 +23,27 @@ namespace Beryll
         MUSHROOM = 9,
         WALL = 10,
         TREE = 11,
-        TREE_SPRUCE = 12,
-        TREE_PINE = 13,
 
-        ARMY_1 = 14,
-        ARMY_2 = 15,
-
-        ARMY_PLAYER_FOOTMAN_GROUP_1,
-        ARMY_PLAYER_FOOTMAN_GROUP_2,
-        ARMY_PLAYER_FOOTMAN_GROUP_3,
-        ARMY_ENEMY_FOOTMAN_GROUP_1,
-        ARMY_ENEMY_FOOTMAN_GROUP_2
+        PLAYER_MELEE_GROUP_1,
+        PLAYER_MELEE_GROUP_2,
+        PLAYER_MELEE_GROUP_3,
+        PLAYER_MELEE_GROUP_4,
+        PLAYER_MELEE_GROUP_5,
+        PLAYER_MELEE_GROUP_6,
+        PLAYER_MELEE_GROUP_7,
+        PLAYER_MELEE_GROUP_8,
+        PLAYER_MELEE_GROUP_9,
+        PLAYER_MELEE_GROUP_10,
+        ENEMY_MELEE_GROUP_1,
+        ENEMY_MELEE_GROUP_2,
+        ENEMY_MELEE_GROUP_3,
+        ENEMY_MELEE_GROUP_4,
+        ENEMY_MELEE_GROUP_5,
+        ENEMY_MELEE_GROUP_6,
+        ENEMY_MELEE_GROUP_7,
+        ENEMY_MELEE_GROUP_8,
+        ENEMY_MELEE_GROUP_9,
+        ENEMY_MELEE_GROUP_10
     };
 
     class SceneObject : public GameObject
@@ -83,7 +93,7 @@ namespace Beryll
 
             m_rotateMatrix = glm::rotate(glm::mat4{1.0f}, angleRad, axis) * m_rotateMatrix;
             // translate and scale matrices should be same
-            m_modelMatrix = m_translateMatrix * m_rotateMatrix * m_scaleMatrix;
+            m_modelMatrix = m_translateMatrix * m_rotateMatrix; // * m_scaleMatrix;
 
             if(m_hasCollisionObject)
             {
@@ -98,7 +108,7 @@ namespace Beryll
 
             m_rotateMatrix = glm::toMat4(qua) * m_rotateMatrix;
             // translate and scale matrices should be same
-            m_modelMatrix = m_translateMatrix * m_rotateMatrix * m_scaleMatrix;
+            m_modelMatrix = m_translateMatrix * m_rotateMatrix; // * m_scaleMatrix;
 
             if(m_hasCollisionObject)
             {

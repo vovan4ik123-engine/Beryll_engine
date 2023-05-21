@@ -26,35 +26,41 @@ namespace Beryll
         {
             const int numberElements = v.size();
 
-            //BR_INFO("m_numThreads: %d, numberElements: %d, oneChunkSize: %d", m_numThreads, numberElements, int(numberElements / m_numThreads) + 1);
+            //BR_INFO("m_numThreads: %d, numberElements: %d", m_numThreads, numberElements);
 
-            if(numberElements <= 50 || m_numThreads == 1)
+            if(numberElements == 1 || m_numThreads <= 1)
             {
-                // run on main thread
+                // Run on main thread and exit.
                 func(v, 0, numberElements);
+                BR_WARN("%s", "AsyncRun::Run() was executed on main thread. Consider dont call AsyncRun::Run()");
+                return;
             }
+
+            // Run in std::async()
+            m_futuresVoid.clear();
+
+            float chunkFloat = float(numberElements) / float(m_numThreads);
+            int oneChunkSize = 0;
+            if(chunkFloat > float(int(chunkFloat)))
+                oneChunkSize = int(chunkFloat) + 1;
             else
+                oneChunkSize = int(chunkFloat);
+
+            //BR_INFO("chunkFloat: %f, oneChunkSize: %d", chunkFloat, oneChunkSize);
+
+            for(int i = 0; i < numberElements; i += oneChunkSize)
             {
-                m_futuresVoid.clear();
+                int chunkEnd = std::min(i + oneChunkSize, numberElements);
 
-                int oneChunkSize = numberElements / m_numThreads;
-                oneChunkSize++; // make sure (oneChunkSize * m_numThreads) > numberElements
-
-                for(int i = 0; i < numberElements; i += oneChunkSize)
-                {
-                    int chunkEnd = std::min(i + oneChunkSize, numberElements);
-
-                    // without std::cref(v)/std::ref(v) std::async() will COPY all parameters !!!
-                    m_futuresVoid.emplace_back(std::async(std::launch::async, func, std::ref(v), i, chunkEnd));
-                }
-
-                // wait all threads
-                for(const std::future<void>& ft : m_futuresVoid)
-                {
-                    ft.wait();
-                }
+                // without std::cref(v)/std::ref(v) std::async() will COPY all parameters !!!
+                m_futuresVoid.emplace_back(std::async(std::launch::async, func, std::ref(v), i, chunkEnd));
             }
 
+            // wait all threads
+            for(const std::future<void>& ft : m_futuresVoid)
+            {
+                ft.wait();
+            }
         }
 
         static const uint32_t m_numThreads; // all available threads on device -1

@@ -128,7 +128,7 @@ namespace Beryll
         {
             float averageFrameTime = m_regulateFPSFramesSum / 50.0f; // in microSec
 
-            setMaxFPS((1000000.0f / averageFrameTime) * 0.98f, true);
+            setMaxFPS((1000000.0f / averageFrameTime) * 0.96f, true);
 
             m_regulateFPSFramesCount = 0;
             m_regulateFPSFramesSum = 0.0f;
