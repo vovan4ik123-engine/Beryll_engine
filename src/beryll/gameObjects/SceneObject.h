@@ -56,6 +56,10 @@ namespace Beryll
             if(m_origin == orig) { return; }
 
             m_origin = orig;
+            m_originX = m_origin.x;
+            m_originY = m_origin.y;
+            m_originZ = m_origin.z;
+
             m_translateMatrix = glm::translate(glm::mat4{1.0f}, m_origin);
 
             m_modelMatrix[3][0] = m_origin.x;
@@ -74,6 +78,10 @@ namespace Beryll
             if(distance.x == 0.0f && distance.y == 0.0f && distance.z == 0.0f) { return; }
 
             m_origin += distance;
+            m_originX = m_origin.x;
+            m_originY = m_origin.y;
+            m_originZ = m_origin.z;
+
             m_translateMatrix = glm::translate(glm::mat4{1.0f}, m_origin);
 
             m_modelMatrix[3][0] = m_origin.x;
@@ -221,7 +229,14 @@ namespace Beryll
             return m_modelMatrix;
         }
 
-        const glm::vec3& getOrigin() { return m_origin; }
+        glm::vec3 getOrigin()
+        {
+            float x = m_originX;
+            float y = m_originY;
+            float z = m_originZ;
+
+            return glm::vec3{x, y, z};
+        }
         bool getIsDisabledForEver() { return m_disabledForEver; } // use it for disable object from draw
         bool getIsEnabledDraw() { return m_isEnabledDraw && !m_disabledForEver; } // use it for disable object from draw
         bool getIsEnabledUpdate() { return m_isEnabledUpdate && !m_disabledForEver; } // use it for disable object from updates
@@ -309,6 +324,11 @@ namespace Beryll
 
     protected:
         glm::vec3 m_origin{0.0f, 0.0f, 0.0f};
+        // For synchronization when one thread set origin and other calls getOrigin()
+        // for same object.
+        std::atomic<float> m_originX = 0.0f;
+        std::atomic<float> m_originY = 0.0f;
+        std::atomic<float> m_originZ = 0.0f;
 
         glm::mat4 m_scaleMatrix{1.0f};
         glm::mat4 m_rotateMatrix{1.0f};
@@ -328,7 +348,7 @@ namespace Beryll
         SceneObjectGroups m_sceneObjectGroup = SceneObjectGroups::NONE; // any scene object can belong to specific group
 
     private:
-        // only for internal checks inside this file
+        // Only for internal checks inside this file.
         bool m_gravityEnabled = true;
         glm::vec3 m_gravity{0.0f, -9999.0f, 0.0f};
         glm::vec3 m_linearFactor{1.0f, 1.0f, 1.0f};

@@ -266,6 +266,9 @@ namespace Beryll
                           "%s", "Scale should be baked to 1 in modeling tool.")
                 m_rotateMatrix = glm::toMat4(Utils::Matrix::getRotationFrom4x4Glm(m_modelMatrix));
                 m_origin = Utils::Matrix::getTranslationFrom4x4Glm(m_modelMatrix);
+                m_originX = m_origin.x;
+                m_originY = m_origin.y;
+                m_originZ = m_origin.z;
                 m_translateMatrix = glm::translate(glm::mat4{1.0f}, m_origin);
             }
         }
@@ -288,6 +291,9 @@ namespace Beryll
         m_physicsTransforms = Physics::getTransforms(m_ID);
 
         m_origin = m_physicsTransforms.origin;
+        m_originX = m_origin.x;
+        m_originY = m_origin.y;
+        m_originZ = m_origin.z;
 
         m_translateMatrix = glm::translate(glm::mat4{1.0f}, m_physicsTransforms.origin);
         m_rotateMatrix = glm::toMat4(m_physicsTransforms.rotation);
