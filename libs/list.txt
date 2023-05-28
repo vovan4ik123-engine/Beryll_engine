@@ -6,4 +6,4 @@ ImGUI       1.89.2
 glm         0.9.9.8
 assimp      5.2.4
 bullet      3.2.4
-sqlite      3.38.5
+sqlite      3.42.0
