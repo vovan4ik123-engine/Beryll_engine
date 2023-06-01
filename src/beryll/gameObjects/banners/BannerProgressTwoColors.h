@@ -22,7 +22,7 @@ namespace Beryll
 
         void setOrigin(const glm::vec3& orig)
         {
-            if(m_origin == orig) { return; }
+            if(glm::distance(m_origin, orig) < 0.001f) { return; }
 
             m_origin = orig;
             m_translateMatrix = glm::translate(glm::mat4{1.0f}, m_origin);

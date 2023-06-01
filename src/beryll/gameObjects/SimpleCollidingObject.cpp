@@ -259,17 +259,16 @@ namespace Beryll
             const aiNode* node = Utils::Common::findAinodeForAimesh(scene, scene->mRootNode, scene->mMeshes[i]->mName);
             if(node)
             {
-                m_modelMatrix = Utils::Matrix::aiToGlm(node->mTransformation);
+                glm::mat4 modelMatrix = Utils::Matrix::aiToGlm(node->mTransformation);
 
-                m_scaleMatrix = glm::scale(glm::mat4{1.0f}, Utils::Matrix::getScaleFrom4x4Glm(m_modelMatrix));
-                BR_ASSERT((m_scaleMatrix[0][0] == 1.0f && m_scaleMatrix[1][1] == 1.0f && m_scaleMatrix[2][2] == 1.0f),
-                          "%s", "Scale should be baked to 1 in modeling tool.")
-                m_rotateMatrix = glm::toMat4(Utils::Matrix::getRotationFrom4x4Glm(m_modelMatrix));
-                m_origin = Utils::Matrix::getTranslationFrom4x4Glm(m_modelMatrix);
+                glm::vec3 scale = Utils::Matrix::getScaleFrom4x4Glm(modelMatrix);
+                BR_ASSERT((scale.x == 1.0f && scale.y == 1.0f && scale.z == 1.0f), "%s", "Scale should be baked to 1 in modeling tool.");
+
+                m_rotation = glm::normalize(Utils::Matrix::getRotationFrom4x4Glm(modelMatrix));
+                m_origin = Utils::Matrix::getTranslationFrom4x4Glm(modelMatrix);
                 m_originX = m_origin.x;
                 m_originY = m_origin.y;
                 m_originZ = m_origin.z;
-                m_translateMatrix = glm::translate(glm::mat4{1.0f}, m_origin);
             }
         }
     }
@@ -290,15 +289,11 @@ namespace Beryll
 
         m_physicsTransforms = Physics::getTransforms(m_ID);
 
+        m_rotation = glm::normalize(m_physicsTransforms.rotation);
         m_origin = m_physicsTransforms.origin;
         m_originX = m_origin.x;
         m_originY = m_origin.y;
         m_originZ = m_origin.z;
-
-        m_translateMatrix = glm::translate(glm::mat4{1.0f}, m_physicsTransforms.origin);
-        m_rotateMatrix = glm::toMat4(m_physicsTransforms.rotation);
-
-        m_modelMatrix = m_translateMatrix * m_rotateMatrix; // * m_scaleMatrix;
     }
 
     void SimpleCollidingObject::draw()
@@ -306,7 +301,7 @@ namespace Beryll
         if(useInternalShader)
         {
             m_internalShader->bind();
-            m_MVP = Camera::getViewProjection() * m_modelMatrix;
+            m_MVP = Camera::getViewProjection() * getModelMatrix();
             m_internalShader->setMatrix4x4Float("MVPMatrix", m_MVP);
         }
 

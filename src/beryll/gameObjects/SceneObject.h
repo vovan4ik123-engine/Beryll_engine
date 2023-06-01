@@ -6,23 +6,16 @@
 
 namespace Beryll
 {
-    // this enum game dependent.
-    // when you create game you can add here groups and mark objects with them
-    // then check these groups in game loop for specific actions/rendering
+    // This enum game dependent.
+    // When you create game you can add here groups and mark objects with them
+    // then check these groups in game loop for specific actions/rendering.
     enum class SceneObjectGroups
     {
         NONE = 0,
         GROUND = 1,
         PLAYER = 2,
         ENEMY = 3,
-        GRASS = 4,
-        STONE = 5,
-        ROCK = 6,
-        BULLET = 7,
-        ROOT = 8,
-        MUSHROOM = 9,
-        WALL = 10,
-        TREE = 11,
+        BULLET = 4,
 
         PLAYER_MELEE_GROUP_1,
         PLAYER_MELEE_GROUP_2,
@@ -53,86 +46,74 @@ namespace Beryll
 
         void setOrigin(const glm::vec3& orig, bool resetVelocities = false)
         {
-            if(m_origin == orig) { return; }
+            if(glm::distance(m_origin, orig) < 0.001f) { return; } // Less than 1mm.
 
             m_origin = orig;
             m_originX = m_origin.x;
             m_originY = m_origin.y;
             m_originZ = m_origin.z;
 
-            m_translateMatrix = glm::translate(glm::mat4{1.0f}, m_origin);
-
-            m_modelMatrix[3][0] = m_origin.x;
-            m_modelMatrix[3][1] = m_origin.y;
-            m_modelMatrix[3][2] = m_origin.z;
-
             if(m_hasCollisionObject)
             {
-                // game object with collision object will take transforms from physics module after simulation
+                // Game object with collision object will take transforms from physics module after simulation.
                 Physics::setOrigin(m_ID, orig, resetVelocities);
             }
         }
 
         void addToOrigin(const glm::vec3& distance, bool resetVelocities = false)
         {
-            if(distance.x == 0.0f && distance.y == 0.0f && distance.z == 0.0f) { return; }
+            if(glm::length(distance) < 0.001f) { return; } // Less than 1mm.
 
             m_origin += distance;
             m_originX = m_origin.x;
             m_originY = m_origin.y;
             m_originZ = m_origin.z;
 
-            m_translateMatrix = glm::translate(glm::mat4{1.0f}, m_origin);
-
-            m_modelMatrix[3][0] = m_origin.x;
-            m_modelMatrix[3][1] = m_origin.y;
-            m_modelMatrix[3][2] = m_origin.z;
-
             if(m_hasCollisionObject)
             {
-                // game object with collision object will take transforms from physics module after simulation
+                // Game object with collision object will take transforms from physics module after simulation.
                 Physics::addToOrigin(m_ID, distance, resetVelocities);
             }
         }
 
         void addToRotation(float angleRad, const glm::vec3& axis, bool resetVelocities = false)
         {
-            if(angleRad < 0.0035f) { return; } // less that 0.2 degree
+            if(angleRad < 0.0035f) { return; } // less that 0.2 degree.
 
-            m_rotateMatrix = glm::rotate(glm::mat4{1.0f}, angleRad, axis) * m_rotateMatrix;
-            // translate and scale matrices should be same
-            m_modelMatrix = m_translateMatrix * m_rotateMatrix; // * m_scaleMatrix;
+            glm::quat normQuat = glm::normalize(glm::angleAxis(angleRad, glm::normalize(axis)));
+
+            m_rotation = glm::normalize(normQuat * m_rotation);
 
             if(m_hasCollisionObject)
             {
-                // game object with collision object will take transforms from physics module after simulation
-                Physics::addToRotation(m_ID, glm::angleAxis(angleRad, axis), resetVelocities);
+                // Game object with collision object will take transforms from physics module after simulation.
+                Physics::addToRotation(m_ID, normQuat, resetVelocities);
             }
         }
 
         void addToRotation(const glm::quat& qua, bool resetVelocities = false)
         {
-            if(glm::angle(qua) < 0.0035f) { return; } // less that 0.2 degree
+            glm::quat normQuat = glm::normalize(qua);
 
-            m_rotateMatrix = glm::toMat4(qua) * m_rotateMatrix;
-            // translate and scale matrices should be same
-            m_modelMatrix = m_translateMatrix * m_rotateMatrix; // * m_scaleMatrix;
+            if(glm::angle(normQuat) < 0.0035f) { return; } // Less than 0.2 degree.
+
+            m_rotation = glm::normalize(normQuat * m_rotation);
 
             if(m_hasCollisionObject)
             {
-                // game object with collision object will take transforms from physics module after simulation
-                Physics::addToRotation(m_ID, qua, resetVelocities);
+                // Game object with collision object will take transforms from physics module after simulation.
+                Physics::addToRotation(m_ID, normQuat, resetVelocities);
             }
         }
 
-        void rotateToPoint(const glm::vec3 point, bool ignoreYAxisWhenRotate)
+        void rotateToPoint(const glm::vec3& point, bool ignoreYAxisWhenRotate)
         {
             rotateToDirection(point - m_origin, ignoreYAxisWhenRotate);
         }
 
-        void rotateToDirection(const glm::vec3 dir, bool ignoreYAxisWhenRotate)
+        void rotateToDirection(const glm::vec3& dir, bool ignoreYAxisWhenRotate)
         {
-            if(dir.x == 0.0f && dir.y == 0.0f && dir.z == 0.0f) { return; }
+            if(glm::length(dir) < 0.001f) { return; } // Less than 1mm.
 
             if(ignoreYAxisWhenRotate)
             {
@@ -224,9 +205,10 @@ namespace Beryll
             }
         }
 
-        const glm::mat4& getModelMatrix()
+        glm::mat4 getModelMatrix()
         {
-            return m_modelMatrix;
+            // translate * rotate * scale
+            return glm::translate(glm::mat4{1.0f}, m_origin) * glm::toMat4(m_rotation);
         }
 
         glm::vec3 getOrigin()
@@ -247,7 +229,7 @@ namespace Beryll
         SceneObjectGroups getSceneObjectGroup() { return m_sceneObjectGroup; }
         glm::vec3 getFaceDirXYZ()
         {
-            return glm::normalize(glm::vec3(m_rotateMatrix * glm::vec4(m_sceneObjectFaceDir, 1.0f)));
+            return glm::normalize(glm::vec3(glm::toMat4(m_rotation) * glm::vec4(m_sceneObjectFaceDir, 1.0f)));
         }
         glm::vec3 getFaceDirXZ()
         {
@@ -256,7 +238,7 @@ namespace Beryll
         }
         glm::vec3 getRightDirXYZ()
         {
-            return glm::normalize(glm::vec3(m_rotateMatrix * glm::vec4(m_sceneObjectRightDir, 1.0f)));
+            return glm::normalize(glm::vec3(glm::toMat4(m_rotation) * glm::vec4(m_sceneObjectRightDir, 1.0f)));
         }
         glm::vec3 getRightDirXZ()
         {
@@ -265,7 +247,7 @@ namespace Beryll
         }
         glm::vec3 getUpDirXYZ()
         {
-            return glm::normalize(glm::vec3(m_rotateMatrix * glm::vec4(m_sceneObjectUpDir, 1.0f)));
+            return glm::normalize(glm::vec3(glm::toMat4(m_rotation) * glm::vec4(m_sceneObjectUpDir, 1.0f)));
         }
 
         void enableDraw()
@@ -323,6 +305,8 @@ namespace Beryll
         bool useInternalTextures = true;
 
     protected:
+        //float m_scale = 1.0f; // Unused for now.
+        glm::quat m_rotation{1.0f, 0.0f, 0.0f, 0.0f}; // Identity quaternion = no rotation.
         glm::vec3 m_origin{0.0f, 0.0f, 0.0f};
         // For synchronization when one thread set origin and other calls getOrigin()
         // for same object.
@@ -330,13 +314,7 @@ namespace Beryll
         std::atomic<float> m_originY = 0.0f;
         std::atomic<float> m_originZ = 0.0f;
 
-        glm::mat4 m_scaleMatrix{1.0f};
-        glm::mat4 m_rotateMatrix{1.0f};
-        glm::mat4 m_translateMatrix{1.0f};
-
-        glm::mat4 m_modelMatrix{1.0f};
         glm::mat4 m_MVP{1.0f};
-
         PhysicsTransforms m_physicsTransforms;
 
         bool m_hasCollisionObject = false; // set true for all collision objects

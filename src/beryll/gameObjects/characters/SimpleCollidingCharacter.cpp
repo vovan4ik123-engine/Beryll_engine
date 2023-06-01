@@ -134,12 +134,12 @@ namespace Beryll
         SimpleCollidingObject::draw();
     }
 
-    void SimpleCollidingCharacter::moveToPosition(glm::vec3 position, bool ignoreYAxisWhenRotate)
+    void SimpleCollidingCharacter::moveToPosition(const glm::vec3 position, bool ignoreYAxisWhenRotate)
     {
-        if(position == m_origin)
+        glm::vec3 needToMove = position - m_origin;
+        if(glm::length(needToMove) < 0.001f) // Less than 1mm.
             return;
 
-        glm::vec3 needToMove = position - m_origin;
         rotateToDirection(needToMove, ignoreYAxisWhenRotate);
 
         glm::vec3 moveVector = (getFaceDirXZ() * moveSpeed) * TimeStep::getTimeStepSec();
@@ -151,7 +151,7 @@ namespace Beryll
         move(moveVector);
     }
 
-    void SimpleCollidingCharacter::moveToDirection(glm::vec3 direction, bool ignoreYAxisWhenRotate)
+    void SimpleCollidingCharacter::moveToDirection(const glm::vec3 direction, bool ignoreYAxisWhenRotate)
     {
         rotateToDirection(direction, ignoreYAxisWhenRotate);
 

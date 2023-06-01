@@ -24,12 +24,16 @@ namespace Beryll
             leftPosPixels = 0.0f;
         float rightPosPixels = leftPosPixels + (MainImGUI::getInstance()->getGUIWidth() * m_width);
         m_joystickOrigin.x = leftPosPixels + ((rightPosPixels - leftPosPixels) * 0.5f);
+        //BR_INFO("Joystick leftPos:%f rightPos:%f", leftPosPixels, rightPosPixels);
+        //BR_INFO("m_joystickOrigin.x:%f", m_joystickOrigin.x);
 
         float topPosPixels = m_topPos * MainImGUI::getInstance()->getGUIHeight();
         if(topPosPixels < 0.0f)
             topPosPixels = 0.0f;
         float bottomPosPixels = topPosPixels + (m_height * MainImGUI::getInstance()->getGUIHeight());
         m_joystickOrigin.y = topPosPixels + ((bottomPosPixels - topPosPixels) * 0.5f);
+        //BR_INFO("Joystick topPosPixels:%f bottomPosPixels:%f", topPosPixels, bottomPosPixels);
+        //BR_INFO("m_joystickOrigin.y:%f", m_joystickOrigin.y);
     }
 
     Joystick::~Joystick()
@@ -51,6 +55,8 @@ namespace Beryll
             {
                 // if any finger in joystick area
                 m_touched = true;
+
+                //BR_INFO("f.ImGuiScreenPos X: %f Y: %f", f.ImGuiScreenPos.x, f.ImGuiScreenPos.y);
 
                 m_touchedDirectionFromOrigin = glm::normalize(f.ImGuiScreenPos - m_joystickOrigin);
                 m_touchedDirectionFromOrigin.y = -m_touchedDirectionFromOrigin.y;
