@@ -79,6 +79,8 @@ set(Common_SRC
         src/beryll/GUI/Text.cpp
         src/beryll/GUI/Slider.cpp
 
+        src/beryll/dataBase/DataBase.cpp
+
         src/beryll/renderer/Camera.cpp
         src/beryll/renderer/Renderer.cpp
 

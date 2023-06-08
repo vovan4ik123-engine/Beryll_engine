@@ -1,6 +1,6 @@
 #pragma once
 
-// common C++ includes for engine and games
+// Common C++ includes for engine and games.
 
 #include <iostream>
 #include <assert.h>
@@ -21,6 +21,9 @@
 #include <functional>
 #include <random>
 #include <iomanip>
+#include <variant>
+#include <optional>
+#include <type_traits>
 
 #include <thread>
 #include <atomic>
