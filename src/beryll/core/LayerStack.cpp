@@ -20,7 +20,6 @@ namespace Beryll
                                     { return l->getLayerID() == layer->getLayerID(); });
         if(it == m_layers.end())
         {
-
             m_layers.insert(m_layers.begin() + m_layerInsertIndex, layer);
             ++m_layerInsertIndex;
         }
@@ -67,7 +66,6 @@ namespace Beryll
         if(it != m_layers.end())
         {
             m_layers.erase(it);
-            --m_layerInsertIndex;
         }
     }
 }

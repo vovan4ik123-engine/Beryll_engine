@@ -1,4 +1,6 @@
 #include "GameStateMachine.h"
+
+#include <utility>
 #include "beryll/core/Log.h"
 
 namespace Beryll
@@ -53,15 +55,8 @@ namespace Beryll
 
     void GameStateMachine::changeState(std::shared_ptr<GameState> state)
     {
-        if(m_gameStates.empty())
-        {
-            pushState(state);
-        }
-        else
-        {
-            popState();
-            pushState(state);
-        }
+        popState();
+        pushState(std::move(state));
     }
 
     void GameStateMachine::popState()
