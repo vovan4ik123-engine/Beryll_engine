@@ -5,7 +5,7 @@
 
 namespace Beryll
 {
-    class TimeStep
+    class TimeStep final
     {
     public:
         static uint32_t getMillisecFromStart()

@@ -9,9 +9,11 @@ namespace Beryll
     enum class LayerID
     {
         UNKNOWN,
+        START_SCREEN_GUI,
         PLAY_GUI,
         PLAY_SCENE,
-        PAUSE_GUI
+        PAUSE_GUI,
+        SETTINGS_GUI
     };
 
     class Layer

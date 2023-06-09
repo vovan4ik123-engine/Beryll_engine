@@ -19,22 +19,22 @@ namespace Beryll
 
 
         ALL_EVENTS,
-        COUNT // MUST be always last and more than number of elements
+        COUNT // MUST be always last and more than number of elements.
     };
 
     struct Finger
     {
-        // range 0...1
+        // Range 0...1.
         glm::vec2 normalizedPos;
-        // ImGUI recognize screen size different than SDL2 window size
-        // use it for positioning ImGUI elements
+        // ImGUI recognize screen size different than SDL2 window size.
+        // Use it for positioning ImGUI elements.
         glm::vec2 ImGuiScreenPos;
-        // use it for 3D/2D scene actions
+        // Use it for 3D/2D scene actions.
         glm::vec2 SDL2ScreenPos;
-        // for disable event from handling any more
+        // For disable event from handling any more.
         bool handled;
-        // true if finger was down at this game loop iteration.
-        // will false in next game loop iteration (reset in loadEvents())
+        // True if finger was down at this game loop iteration.
+        // Will false in next game loop iteration (reset in loadEvents()).
         bool downEvent;
         int ID;
     };
@@ -46,7 +46,7 @@ namespace Beryll
         ~EventHandler() = delete;
 
         static void loadEvents();
-        static void resetEvents(EventID id); // reset before load new
+        static void resetEvents(EventID id); // Reset before load new.
 
         static bool checkEvent(EventID id) { return m_events[static_cast<int>(id)]; }
 

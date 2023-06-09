@@ -6,7 +6,7 @@
 
 namespace Beryll
 {
-    class LayerStack
+    class LayerStack final
     {
     public:
         LayerStack();

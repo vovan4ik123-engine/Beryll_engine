@@ -7,7 +7,7 @@
 
 namespace Beryll
 {
-    class GameLoop
+    class GameLoop final
     {
     public:
         GameLoop() = delete;

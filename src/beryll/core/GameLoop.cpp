@@ -124,11 +124,11 @@ namespace Beryll
 
     void GameLoop::regulateFPS()
     {
-        if(m_regulateFPSFramesCount >= 50) // regulate once per 50 frames
+        if(m_regulateFPSFramesCount >= 50) // Regulate once per 50 frames.
         {
-            float averageFrameTime = m_regulateFPSFramesSum / 50.0f; // in microSec
+            float averageFrameTime = m_regulateFPSFramesSum / 50.0f; // In microSec.
 
-            setMaxFPS((1000000.0f / averageFrameTime) * 0.96f, true);
+            setMaxFPS((1000000.0f / averageFrameTime) * 0.95f, true);
 
             m_regulateFPSFramesCount = 0;
             m_regulateFPSFramesSum = 0.0f;

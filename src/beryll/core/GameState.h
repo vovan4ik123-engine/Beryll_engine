@@ -6,18 +6,17 @@ namespace Beryll
 {
     enum class GameStateID
     {
-        NO_STATE, // return from GameStateMachine if states vector is empty
+        NO_STATE, // Return from GameStateMachine if states vector is empty.
         UNKNOWN,
-        MAIN_MENU,
+        START_SCREEN,
         PLAY,
-        PAUSE
+        PAUSE,
+        SETTINGS
     };
 
-    // you can create many objects of this class
-    // with different layers in layerStack
-    // then push these objects to GameStateMachine
-    // which will update and draw only last pushed state
-    class GameState
+    // You can create many objects of this class with different layers in layerStack.
+    // Then push these objects to GameStateMachine which will update and draw only last pushed state.
+    class GameState final
     {
     public:
         GameState() {}

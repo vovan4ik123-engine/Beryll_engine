@@ -4,12 +4,12 @@
 
 namespace Beryll
 {
-    class Timer
+    class Timer final
     {
     public:
-        Timer() { }
+        Timer() {}
 
-        ~Timer() { }
+        ~Timer() {}
 
         void reset()
         {

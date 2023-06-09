@@ -5,7 +5,7 @@
 
 namespace Beryll
 {
-    class SoundsManager
+    class SoundsManager final
     {
     public:
         SoundsManager() = delete;

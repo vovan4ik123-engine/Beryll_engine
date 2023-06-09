@@ -6,7 +6,7 @@
 
 namespace Beryll
 {
-    class GameStateMachine
+    class GameStateMachine final
     {
     public:
         GameStateMachine() = delete;

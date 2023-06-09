@@ -28,7 +28,7 @@ namespace Beryll
     // This wrapper can store and read only 3 types: INTEGER(int), REAL(float), TEXT(std::string).
     // Empty object of SqliteNULL will returned if sqlite cell store NULL.
     // Throw DataBaseException in case of errors.
-    class DataBase
+    class DataBase final
     {
     public:
         DataBase() = delete;
@@ -36,7 +36,7 @@ namespace Beryll
 
         // First openDataBase, then setSqlQuery, then bind params if need, then execute.
         static void openDataBase(const char* name);
-        
+
         static void setSqlQuery(const std::string& sqlQuery);
 
         // After every execution parameters are reset.

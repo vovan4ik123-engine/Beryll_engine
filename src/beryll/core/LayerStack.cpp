@@ -70,5 +70,4 @@ namespace Beryll
             --m_layerInsertIndex;
         }
     }
-
 }

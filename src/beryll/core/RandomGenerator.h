@@ -4,7 +4,7 @@
 
 namespace Beryll
 {
-    class RandomGenerator
+    class RandomGenerator final
     {
     public:
         // return [0.0f ... 1.0f]
