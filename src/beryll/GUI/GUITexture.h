@@ -9,7 +9,7 @@ namespace Beryll
     {
     public:
         GUITexture() = delete;
-        GUITexture(const char* texturePath, float left, float top, float width, float height);
+        GUITexture(const std::string& texturePath, float left, float top, float width, float height);
         ~GUITexture() override;
 
         void updateBeforePhysics() override;

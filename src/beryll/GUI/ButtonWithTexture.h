@@ -14,8 +14,8 @@ namespace Beryll
          * touchedTexturePath - texture shown when button touched. Can be empty.
          *                      If empty defaultTexturePath will shown always.
          */
-        ButtonWithTexture(const char* defaultTexturePath,
-                          const char* touchedTexturePath,
+        ButtonWithTexture(const std::string& defaultTexturePath,
+                          const std::string& touchedTexturePath,
                           float left,
                           float top,
                           float width,

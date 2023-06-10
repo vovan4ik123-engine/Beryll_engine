@@ -6,19 +6,15 @@
 namespace Beryll
 {
     std::vector<std::shared_ptr<GameState>> GameStateMachine::m_gameStates = std::vector<std::shared_ptr<GameState>>();
-    std::vector<std::shared_ptr<GameState>> GameStateMachine::m_gameStatesForDelete = std::vector<std::shared_ptr<GameState>>();
 
     void GameStateMachine::updateBeforePhysics()
     {
         if(!m_gameStates.empty())
         {
-            m_gameStates.back()->updateBeforePhysics();
-        }
-
-        // only after gameState->update() finished work !!!!
-        if(!m_gameStatesForDelete.empty())
-        {
-            m_gameStatesForDelete.clear();
+            // Because if changeState() / popState() will called inside ->updateBeforePhysics();
+            // m_gameStates vector will be changed.
+            std::shared_ptr<GameState> lastState = m_gameStates.back();
+            lastState->updateBeforePhysics();
         }
     }
 
@@ -62,9 +58,6 @@ namespace Beryll
     void GameStateMachine::popState()
     {
         if(!m_gameStates.empty())
-        {
-            m_gameStatesForDelete.push_back(m_gameStates.back());
             m_gameStates.pop_back();
-        }
     }
 }

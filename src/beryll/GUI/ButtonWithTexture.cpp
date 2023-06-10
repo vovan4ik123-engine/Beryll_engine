@@ -5,15 +5,15 @@
 
 namespace Beryll
 {
-    ButtonWithTexture::ButtonWithTexture(const char* defaultTexturePath,
-                                         const char* touchedTexturePath,
+    ButtonWithTexture::ButtonWithTexture(const std::string& defaultTexturePath,
+                                         const std::string& touchedTexturePath,
                                          float left,
                                          float top,
                                          float width,
                                          float height,
                                          bool actRepeat)
     {
-        BR_ASSERT((std::string(defaultTexturePath).empty() == false), "%s", "Path to default texture can not be empty");
+        BR_ASSERT((defaultTexturePath.empty() == false), "%s", "Path to default texture can not be empty");
 
         m_leftPos = left / 100.0f;
         m_topPos = top / 100.0f;
@@ -22,10 +22,10 @@ namespace Beryll
 
         m_actRepeat = actRepeat;
 
-        m_defaultTexture = Renderer::createTexture(defaultTexturePath, TextureType::DIFFUSE_TEXTURE);
+        m_defaultTexture = Renderer::createTexture(defaultTexturePath.c_str(), TextureType::DIFFUSE_TEXTURE);
 
-        if(!std::string(touchedTexturePath).empty())
-            m_touchedTexture = Renderer::createTexture(touchedTexturePath, TextureType::DIFFUSE_TEXTURE);
+        if( !touchedTexturePath.empty())
+            m_touchedTexture = Renderer::createTexture(touchedTexturePath.c_str(), TextureType::DIFFUSE_TEXTURE);
     }
 
     ButtonWithTexture::~ButtonWithTexture()

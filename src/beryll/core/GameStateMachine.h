@@ -12,7 +12,7 @@ namespace Beryll
         GameStateMachine() = delete;
         ~GameStateMachine() = delete;
 
-        static void updateBeforePhysics();
+        static void updateBeforePhysics(); // Change gameState only here !!!
         static void updateAfterPhysics();
         static void draw();
 
@@ -24,13 +24,13 @@ namespace Beryll
 
         static const GameStateID getStateID()
         {
-            if(!m_gameStates.empty()) return m_gameStates.back()->ID;
-            else return GameStateID::NO_STATE;
+            if(!m_gameStates.empty())
+                return m_gameStates.back()->ID;
+            else
+                return GameStateID::NO_STATE;
         }
 
     private:
         static std::vector<std::shared_ptr<GameState>> m_gameStates;
-        static std::vector<std::shared_ptr<GameState>> m_gameStatesForDelete;
     };
 }
-

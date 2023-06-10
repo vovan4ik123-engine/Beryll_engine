@@ -9,7 +9,9 @@ namespace Beryll
     {
     public:
         Joystick() = delete;
-        Joystick(const char* defaultTexturePath, const char* touchedTexturePath, float left, float top, float width, float height);
+        Joystick(const std::string& defaultTexturePath,
+                 const std::string& touchedTexturePath,
+                 float left, float top, float width, float height);
         ~Joystick() override;
 
         void updateBeforePhysics() override;
