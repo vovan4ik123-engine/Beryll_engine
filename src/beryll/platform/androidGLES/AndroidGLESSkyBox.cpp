@@ -9,7 +9,7 @@
 
 namespace Beryll
 {
-    AndroidGLESSkyBox::AndroidGLESSkyBox(std::string folderPath)
+    AndroidGLESSkyBox::AndroidGLESSkyBox(const std::string& folderPath)
     {
         std::string rightSide = folderPath + "/right.jpg";
         std::string leftSide = folderPath + "/left.jpg";
@@ -57,7 +57,8 @@ namespace Beryll
         , "Load cube texture failed: %s. Use 24 or 32 bit depth", folderPath.c_str());
 
         int pixelFormat = GL_RGB;
-        if(4 == surfaceRight->format->BytesPerPixel) pixelFormat = GL_RGBA;
+        if(4 == surfaceRight->format->BytesPerPixel)
+            pixelFormat = GL_RGBA;
 
         glGenTextures(1, &m_openGLID);
         glBindTexture(GL_TEXTURE_CUBE_MAP, m_openGLID);

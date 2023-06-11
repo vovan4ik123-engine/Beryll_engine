@@ -53,55 +53,55 @@ namespace Beryll
 
         m_loopTime = 1000000.0f / m_maxFPS; // microSec
         m_timer.reset();
-        Physics::enableSimulation(); // also reset timer inside Physics
+        Physics::enableSimulation(); // Also reset timer inside Physics.
 
         Window::getInstance()->reCreate();
         MainImGUI::getInstance()->reCreate();
 
         while(m_isRun)
         {
-            TimeStep::fixateTime(); // fixate time of last finished game loop
+            TimeStep::fixateTime(); // Fixate time of last finished game loop.
             m_timer.reset();
             m_frameStart = m_timer.getElapsedMicroSec();
 
             if(m_regulateFPS) { regulateFPS(); }
 
-        // Check user input
+        // Check user input.
             EventHandler::resetEvents(EventID::ALL_EVENTS);
             EventHandler::loadEvents();
 
-        // Update layers start
-            // first react to user input, set positions of objects, move objects: player->move()
-            // then update objects (let themselves prepare to simulation): GameObject->updateBeforePhysics();
+        // Update layers start.
+            // First react to user input, set positions of objects, move objects: player->move().
+            // Then update objects (let themselves prepare to simulation): GameObject->updateBeforePhysics();.
             GameStateMachine::updateBeforePhysics();
 
             Physics::simulate();
 
-            // read positions of objects after simulation, resolve collisions here
-            // prefer update camera properties here
+            // Read positions of objects after simulation, resolve collisions here.
+            // Prefer update camera properties here.
             GameStateMachine::updateAfterPhysics();
-        // Update layers finish
+        // Update layers finish.
 
-        // Update camera (immediately before draw)
-            // Dont set any camera attributes after this call (set in updateAfterPhysics())
+        // Update camera (immediately before draw).
+            // Don't set any camera attributes after this call (set in updateAfterPhysics()).
             Camera::update3DCamera();
 
             m_CPUTime = m_timer.getElapsedMicroSec() - m_frameStart;
             m_GPUTimeStart = m_timer.getElapsedMicroSec();
 
-        // Draw start DONT CALL ANY DRAW COMMANDS before this point !!!!!!!!
-            // First finish draw previous frame
+        // Draw start DON'T CALL ANY DRAW COMMANDS before this point !!!!!!!!
+            // First finish draw previous frame.
             MainImGUI::getInstance()->endFrame();
-            //Window::getInstance()->finishDraw(); // very slow
-            //Window::getInstance()->flushDraw(); // potentially can be called but not necessary
+            //Window::getInstance()->finishDraw(); // Very slow.
+            //Window::getInstance()->flushDraw(); // Potentially can be called but not necessary.
             Window::getInstance()->swapWindow();
 
-            // Next start draw new frame
+            // Next start draw new frame.
             Window::getInstance()->clear();
             MainImGUI::getInstance()->beginFrame();
 
             GameStateMachine::draw();
-        // Draw finish
+        // Draw finish.
 
             m_GPUTime = m_timer.getElapsedMicroSec() - m_GPUTimeStart;
 
@@ -110,7 +110,7 @@ namespace Beryll
 
             if(m_frameTime < m_loopTime)
             {
-                // sleep if we finished work faster than m_loopTime
+                // Sleep if we finished work faster than m_loopTime.
                 //BR_INFO("sleepTime: %f", (m_loopTime - m_frameTime));
                 std::chrono::duration<long long, std::nano> sleepTime(static_cast<long long>((m_loopTime - m_frameTime) * 1000.0f));
                 std::this_thread::sleep_for(sleepTime);
@@ -126,15 +126,20 @@ namespace Beryll
     {
         if(m_regulateFPSFramesCount >= 50) // Regulate once per 50 frames.
         {
-            float averageFrameTime = m_regulateFPSFramesSum / 50.0f; // In microSec.
+            float averageFrameTime = m_regulateFPSFramesSum / float(m_regulateFPSFramesCount); // In microSec.
 
             setMaxFPS((1000000.0f / averageFrameTime) * 0.95f, true);
 
-            m_regulateFPSFramesCount = 0;
             m_regulateFPSFramesSum = 0.0f;
+            m_regulateFPSFramesCount = 0;
         }
         else
         {
+            // Some very long operation can happen in frame(like change game state).
+            // Avoid frame if its time > 0.5 sec to avoid drop FPS.
+            if(m_frameTime > 500000.0f)
+                return;
+
             m_regulateFPSFramesSum += m_frameTime;
             ++m_regulateFPSFramesCount;
         }

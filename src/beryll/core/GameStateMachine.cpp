@@ -1,6 +1,4 @@
 #include "GameStateMachine.h"
-
-#include <utility>
 #include "beryll/core/Log.h"
 
 namespace Beryll

@@ -6,7 +6,6 @@
 #include "beryll/renderer/Buffer.h"
 #include "beryll/renderer/VertexArray.h"
 #include "beryll/renderer/Shader.h"
-#include "beryll/renderer/Texture.h"
 #include "beryll/renderer/SkyBox.h"
 
 namespace Beryll
@@ -21,9 +20,9 @@ namespace Beryll
     private:
         friend class Renderer;
         /*
-         * folderPath - path to folder in asset folder which contains 6 .jpg textures for every cube side
+         * folderPath - path to folder in asset folder which contains 6 .jpg textures for every cube side.
          */
-        AndroidGLESSkyBox(std::string folderPath);
+        AndroidGLESSkyBox(const std::string& folderPath);
 
         uint32_t m_openGLID;
 
