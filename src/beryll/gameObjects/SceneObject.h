@@ -46,7 +46,7 @@ namespace Beryll
 
         void setOrigin(const glm::vec3& orig, bool resetVelocities = false)
         {
-            if(glm::distance(m_origin, orig) < 0.001f) { return; } // Less than 1mm.
+            if(m_origin == orig) { return; }
 
             m_origin = orig;
             m_originX = m_origin.x;
@@ -62,8 +62,6 @@ namespace Beryll
 
         void addToOrigin(const glm::vec3& distance, bool resetVelocities = false)
         {
-            if(glm::length(distance) < 0.001f) { return; } // Less than 1mm.
-
             m_origin += distance;
             m_originX = m_origin.x;
             m_originY = m_origin.y;
@@ -113,8 +111,6 @@ namespace Beryll
 
         void rotateToDirection(const glm::vec3& dir, bool ignoreYAxisWhenRotate)
         {
-            if(glm::length(dir) < 0.001f) { return; } // Less than 1mm.
-
             if(ignoreYAxisWhenRotate)
             {
                 glm::vec3 dirXZ = glm::normalize(glm::vec3{dir.x, 0.0f, dir.z});

@@ -33,10 +33,6 @@ namespace Beryll
         {
             SDL_SetHint(SDL_HINT_ORIENTATIONS, "LandscapeLeft LandscapeRight");
         }
-        else if(orientation == ScreenOrientation::MOBILE_ALL_ORIENTATIONS)
-        {
-            SDL_SetHint(SDL_HINT_ORIENTATIONS, "LandscapeLeft LandscapeRight Portrait PortraitUpsideDown");
-        }
         else if(orientation == ScreenOrientation::DESKTOP)
         {
             // Should work without changes.

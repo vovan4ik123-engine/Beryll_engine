@@ -3,21 +3,22 @@
 
 namespace Beryll
 {
-    CheckBox::CheckBox(std::string text, float left, float top)
-        : m_text(std::move(text))
+    CheckBox::CheckBox(const std::string& text, const std::string& fontPath, float fontHeightInPercentOfScreen,
+                       float left, float top)
+                       : m_text(text)
     {
+        BR_ASSERT((fontPath.empty() == false && fontHeightInPercentOfScreen > 0.0f), "%s", "fontPath can not be empty and fontHeight must be > 0.0.");
+
         m_leftPos = left / 100.0f;
         m_topPos = top / 100.0f;
+
+        m_font = MainImGUI::getInstance()->createFont(fontPath.c_str(), fontHeightInPercentOfScreen);
     }
 
     CheckBox::~CheckBox()
     {
 
     }
-
-    ImFont* CheckBox::m_font = nullptr;
-    std::string CheckBox::m_fontPath;
-    float CheckBox::m_fontHeight = 0.0f;
 
     void CheckBox::updateBeforePhysics()
     {

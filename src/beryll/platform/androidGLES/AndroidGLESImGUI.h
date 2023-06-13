@@ -22,15 +22,12 @@ namespace Beryll
         float getGUIHeight() override;
 
         /*
-        * path must skip assets/ folder and starts from next folder inside assets/
-        * heightPercent - font height in percent 0%...100% of screen
+        * path must skip assets/ folder and starts from next folder inside assets/.
+        * heightInPercentOfScreen - font height in percent 0%...100% of screen.
         */
-        void setDefaultFont(const char* path, float heightInPercent) override;
-        void setDefaultFontHeight(float heightInPercent) override;
-        void setButtonsFont(const char* path, float heightInPercent) override;
-        void setCheckBoxesFont(const char* path, float heightInPercent) override;
-        void setTextsFont(const char* path, float heightInPercent) override;
-        void setSlidersFont(const char* path, float heightInPercent) override;
+        ImFont* createFont(const std::string& path, float heightInPercentOfScreen) override;
+        void deleteFont(ImFont* font) override;
+        void setDefaultFont(const std::string& path, float heightInPercentOfScreen) override;
 
     private:
         friend class MainImGUI;

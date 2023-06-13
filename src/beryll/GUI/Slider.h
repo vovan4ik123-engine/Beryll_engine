@@ -8,8 +8,9 @@ namespace Beryll
     {
     public:
         Slider() = delete;
-        // position in percent 0...100% of screen
-        Slider(std::string text, float left, float top, float width, float height, float min = 0.0f, float max = 1.0f, bool background = false);
+        // Position in percent 0...100% of screen.
+        Slider(const std::string& text, const std::string& fontPath, float fontHeightInPercentOfScreen,
+               float left, float top, float width, float height, float min = 0.0f, float max = 1.0f, bool background = false);
         ~Slider() override;
 
         void updateBeforePhysics() override;
@@ -34,22 +35,17 @@ namespace Beryll
         void setDragAreaColor(float r, float g, float b, float a) { m_dragAreaColor = ImVec4{ r, g, b, a }; }
 
     private:
-        friend class AndroidGLESImGUI;
-
-        static ImFont* m_font; // one font for all sliders
-        static std::string m_fontPath;
-        static float m_fontHeight; // in range 0 = 0%...1 = 100% of screen size
-        
+        ImFont* m_font;
         int32_t m_flags = 0;
 
         std::string m_text;
         float m_min = 0.0f;
         float m_max = 1.0f;
-        float m_sliderValue = 0.0f; // in range 0.0f...1.0f
+        float m_sliderValue = 0.0f; // In range 0.0f...1.0f.
         bool m_valueChanging = false;
 
         // color can be different for each slider
-        ImVec4 m_fontColor { 1.0f, 1.0f, 1.0f, 1.0f }; // 0.0f - 1.0f range
+        ImVec4 m_fontColor { 1.0f, 1.0f, 1.0f, 1.0f }; // 0.0f - 1.0f range.
         ImVec4 m_sliderGrabColor { 0.0f, 1.0f, 0.0f, 1.0f };
         ImVec4 m_textBackGroundColor { 0.4f, 0.4f, 0.4f, 1.0f };
         ImVec4 m_dragAreaColor { 0.0f, 0.0f, 1.0f, 1.0f };

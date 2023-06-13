@@ -3,9 +3,12 @@
 
 namespace Beryll
 {
-    Text::Text(std::string text, float left, float top, bool background)
-        : text(std::move(text))
+    Text::Text(const std::string& t, const std::string& fontPath, float fontHeightInPercentOfScreen,
+               float left, float top, bool background)
+               : text(t)
     {
+        BR_ASSERT((fontPath.empty() == false && fontHeightInPercentOfScreen > 0.0f), "%s", "fontPath can not be empty and fontHeight must be > 0.0.");
+
         m_leftPos = left / 100.0f;
         m_topPos = top / 100.0f;
 
@@ -14,16 +17,13 @@ namespace Beryll
         else
             m_flags = m_noBackgroundNoFrame;
 
+        m_font = MainImGUI::getInstance()->createFont(fontPath.c_str(), fontHeightInPercentOfScreen);
     }
 
     Text::~Text()
     {
 
     }
-
-    ImFont* Text::m_font = nullptr;
-    std::string Text::m_fontPath;
-    float Text::m_fontHeight = 0.0f;
 
     void Text::updateBeforePhysics()
     {

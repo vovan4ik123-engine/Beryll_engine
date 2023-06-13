@@ -13,7 +13,6 @@ namespace Beryll
         // Use only on mobile.
         MOBILE_PORTRAIT,
         MOBILE_LANDSCAPE_AND_FLIPPED,
-        MOBILE_ALL_ORIENTATIONS, // Use Window::getInstance()->checkOrientationChange(); for recreate Window + ImGUI elements.
 
         // Use for desktop.
         DESKTOP

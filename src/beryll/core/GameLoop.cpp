@@ -35,6 +35,7 @@ namespace Beryll
         Window::getInstance()->setClearColor(0.8f, 0.0f, 0.8f, 1.0f);
         Window::getInstance()->clear();
         Window::getInstance()->swapWindow();
+        Window::getInstance()->reCreate();
 
         MainImGUI::create();
 
@@ -54,9 +55,6 @@ namespace Beryll
         m_loopTime = 1000000.0f / m_maxFPS; // microSec
         m_timer.reset();
         Physics::enableSimulation(); // Also reset timer inside Physics.
-
-        Window::getInstance()->reCreate();
-        MainImGUI::getInstance()->reCreate();
 
         while(m_isRun)
         {
@@ -89,18 +87,16 @@ namespace Beryll
             m_CPUTime = m_timer.getElapsedMicroSec() - m_frameStart;
             m_GPUTimeStart = m_timer.getElapsedMicroSec();
 
-        // Draw start DON'T CALL ANY DRAW COMMANDS before this point !!!!!!!!
-            // First finish draw previous frame.
-            MainImGUI::getInstance()->endFrame();
-            //Window::getInstance()->finishDraw(); // Very slow.
-            //Window::getInstance()->flushDraw(); // Potentially can be called but not necessary.
-            Window::getInstance()->swapWindow();
-
-            // Next start draw new frame.
+        // Draw start.
             Window::getInstance()->clear();
             MainImGUI::getInstance()->beginFrame();
 
             GameStateMachine::draw();
+
+            MainImGUI::getInstance()->endFrame();
+            //Window::getInstance()->finishDraw(); // Very slow.
+            //Window::getInstance()->flushDraw(); // Potentially can be called but not necessary.
+            Window::getInstance()->swapWindow();
         // Draw finish.
 
             m_GPUTime = m_timer.getElapsedMicroSec() - m_GPUTimeStart;

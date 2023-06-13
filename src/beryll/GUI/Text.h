@@ -11,8 +11,9 @@ namespace Beryll
     {
     public:
         Text() = delete;
-        // position in percent 0...100% of screen
-        Text(std::string text, float left, float top, bool background = false);
+        // left, top in percent 0...100% of screen.
+        Text(const std::string& t, const std::string& fontPath, float fontHeightInPercentOfScreen,
+             float left, float top, bool background = false);
         ~Text() override;
 
         void updateBeforePhysics() override;
@@ -22,19 +23,14 @@ namespace Beryll
         void setFontColor(float r, float g, float b, float a) { m_fontColor = ImVec4{ r, g, b, a }; }
         void setBackgroundColor(float r, float g, float b, float a) { m_backgroundColor = ImVec4{ r, g, b, a }; }
 
-        std::string text; // can be set outside
+        std::string text;
 
     private:
-        friend class AndroidGLESImGUI;
-
-        static ImFont* m_font; // one font for all texts
-        static std::string m_fontPath;
-        static float m_fontHeight; // in range 0 = 0%...1 = 100% of screen size
-
+        ImFont* m_font;
         int32_t m_flags = 0;
 
-        // color can be different for each text
-        ImVec4 m_fontColor { 0.0f, 0.0f, 0.0f, 1.0f }; // 0.0f - 1.0f range
+        // Color can be different for each text.
+        ImVec4 m_fontColor { 0.0f, 0.0f, 0.0f, 1.0f }; // 0.0f - 1.0f range.
         ImVec4 m_backgroundColor { 1.0f, 1.0f, 1.0f, 1.0f };
     };
 }

@@ -4,25 +4,26 @@
 
 namespace Beryll
 {
-    ButtonWithText::ButtonWithText(std::string text, float left, float top, float width, float height, bool actRepeat)
-        : m_text(std::move(text))
+    ButtonWithText::ButtonWithText(const std::string& text, const std::string& fontPath, float fontHeightInPercentOfScreen,
+                                   float left, float top, float width, float height, bool actRepeat)
+                                   : m_text(text)
     {
+        BR_ASSERT((fontPath.empty() == false && fontHeightInPercentOfScreen > 0.0f), "%s", "fontPath can not be empty and fontHeight must be > 0.0.");
+
         m_leftPos = left / 100.0f;
         m_topPos = top / 100.0f;
         m_width = width / 100.0f;
         m_height = height / 100.0f;
 
         m_actRepeat = actRepeat;
+
+        m_font = MainImGUI::getInstance()->createFont(fontPath.c_str(), fontHeightInPercentOfScreen);
     }
 
     ButtonWithText::~ButtonWithText()
     {
 
     }
-
-    ImFont* ButtonWithText::m_font = nullptr;
-    std::string ButtonWithText::m_fontPath;
-    float ButtonWithText::m_fontHeight = 0.0f;
 
     void ButtonWithText::updateBeforePhysics()
     {

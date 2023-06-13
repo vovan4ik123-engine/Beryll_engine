@@ -137,8 +137,6 @@ namespace Beryll
     void AnimatedCollidingCharacter::moveToPosition(const glm::vec3 position, bool ignoreYAxisWhenRotate)
     {
         glm::vec3 needToMove = position - m_origin;
-        if(glm::length(needToMove) < 0.001f) // Less than 1mm.
-            return;
 
         rotateToDirection(needToMove, ignoreYAxisWhenRotate);
 

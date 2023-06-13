@@ -8,8 +8,9 @@ namespace Beryll
     {
     public:
         ButtonWithText() = delete;
-        // position and size in percent 0...100% of screen
-        ButtonWithText(std::string text, float left, float top, float width, float height, bool actRepeat = false);
+        // Position and size in percent 0...100% of screen.
+        ButtonWithText(const std::string& text, const std::string& fontPath, float fontHeightInPercentOfScreen,
+                       float left, float top, float width, float height, bool actRepeat = false);
         ~ButtonWithText() override;
 
         void updateBeforePhysics() override;
@@ -24,21 +25,17 @@ namespace Beryll
         void setFontColor(float r, float g, float b, float a) { m_fontColor = ImVec4{ r, g, b, a }; }
 
     private:
-        friend class AndroidGLESImGUI;
+        ImFont* m_font;
 
-        static ImFont* m_font; // one font for all buttons
-        static std::string m_fontPath;
-        static float m_fontHeight; // in range 0 = 0%...1 = 100% of screen size
-
-        // if action is set m_action() will called when pressed
+        // If action is set m_action() will called when pressed.
         std::function<void()> m_action;
 
-        bool m_actRepeat = false; // if you want m_pressed = true all time during button touched pass actRepeat = true
+        bool m_actRepeat = false; // If you want m_pressed = true all time during button touched pass actRepeat = true.
 
         std::string m_text;
 
-        // color can be different for each button
-        ImVec4 m_fontColor { 0.0f, 0.0f, 0.0f, 1.0f }; // 0.0f - 1.0f range
+        // Color can be different for each button.
+        ImVec4 m_fontColor { 0.0f, 0.0f, 0.0f, 1.0f }; // 0.0f - 1.0f range.
         ImVec4 m_color { 0.4f, 0.4f, 0.4f, 1.0f };
         ImVec4 m_clickedColor { 0.5f, 0.5f, 0.5f, 1.0f };
     };

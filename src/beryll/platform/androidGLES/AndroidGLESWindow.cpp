@@ -125,8 +125,8 @@ namespace Beryll
         if(EventHandler::checkEvent(EventID::DISPLAY_ORIENTATION_CHANGE))
         {
             EventHandler::resetEvents(EventID::DISPLAY_ORIENTATION_CHANGE);
-            Window::getInstance()->reCreate();
-            MainImGUI::getInstance()->reCreate();
+            //Window::getInstance()->reCreate();
+            //MainImGUI::getInstance()->reCreate();
         }
     }
 }

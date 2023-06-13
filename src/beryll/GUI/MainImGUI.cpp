@@ -9,6 +9,7 @@
 namespace Beryll
 {
     std::unique_ptr<MainImGUI> MainImGUI::m_imGUI = nullptr;
+    std::vector<FontsLoadedInImFontAtlas> MainImGUI::m_loadedFonts;
 
     void MainImGUI::create()
     {

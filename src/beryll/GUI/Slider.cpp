@@ -4,9 +4,12 @@
 
 namespace Beryll
 {
-    Slider::Slider(std::string text, float left, float top, float width, float height, float min, float max, bool background)
-            : m_text(std::move(text)), m_min(min), m_max(max)
+    Slider::Slider(const std::string& text, const std::string& fontPath, float fontHeightInPercentOfScreen,
+                   float left, float top, float width, float height, float min, float max, bool background)
+                   : m_text(text), m_min(min), m_max(max)
     {
+        BR_ASSERT((fontPath.empty() == false && fontHeightInPercentOfScreen > 0.0f), "%s", "fontPath can not be empty and fontHeight must be > 0.0.");
+
         m_leftPos = left / 100.0f;
         m_topPos = top / 100.0f;
         m_width = width / 100.0f;
@@ -20,16 +23,14 @@ namespace Beryll
         // m_text can not be empty because it is ID for slider window
         if(m_text.empty())
             m_text = "##SomeID" + std::to_string(Utils::Common::generateID());
+
+        m_font = MainImGUI::getInstance()->createFont(fontPath.c_str(), fontHeightInPercentOfScreen);
     }
 
     Slider::~Slider()
     {
 
     }
-
-    ImFont* Slider::m_font = nullptr;
-    std::string Slider::m_fontPath;
-    float Slider::m_fontHeight = 0.0f;
 
     void Slider::updateBeforePhysics()
     {
@@ -38,10 +39,10 @@ namespace Beryll
         for(Finger& f : fingers)
         {
             if(f.normalizedPos.x > m_leftPos && f.normalizedPos.x < m_leftPos + m_width
-                // add 1% of screen to slider bottom because for any reason ImGUI handle a bit more area as slider than slider has
+                // Add 1% of screen to slider bottom because for any reason ImGUI handle a bit more area as slider than slider has.
                && f.normalizedPos.y > m_topPos && f.normalizedPos.y < m_topPos + m_height + 0.01f)
             {
-                // if any finger in slider area
+                // If any finger in slider area.
                 if(f.downEvent && !f.handled)
                 {
                     f.handled = true;
