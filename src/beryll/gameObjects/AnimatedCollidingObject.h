@@ -41,6 +41,7 @@ namespace Beryll
         void setCurrentAnimationByIndex(int index, bool playOneTime) override;
         void setDefaultAnimationByName(const char* name) override;
         void setDefaultAnimationByIndex(int index) override;
+        bool getIsOneTimeAnimationFinished() override { return !m_playAnimOneTime; }
 
         uint32_t getBoneCount() override
         {

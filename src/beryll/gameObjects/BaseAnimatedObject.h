@@ -22,5 +22,6 @@ namespace Beryll
         virtual void setCurrentAnimationByIndex(int index, bool playOneTime) = 0;
         virtual void setDefaultAnimationByName(const char* name) = 0;
         virtual void setDefaultAnimationByIndex(int index) = 0;
+        virtual bool getIsOneTimeAnimationFinished() = 0;
     };
 }
