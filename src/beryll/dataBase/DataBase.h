@@ -35,7 +35,7 @@ namespace Beryll
         ~DataBase() = delete;
 
         // First openDataBase, then setSqlQuery, then bind params if need, then execute.
-        static void openDataBase(const char* name);
+        static void openDataBase(const std::string& name);
 
         static void setSqlQuery(const std::string& sqlQuery);
 

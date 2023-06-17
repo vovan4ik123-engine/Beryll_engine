@@ -6,7 +6,7 @@ namespace Beryll
     sqlite3* DataBase::m_DB = nullptr;
     sqlite3_stmt* DataBase::m_stmt = nullptr;
 
-    void DataBase::openDataBase(const char* name)
+    void DataBase::openDataBase(const std::string& name)
     {
         std::string internalStoragePath;
 #if defined(ANDROID)

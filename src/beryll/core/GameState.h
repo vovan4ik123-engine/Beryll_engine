@@ -19,8 +19,8 @@ namespace Beryll
     class GameState final
     {
     public:
-        GameState() {}
-        ~GameState() {}
+        GameState() { BR_INFO("%s", "GameState()"); }
+        ~GameState() { BR_INFO("%s", "::~GameState()"); }
 
         void updateBeforePhysics()
         {

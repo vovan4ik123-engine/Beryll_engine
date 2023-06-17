@@ -52,9 +52,6 @@ namespace Beryll
         virtual void setDefaultFont(const std::string& path, float heightInPercentOfScreen) = 0;
 
     protected:
-        std::string m_defaultFontPath;
-        float m_defaultFontHeightInPercentOfScreen = 5.0f;
-
         // Store all loaded fonts in vector and check this vector before create new font.
         // Should be cleared together with call ImGui::GetIO().Fonts->Clear();
         static std::vector<FontsLoadedInImFontAtlas> m_loadedFonts;

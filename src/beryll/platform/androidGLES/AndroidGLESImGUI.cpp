@@ -43,29 +43,16 @@ namespace Beryll
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-        // Load fonts.
+        // Load default font.
+        float fontHeight = 5.0f / 100.0f; // 5.0% of screen height
+
         uint32_t bufferSize = 0;
-        char* buffer = nullptr;
-
-        if(m_defaultFontPath.empty())
-            m_defaultFontPath = "fonts/roboto.ttf"; // Load from ...../aseets/fonts/roboto.ttf
-
-        ImFont* defaultStoredFont = findStoredFont(m_defaultFontPath, m_defaultFontHeightInPercentOfScreen);
-        if(defaultStoredFont)
-        {
-            ImGui::GetIO().FontDefault = defaultStoredFont;
-        }
-        else
-        {
-            float fontHeight = m_defaultFontHeightInPercentOfScreen / 100.0f;
-
-            buffer = Utils::File::readToBuffer(m_defaultFontPath.c_str(), &bufferSize);
-            ImFont* fontDefault = io.Fonts->AddFontFromMemoryTTF(buffer, bufferSize, fontHeight  * ImGui::GetIO().DisplaySize.y);
-            BR_ASSERT((fontDefault != nullptr), "%s", "Font was not created.");
-            m_loadedFonts.emplace_back(fontDefault, m_defaultFontPath, m_defaultFontHeightInPercentOfScreen);
-            ImGui_ImplOpenGL3_CreateFontsTexture();
-            ImGui::GetIO().FontDefault = fontDefault;
-        }
+        char* buffer = Utils::File::readToBuffer("fonts/roboto.ttf", &bufferSize);
+        ImFont* fontDefault = io.Fonts->AddFontFromMemoryTTF(buffer, bufferSize, fontHeight  * ImGui::GetIO().DisplaySize.y);
+        BR_ASSERT((fontDefault != nullptr), "%s", "Font was not created.");
+        m_loadedFonts.emplace_back(fontDefault, "fonts/roboto.ttf", 5.0f);
+        ImGui_ImplOpenGL3_CreateFontsTexture();
+        ImGui::GetIO().FontDefault = fontDefault;
 
         ImGui::GetCurrentContext()->Style.FramePadding = ImVec2{1.0f, 1.0f};
 
@@ -146,25 +133,6 @@ namespace Beryll
 
     void AndroidGLESImGUI::setDefaultFont(const std::string& path, float heightInPercentOfScreen)
     {
-        m_defaultFontPath = path;
-        m_defaultFontHeightInPercentOfScreen = heightInPercentOfScreen;
-
-        ImFont* defaultStoredFont = findStoredFont(m_defaultFontPath, m_defaultFontHeightInPercentOfScreen);
-        if(defaultStoredFont)
-        {
-            ImGui::GetIO().FontDefault = defaultStoredFont;
-        }
-        else
-        {
-            float fontHeight = m_defaultFontHeightInPercentOfScreen / 100.0f;
-
-            uint32_t bufferSize = 0;
-            char *buffer = Utils::File::readToBuffer(m_defaultFontPath.c_str(), &bufferSize);
-            ImFont* fontDefault = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(buffer, bufferSize, fontHeight  * ImGui::GetIO().DisplaySize.y);
-            BR_ASSERT((fontDefault != nullptr), "%s", "Font was not created.");
-            m_loadedFonts.emplace_back(fontDefault, m_defaultFontPath, m_defaultFontHeightInPercentOfScreen);
-            ImGui_ImplOpenGL3_CreateFontsTexture();
-            ImGui::GetIO().FontDefault = fontDefault;
-        }
+        ImGui::GetIO().FontDefault = createFont(path, heightInPercentOfScreen);
     }
 }
