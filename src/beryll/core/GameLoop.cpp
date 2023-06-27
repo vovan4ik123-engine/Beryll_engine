@@ -23,8 +23,9 @@ namespace Beryll
     float GameLoop::m_GPUTime = 0.0f;
     Timer GameLoop::m_timer;
 
-    float GameLoop::m_maxFPS = 250.0f;
-    bool GameLoop::m_regulateFPS = true;
+    float GameLoop::m_FPS = 500.0f;
+    float GameLoop::m_FPSMaxLimit = 500.0f;
+
     int GameLoop::m_regulateFPSFramesCount = 0;
     float GameLoop::m_regulateFPSFramesSum = 0.0f;
 
@@ -52,8 +53,7 @@ namespace Beryll
     {
         BR_INFO("%s", "GameLoop started");
 
-        m_loopTime = 1000000.0f / m_maxFPS; // microSec
-        m_timer.reset();
+        m_loopTime = 1000000.0f / m_FPS; // microSec
         Physics::enableSimulation(); // Also reset timer inside Physics.
 
         while(m_isRun)
@@ -62,7 +62,7 @@ namespace Beryll
             m_timer.reset();
             m_frameStart = m_timer.getElapsedMicroSec();
 
-            if(m_regulateFPS) { regulateFPS(); }
+            regulateFPS();
 
         // Check user input.
             EventHandler::resetEvents(EventID::ALL_EVENTS);
@@ -107,7 +107,7 @@ namespace Beryll
             if(m_frameTime < m_loopTime)
             {
                 // Sleep if we finished work faster than m_loopTime.
-                //BR_INFO("sleepTime: %f", (m_loopTime - m_frameTime));
+                //BR_INFO("sleepTime: %f", (m_loopTime - m_frameTime) / 1000.0f);
                 std::chrono::duration<long long, std::nano> sleepTime(static_cast<long long>((m_loopTime - m_frameTime) * 1000.0f));
                 std::this_thread::sleep_for(sleepTime);
             }
@@ -120,18 +120,29 @@ namespace Beryll
 
     void GameLoop::regulateFPS()
     {
-        if(m_regulateFPSFramesCount >= 50) // Regulate once per 50 frames.
+        if(m_regulateFPSFramesCount >= 25) // Regulate once per 25 frames.
         {
             float averageFrameTime = m_regulateFPSFramesSum / float(m_regulateFPSFramesCount); // In microSec.
 
-            setMaxFPS((1000000.0f / averageFrameTime) * 0.95f, true);
+            float newFPS = (1000000.0f / averageFrameTime) * 0.9f;
+
+            if(newFPS >= m_FPSMaxLimit)
+            {
+                m_FPS = m_FPSMaxLimit;
+                m_loopTime = 1000000.0f / m_FPS; // In microSec.
+            }
+            else if(newFPS >= m_FPSMinLimit && newFPS <= m_FPSMaxLimit)
+            {
+                m_FPS = newFPS;
+                m_loopTime = 1000000.0f / m_FPS; // In microSec.
+            }
 
             m_regulateFPSFramesSum = 0.0f;
             m_regulateFPSFramesCount = 0;
         }
         else
         {
-            // Some very long operation can happen in frame(like change game state).
+            // Some very long operation can happen in frame(like change game state with game loading).
             // Avoid frame if its time > 0.5 sec to avoid drop FPS.
             if(m_frameTime > 500000.0f)
                 return;
