@@ -1,4 +1,4 @@
-SDL2        2.24.0
+SDL2        2.28.0
 SDL2 mixer  2.6.1
 SDL2 image  2.6.1
 SDL2 net    2.0.1
