@@ -142,6 +142,11 @@ namespace Beryll
             m_simulationEnabled = true;
         }
 
+        static void resetTimer()
+        {
+            m_timer.reset();
+        }
+
         // Simulation time in milli sec.
         static float getSimulationTime()
         {

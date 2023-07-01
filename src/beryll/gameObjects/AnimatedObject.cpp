@@ -325,7 +325,7 @@ namespace Beryll
             glm::vec3 scale = Utils::Matrix::getScaleFrom4x4Glm(modelMatrix);
             BR_ASSERT((scale.x == 1.0f && scale.y == 1.0f && scale.z == 1.0f), "%s", "Scale should be baked to 1 in modeling tool.");
 
-            m_rotation = glm::normalize(Utils::Matrix::getRotationFrom4x4Glm(modelMatrix));
+            m_rotation = Utils::Matrix::getRotationFrom4x4Glm(modelMatrix);
             m_origin = Utils::Matrix::getTranslationFrom4x4Glm(modelMatrix);
             m_originX = m_origin.x;
             m_originY = m_origin.y;

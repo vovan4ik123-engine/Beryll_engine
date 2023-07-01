@@ -69,7 +69,7 @@ namespace Utils
 
         static glm::quat getRotationFrom4x4Glm(const glm::mat4& matr)
         {
-            return glm::quat{matr};
+            return glm::normalize(glm::quat{matr});
         }
     };
 }

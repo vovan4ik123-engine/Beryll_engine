@@ -54,7 +54,7 @@ namespace Beryll
         BR_INFO("%s", "GameLoop started");
 
         m_loopTime = 1000000.0f / m_FPS; // microSec
-        Physics::enableSimulation(); // Also reset timer inside Physics.
+        Physics::resetTimer();
 
         while(m_isRun)
         {

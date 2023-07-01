@@ -138,14 +138,8 @@ namespace Beryll
     {
         BR_ASSERT((mass == 0.0f), "%s", "ConcaveMesh can be only static or kinematic. means mass = 0.");
         BR_ASSERT((collFlag != CollisionFlags::DYNAMIC), "%s", "ConcaveMesh can be only static or kinematic.");
-        BR_ASSERT((vertices.empty() == false), "%s", "Vertices empty.")
+        BR_ASSERT((vertices.empty() == false), "%s", "Vertices empty.");
 
-        glm::vec3 transl;
-        glm::vec3 scale;
-        glm::quat rot;
-        Utils::Matrix::decompose4x4Glm(transforms, scale, rot, transl);
-
-        // apply scale
         glm::vec3 vertex1;
         glm::vec3 vertex2;
         glm::vec3 vertex3;
@@ -156,11 +150,11 @@ namespace Beryll
 
         for(int i = 0; i < indices.size(); )
         {
-            vertex1 = scale * vertices[indices[i]];
+            vertex1 = vertices[indices[i]];
             ++i;
-            vertex2 = scale * vertices[indices[i]];
+            vertex2 = vertices[indices[i]];
             ++i;
-            vertex3 = scale * vertices[indices[i]];
+            vertex3 = vertices[indices[i]];
             ++i;
 
             triangleMesh->addTriangle(btVector3(vertex1.x, vertex1.y, vertex1.z),
@@ -171,6 +165,8 @@ namespace Beryll
         std::shared_ptr<btBvhTriangleMeshShape> shape = std::make_shared<btBvhTriangleMeshShape>(triangleMesh.get(), true, true);
         m_collisionShapes.push_back(shape);
 
+        glm::vec3 transl = Utils::Matrix::getTranslationFrom4x4Glm(transforms);
+        glm::quat rot = Utils::Matrix::getRotationFrom4x4Glm(transforms);
         btTransform startTransform;
         startTransform.setIdentity();
         startTransform.setOrigin(btVector3(transl.x, transl.y, transl.z));
@@ -209,24 +205,21 @@ namespace Beryll
     {
         BR_ASSERT(((mass == 0.0f && collFlag != CollisionFlags::DYNAMIC) ||
                    (mass > 0.0f && collFlag == CollisionFlags::DYNAMIC)), "%s", "Wrong parameters for convex mesh.");
-        BR_ASSERT((vertices.empty() == false), "%s", "Vertices empty.")
+        BR_ASSERT((vertices.empty() == false), "%s", "Vertices empty.");
 
-        glm::vec3 transl;
-        glm::vec3 scale;
-        glm::quat rot;
-        Utils::Matrix::decompose4x4Glm(transforms, scale, rot, transl);
-
-        // btConvexHullShape should have less that 100 vertices for better performance
+        // btConvexHullShape should have less that 100 vertices for better performance.
         std::shared_ptr<btConvexHullShape> shape = std::make_shared<btConvexHullShape>();
         m_collisionShapes.push_back(shape);
 
         for(int i = 0; i < indices.size(); ++i)
         {
             // apply scale
-            shape->addPoint(btVector3(vertices[indices[i]].x * scale.x, vertices[indices[i]].y * scale.y, vertices[indices[i]].z * scale.z), false);
+            shape->addPoint(btVector3(vertices[indices[i]].x, vertices[indices[i]].y, vertices[indices[i]].z), false);
         }
         shape->recalcLocalAabb();
 
+        glm::vec3 transl = Utils::Matrix::getTranslationFrom4x4Glm(transforms);
+        glm::quat rot = Utils::Matrix::getRotationFrom4x4Glm(transforms);
         btTransform startTransform;
         startTransform.setIdentity();
         startTransform.setOrigin(btVector3(transl.x, transl.y, transl.z));
@@ -264,22 +257,18 @@ namespace Beryll
     {
         BR_ASSERT(((mass == 0.0f && collFlag != CollisionFlags::DYNAMIC) ||
                    (mass > 0.0f && collFlag == CollisionFlags::DYNAMIC)), "%s", "Wrong parameters for box shape.");
-        BR_ASSERT((vertices.empty() == false), "%s", "Vertices empty.")
+        BR_ASSERT((vertices.empty() == false), "%s", "Vertices empty.");
 
-        glm::vec3 transl;
-        glm::vec3 scale;
-        glm::quat rot;
-        Utils::Matrix::decompose4x4Glm(transforms, scale, rot, transl);
+        float bottomX = std::numeric_limits<float>::max();
+        float topX = std::numeric_limits<float>::min();
+        float bottomY = std::numeric_limits<float>::max();
+        float topY = std::numeric_limits<float>::min();
+        float bottomZ = std::numeric_limits<float>::max();
+        float topZ = std::numeric_limits<float>::min();
 
-        float bottomX = 0.0f;
-        float topX = 0.0f;
-        float bottomY = 0.0f;
-        float topY = 0.0f;
-        float bottomZ = 0.0f;
-        float topZ = 0.0f;
         for(const glm::vec3& vert : vertices)
         {
-            glm::vec3 v = glm::vec3(vert.x * scale.x, vert.y * scale.y, vert.z * scale.z);
+            glm::vec4 v = glm::vec4(vert, 1.0f);
 
             if(v.x < bottomX) bottomX = v.x;
             if(v.x > topX) topX = v.x;
@@ -295,9 +284,11 @@ namespace Beryll
         float Ysize = topY - bottomY;
         float Zsize = topZ - bottomZ;
 
-        std::shared_ptr<btBoxShape> boxShape = std::make_shared<btBoxShape>(btVector3(Xsize / 2, Ysize / 2, Zsize / 2));
+        std::shared_ptr<btBoxShape> boxShape = std::make_shared<btBoxShape>(btVector3(Xsize / 2.0f, Ysize / 2.0f, Zsize / 2.0f));
         m_collisionShapes.push_back(boxShape);
 
+        glm::vec3 transl = Utils::Matrix::getTranslationFrom4x4Glm(transforms);
+        glm::quat rot = Utils::Matrix::getRotationFrom4x4Glm(transforms);
         btTransform startTransform;
         startTransform.setIdentity();
         startTransform.setOrigin(btVector3(transl.x, transl.y, transl.z));
@@ -335,19 +326,16 @@ namespace Beryll
     {
         BR_ASSERT(((mass == 0.0f && collFlag != CollisionFlags::DYNAMIC) ||
                    (mass > 0.0f && collFlag == CollisionFlags::DYNAMIC)), "%s", "Wrong parameters for sphere shape.");
-        BR_ASSERT((vertices.empty() == false), "%s", "Vertices empty.")
+        BR_ASSERT((vertices.empty() == false), "%s", "Vertices empty.");
 
-        glm::vec3 transl;
-        glm::vec3 scale;
-        glm::quat rot;
-        Utils::Matrix::decompose4x4Glm(transforms, scale, rot, transl);
-
-        glm::vec3 point = glm::vec3(vertices[0].x * scale.x, vertices[0].y * scale.y, vertices[0].z * scale.z);
+        glm::vec3 point = glm::vec3(vertices[0].x, vertices[0].y, vertices[0].z);
         float radius = glm::distance(glm::vec3(0.0f, 0.0f, 0.0f), point);
 
         std::shared_ptr<btSphereShape> sphereShape = std::make_shared<btSphereShape>(radius);
         m_collisionShapes.push_back(sphereShape);
 
+        glm::vec3 transl = Utils::Matrix::getTranslationFrom4x4Glm(transforms);
+        glm::quat rot = Utils::Matrix::getRotationFrom4x4Glm(transforms);
         btTransform startTransform;
         startTransform.setIdentity();
         startTransform.setOrigin(btVector3(transl.x, transl.y, transl.z));
@@ -385,37 +373,32 @@ namespace Beryll
     {
         BR_ASSERT(((mass == 0.0f && collFlag != CollisionFlags::DYNAMIC) ||
                    (mass > 0.0f && collFlag == CollisionFlags::DYNAMIC)), "%s", "Wrong parameters for capsule shape.");
-        BR_ASSERT((vertices.empty() == false), "%s", "Vertices empty.")
+        BR_ASSERT((vertices.empty() == false), "%s", "Vertices empty.");
 
-        // original capsule position should be around the Y axis
+        float bottomX = std::numeric_limits<float>::max();
+        float topX = std::numeric_limits<float>::min();
+        float bottomZ = std::numeric_limits<float>::max();
+        float topZ = std::numeric_limits<float>::min();
 
-        glm::vec3 transl;
-        glm::vec3 scale;
-        glm::quat rot;
-        Utils::Matrix::decompose4x4Glm(transforms, scale, rot, transl);
-
-        float bottomX = 0.0f;
-        float topX = 0.0f;
-        float bottomY = 0.0f;
-        float topY = 0.0f;
         for(const glm::vec3& vert : vertices)
         {
-            glm::vec3 v = glm::vec3(vert.x * scale.x, vert.y * scale.y, vert.z * scale.z);
+            if(vert.x < bottomX) bottomX = vert.x;
+            if(vert.x > topX) topX = vert.x;
 
-            if(v.x < bottomX) bottomX = v.x;
-            if(v.x > topX) topX = v.x;
-
-            if(v.y < bottomY) bottomY = v.y;
-            if(v.y > topY) topY = v.y;
+            if(vert.z < bottomZ) bottomZ = vert.z;
+            if(vert.z > topZ) topZ = vert.z;
         }
 
         float radius = (topX - bottomX) / 2.0f;
-        float totalHeight = topY - bottomY;
-        float heightNoRadiuses = totalHeight - radius * 2.0f;
+        float totalHeight = topZ - bottomZ;
+        BR_ASSERT((totalHeight > radius), "%s", "Original Capsule position should be along with the Z axis.");
 
-        std::shared_ptr<btCapsuleShape> capsuleShape = std::make_shared<btCapsuleShape>(radius, heightNoRadiuses);
+        // Original capsule position should be along with the Z axis.
+        std::shared_ptr<btCapsuleShapeZ> capsuleShape = std::make_shared<btCapsuleShapeZ>(radius, (totalHeight - radius * 2.0f));
         m_collisionShapes.push_back(capsuleShape);
 
+        glm::vec3 transl = Utils::Matrix::getTranslationFrom4x4Glm(transforms);
+        glm::quat rot = Utils::Matrix::getRotationFrom4x4Glm(transforms);
         btTransform startTransform;
         startTransform.setIdentity();
         startTransform.setOrigin(btVector3(transl.x, transl.y, transl.z));
