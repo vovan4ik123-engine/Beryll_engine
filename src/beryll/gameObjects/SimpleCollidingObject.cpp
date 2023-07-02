@@ -298,10 +298,6 @@ namespace Beryll
 
     void SimpleCollidingObject::draw()
     {
-
-        //BR_INFO("angle: %f", glm::degrees(glm::angle(m_rotation)));
-        //BR_INFO("glm::axis(rot): %f, %f, %f", glm::axis(m_rotation).x, glm::axis(m_rotation).y, glm::axis(m_rotation).z);
-
         if(useInternalShader)
         {
             m_internalShader->bind();

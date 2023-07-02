@@ -213,7 +213,6 @@ namespace Beryll
 
         for(int i = 0; i < indices.size(); ++i)
         {
-            // apply scale
             shape->addPoint(btVector3(vertices[indices[i]].x, vertices[indices[i]].y, vertices[indices[i]].z), false);
         }
         shape->recalcLocalAabb();
@@ -268,16 +267,14 @@ namespace Beryll
 
         for(const glm::vec3& vert : vertices)
         {
-            glm::vec4 v = glm::vec4(vert, 1.0f);
+            if(vert.x < bottomX) bottomX = vert.x;
+            if(vert.x > topX) topX = vert.x;
 
-            if(v.x < bottomX) bottomX = v.x;
-            if(v.x > topX) topX = v.x;
+            if(vert.y < bottomY) bottomY = vert.y;
+            if(vert.y > topY) topY = vert.y;
 
-            if(v.y < bottomY) bottomY = v.y;
-            if(v.y > topY) topY = v.y;
-
-            if(v.z < bottomZ) bottomZ = v.z;
-            if(v.z > topZ) topZ = v.z;
+            if(vert.z < bottomZ) bottomZ = vert.z;
+            if(vert.z > topZ) topZ = vert.z;
         }
 
         float Xsize = topX - bottomX;
