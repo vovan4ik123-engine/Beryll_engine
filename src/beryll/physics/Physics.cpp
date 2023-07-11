@@ -39,7 +39,7 @@ namespace Beryll
         m_collisionConfiguration = std::make_unique<btDefaultCollisionConfiguration>(cci);
         m_dispatcherMT = std::make_unique<btCollisionDispatcherMt>(m_collisionConfiguration.get());
         m_broadPhase = std::make_unique<btDbvtBroadphase>();
-        // let pool of solvers be 2 times more than available threads on device
+        // Let pool of solvers be 2 times more than available threads on device.
         m_solverPoolMT = std::make_unique<btConstraintSolverPoolMt>(btGetTaskScheduler()->getNumThreads() * 2);
         m_constraintSolverMT = std::make_unique<btSequentialImpulseConstraintSolverMt>();
         m_dynamicsWorldMT = std::make_unique<btDiscreteDynamicsWorldMt>(m_dispatcherMT.get(),
@@ -51,7 +51,7 @@ namespace Beryll
         m_dynamicsWorldMT->setGravity(m_gravity);
         m_dynamicsWorldMT->getSolverInfo().m_numIterations = 5;
 
-        // set collisions call backs to bullet
+        // Set collisions call backs to bullet.
         gContactAddedCallback = collisionsCallBack;
 
         m_collisionPairs.reserve(10000);
@@ -61,8 +61,8 @@ namespace Beryll
     {
         BR_ASSERT((m_dynamicsWorldMT != nullptr), "%s", "Create physics before simulate");
 
-        // dont simulate if disabled or no objects
-        // or time after m_timer.reset() is very short (for example we return from state (pause, ...) where simulation was disabled)
+        // Dont simulate if disabled or no objects
+        // or time after m_timer.reset() is very short (for example we return from state (pause, ...) where simulation was disabled).
         if(!m_simulationEnabled || m_timer.getElapsedSec() < 0.003f || m_dynamicsWorldMT->getNumCollisionObjects() == 0)
         {
             return;
@@ -83,7 +83,8 @@ namespace Beryll
                                      m_timeStep / static_cast<float>(m_resolutionFactor));
 
         m_simulationTime = m_timer.getElapsedMilliSec();
-        //BR_INFO("Simulation objects count: %d", m_dynamicsWorldMT->getNumCollisionObjects());
+        //BR_INFO("m_dynamicsWorldMT objects count: %d", m_dynamicsWorldMT->getNumCollisionObjects());
+        //BR_INFO("m_rigidBodiesMap objects count : %d", m_rigidBodiesMap.size());
         //BR_INFO("Simulation time millisec: %d", timer.getElapsedMilliSec());
     }
 
@@ -181,7 +182,7 @@ namespace Beryll
         std::shared_ptr<btRigidBody> body = std::make_shared<btRigidBody>(rbInfo, objectID);
 
         std::shared_ptr<RigidBodyData> rigidBodyData = std::make_shared<RigidBodyData>(objectID, body, true, collGroup, collMask, collFlag, mass);
-        body->setUserPointer(rigidBodyData.get()); // then we can fetch this rigidBodyData from CollisionObject ->getUserPointer()
+        body->setUserPointer(rigidBodyData.get()); // Then we can fetch this rigidBodyData from CollisionObject ->getUserPointer().
 
         if(collFlag == CollisionFlags::KINEMATIC)
             body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
@@ -233,7 +234,7 @@ namespace Beryll
         std::shared_ptr<btRigidBody> body = std::make_shared<btRigidBody>(rbInfo, objectID);
 
         std::shared_ptr<RigidBodyData> rigidBodyData = std::make_shared<RigidBodyData>(objectID, body, true, collGroup, collMask, collFlag, mass);
-        body->setUserPointer(rigidBodyData.get()); // then we can fetch this rigidBodyData from CollisionObject ->getUserPointer()
+        body->setUserPointer(rigidBodyData.get()); // Then we can fetch this rigidBodyData from CollisionObject ->getUserPointer().
 
         if(collFlag == CollisionFlags::KINEMATIC)
             body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
@@ -300,7 +301,7 @@ namespace Beryll
         std::shared_ptr<btRigidBody> body = std::make_shared<btRigidBody>(rbInfo, objectID);
 
         std::shared_ptr<RigidBodyData> rigidBodyData = std::make_shared<RigidBodyData>(objectID, body, true, collGroup, collMask, collFlag, mass);
-        body->setUserPointer(rigidBodyData.get()); // then we can fetch this rigidBodyData from CollisionObject ->getUserPointer()
+        body->setUserPointer(rigidBodyData.get()); // Then we can fetch this rigidBodyData from CollisionObject ->getUserPointer().
 
         if(collFlag == CollisionFlags::KINEMATIC)
             body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
@@ -347,7 +348,7 @@ namespace Beryll
         std::shared_ptr<btRigidBody> body = std::make_shared<btRigidBody>(rbInfo, objectID);
 
         std::shared_ptr<RigidBodyData> rigidBodyData = std::make_shared<RigidBodyData>(objectID, body, true, collGroup, collMask, collFlag, mass);
-        body->setUserPointer(rigidBodyData.get()); // then we can fetch this rigidBodyData from CollisionObject ->getUserPointer()
+        body->setUserPointer(rigidBodyData.get()); // Then we can fetch this rigidBodyData from CollisionObject ->getUserPointer().
 
         if(collFlag == CollisionFlags::KINEMATIC)
             body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
@@ -410,7 +411,7 @@ namespace Beryll
         std::shared_ptr<btRigidBody> body = std::make_shared<btRigidBody>(rbInfo, objectID);
 
         std::shared_ptr<RigidBodyData> rigidBodyData = std::make_shared<RigidBodyData>(objectID, body, true, collGroup, collMask, collFlag, mass);
-        body->setUserPointer(rigidBodyData.get()); // then we can fetch this rigidBodyData from CollisionObject ->getUserPointer()
+        body->setUserPointer(rigidBodyData.get()); // Then we can fetch this rigidBodyData from CollisionObject ->getUserPointer().
 
         if(collFlag == CollisionFlags::KINEMATIC)
             body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
@@ -505,7 +506,7 @@ namespace Beryll
             if((obA->beryllEngineObjectID == ID1 && obB->beryllEngineObjectID == ID2) ||
                (obA->beryllEngineObjectID == ID2 && obB->beryllEngineObjectID == ID1))
             {
-                // we found contact point between 2 objects
+                // We found contact point between 2 objects.
                 for(int j = 0; j < contactManifold->getNumContacts(); j++)
                 {
                     const btManifoldPoint& pt = contactManifold->getContactPoint(j);
@@ -514,8 +515,8 @@ namespace Beryll
                     btVector3 normalOnB = pt.m_normalWorldOnB;
                     normalOnB.normalize();
 
-                    pointsAndNormals.emplace_back(glm::vec3(ptB.getX(), ptB.getY(), ptB.getZ()), // point
-                                                  glm::normalize(glm::vec3(normalOnB.getX(), normalOnB.getY(), normalOnB.getZ()))); // normal
+                    pointsAndNormals.emplace_back(glm::vec3(ptB.getX(), ptB.getY(), ptB.getZ()), // Point.
+                                                  glm::normalize(glm::vec3(normalOnB.getX(), normalOnB.getY(), normalOnB.getZ()))); // Normal.
                 }
             }
         }
@@ -555,7 +556,7 @@ namespace Beryll
             if((obA->beryllEngineObjectID == ID1 && obB_ID_existInIDs) ||
                (obB->beryllEngineObjectID == ID1 && obA_ID_existInIDs))
             {
-                // we found collision between 2 objects
+                // We found collision between 2 objects.
                 for(int j = 0; j < contactManifold->getNumContacts(); j++)
                 {
                     const btManifoldPoint& pt = contactManifold->getContactPoint(j);
@@ -620,7 +621,7 @@ namespace Beryll
             else
                 t = iter->second->rb->getWorldTransform();
 
-            t.getOrigin() += btVector3(dist.x, dist.y, dist.z); // add to reference
+            t.getOrigin() += btVector3(dist.x, dist.y, dist.z); // Add to reference.
 
             iter->second->rb->setWorldTransform(t);
             if(iter->second->rb->getMotionState())
@@ -649,7 +650,7 @@ namespace Beryll
                 t = iter->second->rb->getWorldTransform();
 
             btQuaternion originalRotation = t.getRotation();
-            // rotations will be combined from right to left(originalRotation first, then btQuaternion(.....)
+            // Rotations will be combined from right to left(originalRotation first, then btQuaternion(.....).
             t.setRotation(btQuaternion(qua.x, qua.y, qua.z, qua.w) * originalRotation);
 
             iter->second->rb->setWorldTransform(t);
@@ -691,15 +692,15 @@ namespace Beryll
         return physicsTransforms;
     }
 
-    // is dangerous call softRemoveObject() from many threads especially during ray casts
-    // because this change world state
+    // Is dangerous call softRemoveObject() from many threads especially during ray casts
+    // because this change m_dynamicsWorldMT state.
     void Physics::softRemoveObject(const int ID)
     {
         auto iter = m_rigidBodiesMap.find(ID);
 
         std::scoped_lock<std::mutex> lock (m_mutex);
 
-        if(iter != m_rigidBodiesMap.end() && iter->second->existInDynamicWorld) // found object by ID and it exist in world
+        if(iter != m_rigidBodiesMap.end() && iter->second->existInDynamicWorld) // Found object by ID and it exist in world.
         {
             m_dynamicsWorldMT->removeRigidBody(iter->second->rb.get());
             iter->second->existInDynamicWorld = false;
@@ -729,14 +730,16 @@ namespace Beryll
     {
         m_collisionPairs.clear();
 
-        BR_INFO("Count before hard delete: %d", m_dynamicsWorldMT->getCollisionObjectArray().size());
-        // in reverse order
+        BR_INFO("m_dynamicsWorldMT count before hard delete: %d", m_dynamicsWorldMT->getNumCollisionObjects());
+        BR_INFO("m_rigidBodiesMap count before hard delete: %d", m_rigidBodiesMap.size());
+
+        // In reverse order.
         while(!m_motionStates.empty())
         {
             m_motionStates.pop_back();
         }
 
-        // in reverse order
+        // In reverse order.
         for(auto revIter = m_rigidBodiesMap.rbegin(); revIter != m_rigidBodiesMap.rend(); ++revIter)
         {
             if(revIter->second->existInDynamicWorld)
@@ -750,14 +753,15 @@ namespace Beryll
         m_collisionShapes.clear();
         m_triangleMeshes.clear();
 
-        BR_INFO("Count after hard delete: %d", m_dynamicsWorldMT->getCollisionObjectArray().size());
+        BR_INFO("m_dynamicsWorldMT count after hard delete: %d", m_dynamicsWorldMT->getNumCollisionObjects());
+        BR_INFO("m_rigidBodiesMap count after hard delete: %d", m_rigidBodiesMap.size());
     }
 
     void Physics::activateObject(const int ID)
     {
         auto iter = m_rigidBodiesMap.find(ID);
 
-        if(iter != m_rigidBodiesMap.end() && iter->second->existInDynamicWorld) // found object by ID and it exist in world
+        if(iter != m_rigidBodiesMap.end() && iter->second->existInDynamicWorld) // Found object by ID and it exist in world.
         {
             iter->second->rb->activate(true);
         }
@@ -767,7 +771,7 @@ namespace Beryll
     {
         auto iter = m_rigidBodiesMap.find(ID);
 
-        if(iter != m_rigidBodiesMap.end() && iter->second->existInDynamicWorld) // found object by ID and it exist in world
+        if(iter != m_rigidBodiesMap.end() && iter->second->existInDynamicWorld) // Found object by ID and it exist in world.
         {
             int activationState = iter->second->rb->getActivationState();
 
@@ -874,9 +878,9 @@ namespace Beryll
         }
     }
 
-    // should be thread safe without mutex
-    // ONLY if you dont change m_dynamicsWorldMT during ray cast
-    // removing/add/restore/... objects from/to world = change world
+    // Should be thread safe without mutex.
+    // ONLY if you dont change m_dynamicsWorldMT during ray cast.
+    // Removing/add/restore/... objects from/to world = change world.
     RayClosestHit Physics::castRayClosestHit(const glm::vec3& from, const glm::vec3 to, CollisionGroups collGroup, CollisionGroups collMask)
     {
         btVector3 fr(from.x, from.y, from.z);
@@ -913,9 +917,9 @@ namespace Beryll
         return RayClosestHit{};
     }
 
-    // should be thread safe without mutex
-    // ONLY if you dont change m_dynamicsWorldMT during ray cast
-    // removing/add/restore/... objects from/to world = change world
+    // Should be thread safe without mutex.
+    // ONLY if you dont change m_dynamicsWorldMT during ray cast.
+    // Removing/add/restore/... objects from/to world = change world.
     RayAllHits Physics::castRayAllHits(const glm::vec3& from, const glm::vec3 to, CollisionGroups collGroup, CollisionGroups collMask)
     {
         btVector3 fr(from.x, from.y, from.z);

@@ -10,7 +10,7 @@ namespace Beryll
                                                            CollisionGroups collGroup,
                                                            CollisionGroups collMask,
                                                            SceneObjectGroups sceneGroup)
-                                                           // call base class constructor
+                                                           // Call base class constructor.
                                                            : AnimatedCollidingObject(modelPath,
                                                                                      collisionMass,
                                                                                      wantCollisionCallBack,

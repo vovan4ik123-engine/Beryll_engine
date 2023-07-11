@@ -1,5 +1,6 @@
 ---------------------plan:---------------------
 
+add networking. send one text message to specific URL.
 add scene banner with texture set and timer
 
 update renderer 2 ?

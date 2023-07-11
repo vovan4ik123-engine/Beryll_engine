@@ -18,10 +18,10 @@ namespace Beryll
         auto result =  m_shaderPrograms.find(m_ID);
         if(result != m_shaderPrograms.end())
         {
-            // shaders with given source was compiled and added before
-            // use it
+            // Shaders with given source was compiled and added before.
+            // Use it.
             //BR_INFO("%s", "shaders with given source was compiled and added before");
-            m_shaderProgramID = result->second; // copy shared pointer
+            m_shaderProgramID = result->second; // Copy shared pointer.
             return;
         }
 
@@ -86,8 +86,8 @@ namespace Beryll
     {
         if(m_shaderProgramID.use_count() <= 2)
         {
-            // use_count() <= 2 means only shared_ptr in this class left and in map
-            // if we destroy this m_shaderProgramID (last copy except copy in map) also delete from OpenGL and map.
+            // use_count() <= 2 means only shared_ptr in this class left and in map.
+            // If we destroy this m_shaderProgramID (last copy except copy in map) also delete from OpenGL and map.
             auto result =  m_shaderPrograms.find(m_ID);
             if(result != m_shaderPrograms.end())
             {
@@ -109,7 +109,7 @@ namespace Beryll
 
     void AndroidGLESShader::unBind()
     {
-        // this object can unbind only his own shader program
+        // This object can unbind only his own shader program.
         if(GLESStateVariables::currentShaderProgram == *m_shaderProgramID)
         {
             glUseProgram(0);
