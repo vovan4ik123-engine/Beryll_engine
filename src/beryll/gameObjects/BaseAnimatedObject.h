@@ -18,8 +18,8 @@ namespace Beryll
 
         virtual uint32_t getBoneCount() = 0;
         virtual const std::vector<BoneMatrix>& getBoneMatrices() = 0;
-        virtual void setCurrentAnimationByName(const char* name, bool playOneTime) = 0;
-        virtual void setCurrentAnimationByIndex(int index, bool playOneTime) = 0;
+        virtual void setCurrentAnimationByName(const char* name, bool playOneTime, bool startEvenIfSameAnimPlaying) = 0;
+        virtual void setCurrentAnimationByIndex(int index, bool playOneTime, bool startEvenIfSameAnimPlaying) = 0;
         virtual void setDefaultAnimationByName(const char* name) = 0;
         virtual void setDefaultAnimationByIndex(int index) = 0;
         virtual bool getIsOneTimeAnimationFinished() = 0;

@@ -564,9 +564,9 @@ namespace Beryll
         return scaleMatrix;
     }
 
-    void AnimatedObject::setCurrentAnimationByName(const char* name, bool playOneTime)
+    void AnimatedObject::setCurrentAnimationByName(const char* name, bool playOneTime, bool startEvenIfSameAnimPlaying)
     {
-        if(m_currentAnimName == name) { return; }
+        if(m_currentAnimName == name && !startEvenIfSameAnimPlaying) { return; }
 
         for(const std::pair<std::string, int>& anim : m_animationNameIndex)
         {
@@ -586,9 +586,9 @@ namespace Beryll
         }
     }
 
-    void AnimatedObject::setCurrentAnimationByIndex(int index, bool playOneTime)
+    void AnimatedObject::setCurrentAnimationByIndex(int index, bool playOneTime, bool startEvenIfSameAnimPlaying)
     {
-        if(m_currentAnimIndex == index) { return; }
+        if(m_currentAnimIndex == index && !startEvenIfSameAnimPlaying) { return; }
 
         if(index >= 0 && index < m_animationNameIndex.size())
         {
