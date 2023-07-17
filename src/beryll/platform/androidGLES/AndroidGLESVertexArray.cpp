@@ -14,6 +14,11 @@ namespace Beryll
 
     AndroidGLESVertexArray::~AndroidGLESVertexArray()
     {
+        if(GLESStateVariables::currentVAO == m_VAO)
+        {
+            GLESStateVariables::currentVAO = 0;
+        }
+
         glDeleteVertexArrays(1, &m_VAO);
     }
 

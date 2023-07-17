@@ -74,6 +74,13 @@ namespace Beryll
             auto result =  m_textures.find(m_ID);
             if(result != m_textures.end())
             {
+                if(m_type == TextureType::DIFFUSE_TEXTURE  && GLESStateVariables::currentTexture0 == *m_openGLID)
+                    GLESStateVariables::currentTexture0 = 0;
+                else if(m_type == TextureType::SPECULAR_TEXTURE && GLESStateVariables::currentTexture1 == *m_openGLID)
+                    GLESStateVariables::currentTexture1 = 0;
+                else if(m_type == TextureType::NORMAL_MAP_TEXTURE && GLESStateVariables::currentTexture2 == *m_openGLID)
+                    GLESStateVariables::currentTexture2 = 0;
+
                 glDeleteTextures(1, m_openGLID.get());
                 m_textures.erase(result);
             }
@@ -82,7 +89,7 @@ namespace Beryll
 
     void AndroidGLESTexture::bind()
     {
-        // dont bind if m_openGLID already bound
+        // Dont bind if m_openGLID already bound.
         if(m_type == TextureType::DIFFUSE_TEXTURE && GLESStateVariables::currentTexture0 != *m_openGLID)
         {
             //BR_INFO("%s", "bind diffuse texture");
@@ -108,7 +115,7 @@ namespace Beryll
 
     void AndroidGLESTexture::unBind()
     {
-        // this object can unbind only his own texture
+        // This object can unbind only his own texture.
         if(m_type == TextureType::DIFFUSE_TEXTURE  && GLESStateVariables::currentTexture0 == *m_openGLID)
         {
             glActiveTexture(GL_TEXTURE0);

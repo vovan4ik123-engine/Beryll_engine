@@ -13,7 +13,7 @@ namespace Beryll
     {
         m_type = TextureType::SHADOW_MAP_TEXTURE;
 
-        // Generate texture to store Z values of framebuffer
+        // Generate texture to store Z values of framebuffer.
         glGenTextures(1, &m_openGLID);
         glBindTexture(GL_TEXTURE_2D ,m_openGLID);
 
@@ -34,7 +34,7 @@ namespace Beryll
         const GLenum noBuffers[] = {GL_NONE};
         glDrawBuffers(1, noBuffers);
 
-        // Attach texture as framebuffer depth buffer
+        // Attach texture as framebuffer depth buffer.
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_openGLID, 0);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D ,m_openGLID);
@@ -49,6 +49,8 @@ namespace Beryll
 
     AndroidGLESShadowMapTexture::~AndroidGLESShadowMapTexture()
     {
+        GLESStateVariables::currentTexture6 = 0;
+
         glDeleteTextures(GL_TEXTURE_2D, &m_openGLID);
 
         glDeleteFramebuffers(1, &m_depthMapFBO);
@@ -66,7 +68,7 @@ namespace Beryll
 
     void AndroidGLESShadowMapTexture::unBind()
     {
-        // this object can unbind only his own texture
+        // This object can unbind only his own texture.
         if(GLESStateVariables::currentTexture6 == m_openGLID)
         {
             glActiveTexture(GL_TEXTURE6);
@@ -79,7 +81,7 @@ namespace Beryll
                                                         const std::vector<std::shared_ptr<Beryll::BaseAnimatedObject>>& animatedObj,
                                                         const glm::mat4& VPMatrix)
     {
-        glViewport(0, 0, m_mapWidth, m_mapHeight); // for texture resolution
+        glViewport(0, 0, m_mapWidth, m_mapHeight); // For texture resolution.
         glBindFramebuffer(GL_FRAMEBUFFER, m_depthMapFBO);
         glClear(GL_DEPTH_BUFFER_BIT);
         glColorMask (GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);

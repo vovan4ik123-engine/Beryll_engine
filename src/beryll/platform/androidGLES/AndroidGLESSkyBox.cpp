@@ -140,6 +140,8 @@ namespace Beryll
 
     AndroidGLESSkyBox::~AndroidGLESSkyBox()
     {
+        GLESStateVariables::currentTexture5 = 0;
+
         glDeleteTextures(1, &m_openGLID);
     }
 

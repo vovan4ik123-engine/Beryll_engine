@@ -91,6 +91,11 @@ namespace Beryll
             auto result =  m_shaderPrograms.find(m_ID);
             if(result != m_shaderPrograms.end())
             {
+                if(GLESStateVariables::currentShaderProgram == *m_shaderProgramID)
+                {
+                    GLESStateVariables::currentShaderProgram = 0;
+                }
+
                 glDeleteProgram(*m_shaderProgramID);
                 m_shaderPrograms.erase(result);
             }
