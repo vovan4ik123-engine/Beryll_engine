@@ -42,7 +42,7 @@ namespace Beryll
 
             if(meshName.find("Collision") != std::string::npos)
             {
-                // collect collision mesh dimensions
+                // Collect collision mesh dimensions.
                 for (int g = 0; g < scene->mMeshes[i]->mNumVertices; ++g)
                 {
                     if (scene->mMeshes[i]->mVertices[g].y < m_mostBottomVertex)

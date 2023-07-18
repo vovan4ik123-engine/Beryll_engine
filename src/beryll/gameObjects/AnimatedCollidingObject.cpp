@@ -23,7 +23,8 @@ namespace Beryll
         const auto search = m_importersScenes.find(m_modelPath);
         if(search != m_importersScenes.end())
         {
-            // scene from same file already was loaded. use it
+            // Scene from same file already was loaded. use it.
+            BR_INFO("Use loaded before colliding animated object: %s", modelPath);
             m_scene = search->second.second;
         }
         else
@@ -68,7 +69,7 @@ namespace Beryll
 
             if(meshName.find("Collision") != std::string::npos)
             {
-                // collect collision mesh dimensions
+                // Collect collision mesh dimensions.
                 for(int g = 0; g < m_scene->mMeshes[i]->mNumVertices; ++g)
                 {
                     if(m_scene->mMeshes[i]->mVertices[g].y < m_mostBottomVertex)

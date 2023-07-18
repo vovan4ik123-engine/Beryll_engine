@@ -18,7 +18,8 @@ namespace Beryll
         const auto search = m_importersScenes.find(m_modelPath);
         if(search != m_importersScenes.end())
         {
-            // scene from same file already was loaded. use it
+            // Scene from same file already was loaded. use it.
+            BR_INFO("Use loaded before animated object: %s", modelPath);
             m_scene = search->second.second;
         }
         else
