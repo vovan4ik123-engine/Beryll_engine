@@ -24,8 +24,8 @@ namespace Beryll
 
         void updateBeforePhysics()
         {
-            // start update from last layer = GUI (GUI layer should be pushed as overlay)
-            // GUI element can make fingers handled = true. Mean dont handle this finger more on down layers
+            // Start update from last layer = GUI (GUI layer should be pushed as overlay).
+            // GUI element can make fingers handled = true. Mean dont handle this finger more on down layers.
             for(auto it = layerStack.rbegin(); it != layerStack.rend(); ++it)
             {
                 (*it)->updateBeforePhysics();
@@ -34,7 +34,7 @@ namespace Beryll
 
         void updateAfterPhysics()
         {
-            // start from first layer
+            // Start from first layer.
             for(const std::shared_ptr<Layer>& layer : layerStack)
             {
                 layer->updateAfterPhysics();
@@ -43,11 +43,11 @@ namespace Beryll
 
         void draw()
         {
-            // start from first layer
-            // GUI layer (as overlay) should be drawn last
-            for(const std::shared_ptr<Layer>& layer : layerStack)
+            // Start draw from last layer = GUI (GUI layer should be pushed as overlay).
+            // This probably avoid draw part of scene hidden by GUI.
+            for(auto it = layerStack.rbegin(); it != layerStack.rend(); ++it)
             {
-                layer->draw();
+                (*it)->draw();
             }
         }
 

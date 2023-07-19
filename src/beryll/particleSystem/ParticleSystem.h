@@ -19,24 +19,24 @@ namespace Beryll
         static void draw();
 
         static void EmitQuadsFromCenter(int particlesCount,
-                                    float lifeTime,
-                                    float sizeBegin,
-                                    float sizeEnd,
-                                    glm::vec4 colorBegin,
-                                    glm::vec4 colorEnd,
-                                    glm::vec3 pos,
-                                    glm::vec3 gravity,
-                                    float speed);
+                                        float lifeTimeSec,
+                                        float sizeBegin,
+                                        float sizeEnd,
+                                        const glm::vec4& colorBegin,
+                                        const glm::vec4& colorEnd,
+                                        const glm::vec3& pos,
+                                        const glm::vec3& gravity,
+                                        float speed);
 
         static void EmitCubesFromCenter(int particlesCount,
-                                    float lifeTime,
-                                    float sizeBegin,
-                                    float sizeEnd,
-                                    glm::vec4 colorBegin,
-                                    glm::vec4 colorEnd,
-                                    glm::vec3 pos,
-                                    glm::vec3 gravity,
-                                    float speed);
+                                        float lifeTimeSec,
+                                        float sizeBegin,
+                                        float sizeEnd,
+                                        const glm::vec4& colorBegin,
+                                        const glm::vec4& colorEnd,
+                                        const glm::vec3& pos,
+                                        const glm::vec3& gravity,
+                                        float speed);
 
         static int getActiveCount() { return m_activeCount; };
 

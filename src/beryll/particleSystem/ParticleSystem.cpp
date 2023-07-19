@@ -331,13 +331,13 @@ namespace Beryll
     }
 
     void ParticleSystem::EmitQuadsFromCenter(int particlesCount,
-                                             float lifeTime,
+                                             float lifeTimeSec,
                                              float sizeBegin,
                                              float sizeEnd,
-                                             glm::vec4 colorBegin,
-                                             glm::vec4 colorEnd,
-                                             glm::vec3 pos,
-                                             glm::vec3 gravity,
+                                             const glm::vec4& colorBegin,
+                                             const glm::vec4& colorEnd,
+                                             const glm::vec3& pos,
+                                             const glm::vec3& gravity,
                                              float speed)
     {
         BR_ASSERT((!m_quadParticles.empty() && !m_cubeParticles.empty()), "%s", "Create Particle system before use");
@@ -355,7 +355,7 @@ namespace Beryll
 
             particle.isActive = true;
 
-            particle.lifeTimeFull = lifeTime;
+            particle.lifeTimeFull = lifeTimeSec;
             particle.lifeTimePassed = 0.0f;
 
             particle.sizeBegin = sizeBegin + sizeBegin * ((RandomGenerator::getFloat() - 0.5f) * 0.5f);
@@ -383,13 +383,13 @@ namespace Beryll
     }
 
     void ParticleSystem::EmitCubesFromCenter(int particlesCount,
-                                             float lifeTime,
+                                             float lifeTimeSec,
                                              float sizeBegin,
                                              float sizeEnd,
-                                             glm::vec4 colorBegin,
-                                             glm::vec4 colorEnd,
-                                             glm::vec3 pos,
-                                             glm::vec3 gravity,
+                                             const glm::vec4& colorBegin,
+                                             const glm::vec4& colorEnd,
+                                             const glm::vec3& pos,
+                                             const glm::vec3& gravity,
                                              float speed)
     {
         BR_ASSERT((!m_quadParticles.empty() && !m_cubeParticles.empty()), "%s", "Create Particle system before use");
@@ -407,7 +407,7 @@ namespace Beryll
 
             particle.isActive = true;
 
-            particle.lifeTimeFull = lifeTime;
+            particle.lifeTimeFull = lifeTimeSec;
             particle.lifeTimePassed = 0.0f;
 
             particle.sizeBegin = sizeBegin + sizeBegin * ((RandomGenerator::getFloat() - 0.5f) * 0.5f);
