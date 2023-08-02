@@ -20,7 +20,7 @@ namespace Utils
     //glm::mat4 myModelMatrix = myTranslationMatrix * myRotationMatrix * myScaleMatrix;
     //glm::vec4 myTransformedVector = myModelMatrix * myOriginalVector;
 
-    //M_new = M_prev * M // would apply first matrix M then M_prev
+    //M_new = M_second_applied * M_first_applied;
 
     //http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-17-quaternions/#how-do-i-create-a-quaternion-in-c-
 

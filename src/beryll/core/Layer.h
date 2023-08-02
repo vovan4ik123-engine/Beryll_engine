@@ -25,7 +25,7 @@ namespace Beryll
         virtual void updateAfterPhysics() = 0; // Update positions after simulation, resolve collisions, Physics::getTransforms() here.
         virtual void draw() = 0; // Draw game objects.
 
-        const LayerID getLayerID() const { return m_ID; };
+        const LayerID getLayerID() const { return m_ID; }
 
     protected:
         LayerID m_ID = LayerID::UNKNOWN; // Initialize in subclass.

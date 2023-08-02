@@ -38,7 +38,7 @@ namespace Beryll
                                         const glm::vec3& gravity,
                                         float speed);
 
-        static int getActiveCount() { return m_activeCount; };
+        static int getActiveCount() { return m_activeCount; }
 
     private:
         friend class GameLoop;

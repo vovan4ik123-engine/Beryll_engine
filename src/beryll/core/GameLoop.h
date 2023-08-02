@@ -19,7 +19,7 @@ namespace Beryll
                 m_FPSMaxLimit = fps;
         }
 
-        static float getFPS() { return 1000000.0f / m_frameTimeIncludeSleep; };
+        static float getFPS() { return 1000000.0f / m_frameTimeIncludeSleep; }
 
         static float getFrameTime() { return m_frameTime * 0.001; } // Convert to milliSec.
         static float getCPUTime() { return m_CPUTime * 0.001; } // All logic + Physics simulation // convert to milliSec.

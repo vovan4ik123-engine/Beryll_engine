@@ -17,26 +17,26 @@ namespace Beryll
         ENEMY = 3,
         BULLET = 4,
 
-        PLAYER_MELEE_GROUP_1,
-        PLAYER_MELEE_GROUP_2,
-        PLAYER_MELEE_GROUP_3,
-        PLAYER_MELEE_GROUP_4,
-        PLAYER_MELEE_GROUP_5,
-        PLAYER_MELEE_GROUP_6,
-        PLAYER_MELEE_GROUP_7,
-        PLAYER_MELEE_GROUP_8,
-        PLAYER_MELEE_GROUP_9,
-        PLAYER_MELEE_GROUP_10,
-        ENEMY_MELEE_GROUP_1,
-        ENEMY_MELEE_GROUP_2,
-        ENEMY_MELEE_GROUP_3,
-        ENEMY_MELEE_GROUP_4,
-        ENEMY_MELEE_GROUP_5,
-        ENEMY_MELEE_GROUP_6,
-        ENEMY_MELEE_GROUP_7,
-        ENEMY_MELEE_GROUP_8,
-        ENEMY_MELEE_GROUP_9,
-        ENEMY_MELEE_GROUP_10
+        PLAYER_GROUP_1,
+        PLAYER_GROUP_2,
+        PLAYER_GROUP_3,
+        PLAYER_GROUP_4,
+        PLAYER_GROUP_5,
+        PLAYER_GROUP_6,
+        PLAYER_GROUP_7,
+        PLAYER_GROUP_8,
+        PLAYER_GROUP_9,
+        PLAYER_GROUP_10,
+        ENEMY_GROUP_1,
+        ENEMY_GROUP_2,
+        ENEMY_GROUP_3,
+        ENEMY_GROUP_4,
+        ENEMY_GROUP_5,
+        ENEMY_GROUP_6,
+        ENEMY_GROUP_7,
+        ENEMY_GROUP_8,
+        ENEMY_GROUP_9,
+        ENEMY_GROUP_10
     };
 
     class SceneObject : public GameObject
@@ -80,7 +80,7 @@ namespace Beryll
 
             glm::quat normQuat = glm::normalize(glm::angleAxis(angleRad, glm::normalize(axis)));
 
-            m_rotation = glm::normalize(normQuat * m_rotation);
+            m_engineAddedRotation = glm::normalize(normQuat * m_engineAddedRotation);
 
             if(m_hasCollisionObject)
             {
@@ -95,7 +95,7 @@ namespace Beryll
 
             if(glm::angle(normQuat) < 0.0035f) { return; } // Less than 0.2 degree.
 
-            m_rotation = glm::normalize(normQuat * m_rotation);
+            m_engineAddedRotation = glm::normalize(normQuat * m_engineAddedRotation);
 
             if(m_hasCollisionObject)
             {
@@ -201,10 +201,13 @@ namespace Beryll
             }
         }
 
-        glm::mat4 getModelMatrix()
+        glm::mat4 getModelMatrix(bool includeBlenderFileRotation = true)
         {
-            // translate * rotate * scale
-            return glm::translate(glm::mat4{1.0f}, m_origin) * glm::toMat4(m_rotation);
+            // translate * rotate * scale m_engineAddedRotation
+            if(includeBlenderFileRotation)
+                return glm::translate(glm::mat4{1.0f}, m_origin) * glm::toMat4(glm::normalize(m_engineAddedRotation * m_originalRotationFromBlenderFile));
+            else
+                return glm::translate(glm::mat4{1.0f}, m_origin) * glm::toMat4(m_engineAddedRotation);
         }
 
         glm::vec3 getOrigin()
@@ -215,17 +218,17 @@ namespace Beryll
 
             return glm::vec3{x, y, z};
         }
-        bool getIsDisabledForEver() { return m_disabledForEver; } // use it for disable object from draw
-        bool getIsEnabledDraw() { return m_isEnabledDraw && !m_disabledForEver; } // use it for disable object from draw
-        bool getIsEnabledUpdate() { return m_isEnabledUpdate && !m_disabledForEver; } // use it for disable object from updates
+        bool getIsDisabledForEver() { return m_isDisabledForEver; } // use it for disable object from draw
+        bool getIsEnabledDraw() { return m_isEnabledDraw && !m_isDisabledForEver; } // use it for disable object from draw
+        bool getIsEnabledUpdate() { return m_isEnabledUpdate && !m_isDisabledForEver; } // use it for disable object from updates
         bool getHasCollisionMesh() { return m_hasCollisionObject; }
-        bool getIsEnabledCollisionMesh() { return m_isEnabledInPhysicsSimulation && !m_disabledForEver; }
+        bool getIsEnabledCollisionMesh() { return m_isEnabledInPhysicsSimulation && !m_isDisabledForEver; }
         CollisionGroups getCollisionGroup() { return m_collisionGroup; }
         CollisionFlags getCollisionFlag() { return m_collisionFlag; }
         SceneObjectGroups getSceneObjectGroup() { return m_sceneObjectGroup; }
         glm::vec3 getFaceDirXYZ()
         {
-            return glm::normalize(glm::vec3(glm::toMat4(m_rotation) * glm::vec4(m_sceneObjectFaceDir, 1.0f)));
+            return glm::normalize(glm::vec3(glm::toMat4(glm::normalize(m_engineAddedRotation * m_originalRotationFromBlenderFile)) * glm::vec4(m_sceneObjectFaceDir, 1.0f)));
         }
         glm::vec3 getFaceDirXZ()
         {
@@ -234,7 +237,7 @@ namespace Beryll
         }
         glm::vec3 getRightDirXYZ()
         {
-            return glm::normalize(glm::vec3(glm::toMat4(m_rotation) * glm::vec4(m_sceneObjectRightDir, 1.0f)));
+            return glm::normalize(glm::vec3(glm::toMat4(glm::normalize(m_engineAddedRotation * m_originalRotationFromBlenderFile)) * glm::vec4(m_sceneObjectRightDir, 1.0f)));
         }
         glm::vec3 getRightDirXZ()
         {
@@ -243,22 +246,22 @@ namespace Beryll
         }
         glm::vec3 getUpDirXYZ()
         {
-            return glm::normalize(glm::vec3(glm::toMat4(m_rotation) * glm::vec4(m_sceneObjectUpDir, 1.0f)));
+            return glm::normalize(glm::vec3(glm::toMat4(glm::normalize(m_engineAddedRotation * m_originalRotationFromBlenderFile)) * glm::vec4(m_sceneObjectUpDir, 1.0f)));
         }
 
         void enableDraw()
         {
-            m_isEnabledDraw = !m_disabledForEver;
+            m_isEnabledDraw = !m_isDisabledForEver;
         }
 
         void enableUpdate()
         {
-            m_isEnabledUpdate = !m_disabledForEver;
+            m_isEnabledUpdate = !m_isDisabledForEver;
         }
 
         void enableCollisionMesh(bool resetVelocities = false)
         {
-            if(m_hasCollisionObject && !m_isEnabledInPhysicsSimulation && !m_disabledForEver)
+            if(m_hasCollisionObject && !m_isEnabledInPhysicsSimulation && !m_isDisabledForEver)
             {
                 Physics::restoreObject(m_ID, resetVelocities);
                 m_isEnabledInPhysicsSimulation = true;
@@ -286,7 +289,7 @@ namespace Beryll
 
         void disableForEver()
         {
-            m_disabledForEver = true;
+            m_isDisabledForEver = true;
 
             disableDraw();
             disableUpdate();
@@ -302,7 +305,8 @@ namespace Beryll
 
     protected:
         //float m_scale = 1.0f; // Unused for now.
-        glm::quat m_rotation{1.0f, 0.0f, 0.0f, 0.0f}; // Identity quaternion = no rotation.
+        glm::quat m_originalRotationFromBlenderFile{1.0f, 0.0f, 0.0f, 0.0f}; // Loaded with model from blender exported file.
+        glm::quat m_engineAddedRotation{1.0f, 0.0f, 0.0f, 0.0f}; // Rotation added by user to model.
         glm::vec3 m_origin{0.0f, 0.0f, 0.0f};
         // For synchronization when one thread set origin and other calls getOrigin()
         // for same object.
@@ -328,7 +332,7 @@ namespace Beryll
         glm::vec3 m_linearFactor{1.0f, 1.0f, 1.0f};
         glm::vec3 m_angularFactor{1.0f, 1.0f, 1.0f};
 
-        bool m_disabledForEver = false;
+        bool m_isDisabledForEver = false;
         bool m_isEnabledDraw = true; // for method draw()
         bool m_isEnabledUpdate = true; // for methods updateBeforePhysics() + updateAfterPhysics()
 
