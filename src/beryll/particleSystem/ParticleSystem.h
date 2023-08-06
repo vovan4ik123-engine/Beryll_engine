@@ -3,6 +3,7 @@
 #include "CppHeaders.h"
 #include "LibsHeaders.h"
 
+#include "beryll/core/Timer.h"
 #include "beryll/renderer/Shader.h"
 #include "beryll/renderer/Buffer.h"
 #include "beryll/renderer/VertexArray.h"
@@ -17,6 +18,7 @@ namespace Beryll
         ~ParticleSystem() = delete;
 
         static void draw();
+        static void disableAll(); // Call when change game state/level.
 
         static void EmitQuadsFromCenter(int particlesCount,
                                         float lifeTimeSec,
@@ -46,6 +48,8 @@ namespace Beryll
 
         static int m_activeCount;
         static std::shared_ptr<Shader> m_internalShader;
+        static Timer m_timer;
+        static float m_timeStep; // Time in sec between last ParticleSystem::draw() and current ParticleSystem::draw().
 
         struct QuadParticle
         {

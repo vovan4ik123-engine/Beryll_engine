@@ -34,10 +34,9 @@ namespace Beryll
 
         void updateAfterPhysics()
         {
-            // Start from first layer.
-            for(const std::shared_ptr<Layer>& layer : layerStack)
+            for(auto it = layerStack.rbegin(); it != layerStack.rend(); ++it)
             {
-                layer->updateAfterPhysics();
+                (*it)->updateAfterPhysics();
             }
         }
 

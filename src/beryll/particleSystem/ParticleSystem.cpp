@@ -1,7 +1,6 @@
 #include "ParticleSystem.h"
 #include "beryll/renderer/Renderer.h"
 #include "beryll/renderer/Camera.h"
-#include "beryll/core/TimeStep.h"
 #include "beryll/core/RandomGenerator.h"
 #include "beryll/async/AsyncRun.h"
 #include "beryll/utils/CommonUtils.h"
@@ -10,20 +9,22 @@ namespace Beryll
 {
     int ParticleSystem::m_activeCount = 0;
     std::shared_ptr<Shader> ParticleSystem::m_internalShader;
+    Timer ParticleSystem::m_timer;
+    float ParticleSystem::m_timeStep = 0.0f;
 
     const std::vector<glm::vec4> ParticleSystem::m_quadVertices{glm::vec4{-1.0f, -1.0f, 0.0f, 1.0f},
                                                                 glm::vec4{1.0f, -1.0f, 0.0f, 1.0f},
                                                                 glm::vec4{1.0f, 1.0f, 0.0f, 1.0f},
                                                                 glm::vec4{-1.0f, 1.0f, 0.0f, 1.0f}};
     const uint32_t ParticleSystem::m_maxQuadCount = 100000;
-    const uint32_t ParticleSystem::m_quadVerticesCount = 4; // 4 vertices per quad
-    const uint32_t ParticleSystem::m_quadIndicesCount = 6;  // 6 indices per quad
+    const uint32_t ParticleSystem::m_quadVerticesCount = 4; // 4 vertices per quad.
+    const uint32_t ParticleSystem::m_quadIndicesCount = 6;  // 6 indices per quad.
     const uint32_t ParticleSystem::m_allQuadsVerticesCount = m_maxQuadCount * m_quadVerticesCount;
     const uint32_t ParticleSystem::m_allQuadsIndicesCount = m_maxQuadCount * m_quadIndicesCount;
     int ParticleSystem::m_activeQuads = 0;
     std::vector<ParticleSystem::QuadParticle> ParticleSystem::m_quadParticles;
     int ParticleSystem::m_currentQuadParticlesIndex = 0;
-    bool ParticleSystem::m_anyQuadParticleIsActive = false; // use to avoid update and draw if no active particles
+    bool ParticleSystem::m_anyQuadParticleIsActive = false; // Use to avoid update and draw if no active particles.
     std::shared_ptr<VertexBuffer> ParticleSystem::m_quadVertexPosDynamicBuffer;
     std::shared_ptr<VertexBuffer> ParticleSystem::m_quadVertexColorDynamicBuffer;
     std::shared_ptr<IndexBuffer> ParticleSystem::m_quadIndexBuffer;
@@ -32,24 +33,24 @@ namespace Beryll
     std::vector<glm::vec4> ParticleSystem::m_quadVertexColorDynamicVector;
     std::function<void(std::vector<ParticleSystem::QuadParticle>&, int, int)> ParticleSystem::updateQuadParticles;
 
-    const std::vector<glm::vec4> ParticleSystem::m_cubeVertices{glm::vec4{-1.0f, -1.0f, 1.0f, 1.0f}, // front side +Z
+    const std::vector<glm::vec4> ParticleSystem::m_cubeVertices{glm::vec4{-1.0f, -1.0f, 1.0f, 1.0f}, // Front side +Z.
                                                                 glm::vec4{1.0f, -1.0f, 1.0f, 1.0f},
                                                                 glm::vec4{1.0f, 1.0f, 1.0f, 1.0f},
                                                                 glm::vec4{-1.0f, 1.0f, 1.0f, 1.0f},
 
-                                                                glm::vec4{-1.0f, -1.0f, -1.0f, 1.0f}, // back side -Z
+                                                                glm::vec4{-1.0f, -1.0f, -1.0f, 1.0f}, // Back side -Z.
                                                                 glm::vec4{1.0f, -1.0f, -1.0f, 1.0f},
                                                                 glm::vec4{1.0f, 1.0f, -1.0f, 1.0f},
                                                                 glm::vec4{-1.0f, 1.0f, -1.0f, 1.0f}};
     const uint32_t ParticleSystem::m_maxCubeCount = 100000;
-    const uint32_t ParticleSystem::m_cubeVerticesCount = 8; // 8 vertices per cube
-    const uint32_t ParticleSystem::m_cubeIndicesCount = 36;  // 36 indices per quad
+    const uint32_t ParticleSystem::m_cubeVerticesCount = 8; // 8 vertices per cube.
+    const uint32_t ParticleSystem::m_cubeIndicesCount = 36;  // 36 indices per quad.
     const uint32_t ParticleSystem::m_allCubesVerticesCount = m_maxCubeCount * m_cubeVerticesCount;
     const uint32_t ParticleSystem::m_allCubesIndicesCount = m_maxCubeCount * m_cubeIndicesCount;
     int ParticleSystem::m_activeCubes = 0;
     std::vector<ParticleSystem::CubeParticle> ParticleSystem::m_cubeParticles;
     int ParticleSystem::m_currentCubeParticlesIndex = 0;
-    bool ParticleSystem::m_anyCubeParticleIsActive = false; // use to avoid update and draw if no active particles
+    bool ParticleSystem::m_anyCubeParticleIsActive = false; // Use to avoid update and draw if no active particles.
     std::shared_ptr<VertexBuffer> ParticleSystem::m_cubeVertexPosDynamicBuffer;
     std::shared_ptr<VertexBuffer> ParticleSystem::m_cubeVertexColorDynamicBuffer;
     std::shared_ptr<IndexBuffer> ParticleSystem::m_cubeIndexBuffer;
@@ -78,10 +79,10 @@ namespace Beryll
             quadsIndices[i + 4] = 3 + quadsIndicesOffset;
             quadsIndices[i + 5] = 0 + quadsIndicesOffset;
 
-            quadsIndicesOffset += m_quadVerticesCount; // deference between current and next quad indices
+            quadsIndicesOffset += m_quadVerticesCount; // Deference between current and next quad indices.
         }
 
-        uint32_t allQuadsVerticesSizeBytes = m_allQuadsVerticesCount * sizeof(glm::vec4); // 1 vertex = 4 floats
+        uint32_t allQuadsVerticesSizeBytes = m_allQuadsVerticesCount * sizeof(glm::vec4); // 1 vertex = 4 floats.
         m_quadVertexPosDynamicVector.resize(m_allQuadsVerticesCount);
         m_quadVertexColorDynamicVector.resize(m_allQuadsVerticesCount);
 
@@ -94,12 +95,14 @@ namespace Beryll
         m_quadVertexArray->addVertexBuffer(m_quadVertexColorDynamicBuffer);
         m_quadVertexArray->setIndexBuffer(m_quadIndexBuffer);
 
-        updateQuadParticles = [](std::vector<QuadParticle>& v, int begin, int end) -> void // -> void = return type
+        updateQuadParticles = [](std::vector<QuadParticle>& v, int begin, int end) -> void // -> void = return type.
         {
             for(int i = begin; i < end; ++i)
             {
                 if(!v[i].isActive)
                     continue;
+
+                v[i].lifeTimePassed += m_timeStep;
 
                 if(v[i].lifeTimePassed >= v[i].lifeTimeFull)
                 {
@@ -107,9 +110,8 @@ namespace Beryll
                     continue;
                 }
 
-                v[i].lifeTimePassed += TimeStep::getTimeStepSec();
-                v[i].pos += v[i].moveDir * (v[i].moveSpeed * TimeStep::getTimeStepSec());
-                v[i].rotation += ((2.0f * TimeStep::getTimeStepSec()) * v[i].rotationSpeed) * v[i].rotationSide;
+                v[i].pos += v[i].moveDir * (v[i].moveSpeed * m_timeStep);
+                v[i].rotation += ((2.0f * m_timeStep) * v[i].rotationSpeed) * v[i].rotationSide;
                 float lifeInRange_0_1 = v[i].lifeTimePassed / v[i].lifeTimeFull;
                 v[i].finalColor = glm::lerp(v[i].colorBegin, v[i].colorEnd, lifeInRange_0_1);
                 v[i].finalSize = glm::lerp(v[i].sizeBegin, v[i].sizeEnd, lifeInRange_0_1);
@@ -120,10 +122,10 @@ namespace Beryll
                     faceDirToCameraDirRotation = glm::rotation(-v[i].faceDir, Camera::getCameraDirectionXYZ());
 
                 v[i].MVPMatrix = Camera::getViewProjection() *
-                                 // model matrix
+                                 // Model matrix.
                                  (glm::translate(glm::mat4{1.0f}, v[i].pos) *
                                   (glm::toMat4(faceDirToCameraDirRotation) * glm::rotate(glm::mat4{1.0f}, v[i].rotation, v[i].faceDir)) *
-                                  glm::scale(glm::mat4{1.0f}, glm::vec3(v[i].finalSize, v[i].finalSize, 1.0f)));
+                                  glm::scale(glm::mat4{1.0f}, glm::vec3{v[i].finalSize, v[i].finalSize, 1.0f}));
 
                 v[i].finalVertex0 = v[i].MVPMatrix * ParticleSystem::m_quadVertices[0];
                 v[i].finalVertex1 = v[i].MVPMatrix * ParticleSystem::m_quadVertices[1];
@@ -182,18 +184,18 @@ namespace Beryll
             cubesIndices[i + 34] = 0 + cubesIndicesOffset;
             cubesIndices[i + 35] = 4 + cubesIndicesOffset;
 
-            cubesIndicesOffset += m_cubeVerticesCount; // deference between current and next cube indices
+            cubesIndicesOffset += m_cubeVerticesCount; // Deference between current and next cube indices.
         }
 
         /*
-        std::vector<uint32_t> cubeIndices{0,1,2,    2,3,0, // two triangles
+        std::vector<uint32_t> cubeIndices{0,1,2,    2,3,0, // Two triangles.
                                           1,5,6,    6,2,1,
                                           5,4,7,    7,6,5,
                                           4,0,3,    3,7,4,
                                           3,2,6,    6,7,3,
                                           4,5,1,    1,0,4}; */
 
-        uint32_t allCubesVerticesSizeBytes = m_allCubesVerticesCount * sizeof(glm::vec4); // 1 vertex = 4 floats
+        uint32_t allCubesVerticesSizeBytes = m_allCubesVerticesCount * sizeof(glm::vec4); // 1 vertex = 4 floats.
         m_cubeVertexPosDynamicVector.resize(m_allCubesVerticesCount);
         m_cubeVertexColorDynamicVector.resize(m_allCubesVerticesCount);
 
@@ -206,12 +208,14 @@ namespace Beryll
         m_cubeVertexArray->addVertexBuffer(m_cubeVertexColorDynamicBuffer);
         m_cubeVertexArray->setIndexBuffer(m_cubeIndexBuffer);
 
-        updateCubeParticles = [](std::vector<CubeParticle>& v, int begin, int end) -> void // -> void = return type
+        updateCubeParticles = [](std::vector<CubeParticle>& v, int begin, int end) -> void // -> void = return type.
         {
             for(int i = begin; i < end; ++i)
             {
                 if(!v[i].isActive)
                     continue;
+
+                v[i].lifeTimePassed += m_timeStep;
 
                 if(v[i].lifeTimePassed >= v[i].lifeTimeFull)
                 {
@@ -219,17 +223,16 @@ namespace Beryll
                     continue;
                 }
 
-                v[i].lifeTimePassed += TimeStep::getTimeStepSec();
-                v[i].pos += v[i].moveDir * (v[i].moveSpeed * TimeStep::getTimeStepSec());
+                v[i].pos += v[i].moveDir * (v[i].moveSpeed * m_timeStep);
                 float lifeInRange_0_1 = v[i].lifeTimePassed / v[i].lifeTimeFull;
                 v[i].finalColor = glm::lerp(v[i].colorBegin, v[i].colorEnd, lifeInRange_0_1);
                 v[i].finalSize = glm::lerp(v[i].sizeBegin, v[i].sizeEnd, lifeInRange_0_1);
 
                 v[i].MVPMatrix = Camera::getViewProjection() *
-                                 // model matrix
+                                 // Model matrix.
                                  (glm::translate(glm::mat4{1.0f}, v[i].pos) *
                                   v[i].rotationMatrix *
-                                  glm::scale(glm::mat4{1.0f}, glm::vec3(v[i].finalSize, v[i].finalSize, v[i].finalSize)));
+                                  glm::scale(glm::mat4{1.0f}, glm::vec3{v[i].finalSize}));
 
                 v[i].finalVertex0 = v[i].MVPMatrix * ParticleSystem::m_cubeVertices[0];
                 v[i].finalVertex1 = v[i].MVPMatrix * ParticleSystem::m_cubeVertices[1];
@@ -244,11 +247,16 @@ namespace Beryll
 
         m_internalShader = Renderer::createShader(BeryllConstants::particleVertexPath.data(),
                                                   BeryllConstants::particleFragmentPath.data());
+
+        m_timer.reset();
     }
 
     void ParticleSystem::draw()
     {
         BR_ASSERT((!m_quadParticles.empty() && !m_cubeParticles.empty()), "%s", "Create Particle system before use");
+
+        m_timeStep = m_timer.getElapsedSec();
+        m_timer.reset();
 
         m_activeCount = 0;
 
@@ -265,7 +273,7 @@ namespace Beryll
 
                 ++m_activeQuads;
 
-                // collect dynamic positions and colors
+                // Collect dynamic positions and colors.
                 m_quadVertexPosDynamicVector[vertexOffset + 0] = particle.finalVertex0;     m_quadVertexColorDynamicVector[vertexOffset + 0] = particle.finalColor;
                 m_quadVertexPosDynamicVector[vertexOffset + 1] = particle.finalVertex1;     m_quadVertexColorDynamicVector[vertexOffset + 1] = particle.finalColor;
                 m_quadVertexPosDynamicVector[vertexOffset + 2] = particle.finalVertex2;     m_quadVertexColorDynamicVector[vertexOffset + 2] = particle.finalColor;
@@ -276,13 +284,16 @@ namespace Beryll
 
             m_activeCount += m_activeQuads;
 
-            m_quadVertexPosDynamicBuffer->setDynamicBufferData(m_quadVertexPosDynamicVector, m_activeQuads * m_quadVerticesCount);
-            m_quadVertexColorDynamicBuffer->setDynamicBufferData(m_quadVertexColorDynamicVector, m_activeQuads * m_quadVerticesCount);
-            m_quadIndexBuffer->setCount(m_activeQuads * m_quadIndicesCount);
+            if(m_activeQuads > 0)
+            {
+                m_quadVertexPosDynamicBuffer->setDynamicBufferData(m_quadVertexPosDynamicVector, m_activeQuads * m_quadVerticesCount);
+                m_quadVertexColorDynamicBuffer->setDynamicBufferData(m_quadVertexColorDynamicVector, m_activeQuads * m_quadVerticesCount);
+                m_quadIndexBuffer->setCount(m_activeQuads * m_quadIndicesCount);
 
-            m_internalShader->bind();
-            m_quadVertexArray->bind();
-            m_quadVertexArray->draw();
+                m_internalShader->bind();
+                m_quadVertexArray->bind();
+                m_quadVertexArray->draw();
+            }
         }
 
         if(m_activeQuads == 0)
@@ -301,7 +312,10 @@ namespace Beryll
 
                 ++m_activeCubes;
 
-                // collect dynamic positions and colors
+                //BR_INFO("pos X: %f Y: %f Z: %f", particle.pos.x, particle.pos.y, particle.pos.z);
+                //BR_INFO("particle X: %f Y: %f Z: %f", particle.MVPMatrix[3][0], particle.MVPMatrix[3][1], particle.MVPMatrix[3][2]);
+
+                // Collect dynamic positions and colors.
                 m_cubeVertexPosDynamicVector[vertexOffset + 0] = particle.finalVertex0;     m_cubeVertexColorDynamicVector[vertexOffset + 0] = particle.finalColor;
                 m_cubeVertexPosDynamicVector[vertexOffset + 1] = particle.finalVertex1;     m_cubeVertexColorDynamicVector[vertexOffset + 1] = particle.finalColor;
                 m_cubeVertexPosDynamicVector[vertexOffset + 2] = particle.finalVertex2;     m_cubeVertexColorDynamicVector[vertexOffset + 2] = particle.finalColor;
@@ -317,17 +331,38 @@ namespace Beryll
 
             m_activeCount += m_activeCubes;
 
-            m_cubeVertexPosDynamicBuffer->setDynamicBufferData(m_cubeVertexPosDynamicVector, m_activeCubes * m_cubeVerticesCount);
-            m_cubeVertexColorDynamicBuffer->setDynamicBufferData(m_cubeVertexColorDynamicVector, m_activeCubes * m_cubeVerticesCount);
-            m_cubeIndexBuffer->setCount(m_activeCubes * m_cubeIndicesCount);
+            if(m_activeCubes > 0)
+            {
+                m_cubeVertexPosDynamicBuffer->setDynamicBufferData(m_cubeVertexPosDynamicVector, m_activeCubes * m_cubeVerticesCount);
+                m_cubeVertexColorDynamicBuffer->setDynamicBufferData(m_cubeVertexColorDynamicVector, m_activeCubes * m_cubeVerticesCount);
+                m_cubeIndexBuffer->setCount(m_activeCubes * m_cubeIndicesCount);
 
-            m_internalShader->bind();
-            m_cubeVertexArray->bind();
-            m_cubeVertexArray->draw();
+                m_internalShader->bind();
+                m_cubeVertexArray->bind();
+                m_cubeVertexArray->draw();
+            }
         }
 
         if(m_activeCubes == 0)
             m_anyCubeParticleIsActive = false;
+    }
+
+    void ParticleSystem::disableAll()
+    {
+        for(QuadParticle& particle : m_quadParticles)
+            particle.isActive = false;
+
+        m_anyQuadParticleIsActive = false;
+        m_currentQuadParticlesIndex = static_cast<int>(m_quadParticles.size()) - 1;
+
+        for(CubeParticle& particle : m_cubeParticles)
+            particle.isActive = false;
+
+        m_anyCubeParticleIsActive = false;
+        m_currentCubeParticlesIndex = static_cast<int>(m_cubeParticles.size()) - 1;
+
+        draw();
+        draw();
     }
 
     void ParticleSystem::EmitQuadsFromCenter(int particlesCount,
@@ -340,7 +375,7 @@ namespace Beryll
                                              const glm::vec3& gravity,
                                              float speed)
     {
-        BR_ASSERT((!m_quadParticles.empty() && !m_cubeParticles.empty()), "%s", "Create Particle system before use");
+        BR_ASSERT((!m_quadParticles.empty() && !m_cubeParticles.empty()), "%s", "Create Particle system before use.");
 
         for(int i = 0; i < particlesCount; ++i)
         {
@@ -392,7 +427,7 @@ namespace Beryll
                                              const glm::vec3& gravity,
                                              float speed)
     {
-        BR_ASSERT((!m_quadParticles.empty() && !m_cubeParticles.empty()), "%s", "Create Particle system before use");
+        BR_ASSERT((!m_quadParticles.empty() && !m_cubeParticles.empty()), "%s", "Create Particle system before use.");
 
         for(int i = 0; i < particlesCount; ++i)
         {
