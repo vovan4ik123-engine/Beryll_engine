@@ -4,6 +4,7 @@
 #include "beryll/core/RandomGenerator.h"
 #include "beryll/async/AsyncRun.h"
 #include "beryll/utils/CommonUtils.h"
+#include "beryll/GUI/MainImGUI.h"
 
 namespace Beryll
 {
@@ -349,20 +350,16 @@ namespace Beryll
 
     void ParticleSystem::disableAll()
     {
+        BR_INFO("%s", "ParticleSystem::disableAll()");
+
         for(QuadParticle& particle : m_quadParticles)
             particle.isActive = false;
-
-        m_anyQuadParticleIsActive = false;
-        m_currentQuadParticlesIndex = static_cast<int>(m_quadParticles.size()) - 1;
 
         for(CubeParticle& particle : m_cubeParticles)
             particle.isActive = false;
 
-        m_anyCubeParticleIsActive = false;
+        m_currentQuadParticlesIndex = static_cast<int>(m_quadParticles.size()) - 1;
         m_currentCubeParticlesIndex = static_cast<int>(m_cubeParticles.size()) - 1;
-
-        draw();
-        draw();
     }
 
     void ParticleSystem::EmitQuadsFromCenter(int particlesCount,

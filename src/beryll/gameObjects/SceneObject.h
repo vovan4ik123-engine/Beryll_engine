@@ -297,7 +297,7 @@ namespace Beryll
         }
 
         /*
-         * inherited pure virtual methods are here
+         * Inherited pure virtual methods are here.
          */
 
         bool useInternalShader = true;

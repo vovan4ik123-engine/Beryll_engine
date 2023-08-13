@@ -32,10 +32,10 @@ namespace Beryll
         void setAction(std::function<void()> fn) { m_action = fn; }
 
     private:
-        // if action is set m_action() will called when pressed
+        // If action is set m_action() will called when pressed.
         std::function<void()> m_action;
 
-        bool m_actRepeat = false; // if you want m_pressed = true all time during button touched pass actRepeat = true
+        bool m_actRepeat = false; // If you want m_pressed = true all time during button touched pass actRepeat = true.
 
         std::unique_ptr<Texture> m_defaultTexture;
         std::unique_ptr<Texture> m_touchedTexture;

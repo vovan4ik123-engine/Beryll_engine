@@ -1,12 +1,10 @@
 ---------------------plan:---------------------
 
-add networking. send one text message to specific URL.
-add scene banner with texture set and timer
+Remove blue background under transparent pixels in ImGUI.
+Add networking. send one text message to specific URL.
+Add scene banner with texture set and timer.
 
-update renderer 2 ?
-draw thread ?
-
-
+Draw thread?
 
 
 #include <android/log.h>

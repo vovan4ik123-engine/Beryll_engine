@@ -36,7 +36,7 @@ namespace Beryll
         }
         else
         {
-            if(m_actRepeat && m_pressed) // still keep button pressed or not
+            if(m_actRepeat && m_pressed) // Still keep button pressed or not.
             {
                 m_pressed = false;
                 for(Finger& f : fingers)
@@ -44,7 +44,7 @@ namespace Beryll
                     if(f.normalizedPos.x > m_leftPos && f.normalizedPos.x < m_leftPos + m_width
                        && f.normalizedPos.y > m_topPos && f.normalizedPos.y < m_topPos + m_height)
                     {
-                        // if any finger in button area
+                        // If any finger in button area.
                         m_pressed = true;
                     }
                 }
@@ -60,7 +60,7 @@ namespace Beryll
                 if(f.normalizedPos.x > m_leftPos && f.normalizedPos.x < m_leftPos + m_width
                    && f.normalizedPos.y > m_topPos && f.normalizedPos.y < m_topPos + m_height)
                 {
-                    // if any finger in button area
+                    // If any finger in button area.
                     m_touched = true;
 
                     if(f.downEvent && !f.handled)
@@ -85,9 +85,9 @@ namespace Beryll
 
     void ButtonWithText::draw()
     {
-        ImGui::PushStyleColor(ImGuiCol_Button, m_color); // lost focus
-        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, m_color); // on focus
-        ImGui::PushStyleColor(ImGuiCol_ButtonActive, m_clickedColor); // clicked
+        ImGui::PushStyleColor(ImGuiCol_Button, m_color); // Lost focus.
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, m_color); // On focus.
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive, m_clickedColor); // Clicked.
         ImGui::PushStyleColor(ImGuiCol_Text, m_fontColor);
 
 

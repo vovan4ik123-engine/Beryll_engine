@@ -11,7 +11,7 @@ namespace Beryll
         ~GUIObject() override {}
 
         /*
-         * inherited pure virtual methods are here
+         * Inherited pure virtual methods are here.
          */
 
         bool getIsEnabled() { return m_isEnabled; }
@@ -29,7 +29,7 @@ namespace Beryll
         }
 
     protected:
-        // properties only for GUI objects
+        // Properties only for GUI objects.
         int32_t m_noBackgroundNoFrame = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize |
                                          ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBackground;
 
@@ -41,7 +41,7 @@ namespace Beryll
         bool m_pressed = false;
         bool m_touched = false;
 
-        float m_leftPos; // in range 0 = 0%...1 = 100% of screen size
+        float m_leftPos; // In range 0 = 0%...1 = 100% of screen size.
         float m_topPos;
         float m_width;
         float m_height;

@@ -32,5 +32,6 @@ namespace Beryll
 
     private:
         static std::vector<std::shared_ptr<GameState>> m_gameStates;
+        static std::shared_ptr<GameState> m_currentState;
     };
 }
