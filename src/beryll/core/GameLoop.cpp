@@ -53,12 +53,12 @@ namespace Beryll
     {
         BR_INFO("%s", "GameLoop started");
 
-        m_loopTime = 1000000.0f / m_FPS; // microSec
+        m_loopTime = 1000000.0f / m_FPS; // MicroSec.
         Physics::resetTimer();
 
         while(m_isRun)
         {
-            TimeStep::fixateTime(); // Fixate time of last finished game loop.
+            TimeStep::fixateTime(); // Fixate time of last finished frame.
             m_timer.reset();
             m_frameStart = m_timer.getElapsedMicroSec();
 

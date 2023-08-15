@@ -1,17 +1,16 @@
 #include "ParticleSystem.h"
 #include "beryll/renderer/Renderer.h"
 #include "beryll/renderer/Camera.h"
-#include "beryll/core/RandomGenerator.h"
 #include "beryll/async/AsyncRun.h"
 #include "beryll/utils/CommonUtils.h"
 #include "beryll/GUI/MainImGUI.h"
+#include "beryll/core/TimeStep.h"
+#include "beryll/core/RandomGenerator.h"
 
 namespace Beryll
 {
     int ParticleSystem::m_activeCount = 0;
     std::shared_ptr<Shader> ParticleSystem::m_internalShader;
-    Timer ParticleSystem::m_timer;
-    float ParticleSystem::m_timeStep = 0.0f;
 
     const std::vector<glm::vec4> ParticleSystem::m_quadVertices{glm::vec4{-1.0f, -1.0f, 0.0f, 1.0f},
                                                                 glm::vec4{1.0f, -1.0f, 0.0f, 1.0f},
@@ -103,7 +102,7 @@ namespace Beryll
                 if(!v[i].isActive)
                     continue;
 
-                v[i].lifeTimePassed += m_timeStep;
+                v[i].lifeTimePassed += TimeStep::getTimeStepSec();
 
                 if(v[i].lifeTimePassed >= v[i].lifeTimeFull)
                 {
@@ -111,8 +110,8 @@ namespace Beryll
                     continue;
                 }
 
-                v[i].pos += v[i].moveDir * (v[i].moveSpeed * m_timeStep);
-                v[i].rotation += ((2.0f * m_timeStep) * v[i].rotationSpeed) * v[i].rotationSide;
+                v[i].pos += v[i].moveDir * (v[i].moveSpeed * TimeStep::getTimeStepSec());
+                v[i].rotation += ((2.0f * TimeStep::getTimeStepSec()) * v[i].rotationSpeed) * v[i].rotationSide;
                 float lifeInRange_0_1 = v[i].lifeTimePassed / v[i].lifeTimeFull;
                 v[i].finalColor = glm::lerp(v[i].colorBegin, v[i].colorEnd, lifeInRange_0_1);
                 v[i].finalSize = glm::lerp(v[i].sizeBegin, v[i].sizeEnd, lifeInRange_0_1);
@@ -216,7 +215,7 @@ namespace Beryll
                 if(!v[i].isActive)
                     continue;
 
-                v[i].lifeTimePassed += m_timeStep;
+                v[i].lifeTimePassed += TimeStep::getTimeStepSec();
 
                 if(v[i].lifeTimePassed >= v[i].lifeTimeFull)
                 {
@@ -224,7 +223,7 @@ namespace Beryll
                     continue;
                 }
 
-                v[i].pos += v[i].moveDir * (v[i].moveSpeed * m_timeStep);
+                v[i].pos += v[i].moveDir * (v[i].moveSpeed * TimeStep::getTimeStepSec());
                 float lifeInRange_0_1 = v[i].lifeTimePassed / v[i].lifeTimeFull;
                 v[i].finalColor = glm::lerp(v[i].colorBegin, v[i].colorEnd, lifeInRange_0_1);
                 v[i].finalSize = glm::lerp(v[i].sizeBegin, v[i].sizeEnd, lifeInRange_0_1);
@@ -248,16 +247,11 @@ namespace Beryll
 
         m_internalShader = Renderer::createShader(BeryllConstants::particleVertexPath.data(),
                                                   BeryllConstants::particleFragmentPath.data());
-
-        m_timer.reset();
     }
 
     void ParticleSystem::draw()
     {
         BR_ASSERT((!m_quadParticles.empty() && !m_cubeParticles.empty()), "%s", "Create Particle system before use");
-
-        m_timeStep = m_timer.getElapsedSec();
-        m_timer.reset();
 
         m_activeCount = 0;
 
