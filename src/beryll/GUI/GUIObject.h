@@ -4,7 +4,7 @@
 
 namespace Beryll
 {
-    // base class of all GUI objects
+    // Base class of all GUI objects.
     class GUIObject : public GameObject
     {
     public:
@@ -35,7 +35,7 @@ namespace Beryll
 
         int32_t m_backgroundNoFrame = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
 
-        const std::string m_stringID = std::to_string(m_ID); // only for GUI elements.
+        const std::string m_IDAsString = std::to_string(m_ID); // Only for GUI elements.
 
         bool m_isEnabled = true;
         bool m_pressed = false;

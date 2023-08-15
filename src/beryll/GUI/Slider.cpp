@@ -20,9 +20,9 @@ namespace Beryll
         else
             m_flags = m_noBackgroundNoFrame;
 
-        // m_text can not be empty because it is ID for slider window
+        // m_text can not be empty because it is ID for slider window.
         if(m_text.empty())
-            m_text = "##SomeID" + std::to_string(Utils::Common::generateID());
+            m_text = "##SomeID" + m_IDAsString;
 
         m_font = MainImGUI::getInstance()->createFont(fontPath.c_str(), fontHeightInPercentOfScreen);
     }
@@ -70,7 +70,7 @@ namespace Beryll
         ImGui::PushStyleColor(ImGuiCol_FrameBgActive, m_dragAreaColor);
 
         ImGui::SetNextWindowPos(ImVec2(m_leftPos * MainImGUI::getInstance()->getGUIWidth(), m_topPos * MainImGUI::getInstance()->getGUIHeight()));
-        ImGui::Begin(m_stringID.c_str(), nullptr, m_flags);
+        ImGui::Begin(m_IDAsString.c_str(), nullptr, m_flags);
 
         if(m_font)
         {

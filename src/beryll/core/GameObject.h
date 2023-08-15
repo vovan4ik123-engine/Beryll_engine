@@ -9,20 +9,20 @@
 
 namespace Beryll
 {
-    // base class of all game objects in game (3d scene and GUI objects)
-    // game objects are handled in layers in game state
+    // Base class of all game objects in game (3d scene and GUI objects).
+    // Game objects are handled in layers in game state.
     class GameObject
     {
     public:
         virtual ~GameObject() { }
 
-        virtual void updateBeforePhysics() = 0; // handle users input, move objects here
-        virtual void updateAfterPhysics() = 0; // update positions after simulation, resolve collisions, Physics::getTransforms() here
-        virtual void draw() = 0; // subclass graphics
+        virtual void updateBeforePhysics() = 0; // Handle users input, move objects here.
+        virtual void updateAfterPhysics() = 0; // Update positions after simulation, resolve collisions, Physics::getTransforms() here.
+        virtual void draw() = 0; // Subclass graphics.
 
         int getID() { return m_ID; }
 
     protected:
-        const int m_ID = Utils::Common::generateID(); // unique
+        const int m_ID = Utils::Common::generateID(); // Unique.
     };
 }

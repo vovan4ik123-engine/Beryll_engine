@@ -67,17 +67,17 @@ namespace Beryll
     void Joystick::draw()
     {
         ImGui::SetNextWindowPos(ImVec2(m_leftPos * MainImGUI::getInstance()->getGUIWidth(), m_topPos * MainImGUI::getInstance()->getGUIHeight()));
-        ImGui::Begin(m_stringID.c_str(), nullptr, m_noBackgroundNoFrame);
+        ImGui::Begin(m_IDAsString.c_str(), nullptr, m_noBackgroundNoFrame);
 
         if(m_touched && m_touchedTexture)
         {
-            ImGui::ImageButton(m_stringID.c_str(),
+            ImGui::ImageButton(m_IDAsString.c_str(),
                                reinterpret_cast<ImTextureID>(m_touchedTexture->getID()),
                                ImVec2(m_width * MainImGUI::getInstance()->getGUIWidth(), m_height * MainImGUI::getInstance()->getGUIHeight()));
         }
         else
         {
-            ImGui::ImageButton(m_stringID.c_str(),
+            ImGui::ImageButton(m_IDAsString.c_str(),
                                reinterpret_cast<ImTextureID>(m_defaultTexture->getID()),
                                ImVec2(m_width * MainImGUI::getInstance()->getGUIWidth(), m_height * MainImGUI::getInstance()->getGUIHeight()));
         }
