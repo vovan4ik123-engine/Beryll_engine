@@ -881,7 +881,7 @@ namespace Beryll
     // Should be thread safe without mutex.
     // ONLY if you dont change m_dynamicsWorldMT during ray cast.
     // Removing/add/restore/... objects from/to world = change world.
-    RayClosestHit Physics::castRayClosestHit(const glm::vec3& from, const glm::vec3 to, CollisionGroups collGroup, CollisionGroups collMask)
+    RayClosestHit Physics::castRayClosestHit(const glm::vec3& from, const glm::vec3& to, CollisionGroups collGroup, CollisionGroups collMask)
     {
         btVector3 fr(from.x, from.y, from.z);
         btVector3 t(to.x, to.y, to.z);
@@ -920,7 +920,7 @@ namespace Beryll
     // Should be thread safe without mutex.
     // ONLY if you dont change m_dynamicsWorldMT during ray cast.
     // Removing/add/restore/... objects from/to world = change world.
-    RayAllHits Physics::castRayAllHits(const glm::vec3& from, const glm::vec3 to, CollisionGroups collGroup, CollisionGroups collMask)
+    RayAllHits Physics::castRayAllHits(const glm::vec3& from, const glm::vec3& to, CollisionGroups collGroup, CollisionGroups collMask)
     {
         btVector3 fr(from.x, from.y, from.z);
         btVector3 t(to.x, to.y, to.z);

@@ -37,16 +37,30 @@ namespace Beryll
         CAMERA = 1 << 0,
         STATIC_ENVIRONMENT = 1 << 1,
         DYNAMIC_ENVIRONMENT = 1 << 2,
-        PLAYER = 1 << 3,
-        ENEMY = 1 << 4,
-        BULLET = 1 << 5,
-        WALL = 1 << 6,
-        GROUND = 1 << 7,
-        ARMY_RAY = 1 << 8,
+        GROUND = 1 << 3,
+        ARMY_RAY = 1 << 4,
+
+        PLAYER_GROUP_1 = 1 << 5,
+        PLAYER_GROUP_2 = 1 << 6,
+        PLAYER_GROUP_3 = 1 << 7,
+        PLAYER_GROUP_4 = 1 << 8,
+        PLAYER_GROUP_5 = 1 << 9,
+        PLAYER_GROUP_6 = 1 << 10,
+        PLAYER_GROUP_7 = 1 << 11,
+        PLAYER_GROUP_8 = 1 << 12,
+
+        ENEMY_GROUP_1 = 1 << 13,
+        ENEMY_GROUP_2 = 1 << 14,
+        ENEMY_GROUP_3 = 1 << 15,
+        ENEMY_GROUP_4 = 1 << 16,
+        ENEMY_GROUP_5 = 1 << 17,
+        ENEMY_GROUP_6 = 1 << 18,
+        ENEMY_GROUP_7 = 1 << 19,
+        ENEMY_GROUP_8 = 1 << 20,
 
         YOU_CAN_COMBINE_GROUPS_WHEN_USE = STATIC_ENVIRONMENT | CAMERA,
 
-        ALL_GROUPS = -1 // All bits = 1.
+        ALL_GROUPS = -1 // all bits = 1
     };
     inline CollisionGroups operator | (CollisionGroups gr1, CollisionGroups gr2)
     {
@@ -174,8 +188,8 @@ namespace Beryll
         static glm::vec3 getDefaultGravity() { return glm::vec3(m_gravity.x(), m_gravity.y(), m_gravity.z()); }
 
         // Cast ray. Only objects in physics world can be hit.
-        static RayClosestHit castRayClosestHit(const glm::vec3& from, const glm::vec3 to, CollisionGroups collGroup, CollisionGroups collMask);
-        static RayAllHits castRayAllHits(const glm::vec3& from, const glm::vec3 to, CollisionGroups collGroup, CollisionGroups collMask);
+        static RayClosestHit castRayClosestHit(const glm::vec3& from, const glm::vec3& to, CollisionGroups collGroup, CollisionGroups collMask);
+        static RayAllHits castRayAllHits(const glm::vec3& from, const glm::vec3& to, CollisionGroups collGroup, CollisionGroups collMask);
 
     private:
         friend class GameLoop;
