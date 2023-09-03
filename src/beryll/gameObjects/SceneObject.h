@@ -203,7 +203,7 @@ namespace Beryll
 
         glm::mat4 getModelMatrix(bool includeBlenderFileRotation = true)
         {
-            // translate * rotate * scale m_engineAddedRotation
+            // translate * rotate * scale
             if(includeBlenderFileRotation)
                 return glm::translate(glm::mat4{1.0f}, m_origin) * glm::toMat4(glm::normalize(m_engineAddedRotation * m_originalRotationFromBlenderFile));
             else
@@ -218,9 +218,9 @@ namespace Beryll
 
             return glm::vec3{x, y, z};
         }
-        bool getIsDisabledForEver() { return m_isDisabledForEver; } // use it for disable object from draw
-        bool getIsEnabledDraw() { return m_isEnabledDraw && !m_isDisabledForEver; } // use it for disable object from draw
-        bool getIsEnabledUpdate() { return m_isEnabledUpdate && !m_isDisabledForEver; } // use it for disable object from updates
+        bool getIsDisabledForEver() { return m_isDisabledForEver; } // Use it for avoid object updating and drawing.
+        bool getIsEnabledDraw() { return m_isEnabledDraw && !m_isDisabledForEver; } // Use it for avoid object from drawing.
+        bool getIsEnabledUpdate() { return m_isEnabledUpdate && !m_isDisabledForEver; } // Use it for avoid object from updating.
         bool getHasCollisionMesh() { return m_hasCollisionObject; }
         bool getIsEnabledCollisionMesh() { return m_isEnabledInPhysicsSimulation && !m_isDisabledForEver; }
         CollisionGroups getCollisionGroup() { return m_collisionGroup; }

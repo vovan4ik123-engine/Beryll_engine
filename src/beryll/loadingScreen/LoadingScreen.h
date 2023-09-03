@@ -31,6 +31,16 @@ namespace Beryll
             m_textureIndex = Beryll::RandomGenerator::getInt(m_diffuseTextures.size() - 1);
         }
 
+        static void setTextureByIndex(int index)
+        {
+            BR_ASSERT((!m_diffuseTextures.empty()), "%s", "Loading screen textures are empty. Use setTextures()");
+
+            if(index >= 0 && index < m_diffuseTextures.size())
+                m_textureIndex = index;
+            else
+                m_textureIndex = Beryll::RandomGenerator::getInt(m_diffuseTextures.size() - 1);
+        }
+
         static void setTextures(const std::vector<std::string>& screenImages);
 
     private:

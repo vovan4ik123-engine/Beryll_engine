@@ -180,7 +180,7 @@ namespace Beryll
         if(headSomethingHit)
         {
             glm::vec3 headBackwardMoveVector = glm::normalize(characterHeadUp - characterHeadUpNextPos);
-            if(Utils::Common::getAngleInRadians(headBackwardMoveVector, headSomethingHit.hitNormal) < 0.698f && // < than 40 degrees
+            if(Utils::Common::getAngleInRadians(headBackwardMoveVector, headSomethingHit.hitNormal) < 0.698f && // < than 40 degrees.
                headSomethingHit.collFlag != CollisionFlags::DYNAMIC)
             {
                 // characters head moving directly into static wall = can not move
@@ -194,7 +194,7 @@ namespace Beryll
             bool allowedStairStepFound = false;
 
             glm::vec3 characterLegs = m_origin;
-            characterLegs.y -= (m_fromOriginToBottom - m_XZRadius * 0.98f); // characterLegs.y - distance from origin to capsules cylinder bottom
+            characterLegs.y -= (m_fromOriginToBottom - m_XZRadius * 0.98f); // characterLegs.y - distance from origin to capsules cylinder bottom.
             glm::vec3 characterLegsNextPos = characterLegs + scaledMoveDirectionByRadius;
             RayClosestHit legsSomethingHit = Physics::castRayClosestHit(characterLegs,
                                                                         characterLegsNextPos,
@@ -204,7 +204,7 @@ namespace Beryll
             {
                 BR_INFO("%s", "legsSomethingHit");
                 glm::vec3 legsBackwardMoveVector = glm::normalize(characterLegs - characterLegsNextPos);
-                if(Utils::Common::getAngleInRadians(legsBackwardMoveVector, legsSomethingHit.hitNormal) < 0.698f && // < than 40 degrees
+                if(Utils::Common::getAngleInRadians(legsBackwardMoveVector, legsSomethingHit.hitNormal) < 0.698f && // < than 40 degrees.
                    legsSomethingHit.collFlag != CollisionFlags::DYNAMIC)
                 {
                     BR_INFO("%s", "legsSomethingHit < than 40 degrees");

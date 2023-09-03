@@ -70,11 +70,11 @@ namespace Beryll
 
     void LoadingScreen::showProgress(float pr)
     {
-        BR_ASSERT((!m_diffuseTextures.empty()), "%s", "Loading screen textures are empty. Use setTextures()");
+        BR_ASSERT((!m_diffuseTextures.empty()), "%s", "Loading screen textures are empty. Use setTextures().");
 
-        BR_ASSERT((pr >= 0.0f && pr <= 100.0f), "%s", "Loading progress must be between 0.0f and 100.0f");
+        BR_ASSERT((pr >= 0.0f && pr <= 100.0f), "%s", "Loading progress must be between 0.0f and 100.0f.");
 
-        m_loadingProgress = pr * 0.01f; // same as pr / 100
+        m_loadingProgress = pr * 0.01f; // Same as pr / 100.0f.
 
         Window::getInstance()->clear();
 

@@ -124,8 +124,8 @@ namespace Beryll
         m_vertexPosBuffer = Renderer::createStaticVertexBuffer(vertices);
 
         // Clockwise winding order (because we are always inside cube)
-        // for correctly draw sky box if face culling enabled
-        std::vector<uint32_t> indices{0,1,2,    1,3,2, // two triangles
+        // for correctly draw sky box if face culling enabled.
+        std::vector<uint32_t> indices{0,1,2,    1,3,2, // Two triangles.
                                       4,5,6,    5,7,6,
                                       8,9,10,   9,11,10,
                                       12,14,13, 13,14,15,
@@ -147,11 +147,11 @@ namespace Beryll
 
     void AndroidGLESSkyBox::draw()
     {
-        glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
+        glDepthFunc(GL_LEQUAL);  // Change depth function so depth test passes when values are equal to depth buffer's content.
 
         m_internalShader->bind();
         m_persp = Camera::getProjection();
-        m_view = glm::mat4(glm::mat3(Camera::getView())); // remove translation from matrix
+        m_view = glm::mat4(glm::mat3(Camera::getView())); // Remove translation from matrix.
         m_perspView = m_persp * m_view;
         m_internalShader->setMatrix4x4Float("VPMatrix", m_perspView);
 
@@ -165,6 +165,6 @@ namespace Beryll
         m_vertexArray->bind();
         m_vertexArray->draw();
 
-        glDepthFunc(GL_LESS); // set depth function back to default
+        glDepthFunc(GL_LESS); // Set depth function back to default.
     }
 }

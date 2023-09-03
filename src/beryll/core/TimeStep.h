@@ -18,7 +18,7 @@ namespace Beryll
             return m_secFromStart;
         }
 
-        static unsigned int getTimeStepMilliSec()
+        static unsigned long getTimeStepMilliSec()
         {
             return m_timeStepMilliSec;
         }
