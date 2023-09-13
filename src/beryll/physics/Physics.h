@@ -22,7 +22,7 @@ namespace Beryll
     //    Zero mass.
     //    Can be animated by the user, but there will be only one-way interaction: dynamic.
     //    Objects will be pushed away but there is no influence from dynamics objects.
-    //    body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT); // make object kinematic.
+    //    body->setCollisionFlags(btCollisionObject::CF_KINEMATIC_OBJECT); // Make object kinematic. Replace coll flags. Use | operator to add.
 
     // Each object in physics world can be a part of zero, one, or more collision groups.
     // Groups could represent concepts such as players, power-ups, enemies, and so on.

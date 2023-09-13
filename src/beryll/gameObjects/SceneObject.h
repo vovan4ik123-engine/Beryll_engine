@@ -6,7 +6,7 @@
 
 namespace Beryll
 {
-    // This enum game dependent.
+    // This enum is game dependent.
     // When you create game you can add here groups and mark objects with them
     // then check these groups in game loop for specific actions/rendering.
     enum class SceneObjectGroups
@@ -76,7 +76,7 @@ namespace Beryll
 
         void addToRotation(float angleRad, const glm::vec3& axis, bool resetVelocities = false)
         {
-            if(angleRad < 0.0035f) { return; } // less that 0.2 degree.
+            if(angleRad < 0.0035f) { return; } // Less that 0.2 degree.
 
             glm::quat normQuat = glm::normalize(glm::angleAxis(angleRad, glm::normalize(axis)));
 
@@ -203,7 +203,7 @@ namespace Beryll
 
         glm::mat4 getModelMatrix(bool includeBlenderFileRotation = true)
         {
-            // translate * rotate * scale
+            // translate * rotate * scale.
             if(includeBlenderFileRotation)
                 return glm::translate(glm::mat4{1.0f}, m_origin) * glm::toMat4(glm::normalize(m_engineAddedRotation * m_originalRotationFromBlenderFile));
             else
@@ -280,7 +280,7 @@ namespace Beryll
 
         void disableCollisionMesh()
         {
-            if (m_hasCollisionObject && m_isEnabledInPhysicsSimulation)
+            if(m_hasCollisionObject && m_isEnabledInPhysicsSimulation)
             {
                 Physics::softRemoveObject(m_ID);
                 m_isEnabledInPhysicsSimulation = false;
@@ -308,7 +308,7 @@ namespace Beryll
         glm::quat m_originalRotationFromBlenderFile{1.0f, 0.0f, 0.0f, 0.0f}; // Loaded with model from blender exported file.
         glm::quat m_engineAddedRotation{1.0f, 0.0f, 0.0f, 0.0f}; // Rotation added by user to model.
         glm::vec3 m_origin{0.0f, 0.0f, 0.0f};
-        // For synchronization when one thread set origin and other calls getOrigin()
+        // For synchronization when one thread set origin and other calls getOrigin().
         // for same object.
         std::atomic<float> m_originX = 0.0f;
         std::atomic<float> m_originY = 0.0f;
@@ -317,13 +317,13 @@ namespace Beryll
         glm::mat4 m_MVP{1.0f};
         PhysicsTransforms m_physicsTransforms;
 
-        bool m_hasCollisionObject = false; // set true for all collision objects
-        CollisionGroups m_collisionGroup = CollisionGroups::NONE; // set inside colliding objects
-        CollisionGroups m_collisionMask = CollisionGroups::NONE; // set inside colliding objects
-        CollisionFlags m_collisionFlag = CollisionFlags::NONE; // set inside colliding objects
-        bool m_isEnabledInPhysicsSimulation = false; // set inside colliding objects
+        bool m_hasCollisionObject = false; // Set true for all collision objects.
+        CollisionGroups m_collisionGroup = CollisionGroups::NONE; // Set inside colliding objects.
+        CollisionGroups m_collisionMask = CollisionGroups::NONE; // Set inside colliding objects.
+        CollisionFlags m_collisionFlag = CollisionFlags::NONE; // Set inside colliding objects.
+        bool m_isEnabledInPhysicsSimulation = false; // Set inside colliding objects.
 
-        SceneObjectGroups m_sceneObjectGroup = SceneObjectGroups::NONE; // any scene object can belong to specific group
+        SceneObjectGroups m_sceneObjectGroup = SceneObjectGroups::NONE; // Any scene object can belong to specific group.
 
     private:
         // Only for internal checks inside this file.
@@ -333,14 +333,14 @@ namespace Beryll
         glm::vec3 m_angularFactor{1.0f, 1.0f, 1.0f};
 
         bool m_isDisabledForEver = false;
-        bool m_isEnabledDraw = true; // for method draw()
-        bool m_isEnabledUpdate = true; // for methods updateBeforePhysics() + updateAfterPhysics()
+        bool m_isEnabledDraw = true; // For method draw().
+        bool m_isEnabledUpdate = true; // For methods updateBeforePhysics() + updateAfterPhysics().
 
         // If objects on scene has face it should be created in Blender with face directed along +X axis.
         // Engine assume you create 3D models in tool where up axis is +Z (like Blender)
         // and during exporting model you change axis to: up +Y, forward -Z.
-        // That will add rotation to exported model: 90 degrees around -X axis or 270 degrees around +X axis
-        // If you want take models faceDir or upDir just multiply these vectors by m_rotateMatrix
+        // That will add rotation to exported model: 90 degrees around -X axis or 270 degrees around +X axis.
+        // If you want take models faceDir or upDir just multiply these vectors by m_rotateMatrix.
         const glm::vec3 m_sceneObjectFaceDir{1.0f, 0.0f, 0.0f};
         const glm::vec3 m_sceneObjectRightDir{0.0f, -1.0f, 0.0f};
         const glm::vec3 m_sceneObjectUpDir{0.0f, 0.0f, 1.0f};

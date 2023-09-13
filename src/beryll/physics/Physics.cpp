@@ -78,6 +78,7 @@ namespace Beryll
         //                If your balls penetrates your walls instead of colliding with them decrease it
         m_timeStep = std::min(m_timer.getElapsedSec(), 0.07f); // protection from lag (FPS dropped down and is < 14 FPS)
         m_timer.reset();
+
         m_dynamicsWorldMT->stepSimulation(m_timeStep,
                                      m_resolutionFactor + 1,
                                      m_timeStep / static_cast<float>(m_resolutionFactor));
@@ -184,8 +185,10 @@ namespace Beryll
         std::shared_ptr<RigidBodyData> rigidBodyData = std::make_shared<RigidBodyData>(objectID, body, true, collGroup, collMask, collFlag, mass);
         body->setUserPointer(rigidBodyData.get()); // Then we can fetch this rigidBodyData from CollisionObject ->getUserPointer().
 
-        if(collFlag == CollisionFlags::KINEMATIC)
-            body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
+        if(collFlag == CollisionFlags::STATIC && mass == 0.0f)
+            body->setCollisionFlags(btCollisionObject::CF_STATIC_OBJECT);
+        else if(collFlag == CollisionFlags::KINEMATIC && mass == 0.0f)
+            body->setCollisionFlags(btCollisionObject::CF_KINEMATIC_OBJECT);
 
         if(wantCallBack)
             body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
@@ -236,8 +239,12 @@ namespace Beryll
         std::shared_ptr<RigidBodyData> rigidBodyData = std::make_shared<RigidBodyData>(objectID, body, true, collGroup, collMask, collFlag, mass);
         body->setUserPointer(rigidBodyData.get()); // Then we can fetch this rigidBodyData from CollisionObject ->getUserPointer().
 
-        if(collFlag == CollisionFlags::KINEMATIC)
-            body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
+        if(collFlag == CollisionFlags::STATIC && mass == 0.0f)
+            body->setCollisionFlags(btCollisionObject::CF_STATIC_OBJECT);
+        else if(collFlag == CollisionFlags::KINEMATIC && mass == 0.0f)
+            body->setCollisionFlags(btCollisionObject::CF_KINEMATIC_OBJECT);
+        else if(collFlag == CollisionFlags::DYNAMIC && mass > 0.0f)
+            body->setCollisionFlags(btCollisionObject::CF_DYNAMIC_OBJECT);
 
         if(wantCallBack)
             body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
@@ -303,8 +310,12 @@ namespace Beryll
         std::shared_ptr<RigidBodyData> rigidBodyData = std::make_shared<RigidBodyData>(objectID, body, true, collGroup, collMask, collFlag, mass);
         body->setUserPointer(rigidBodyData.get()); // Then we can fetch this rigidBodyData from CollisionObject ->getUserPointer().
 
-        if(collFlag == CollisionFlags::KINEMATIC)
-            body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
+        if(collFlag == CollisionFlags::STATIC && mass == 0.0f)
+            body->setCollisionFlags(btCollisionObject::CF_STATIC_OBJECT);
+        else if(collFlag == CollisionFlags::KINEMATIC && mass == 0.0f)
+            body->setCollisionFlags(btCollisionObject::CF_KINEMATIC_OBJECT);
+        else if(collFlag == CollisionFlags::DYNAMIC && mass > 0.0f)
+            body->setCollisionFlags(btCollisionObject::CF_DYNAMIC_OBJECT);
 
         if(wantCallBack)
             body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
@@ -350,8 +361,12 @@ namespace Beryll
         std::shared_ptr<RigidBodyData> rigidBodyData = std::make_shared<RigidBodyData>(objectID, body, true, collGroup, collMask, collFlag, mass);
         body->setUserPointer(rigidBodyData.get()); // Then we can fetch this rigidBodyData from CollisionObject ->getUserPointer().
 
-        if(collFlag == CollisionFlags::KINEMATIC)
-            body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
+        if(collFlag == CollisionFlags::STATIC && mass == 0.0f)
+            body->setCollisionFlags(btCollisionObject::CF_STATIC_OBJECT);
+        else if(collFlag == CollisionFlags::KINEMATIC && mass == 0.0f)
+            body->setCollisionFlags(btCollisionObject::CF_KINEMATIC_OBJECT);
+        else if(collFlag == CollisionFlags::DYNAMIC && mass > 0.0f)
+            body->setCollisionFlags(btCollisionObject::CF_DYNAMIC_OBJECT);
 
         if(wantCallBack)
             body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
@@ -413,8 +428,12 @@ namespace Beryll
         std::shared_ptr<RigidBodyData> rigidBodyData = std::make_shared<RigidBodyData>(objectID, body, true, collGroup, collMask, collFlag, mass);
         body->setUserPointer(rigidBodyData.get()); // Then we can fetch this rigidBodyData from CollisionObject ->getUserPointer().
 
-        if(collFlag == CollisionFlags::KINEMATIC)
-            body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
+        if(collFlag == CollisionFlags::STATIC && mass == 0.0f)
+            body->setCollisionFlags(btCollisionObject::CF_STATIC_OBJECT);
+        else if(collFlag == CollisionFlags::KINEMATIC && mass == 0.0f)
+            body->setCollisionFlags(btCollisionObject::CF_KINEMATIC_OBJECT);
+        else if(collFlag == CollisionFlags::DYNAMIC && mass > 0.0f)
+            body->setCollisionFlags(btCollisionObject::CF_DYNAMIC_OBJECT);
 
         if(wantCallBack)
             body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
