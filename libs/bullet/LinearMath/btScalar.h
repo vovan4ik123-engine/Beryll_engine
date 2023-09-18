@@ -25,7 +25,7 @@ subject to the following restrictions:
 #include <float.h>
 
 /* SVN $Revision$ on $Date$ from http://bullet.googlecode.com*/
-#define BT_BULLET_VERSION 324
+#define BT_BULLET_VERSION 325
 
 inline int btGetVersion()
 {
@@ -289,7 +289,11 @@ inline int btIsDoublePrecision()
 				#include <assert.h>
 				#endif
 
-				#define btAssert assert
+				#if defined(DEBUG) || defined (_DEBUG)
+					#define btAssert assert
+				#else
+					#define btAssert(x)
+				#endif
 
 				//btFullAssert is optional, slows down a lot
 				#define btFullAssert(x)

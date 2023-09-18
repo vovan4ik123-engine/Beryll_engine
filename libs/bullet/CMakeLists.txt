@@ -23,7 +23,7 @@ set(LinearMath_SRCS
         LinearMath/TaskScheduler/btTaskScheduler.cpp
         LinearMath/TaskScheduler/btThreadSupportPosix.cpp
         LinearMath/TaskScheduler/btThreadSupportWin32.cpp
-        )
+    )
 
 set(BulletCollision_SRCS
         BulletCollision/BroadphaseCollision/btAxisSweep3.cpp
@@ -124,7 +124,7 @@ set(BulletCollision_SRCS
         BulletCollision/NarrowPhaseCollision/btSubSimplexConvexCast.cpp
         BulletCollision/NarrowPhaseCollision/btVoronoiSimplexSolver.cpp
         BulletCollision/NarrowPhaseCollision/btPolyhedralContactClipping.cpp
-        )
+    )
 
 set(BulletDynamics_SRCS
         BulletDynamics/Character/btKinematicCharacterController.cpp
@@ -170,7 +170,7 @@ set(BulletDynamics_SRCS
         BulletDynamics/MLCPSolvers/btDantzigLCP.cpp
         BulletDynamics/MLCPSolvers/btMLCPSolver.cpp
         BulletDynamics/MLCPSolvers/btLemkeAlgorithm.cpp
-        )
+    )
 
 set(BulletSoftBody_SRCS
         BulletSoftBody/btSoftBody.cpp
@@ -195,14 +195,14 @@ set(BulletSoftBody_SRCS
         BulletSoftBody/BulletReducedDeformableBody/btReducedDeformableBodyHelpers.cpp
         BulletSoftBody/BulletReducedDeformableBody/btReducedDeformableBodySolver.cpp
         BulletSoftBody/BulletReducedDeformableBody/btReducedDeformableContactConstraint.cpp
-        )
+    )
 
 set(BulletInverseDynamics_SRCS
         BulletInverseDynamics/IDMath.cpp
         BulletInverseDynamics/MultiBodyTree.cpp
         BulletInverseDynamics/details/MultiBodyTreeInitCache.cpp
         BulletInverseDynamics/details/MultiBodyTreeImpl.cpp
-        )
+    )
 
 add_library(bullet-static STATIC ${Bullet3Common_SRCS}
                                  ${LinearMath_SRCS}
@@ -212,4 +212,3 @@ add_library(bullet-static STATIC ${Bullet3Common_SRCS}
                                  ${BulletInverseDynamics_SRCS})
 
 target_include_directories(bullet-static PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-#target_link_libraries(bullet-static log)

@@ -26,11 +26,10 @@ btScalar gDeactivationTime = btScalar(2.);
 bool gDisableDeactivation = false;
 static int uniqueId = 0;
 
-btRigidBody::btRigidBody(const btRigidBody::btRigidBodyConstructionInfo& constructionInfo, int id)
+btRigidBody::btRigidBody(const btRigidBody::btRigidBodyConstructionInfo& constructionInfo, int objectID)
 {
 	setupRigidBody(constructionInfo);
-
-	beryllEngineObjectID = id;
+	beryllEngineObjectID = objectID;
 }
 
 btRigidBody::btRigidBody(btScalar mass, btMotionState* motionState, btCollisionShape* collisionShape, const btVector3& localInertia)

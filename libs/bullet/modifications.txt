@@ -19,8 +19,10 @@ class btTaskSchedulerForBeryll : public btITaskScheduler
 public:
     btTaskSchedulerForBeryll() : btITaskScheduler("TaskSchedulerForBeryll")
     {
-        // all available threads -1
-        m_numThreads = std::max(std::thread::hardware_concurrency() - 1, 1u);
+        // All available threads -1.
+        m_numThreads = std::max(std::thread::hardware_concurrency(), 1u);
+        if(m_numThreads > 1)
+            --m_numThreads;
 
 		m_futuresVoid.reserve(m_numThreads);
 		m_futuresFloat.reserve(m_numThreads);
@@ -42,7 +44,7 @@ public:
 
         if(numberElements <= 10 || m_numThreads == 1)
         {
-            // 10 or less elements are handled by main thread
+            // 10 or less elements are handled by main thread.
             body.forLoop(iBegin, iEnd);
         }
         else
@@ -50,7 +52,7 @@ public:
             m_futuresVoid.clear();
 
             int oneChunkSize = numberElements / m_numThreads;
-            oneChunkSize++; // make sure (oneChunkSize * m_numThreads) > numberElements
+            oneChunkSize++; // Make sure (oneChunkSize * m_numThreads) > numberElements.
 
             for(int i = iBegin; i < iEnd; i += oneChunkSize)
             {
@@ -59,8 +61,8 @@ public:
 				m_futuresVoid.emplace_back(std::async(std::launch::async, &btIParallelForBody::forLoop, std::cref(body), i, chunkEnd));
             }
 
-			// wait all threads
-			for(const std::future<void>& ft : m_futuresVoid)
+			// Wait all threads.
+			for(std::future<void>& ft : m_futuresVoid)
 			{
 				ft.wait();
 			}
@@ -74,7 +76,7 @@ public:
 
 		if(numberElements <= 10 || m_numThreads == 1)
 		{
-			// 10 or less elements are handled by main thread
+			// 10 or less elements are handled by main thread.
 			return body.sumLoop(iBegin, iEnd);
 		}
 		else
@@ -82,7 +84,7 @@ public:
             m_futuresFloat.clear();
 
 			int oneChunkSize = numberElements / m_numThreads;
-			oneChunkSize++; // make sure (oneChunkSize * m_numThreads) > numberElements
+			oneChunkSize++; // Make sure (oneChunkSize * m_numThreads) > numberElements.
 
 			for(int i = iBegin; i < iEnd; i += oneChunkSize)
 			{
@@ -91,7 +93,7 @@ public:
 				m_futuresFloat.emplace_back(std::async(std::launch::async, &btIParallelSumBody::sumLoop, std::cref(body), i, chunkEnd));
 			}
 
-			// wait all threads
+			// Wait all threads.
 			for(std::future<btScalar>& ft : m_futuresFloat)
 			{
 				result += ft.get();
