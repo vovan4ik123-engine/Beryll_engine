@@ -45,15 +45,7 @@ void btSpinMutex::unlock()
 
 #endif // #else BT_THREADSAFE
 
-
 static btITaskScheduler* gBtTaskScheduler = nullptr;
-
-btITaskScheduler::btITaskScheduler(const char* name)
-{
-	m_name = name;
-	m_savedThreadCounter = 0;
-	m_isActive = false;
-}
 
 void btSetTaskScheduler(btITaskScheduler* ts)
 {

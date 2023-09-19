@@ -29,13 +29,13 @@ namespace Beryll
     {
         if(m_dynamicsWorldMT) { return; }
 
-        btSetTaskScheduler(btCreateDefaultTaskScheduler());
+        btSetTaskScheduler(btCreateTaskSchedulerForBeryll());
 
         BR_INFO("Number of threads on device: %d", btGetTaskScheduler()->getNumThreads());
 
         btDefaultCollisionConstructionInfo cci;
-        cci.m_defaultMaxPersistentManifoldPoolSize = 50000;
-        cci.m_defaultMaxCollisionAlgorithmPoolSize = 50000;
+        cci.m_defaultMaxPersistentManifoldPoolSize = 80000;
+        cci.m_defaultMaxCollisionAlgorithmPoolSize = 80000;
         m_collisionConfiguration = std::make_unique<btDefaultCollisionConfiguration>(cci);
         m_dispatcherMT = std::make_unique<btCollisionDispatcherMt>(m_collisionConfiguration.get());
         m_broadPhase = std::make_unique<btDbvtBroadphase>();

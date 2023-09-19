@@ -217,7 +217,7 @@ struct ReadSolverConstraintsLoop : public btIParallelForBody
 		m_outConInfos = outConInfos;
 		m_constraints = constraints;
 	}
-	void forLoop(int iBegin, int iEnd) const BT_OVERRIDE
+	void forLoop(int iBegin, int iEnd) const override
 	{
 		for (int i = iBegin; i < iEnd; ++i)
 		{
@@ -314,7 +314,7 @@ struct ExpandConstraintRowsLoop : public btIParallelForBody
 		m_conInfos = conInfos;
 		m_numConstraintRows = numConstraintRows;
 	}
-	void forLoop(int iBegin, int iEnd) const BT_OVERRIDE
+	void forLoop(int iBegin, int iEnd) const override
 	{
 		expandConstraintRows(m_destConstraintBatchIds, m_srcConstraintBatchIds + iBegin, m_conInfos + iBegin, iEnd - iBegin, m_numConstraintRows);
 	}
@@ -414,7 +414,7 @@ struct UpdateConstraintBatchIdsForMergesLoop : public btIParallelForBody
 		m_batches = batches;
 		m_numBatches = numBatches;
 	}
-	void forLoop(int iBegin, int iEnd) const BT_OVERRIDE
+	void forLoop(int iBegin, int iEnd) const override
 	{
 		BT_PROFILE("UpdateConstraintBatchIdsForMergesLoop");
 		updateConstraintBatchIdsForMerges(m_constraintBatchIds + iBegin, iEnd - iBegin, m_batches, m_numBatches);
@@ -472,7 +472,7 @@ struct WriteOutConstraintIndicesLoop : public btIParallelForBody
 		m_constraintIdPerBatch = constraintIdPerBatch;
 		m_maxNumBatchesPerPhase = maxNumBatchesPerPhase;
 	}
-	void forLoop(int iBegin, int iEnd) const BT_OVERRIDE
+	void forLoop(int iBegin, int iEnd) const override
 	{
 		BT_PROFILE("WriteOutConstraintIndicesLoop");
 		int batchBegin = iBegin * m_maxNumBatchesPerPhase;
@@ -779,7 +779,7 @@ struct AssignConstraintsToGridBatchesLoop : public btIParallelForBody
 	{
 		m_params = &params;
 	}
-	void forLoop(int iBegin, int iEnd) const BT_OVERRIDE
+	void forLoop(int iBegin, int iEnd) const override
 	{
 		assignConstraintsToGridBatches(*m_params, iBegin, iEnd);
 	}

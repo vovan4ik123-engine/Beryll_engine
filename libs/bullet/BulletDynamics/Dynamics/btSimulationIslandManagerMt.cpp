@@ -562,7 +562,7 @@ struct UpdateIslandDispatcher : public btIParallelForBody
 	{
 	}
 
-	void forLoop(int iBegin, int iEnd) const BT_OVERRIDE
+	void forLoop(int iBegin, int iEnd) const override
 	{
 		btConstraintSolver* solver = m_solverParams.m_solverPool;
 		for (int i = iBegin; i < iEnd; ++i)

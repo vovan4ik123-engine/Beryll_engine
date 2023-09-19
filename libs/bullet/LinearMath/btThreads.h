@@ -17,15 +17,6 @@ subject to the following restrictions:
 
 #include "btScalar.h"  // has definitions like SIMD_FORCE_INLINE
 
-#if defined(_MSC_VER) && _MSC_VER >= 1600
-// give us a compile error if any signatures of overriden methods is changed
-#define BT_OVERRIDE override
-#endif
-
-#ifndef BT_OVERRIDE
-#define BT_OVERRIDE
-#endif
-
 ///
 /// btSpinMutex -- lightweight spin-mutex implemented with atomic ops, never puts
 ///               a thread to sleep because it is designed to be used with a task scheduler
@@ -85,9 +76,7 @@ SIMD_FORCE_INLINE bool btMutexTryLock(btSpinMutex* mutex)
 #endif // #if BT_THREADSAFE
 }
 
-//
 // btIParallelForBody -- subclass this to express work that can be done in parallel
-//
 class btIParallelForBody
 {
 public:
@@ -95,10 +84,7 @@ public:
 	virtual void forLoop(int iBegin, int iEnd) const = 0;
 };
 
-//
-// btIParallelSumBody -- subclass this to express work that can be done in parallel
-//                       and produces a sum over all loop elements
-//
+// btIParallelSumBody -- subclass this to express work that can be done in parallel and produces a sum over all loop elements
 class btIParallelSumBody
 {
 public:
@@ -106,32 +92,19 @@ public:
 	virtual btScalar sumLoop(int iBegin, int iEnd) const = 0;
 };
 
-//
-// btITaskScheduler -- subclass this to implement a task scheduler that can dispatch work to
-//                     worker threads
-//
+
+// btITaskScheduler -- subclass this to implement a task scheduler for multithreading
 class btITaskScheduler
 {
 public:
-	btITaskScheduler(const char* name);
+	btITaskScheduler() {};
 	virtual ~btITaskScheduler() {}
-	const char* getName() const { return m_name; }
 
-	virtual int getMaxNumThreads() const = 0;
 	virtual int getNumThreads() const = 0;
-	virtual void setNumThreads(int numThreads) = 0;
 	virtual void parallelFor(int iBegin, int iEnd, int grainSize, const btIParallelForBody& body) = 0;
 	virtual btScalar parallelSum(int iBegin, int iEnd, int grainSize, const btIParallelSumBody& body) = 0;
-	virtual void sleepWorkerThreadsHint() {}  // hint the task scheduler that we may not be using these threads for a little while
-
-protected:
-	const char* m_name;
-	unsigned int m_savedThreadCounter;
-	bool m_isActive;
 };
 
-// set the task scheduler to use for all calls to btParallelFor()
-// NOTE: you must set this prior to using any of the multi-threaded "Mt" classes
 void btSetTaskScheduler(btITaskScheduler* ts);
 
 btITaskScheduler* btGetTaskScheduler();

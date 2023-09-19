@@ -49,10 +49,10 @@ public:
 								int numConstraints,
 								const btContactSolverInfo& info,
 								btIDebugDraw* debugDrawer,
-								btDispatcher* dispatcher) BT_OVERRIDE;
+								btDispatcher* dispatcher) override;
 
-	virtual void reset() BT_OVERRIDE;
-	virtual btConstraintSolverType getSolverType() const BT_OVERRIDE { return m_solverType; }
+	virtual void reset() override;
+	virtual btConstraintSolverType getSolverType() const override { return m_solverType; }
 
 private:
 	const static size_t kCacheLineSize = 128;
@@ -85,9 +85,9 @@ btDiscreteDynamicsWorldMt : public btDiscreteDynamicsWorld
 protected:
 	btConstraintSolver* m_constraintSolverMt;
 
-	virtual void solveConstraints(btContactSolverInfo & solverInfo) BT_OVERRIDE;
+	virtual void solveConstraints(btContactSolverInfo & solverInfo) override;
 
-	virtual void predictUnconstraintMotion(btScalar timeStep) BT_OVERRIDE;
+	virtual void predictUnconstraintMotion(btScalar timeStep) override;
 
 	struct UpdaterCreatePredictiveContacts : public btIParallelForBody
 	{
@@ -95,12 +95,12 @@ protected:
 		btRigidBody** rigidBodies;
 		btDiscreteDynamicsWorldMt* world;
 
-		void forLoop(int iBegin, int iEnd) const BT_OVERRIDE
+		void forLoop(int iBegin, int iEnd) const override
 		{
 			world->createPredictiveContactsInternal(&rigidBodies[iBegin], iEnd - iBegin, timeStep);
 		}
 	};
-	virtual void createPredictiveContacts(btScalar timeStep) BT_OVERRIDE;
+	virtual void createPredictiveContacts(btScalar timeStep) override;
 
 	struct UpdaterIntegrateTransforms : public btIParallelForBody
 	{
@@ -108,12 +108,12 @@ protected:
 		btRigidBody** rigidBodies;
 		btDiscreteDynamicsWorldMt* world;
 
-		void forLoop(int iBegin, int iEnd) const BT_OVERRIDE
+		void forLoop(int iBegin, int iEnd) const override
 		{
 			world->integrateTransformsInternal(&rigidBodies[iBegin], iEnd - iBegin, timeStep);
 		}
 	};
-	virtual void integrateTransforms(btScalar timeStep) BT_OVERRIDE;
+	virtual void integrateTransforms(btScalar timeStep) override;
 
 public:
 	BT_DECLARE_ALIGNED_ALLOCATOR();
@@ -125,7 +125,7 @@ public:
 							  btCollisionConfiguration * collisionConfiguration);
 	virtual ~btDiscreteDynamicsWorldMt();
 
-	virtual int stepSimulation(btScalar timeStep, int maxSubSteps, btScalar fixedTimeStep) BT_OVERRIDE;
+	virtual int stepSimulation(btScalar timeStep, int maxSubSteps, btScalar fixedTimeStep) override;
 };
 
 #endif  //BT_DISCRETE_DYNAMICS_WORLD_H

@@ -255,7 +255,7 @@ struct SetupContactConstraintsLoop : public btIParallelForBody
 		m_bc = bc;
 		m_infoGlobal = &infoGlobal;
 	}
-	void forLoop(int iBegin, int iEnd) const BT_OVERRIDE
+	void forLoop(int iBegin, int iEnd) const override
 	{
 		BT_PROFILE("SetupContactConstraintsLoop");
 		for (int iBatch = iBegin; iBatch < iEnd; ++iBatch)
@@ -441,7 +441,7 @@ struct CollectContactManifoldCachedInfoLoop : public btIParallelForBody
 		m_manifoldPtr = manifoldPtr;
 		m_infoGlobal = &infoGlobal;
 	}
-	void forLoop(int iBegin, int iEnd) const BT_OVERRIDE
+	void forLoop(int iBegin, int iEnd) const override
 	{
 		m_solver->internalCollectContactManifoldCachedInfo(m_cachedInfoArray + iBegin, m_manifoldPtr + iBegin, iEnd - iBegin, *m_infoGlobal);
 	}
@@ -504,7 +504,7 @@ struct AllocContactConstraintsLoop : public btIParallelForBody
 		m_solver = solver;
 		m_cachedInfoArray = cachedInfoArray;
 	}
-	void forLoop(int iBegin, int iEnd) const BT_OVERRIDE
+	void forLoop(int iBegin, int iEnd) const override
 	{
 		m_solver->internalAllocContactConstraints(m_cachedInfoArray + iBegin, iEnd - iBegin);
 	}
@@ -634,7 +634,7 @@ struct InitJointsLoop : public btIParallelForBody
 		m_solver = solver;
 		m_constraints = constraints;
 	}
-	void forLoop(int iBegin, int iEnd) const BT_OVERRIDE
+	void forLoop(int iBegin, int iEnd) const override
 	{
 		m_solver->internalInitMultipleJoints(m_constraints, iBegin, iEnd);
 	}
@@ -677,7 +677,7 @@ struct ConvertJointsLoop : public btIParallelForBody
 		m_solver = solver;
 		m_srcConstraints = srcConstraints;
 	}
-	void forLoop(int iBegin, int iEnd) const BT_OVERRIDE
+	void forLoop(int iBegin, int iEnd) const override
 	{
 		m_solver->internalConvertMultipleJoints(m_jointParamsArray, m_srcConstraints, iBegin, iEnd, m_infoGlobal);
 	}
@@ -793,7 +793,7 @@ struct ConvertBodiesLoop : public btIParallelForBody
 		m_bodies = bodies;
 		m_numBodies = numBodies;
 	}
-	void forLoop(int iBegin, int iEnd) const BT_OVERRIDE
+	void forLoop(int iBegin, int iEnd) const override
 	{
 		m_solver->internalConvertBodies(m_bodies, iBegin, iEnd, m_infoGlobal);
 	}
@@ -873,7 +873,7 @@ struct ContactSplitPenetrationImpulseSolverLoop : public btIParallelSumBody
 		m_solver = solver;
 		m_bc = bc;
 	}
-	btScalar sumLoop(int iBegin, int iEnd) const BT_OVERRIDE
+	btScalar sumLoop(int iBegin, int iEnd) const override
 	{
 		BT_PROFILE("ContactSplitPenetrationImpulseSolverLoop");
 		btScalar sum = 0;
@@ -1206,7 +1206,7 @@ struct JointSolverLoop : public btIParallelSumBody
 		m_bc = bc;
 		m_iteration = iteration;
 	}
-	btScalar sumLoop(int iBegin, int iEnd) const BT_OVERRIDE
+	btScalar sumLoop(int iBegin, int iEnd) const override
 	{
 		BT_PROFILE("JointSolverLoop");
 		btScalar sum = 0;
@@ -1245,7 +1245,7 @@ struct ContactSolverLoop : public btIParallelSumBody
 		m_solver = solver;
 		m_bc = bc;
 	}
-	btScalar sumLoop(int iBegin, int iEnd) const BT_OVERRIDE
+	btScalar sumLoop(int iBegin, int iEnd) const override
 	{
 		BT_PROFILE("ContactSolverLoop");
 		btScalar sum = 0;
@@ -1284,7 +1284,7 @@ struct ContactFrictionSolverLoop : public btIParallelSumBody
 		m_solver = solver;
 		m_bc = bc;
 	}
-	btScalar sumLoop(int iBegin, int iEnd) const BT_OVERRIDE
+	btScalar sumLoop(int iBegin, int iEnd) const override
 	{
 		BT_PROFILE("ContactFrictionSolverLoop");
 		btScalar sum = 0;
@@ -1323,7 +1323,7 @@ struct InterleavedContactSolverLoop : public btIParallelSumBody
 		m_solver = solver;
 		m_bc = bc;
 	}
-	btScalar sumLoop(int iBegin, int iEnd) const BT_OVERRIDE
+	btScalar sumLoop(int iBegin, int iEnd) const override
 	{
 		BT_PROFILE("InterleavedContactSolverLoop");
 		btScalar sum = 0;
@@ -1362,7 +1362,7 @@ struct ContactRollingFrictionSolverLoop : public btIParallelSumBody
 		m_solver = solver;
 		m_bc = bc;
 	}
-	btScalar sumLoop(int iBegin, int iEnd) const BT_OVERRIDE
+	btScalar sumLoop(int iBegin, int iEnd) const override
 	{
 		BT_PROFILE("ContactFrictionSolverLoop");
 		btScalar sum = 0;
@@ -1477,7 +1477,7 @@ struct WriteContactPointsLoop : public btIParallelForBody
 		m_solver = solver;
 		m_infoGlobal = &infoGlobal;
 	}
-	void forLoop(int iBegin, int iEnd) const BT_OVERRIDE
+	void forLoop(int iBegin, int iEnd) const override
 	{
 		m_solver->internalWriteBackContacts(iBegin, iEnd, *m_infoGlobal);
 	}
@@ -1493,7 +1493,7 @@ struct WriteJointsLoop : public btIParallelForBody
 		m_solver = solver;
 		m_infoGlobal = &infoGlobal;
 	}
-	void forLoop(int iBegin, int iEnd) const BT_OVERRIDE
+	void forLoop(int iBegin, int iEnd) const override
 	{
 		m_solver->internalWriteBackJoints(iBegin, iEnd, *m_infoGlobal);
 	}
@@ -1509,7 +1509,7 @@ struct WriteBodiesLoop : public btIParallelForBody
 		m_solver = solver;
 		m_infoGlobal = &infoGlobal;
 	}
-	void forLoop(int iBegin, int iEnd) const BT_OVERRIDE
+	void forLoop(int iBegin, int iEnd) const override
 	{
 		m_solver->internalWriteBackBodies(iBegin, iEnd, *m_infoGlobal);
 	}

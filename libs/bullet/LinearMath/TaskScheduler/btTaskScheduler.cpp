@@ -10,7 +10,7 @@
 class btTaskSchedulerForBeryll : public btITaskScheduler
 {
 public:
-    btTaskSchedulerForBeryll() : btITaskScheduler("TaskSchedulerForBeryll")
+    btTaskSchedulerForBeryll()
     {
         // All available threads -1.
         m_numThreads = std::max((std::thread::hardware_concurrency() == 0 ? 0 : std::thread::hardware_concurrency() - 1u), 1u);
@@ -25,9 +25,7 @@ public:
         m_futuresFloat.clear();
     }
 
-    int getMaxNumThreads() const override { return m_numThreads; }
     int getNumThreads() const override { return m_numThreads; }
-    void setNumThreads(int numThreads) override { /* dont set anything*/ }
 
     void parallelFor(int iBegin, int iEnd, int grainSize, const btIParallelForBody& body) override
     {
@@ -52,7 +50,7 @@ public:
                 m_futuresVoid.emplace_back(std::async(std::launch::async, &btIParallelForBody::forLoop, std::cref(body), i, chunkEnd));
             }
 
-            // Wait all threads.
+            // Wait for all threads.
             for(std::future<void>& ft : m_futuresVoid)
             {
                 ft.wait();
@@ -84,7 +82,7 @@ public:
                 m_futuresFloat.emplace_back(std::async(std::launch::async, &btIParallelSumBody::sumLoop, std::cref(body), i, chunkEnd));
             }
 
-            // Wait all threads.
+            // Wait for all threads.
             for(std::future<float>& ft : m_futuresFloat)
             {
                 result += ft.get();

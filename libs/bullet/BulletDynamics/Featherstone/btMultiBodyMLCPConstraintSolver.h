@@ -145,7 +145,7 @@ protected:
 		btTypedConstraint** constraints,
 		int numConstraints,
 		const btContactSolverInfo& infoGlobal,
-		btIDebugDraw* debugDrawer) BT_OVERRIDE;
+		btIDebugDraw* debugDrawer) override;
 
 	// Documentation inherited
 	btScalar solveGroupCacheFriendlyIterations(
