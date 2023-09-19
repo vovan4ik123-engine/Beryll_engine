@@ -737,9 +737,5 @@ int btDeformableMultiBodyDynamicsWorld::stepSimulation(btScalar timeStep, int ma
 
 	clearForces();
 
-#ifndef BT_NO_PROFILE
-	CProfileManager::Increment_Frame_Counter();
-#endif  //BT_NO_PROFILE
-
 	return numSimulationSubSteps;
 }

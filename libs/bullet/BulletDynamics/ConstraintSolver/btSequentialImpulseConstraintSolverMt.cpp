@@ -836,14 +836,7 @@ btScalar btSequentialImpulseConstraintSolverMt::solveGroupCacheFriendlySetup(
 	btIDebugDraw* debugDrawer)
 {
 	m_numFrictionDirections = (infoGlobal.m_solverMode & SOLVER_USE_2_FRICTION_DIRECTIONS) ? 2 : 1;
-	m_useBatching = false;
-	if (numManifolds >= s_minimumContactManifoldsForBatching &&
-		(s_allowNestedParallelForLoops || !btThreadsAreRunning()))
-	{
-		m_useBatching = true;
-		m_batchedContactConstraints.m_debugDrawer = debugDrawer;
-		m_batchedJointConstraints.m_debugDrawer = debugDrawer;
-	}
+
 	btSequentialImpulseConstraintSolver::solveGroupCacheFriendlySetup(bodies,
 																	  numBodies,
 																	  manifoldPtr,

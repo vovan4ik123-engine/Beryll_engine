@@ -53,20 +53,22 @@ subject to the following restrictions:
 btConstraintSolverPoolMt::ThreadSolver* btConstraintSolverPoolMt::getAndLockThreadSolver()
 {
 	int i = 0;
-#if BT_THREADSAFE
-	i = btGetCurrentThreadIndex() % m_solvers.size();
-#endif  // #if BT_THREADSAFE
-	while (true)
+
+	while(true)
 	{
 		ThreadSolver& solver = m_solvers[i];
 		if (solver.mutex.tryLock())
 		{
 			return &solver;
 		}
-		// failed, try the next one
-		i = (i + 1) % m_solvers.size();
+
+		++i;
+
+		if(i >= m_solvers.size())
+			i = 0;
 	}
-	return NULL;
+
+	return nullptr;
 }
 
 void btConstraintSolverPoolMt::init(btConstraintSolver** solvers, int numSolvers)

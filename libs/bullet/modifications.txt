@@ -1,18 +1,37 @@
-beryllEngineObjectID in btCollisionObject
+Add to btCollisionObject:
+    beryllEngineObjectID
 
-synchronize with mutex user collision callback
+Synchronize with mutex user collision callback:
+    gContactAddedCallback = collisionsCallBack;
 
-own task scheduler:
+Update and synchronize btCollisionDispatcherMt.cpp
 
-btITaskScheduler* btCreateTaskSchedulerForBeryll()
-{
-    btTaskSchedulerForBeryll* ts = new btTaskSchedulerForBeryll();
-    return ts;
-}
+Delete custom threads handling and indexes:
+    btGetCurrentThreadIndex()
+    gThreadCounter.getNext()
+    BT_MAX_THREAD_COUNT
+
+Delete files:
+    bullet/LinearMath/TaskScheduler/btThreadSupportInterface.h
+    bullet/LinearMath/TaskScheduler/btThreadSupportPosix.cpp
+    bullet/LinearMath/TaskScheduler/btThreadSupportWin32.cpp
+
+    bullet/btBulletCollisionAll.cpp
+    bullet/btBulletDynamicsAll.cpp
+    bullet/btLinearMathAll.cpp
+
+LinearMath/TaskScheduler/btTaskScheduler.cpp
+    Replace to:
+
+#if BT_THREADSAFE
+
+#include "LinearMath/btThreads.h"
 
 #include <vector>
 #include <future>
 #include <thread>
+#include <algorithm>
+#include <android/log.h>
 
 class btTaskSchedulerForBeryll : public btITaskScheduler
 {
@@ -20,18 +39,16 @@ public:
     btTaskSchedulerForBeryll() : btITaskScheduler("TaskSchedulerForBeryll")
     {
         // All available threads -1.
-        m_numThreads = std::max(std::thread::hardware_concurrency(), 1u);
-        if(m_numThreads > 1)
-            --m_numThreads;
+        m_numThreads = std::max((std::thread::hardware_concurrency() == 0 ? 0 : std::thread::hardware_concurrency() - 1u), 1u);
 
-		m_futuresVoid.reserve(m_numThreads);
-		m_futuresFloat.reserve(m_numThreads);
+        m_futuresVoid.reserve(m_numThreads);
+        m_futuresFloat.reserve(m_numThreads);
     }
 
     ~btTaskSchedulerForBeryll() override
     {
-		m_futuresVoid.clear();
-		m_futuresFloat.clear();
+        m_futuresVoid.clear();
+        m_futuresFloat.clear();
     }
 
     int getMaxNumThreads() const override { return m_numThreads; }
@@ -42,13 +59,15 @@ public:
     {
         int numberElements = iEnd - iBegin;
 
-        if(numberElements <= 10 || m_numThreads == 1)
+        if(numberElements <= 20 || m_numThreads == 1)
         {
-            // 10 or less elements are handled by main thread.
+			__android_log_print(ANDROID_LOG_DEBUG, "TAG", "parallelFor on main thread.");
+            // Run on main thread.
             body.forLoop(iBegin, iEnd);
         }
         else
         {
+			__android_log_print(ANDROID_LOG_DEBUG, "TAG", "parallelFor on std::async.");
             m_futuresVoid.clear();
 
             int oneChunkSize = numberElements / m_numThreads;
@@ -58,47 +77,49 @@ public:
             {
                 int chunkEnd = std::min(i + oneChunkSize, iEnd);
 
-				m_futuresVoid.emplace_back(std::async(std::launch::async, &btIParallelForBody::forLoop, std::cref(body), i, chunkEnd));
+                m_futuresVoid.emplace_back(std::async(std::launch::async, &btIParallelForBody::forLoop, std::cref(body), i, chunkEnd));
             }
 
-			// Wait all threads.
-			for(std::future<void>& ft : m_futuresVoid)
-			{
-				ft.wait();
-			}
+            // Wait all threads.
+            for(std::future<void>& ft : m_futuresVoid)
+            {
+                ft.wait();
+            }
         }
     }
 
-    btScalar parallelSum(int iBegin, int iEnd, int grainSize, const btIParallelSumBody& body) override
+    float parallelSum(int iBegin, int iEnd, int grainSize, const btIParallelSumBody& body) override
     {
-		btScalar result = 0.0f;
-		int numberElements = iEnd - iBegin;
+		float result = 0.0f;
+        int numberElements = iEnd - iBegin;
 
-		if(numberElements <= 10 || m_numThreads == 1)
-		{
-			// 10 or less elements are handled by main thread.
-			return body.sumLoop(iBegin, iEnd);
-		}
-		else
-		{
+        if(numberElements <= 20 || m_numThreads == 1)
+        {
+			__android_log_print(ANDROID_LOG_DEBUG, "TAG", "parallelSum on main thread.");
+            // Run on main thread.
+            return body.sumLoop(iBegin, iEnd);
+        }
+        else
+        {
+			__android_log_print(ANDROID_LOG_DEBUG, "TAG", "parallelSum on std::async.");
             m_futuresFloat.clear();
 
-			int oneChunkSize = numberElements / m_numThreads;
-			oneChunkSize++; // Make sure (oneChunkSize * m_numThreads) > numberElements.
+            int oneChunkSize = numberElements / m_numThreads;
+            oneChunkSize++; // Make sure (oneChunkSize * m_numThreads) > numberElements.
 
-			for(int i = iBegin; i < iEnd; i += oneChunkSize)
-			{
-				int chunkEnd = std::min(i + oneChunkSize, iEnd);
+            for(int i = iBegin; i < iEnd; i += oneChunkSize)
+            {
+                int chunkEnd = std::min(i + oneChunkSize, iEnd);
 
-				m_futuresFloat.emplace_back(std::async(std::launch::async, &btIParallelSumBody::sumLoop, std::cref(body), i, chunkEnd));
-			}
+                m_futuresFloat.emplace_back(std::async(std::launch::async, &btIParallelSumBody::sumLoop, std::cref(body), i, chunkEnd));
+            }
 
-			// Wait all threads.
-			for(std::future<btScalar>& ft : m_futuresFloat)
-			{
-				result += ft.get();
-			}
-		}
+            // Wait all threads.
+            for(std::future<float>& ft : m_futuresFloat)
+            {
+                result += ft.get();
+            }
+        }
 
         return result;
     }
@@ -106,5 +127,13 @@ public:
 private:
     int m_numThreads = 1;
     std::vector<std::future<void>> m_futuresVoid;
-    std::vector<std::future<btScalar>> m_futuresFloat;
+    std::vector<std::future<float>> m_futuresFloat;
 };
+
+btITaskScheduler* btCreateTaskSchedulerForBeryll()
+{
+    btTaskSchedulerForBeryll* ts = new btTaskSchedulerForBeryll();
+    return ts;
+}
+
+#endif // #if BT_THREADSAFE

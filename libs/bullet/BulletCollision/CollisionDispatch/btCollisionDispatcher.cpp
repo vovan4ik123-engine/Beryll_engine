@@ -67,31 +67,15 @@ btCollisionDispatcher::~btCollisionDispatcher()
 
 btPersistentManifold* btCollisionDispatcher::getNewManifold(const btCollisionObject* body0, const btCollisionObject* body1)
 {
-	//btAssert(gNumManifold < 65535);
-
-	//optional relative contact breaking threshold, turned on by default (use setDispatcherFlags to switch off feature for improved performance)
-
-	btScalar contactBreakingThreshold = (m_dispatcherFlags & btCollisionDispatcher::CD_USE_RELATIVE_CONTACT_BREAKING_THRESHOLD) ? btMin(body0->getCollisionShape()->getContactBreakingThreshold(gContactBreakingThreshold), body1->getCollisionShape()->getContactBreakingThreshold(gContactBreakingThreshold))
-																																: gContactBreakingThreshold;
-
 	btScalar contactProcessingThreshold = btMin(body0->getContactProcessingThreshold(), body1->getContactProcessingThreshold());
 
 	void* mem = m_persistentManifoldPoolAllocator->allocate(sizeof(btPersistentManifold));
-	if (NULL == mem)
+	if (nullptr == mem)
 	{
-		//we got a pool memory overflow, by default we fallback to dynamically allocate memory. If we require a contiguous contact pool then assert.
-		if ((m_dispatcherFlags & CD_DISABLE_CONTACTPOOL_DYNAMIC_ALLOCATION) == 0)
-		{
-			mem = btAlignedAlloc(sizeof(btPersistentManifold), 16);
-		}
-		else
-		{
-			btAssert(0);
-			//make sure to increase the m_defaultMaxPersistentManifoldPoolSize in the btDefaultCollisionConstructionInfo/btDefaultCollisionConfiguration
-			return 0;
-		}
+		mem = btAlignedAlloc(sizeof(btPersistentManifold), 16);
 	}
-	btPersistentManifold* manifold = new (mem) btPersistentManifold(body0, body1, 0, contactBreakingThreshold, contactProcessingThreshold);
+
+	btPersistentManifold* manifold = new (mem) btPersistentManifold(body0, body1, 0, gContactBreakingThreshold, contactProcessingThreshold);
 	manifold->m_index1a = m_manifoldsPtr.size();
 	m_manifoldsPtr.push_back(manifold);
 

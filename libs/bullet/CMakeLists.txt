@@ -21,8 +21,6 @@ set(LinearMath_SRCS
         LinearMath/btThreads.cpp
         LinearMath/btVector3.cpp
         LinearMath/TaskScheduler/btTaskScheduler.cpp
-        LinearMath/TaskScheduler/btThreadSupportPosix.cpp
-        LinearMath/TaskScheduler/btThreadSupportWin32.cpp
     )
 
 set(BulletCollision_SRCS

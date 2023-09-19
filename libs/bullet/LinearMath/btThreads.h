@@ -26,16 +26,6 @@ subject to the following restrictions:
 #define BT_OVERRIDE
 #endif
 
-// Don't set this to larger than 64, without modifying btThreadSupportPosix
-// and btThreadSupportWin32. They use UINT64 bit-masks.
-const unsigned int BT_MAX_THREAD_COUNT = 64;  // only if BT_THREADSAFE is 1
-
-// for internal use only
-bool btIsMainThread();
-bool btThreadsAreRunning();
-unsigned int btGetCurrentThreadIndex();
-void btResetThreadIndexCounter();  // notify that all worker threads have been destroyed
-
 ///
 /// btSpinMutex -- lightweight spin-mutex implemented with atomic ops, never puts
 ///               a thread to sleep because it is designed to be used with a task scheduler
@@ -73,7 +63,7 @@ SIMD_FORCE_INLINE void btMutexLock(btSpinMutex* mutex)
 	mutex->lock();
 #else
 	(void)mutex;
-#endif  // #if BT_THREADSAFE
+#endif // #if BT_THREADSAFE
 }
 
 SIMD_FORCE_INLINE void btMutexUnlock(btSpinMutex* mutex)
@@ -82,7 +72,7 @@ SIMD_FORCE_INLINE void btMutexUnlock(btSpinMutex* mutex)
 	mutex->unlock();
 #else
 	(void)mutex;
-#endif  // #if BT_THREADSAFE
+#endif // #if BT_THREADSAFE
 }
 
 SIMD_FORCE_INLINE bool btMutexTryLock(btSpinMutex* mutex)
@@ -92,7 +82,7 @@ SIMD_FORCE_INLINE bool btMutexTryLock(btSpinMutex* mutex)
 #else
 	(void)mutex;
 	return true;
-#endif  // #if BT_THREADSAFE
+#endif // #if BT_THREADSAFE
 }
 
 //
@@ -134,10 +124,6 @@ public:
 	virtual btScalar parallelSum(int iBegin, int iEnd, int grainSize, const btIParallelSumBody& body) = 0;
 	virtual void sleepWorkerThreadsHint() {}  // hint the task scheduler that we may not be using these threads for a little while
 
-	// internal use only
-	virtual void activate();
-	virtual void deactivate();
-
 protected:
 	const char* m_name;
 	unsigned int m_savedThreadCounter;
@@ -148,23 +134,9 @@ protected:
 // NOTE: you must set this prior to using any of the multi-threaded "Mt" classes
 void btSetTaskScheduler(btITaskScheduler* ts);
 
-// get the current task scheduler
 btITaskScheduler* btGetTaskScheduler();
 
-// get non-threaded task scheduler (always available)
-btITaskScheduler* btGetSequentialTaskScheduler();
-
-// create a default task scheduler (Win32 or pthreads based)
-btITaskScheduler* btCreateDefaultTaskScheduler();
-
-// get OpenMP task scheduler (if available, otherwise returns null)
-btITaskScheduler* btGetOpenMPTaskScheduler();
-
-// get Intel TBB task scheduler (if available, otherwise returns null)
-btITaskScheduler* btGetTBBTaskScheduler();
-
-// get PPL task scheduler (if available, otherwise returns null)
-btITaskScheduler* btGetPPLTaskScheduler();
+btITaskScheduler* btCreateTaskSchedulerForBeryll();
 
 // btParallelFor -- call this to dispatch work like a for-loop
 //                 (iterations may be done out of order, so no dependencies are allowed)

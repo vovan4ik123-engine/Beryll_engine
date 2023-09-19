@@ -98,7 +98,7 @@ protected:
 	btBatchedConstraints m_batchedContactConstraints;
 	btBatchedConstraints m_batchedJointConstraints;
 	int m_numFrictionDirections;
-	bool m_useBatching;
+	bool m_useBatching = false;
 	bool m_useObsoleteJointConstraints;
 	btAlignedObjectArray<btContactManifoldCachedInfo> m_manifoldCachedInfoArray;
 	btAlignedObjectArray<int> m_rollingFrictionIndexTable;  // lookup table mapping contact index to rolling friction index

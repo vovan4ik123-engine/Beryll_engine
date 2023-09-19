@@ -18,6 +18,7 @@ subject to the following restrictions:
 
 #include "BulletCollision/CollisionDispatch/btCollisionDispatcher.h"
 #include "LinearMath/btThreads.h"
+#include <mutex>
 
 class btCollisionDispatcherMt : public btCollisionDispatcher
 {
@@ -30,10 +31,8 @@ public:
 	virtual void dispatchAllCollisionPairs(btOverlappingPairCache* pairCache, const btDispatcherInfo& info, btDispatcher* dispatcher) BT_OVERRIDE;
 
 protected:
-	btAlignedObjectArray<btAlignedObjectArray<btPersistentManifold*> > m_batchManifoldsPtr;
-	btAlignedObjectArray<btAlignedObjectArray<btPersistentManifold*> > m_batchReleasePtr;
-	bool m_batchUpdating;
 	int m_grainSize;
+    std::mutex m_mutex;
 };
 
 #endif  //BT_COLLISION_DISPATCHER_MT_H
