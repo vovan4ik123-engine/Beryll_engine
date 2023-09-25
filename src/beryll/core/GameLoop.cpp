@@ -55,6 +55,7 @@ namespace Beryll
 
         m_loopTime = 1000000.0f / m_FPS; // MicroSec.
         Physics::resetTimer();
+        m_isRun = true; // Can be false before this method call.
 
         while(m_isRun)
         {

@@ -3,7 +3,6 @@
 #include "LibsHeaders.h"
 
 #include "beryll/core/Window.h"
-#include "beryll/core/Log.h"
 
 #include <GLES3/gl32.h>
 #include <GLES3/gl3ext.h>

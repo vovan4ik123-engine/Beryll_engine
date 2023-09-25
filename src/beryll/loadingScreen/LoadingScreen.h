@@ -26,14 +26,14 @@ namespace Beryll
 
         static void selectRandomTexture()
         {
-            BR_ASSERT((!m_diffuseTextures.empty()), "%s", "Loading screen textures are empty. Use setTextures()");
+            BR_ASSERT((!m_diffuseTextures.empty()), "%s", "Loading screen textures are empty. Use setTextures().");
 
             m_textureIndex = Beryll::RandomGenerator::getInt(m_diffuseTextures.size() - 1);
         }
 
         static void setTextureByIndex(int index)
         {
-            BR_ASSERT((!m_diffuseTextures.empty()), "%s", "Loading screen textures are empty. Use setTextures()");
+            BR_ASSERT((!m_diffuseTextures.empty()), "%s", "Loading screen textures are empty. Use setTextures().");
 
             if(index >= 0 && index < m_diffuseTextures.size())
                 m_textureIndex = index;
@@ -54,7 +54,7 @@ namespace Beryll
         static std::shared_ptr<Shader> m_internalShader;
         static std::vector<std::unique_ptr<Texture>> m_diffuseTextures;
 
-        static float m_loadingProgress; // 0.0f...1.0f range
+        static float m_loadingProgress; // 0.0f...1.0f range.
         static int m_textureIndex;
         static bool m_created;
     };

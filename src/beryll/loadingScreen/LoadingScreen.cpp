@@ -26,7 +26,7 @@ namespace Beryll
                                         glm::vec3(-1.0f,  1.0f, 1.0f)};
 
 #if defined(ANDROID)
-        std::vector<glm::vec2> textureCoords{glm::vec2(0.0f, 1.0f), // flipped Y for OpenGL
+        std::vector<glm::vec2> textureCoords{glm::vec2(0.0f, 1.0f), // Flipped Y for OpenGL.
                                              glm::vec2(1.0f, 1.0f),
                                              glm::vec2(1.0f, 0.0f),
                                              glm::vec2(0.0f, 0.0f)};

@@ -13,7 +13,7 @@
 
 namespace Beryll
 {
-    // static methods for create things required for rendering objects
+    // Static methods for create things required for rendering objects.
     class Renderer final
     {
     public:
