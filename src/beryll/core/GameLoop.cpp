@@ -9,6 +9,7 @@
 #include "beryll/renderer/Camera.h"
 #include "beryll/particleSystem/ParticleSystem.h"
 #include "beryll/loadingScreen/LoadingScreen.h"
+#include "beryll/billingSystem/BillingSystem.h"
 
 namespace Beryll
 {
@@ -47,6 +48,8 @@ namespace Beryll
         ParticleSystem::create();
 
         LoadingScreen::create();
+
+        BillingSystem::create();
     }
 
     void GameLoop::run()

@@ -50,3 +50,5 @@
 #include "beryll/loadingScreen/LoadingScreen.h"
 
 #include "beryll/dataBase/DataBase.h"
+
+#include "beryll/billingSystem/BillingSystem.h"

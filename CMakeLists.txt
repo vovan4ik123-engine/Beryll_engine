@@ -42,9 +42,11 @@ if(ANDROID)
             src/beryll/platform/androidGLES/AndroidGLESSkyBox.cpp
             src/beryll/platform/androidGLES/AndroidGLESShadowMapTexture.cpp
             src/beryll/platform/androidGLES/AndroidGLESGlobal.cpp
+            src/beryll/platform/androidGLES/AndroidGLESBillingSystem.cpp
             )
 elseif(APPLE)
-    #set(IOSMetal_SRC src/beryll/platform/...)
+    set(IOSMetal_SRC
+            )
 endif()
 
 set(Common_SRC
@@ -91,9 +93,15 @@ set(Common_SRC
         src/beryll/particleSystem/ParticleSystem.cpp
 
         src/beryll/loadingScreen/LoadingScreen.cpp
+
+        src/beryll/billingSystem/BillingSystem.cpp
 )
 
-add_library(Beryll-static STATIC ${AndroidGLES_SRC} ${IOSMetal_SRC} ${Common_SRC})
+if(ANDROID)
+    add_library(Beryll-static STATIC ${AndroidGLES_SRC} ${Common_SRC})
+elseif(APPLE)
+    add_library(Beryll-static STATIC ${IOSMetal_SRC} ${Common_SRC})
+endif()
 
 # add these lines to main CmakeLists.txt
 #include_directories(Beryll_engine/libs)

@@ -4,6 +4,7 @@
 // include this file only inside engine
 
 #include "SDL2/include/SDL.h"
+#include "SDL2/include/SDL_system.h"
 #include "SDL2/include/SDL_log.h"
 
 #include "SDL2_image/SDL_image.h"

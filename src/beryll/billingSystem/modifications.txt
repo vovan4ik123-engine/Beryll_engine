@@ -1,0 +1,27 @@
+----------------------- For Android -----------------------
+
+Add to dependencies{} inside app/build.gradle.
+
+    dependencies {
+        ...................................................
+
+        def billing_version = "6.0.1"
+
+        implementation "com.android.billingclient:billing:$billing_version"
+    }
+
+
+Add to AndroidManifest.xml
+    <!-- Billing system-->
+    <uses-permission android:name="com.android.vending.BILLING" />
+
+Add to gradle.properties
+    android.useAndroidX=true
+
+SDLActivity:
+
+BillingManager:
+
+
+
+----------------------- For IOS -----------------------
