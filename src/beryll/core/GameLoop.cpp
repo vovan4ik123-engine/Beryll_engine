@@ -10,6 +10,7 @@
 #include "beryll/particleSystem/ParticleSystem.h"
 #include "beryll/loadingScreen/LoadingScreen.h"
 #include "beryll/billingSystem/BillingSystem.h"
+#include "beryll/network/Network.h"
 
 namespace Beryll
 {
@@ -50,11 +51,13 @@ namespace Beryll
         LoadingScreen::create();
 
         BillingSystem::create();
+
+        Network::create();
     }
 
     void GameLoop::run()
     {
-        BR_INFO("%s", "GameLoop started");
+        BR_INFO("%s", "GameLoop started.");
 
         m_loopTime = 1000000.0f / m_FPS; // MicroSec.
         Physics::resetTimer();
@@ -119,7 +122,7 @@ namespace Beryll
             m_frameTimeIncludeSleep = m_timer.getElapsedMicroSec() - m_frameStart;
         }
 
-        BR_INFO("%s", "GameLoop stopped");
+        BR_INFO("%s", "GameLoop stopped.");
     }
 
     void GameLoop::regulateFPS()

@@ -95,6 +95,8 @@ set(Common_SRC
         src/beryll/loadingScreen/LoadingScreen.cpp
 
         src/beryll/billingSystem/BillingSystem.cpp
+
+        src/beryll/network/Network.cpp
 )
 
 if(ANDROID)

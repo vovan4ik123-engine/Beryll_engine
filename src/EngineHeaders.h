@@ -52,3 +52,5 @@
 #include "beryll/dataBase/DataBase.h"
 
 #include "beryll/billingSystem/BillingSystem.h"
+
+#include "beryll/network/Network.h"
