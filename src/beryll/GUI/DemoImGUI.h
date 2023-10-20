@@ -1,7 +1,5 @@
 #pragma once
 
-#include "LibsHeaders.h"
-
 #include "GUIObject.h"
 
 namespace Beryll
@@ -17,4 +15,3 @@ namespace Beryll
         void draw() override;
     };
 }
-

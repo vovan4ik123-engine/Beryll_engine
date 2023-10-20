@@ -1,7 +1,7 @@
 #pragma once
 
-#include "CppHeaders.h"
 #include "LibsHeaders.h"
+#include "CppHeaders.h"
 
 #include "sqlite/sqlite3.h"
 
@@ -59,4 +59,3 @@ namespace Beryll
         static sqlite3_stmt* m_stmt;
     };
 }
-

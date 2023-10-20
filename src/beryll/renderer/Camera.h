@@ -1,6 +1,8 @@
 #pragma once
 
 #include "LibsHeaders.h"
+#include "CppHeaders.h"
+
 #include "beryll/core/Window.h"
 #include "beryll/utils/CommonUtils.h"
 

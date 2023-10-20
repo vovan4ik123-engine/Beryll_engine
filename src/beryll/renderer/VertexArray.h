@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CppHeaders.h"
+
 #include "Buffer.h"
 
 namespace Beryll

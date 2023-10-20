@@ -1,6 +1,7 @@
 #pragma once
 
 #include "LibsHeaders.h"
+#include "CppHeaders.h"
 
 namespace BeryllConstants
 {
@@ -53,9 +54,4 @@ namespace BeryllConstants
     const std::string_view loadingScreenVertexPath = "";
     const std::string_view loadingScreenFragmentPath = "";
 #endif
-
-
-
-
-
 }

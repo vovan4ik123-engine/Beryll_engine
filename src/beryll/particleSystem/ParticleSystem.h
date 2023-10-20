@@ -1,7 +1,7 @@
 #pragma once
 
-#include "CppHeaders.h"
 #include "LibsHeaders.h"
+#include "CppHeaders.h"
 
 #include "beryll/renderer/Shader.h"
 #include "beryll/renderer/Buffer.h"
