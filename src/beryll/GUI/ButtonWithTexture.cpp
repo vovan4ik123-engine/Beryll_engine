@@ -13,7 +13,7 @@ namespace Beryll
                                          float height,
                                          bool actRepeat)
     {
-        BR_ASSERT((defaultTexturePath.empty() == false), "%s", "Path to default texture can not be empty");
+        BR_ASSERT((defaultTexturePath.empty() == false), "%s", "Path to default texture can not be empty.");
 
         m_leftPos = left / 100.0f;
         m_topPos = top / 100.0f;

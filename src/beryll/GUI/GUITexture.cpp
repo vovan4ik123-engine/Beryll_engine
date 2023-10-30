@@ -6,7 +6,7 @@ namespace Beryll
 {
     GUITexture::GUITexture(const std::string& texturePath, float left, float top, float width, float height)
     {
-        BR_ASSERT((texturePath.empty() == false), "%s", "Path to texture can not be empty");
+        BR_ASSERT((texturePath.empty() == false), "%s", "Path to texture can not be empty.");
 
         m_leftPos = left / 100.0f;
         m_topPos = top / 100.0f;

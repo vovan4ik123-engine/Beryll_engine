@@ -11,7 +11,10 @@ namespace Beryll
 
     void EventHandler::loadEvents()
     {
-        for(Finger& f : m_fingers) { f.downEvent = false; }
+        for(Finger& f : m_fingers)
+        {
+            f.downEvent = false;
+        }
 
         SDL_Event event;
 

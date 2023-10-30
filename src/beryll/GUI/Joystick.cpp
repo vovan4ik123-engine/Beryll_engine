@@ -9,7 +9,7 @@ namespace Beryll
                        const std::string& touchedTexturePath,
                        float left, float top, float width, float height)
     {
-        BR_ASSERT((defaultTexturePath.empty() == false), "%s", "Path to default texture can not be empty");
+        BR_ASSERT((defaultTexturePath.empty() == false), "%s", "Path to default texture can not be empty.");
 
         m_leftPos = left / 100.0f;
         m_topPos = top / 100.0f;
@@ -23,11 +23,11 @@ namespace Beryll
 
         float leftPosPixels = m_leftPos * MainImGUI::getInstance()->getGUIWidth();
         float rightPosPixels = leftPosPixels + (MainImGUI::getInstance()->getGUIWidth() * m_width);
-        m_joystickOrigin.x = leftPosPixels + ((rightPosPixels - leftPosPixels) * 0.5f);
+        m_joystickOriginInPixels.x = leftPosPixels + ((rightPosPixels - leftPosPixels) * 0.5f);
 
         float topPosPixels = m_topPos * MainImGUI::getInstance()->getGUIHeight();
         float bottomPosPixels = topPosPixels + (m_height * MainImGUI::getInstance()->getGUIHeight());
-        m_joystickOrigin.y = topPosPixels + ((bottomPosPixels - topPosPixels) * 0.5f);
+        m_joystickOriginInPixels.y = topPosPixels + ((bottomPosPixels - topPosPixels) * 0.5f);
     }
 
     Joystick::~Joystick()
@@ -38,7 +38,8 @@ namespace Beryll
     void Joystick::updateBeforePhysics()
     {
         m_touched = false;
-        m_touchedDirectionFromOrigin = glm::vec2{0.0f, 0.0f};
+        m_touchedDirectionFromOrigin.x = 0.0f;
+        m_touchedDirectionFromOrigin.y = 0.0f;
 
         std::vector<Finger>& fingers = EventHandler::getFingers();
 
@@ -53,8 +54,12 @@ namespace Beryll
                 if(f.downEvent && !f.handled)
                     f.handled = true;
 
-                m_touchedDirectionFromOrigin = glm::normalize(f.ImGuiScreenPos - m_joystickOrigin);
-                m_touchedDirectionFromOrigin.y = -m_touchedDirectionFromOrigin.y;
+                glm::vec2 touchDistanceFromOriginInPixels = f.ImGuiScreenPos - m_joystickOriginInPixels;
+                if(glm::length(touchDistanceFromOriginInPixels) > 0.0f)
+                {
+                    m_touchedDirectionFromOrigin = glm::normalize(touchDistanceFromOriginInPixels);
+                    m_touchedDirectionFromOrigin.y = -m_touchedDirectionFromOrigin.y;
+                }
             }
         }
     }
@@ -83,5 +88,19 @@ namespace Beryll
         }
 
         ImGui::End();
+    }
+
+    void Joystick::setOrigin(glm::vec2 origInRange0to1)
+    {
+        BR_ASSERT((origInRange0to1.x >= 0.0f &&
+                   origInRange0to1.x <= 1.0f &&
+                   origInRange0to1.y >= 0.0f &&
+                   origInRange0to1.y <= 1.0f ), "%s", "Joystick new origin not correct.");
+
+        m_joystickOriginInPixels.x = origInRange0to1.x * MainImGUI::getInstance()->getGUIWidth();
+        m_joystickOriginInPixels.y = origInRange0to1.y * MainImGUI::getInstance()->getGUIHeight();
+
+        m_leftPos = origInRange0to1.x - (m_width * 0.5f);
+        m_topPos = origInRange0to1.y - (m_height * 0.5f);
     }
 }

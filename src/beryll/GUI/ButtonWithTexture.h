@@ -10,10 +10,11 @@ namespace Beryll
     public:
         ButtonWithTexture() = delete;
         /*
-         * defaultTexturePath - default texture path on button. Cannot be empty
-         * touchedTexturePath - texture shown when button touched. Can be empty.
+         * defaultTexturePath - Cannot be empty.
+         * touchedTexturePath - texture shown when touched. Can be empty.
          *                      If empty defaultTexturePath will shown always.
          */
+        // Position and size in percent 0...100% of screen.
         ButtonWithTexture(const std::string& defaultTexturePath,
                           const std::string& touchedTexturePath,
                           float left,
