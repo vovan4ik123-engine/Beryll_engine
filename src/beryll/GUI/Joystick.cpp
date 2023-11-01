@@ -71,6 +71,10 @@ namespace Beryll
 
     void Joystick::draw()
     {
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+
         ImGui::SetNextWindowPos(ImVec2(m_leftPos * MainImGUI::getInstance()->getGUIWidth(), m_topPos * MainImGUI::getInstance()->getGUIHeight()));
         ImGui::Begin(m_IDAsString.c_str(), nullptr, m_noBackgroundNoFrame);
 
@@ -88,6 +92,8 @@ namespace Beryll
         }
 
         ImGui::End();
+
+        ImGui::PopStyleColor(3);
     }
 
     void Joystick::setOrigin(glm::vec2 origInRange0to1)

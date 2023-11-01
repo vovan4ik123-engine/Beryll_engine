@@ -1,3 +1,4 @@
+
 ----------------------- For Android -----------------------
 
 Add to dependencies{} inside app/build.gradle.
@@ -15,13 +16,169 @@ Add to AndroidManifest.xml
     <!-- Billing system-->
     <uses-permission android:name="com.android.vending.BILLING" />
 
+Replace in AndroidManifest.xml
+    android:launchMode="singleInstance"
+    by
+    android:launchMode="singleTop"
+
 Add to gradle.properties
     android.useAndroidX=true
 
-SDLActivity:
+Add to SDLActivity:
+
+    public static SDLActivity getSDLActivity() {
+        return mSingleton;
+    }
 
 BillingManager:
+    package com.controlledbattles.bigbattlesimulator.app;
 
+    import android.util.Log;
+
+    import androidx.annotation.NonNull;
+
+    import com.android.billingclient.api.BillingClient;
+    import com.android.billingclient.api.BillingClientStateListener;
+    import com.android.billingclient.api.BillingFlowParams;
+    import com.android.billingclient.api.BillingResult;
+    import com.android.billingclient.api.ConsumeParams;
+    import com.android.billingclient.api.ConsumeResponseListener;
+    import com.android.billingclient.api.ProductDetails;
+    import com.android.billingclient.api.ProductDetailsResponseListener;
+    import com.android.billingclient.api.Purchase;
+    import com.android.billingclient.api.PurchasesUpdatedListener;
+    import com.android.billingclient.api.QueryProductDetailsParams;
+
+    import org.libsdl.app.SDL;
+    import org.libsdl.app.SDLActivity;
+
+    import java.util.ArrayList;
+    import java.util.List;
+
+    public class BillingManager implements PurchasesUpdatedListener, ProductDetailsResponseListener, BillingClientStateListener {
+        private static int connectionFailures = 0;
+        private static String inAppProductID = "";
+
+        private static BillingManager billingManager = new BillingManager();
+        private static BillingClient billingClient = BillingClient.newBuilder(SDL.getContext())
+                .setListener(billingManager) // PurchasesUpdatedListener
+                .enablePendingPurchases()
+                .build();
+
+        // Called from C++ code to purchase.
+        public static void makeInAppPurchase(String productID) {
+            Log.v("BillingManager", "testBillingLogs makeInAppPurchase(String productID): " + productID + " ThreadID: " + Thread.currentThread().getId());
+            inAppProductID = productID;
+            billingClient.startConnection(billingManager); // BillingClientStateListener
+        }
+
+        // PurchasesUpdatedListener
+        @Override
+        public void onPurchasesUpdated(@NonNull BillingResult billingResult, List<Purchase> purchases) {
+            Log.v("BillingManager", "testBillingLogs onPurchasesUpdated() ThreadID: " + Thread.currentThread().getId());
+
+            if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK && purchases != null) {
+                Log.v("BillingManager", "testBillingLogs billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK ThreadID: " + Thread.currentThread().getId());
+
+                // Consume purchased item = make them purchasable again.
+                for (Purchase purchase : purchases) {
+                    ConsumeParams consumeParams = ConsumeParams.newBuilder()
+                            .setPurchaseToken(purchase.getPurchaseToken())
+                            .build();
+
+                    billingClient.consumeAsync(consumeParams, new ConsumeResponseListener() {
+                        @Override
+                        public void onConsumeResponse(BillingResult billingResult, String purchaseToken) {
+                            if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
+                                // Purchased item consumed on users google account and can be purchased again.
+                                // Otherwise user will get error "You already have that" if will try bye again.
+                            }
+                        }
+                    });
+                }
+
+                billingSystemSuccessCallback();
+            } else {
+                // Handle any error codes.
+                Log.v("BillingManager", "testBillingLogs Purchase error ThreadID: " + Thread.currentThread().getId());
+                billingSystemErrorCallback();
+            }
+        }
+
+        // ProductDetailsResponseListener
+        public void onProductDetailsResponse(@NonNull BillingResult billingResult, @NonNull List<ProductDetails> productDetailsList) {
+            Log.v("BillingManager", "testBillingLogs onProductDetailsResponse() ThreadID: " + Thread.currentThread().getId());
+
+            List<BillingFlowParams.ProductDetailsParams> productDetailsParamsList = new ArrayList<BillingFlowParams.ProductDetailsParams>();
+
+            // For loop for iterating over the List
+            for (int i = 0; i < productDetailsList.size(); ++i) {
+
+                BillingFlowParams.ProductDetailsParams param = BillingFlowParams.ProductDetailsParams.newBuilder()
+                        // retrieve a value for "productDetails" by calling queryProductDetailsAsync()
+                        .setProductDetails(productDetailsList.get(i))
+                        // to get an offer token, call ProductDetails.getSubscriptionOfferDetails()
+                        // for a list of offers that are available to the user
+                        //.setOfferToken(productDetailsList.get(i).getOneTimePurchaseOfferDetails().toString())
+                        .build();
+
+                productDetailsParamsList.add(param);
+            }
+
+            BillingFlowParams billingFlowParams = BillingFlowParams.newBuilder()
+                    .setProductDetailsParamsList(productDetailsParamsList)
+                    .build();
+
+            // Launch the billing flow.
+            BillingResult billingResult2 = billingClient.launchBillingFlow(SDLActivity.getSDLActivity(), billingFlowParams);
+            if(billingResult2.getResponseCode() ==  BillingClient.BillingResponseCode.OK) {
+                // Result of success cal should be call: MyPurchasesUpdatedListener::onPurchasesUpdated().
+                // And open Google Play purchase screen on android device.
+                Log.v("BillingManager", "testBillingLogs launchBillingFlow() success ThreadID: " + Thread.currentThread().getId());
+            }
+            else {
+                Log.v("BillingManager", "testBillingLogs launchBillingFlow() error ThreadID: " + Thread.currentThread().getId());
+            }
+        }
+
+        // BillingClientStateListener
+        @Override
+        public void onBillingSetupFinished(@NonNull BillingResult billingResult) {
+            Log.v("BillingManager", "testBillingLogs onBillingSetupFinished() ThreadID: " + Thread.currentThread().getId());
+            if(billingResult.getResponseCode() ==  BillingClient.BillingResponseCode.OK) {
+                // The BillingClient is ready. You can query purchases here.
+
+                QueryProductDetailsParams.Product product = QueryProductDetailsParams.Product.newBuilder()
+                        .setProductId(inAppProductID)
+                        .setProductType(BillingClient.ProductType.INAPP)
+                        .build();
+
+                List<QueryProductDetailsParams.Product> productList = new ArrayList<QueryProductDetailsParams.Product>();
+                productList.add(product);
+
+                QueryProductDetailsParams queryProductDetailsParams = QueryProductDetailsParams.newBuilder().setProductList(productList).build();
+
+                billingClient.queryProductDetailsAsync(queryProductDetailsParams, billingManager); // ProductDetailsResponseListener
+            }
+        }
+
+        @Override
+        public void onBillingServiceDisconnected() {
+            Log.v("BillingManager", "testBillingLogs onBillingServiceDisconnected() ThreadID: " + Thread.currentThread().getId());
+            // Try to restart the connection on the next request to
+            // Google Play by calling the startConnection() method.
+            if(connectionFailures < 2) {
+                ++connectionFailures;
+                makeInAppPurchase(inAppProductID);
+            }
+            else {
+                connectionFailures = 0;
+            }
+        }
+
+        public static native void billingSystemSuccessCallback();
+        public static native void billingSystemErrorCallback();
+    }
 
 
 ----------------------- For IOS -----------------------
