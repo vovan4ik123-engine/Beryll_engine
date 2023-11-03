@@ -24,6 +24,6 @@ namespace Beryll
 
         JNIEnv* m_jniEnv = nullptr;
         jclass m_javaBillingManagerClassID = nullptr;
-        jmethodID m_inAppMethodID = nullptr;
+        jmethodID m_makeInAppPurchaseMethodID = nullptr;
     };
 }

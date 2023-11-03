@@ -53,4 +53,6 @@
 
 #include "beryll/billingSystem/BillingSystem.h"
 
+#include "beryll/googleAnalytics/GoogleAnalytics.h"
+
 #include "beryll/network/Network.h"

@@ -46,7 +46,7 @@ namespace Beryll
         ~EventHandler() = delete;
 
         static void loadEvents();
-        static void resetEvents(EventID id); // Reset before load new.
+        static void resetEvents(EventID id); // Reset before loadEvents().
 
         static bool checkEvent(EventID id) { return m_events[static_cast<int>(id)]; }
 

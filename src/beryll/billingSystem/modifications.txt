@@ -1,16 +1,12 @@
 
 ----------------------- For Android -----------------------
 
-Add to dependencies{} inside app/build.gradle.
-
+Add to app/build.gradle
     dependencies {
         ...................................................
 
-        def billing_version = "6.0.1"
-
-        implementation "com.android.billingclient:billing:$billing_version"
+        implementation 'com.android.billingclient:billing:6.0.1'
     }
-
 
 Add to AndroidManifest.xml
     <!-- Billing system-->
@@ -24,13 +20,16 @@ Replace in AndroidManifest.xml
 Add to gradle.properties
     android.useAndroidX=true
 
-Add to SDLActivity:
-
+Add to SDLActivity
     public static SDLActivity getSDLActivity() {
         return mSingleton;
     }
 
-BillingManager:
+    onCreate():
+    after mSingleton = this;
+    BillingManager.init(mSingleton);
+
+BillingManager
     package com.controlledbattles.bigbattlesimulator.app;
 
     import android.util.Log;
@@ -49,7 +48,6 @@ BillingManager:
     import com.android.billingclient.api.PurchasesUpdatedListener;
     import com.android.billingclient.api.QueryProductDetailsParams;
 
-    import org.libsdl.app.SDL;
     import org.libsdl.app.SDLActivity;
 
     import java.util.ArrayList;
@@ -59,11 +57,17 @@ BillingManager:
         private static int connectionFailures = 0;
         private static String inAppProductID = "";
 
-        private static BillingManager billingManager = new BillingManager();
-        private static BillingClient billingClient = BillingClient.newBuilder(SDL.getContext())
-                .setListener(billingManager) // PurchasesUpdatedListener
-                .enablePendingPurchases()
-                .build();
+        private static BillingManager billingManager;
+        private static BillingClient billingClient;
+
+        public static void init(SDLActivity activity) {
+            billingManager = new BillingManager();
+
+            billingClient = BillingClient.newBuilder(activity)
+                    .setListener(billingManager) // PurchasesUpdatedListener
+                    .enablePendingPurchases()
+                    .build();
+        }
 
         // Called from C++ code to purchase.
         public static void makeInAppPurchase(String productID) {
@@ -179,6 +183,7 @@ BillingManager:
         public static native void billingSystemSuccessCallback();
         public static native void billingSystemErrorCallback();
     }
+
 
 
 ----------------------- For IOS -----------------------

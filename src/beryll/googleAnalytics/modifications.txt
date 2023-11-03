@@ -1,0 +1,58 @@
+
+----------------------- For Android -----------------------
+
+Add to build.gradle
+    classpath 'com.google.gms:google-services:4.4.0'
+
+Add to app/build.gradle
+    apply plugin: 'com.google.gms.google-services'
+
+    dependencies {
+        ...................................................
+
+        // When using the BoM, you don't specify versions in Firebase library dependencies.
+        implementation platform('com.google.firebase:firebase-bom:32.5.0')
+        implementation 'com.google.firebase:firebase-analytics'
+
+        implementation 'androidx.fragment:fragment:1.6.2'
+    }
+
+Add to AndroidManifest.xml
+    <uses-permission android:name="com.google.android.gms.permission.AD_ID"/>
+
+Create projects on Firebase and Google analytics services to receive events from app.
+Download file "google-services.json" from Firebase project and put it to app/
+
+Add to SDLActivity
+    onCreate():
+    after mSingleton = this;
+    GoogleAnalyticsManager.init(mSingleton);
+
+GoogleAnalyticsManager
+    package com.controlledbattles.bigbattlesimulator.app;
+    import android.os.Bundle;
+    import android.util.Log;
+
+    import com.google.firebase.analytics.FirebaseAnalytics;
+    import org.libsdl.app.SDLActivity;
+
+    public class GoogleAnalyticsManager {
+
+        private static FirebaseAnalytics firebaseAnalytics;
+
+        public static void init(SDLActivity activity) {
+            firebaseAnalytics = FirebaseAnalytics.getInstance(activity);
+        }
+
+        // Called from C++ code to send event.
+        public static void sendEvent(String eventType, String eventName) {
+            Log.v("GoogleAnalyticsManager", "Send custom analytics event: " + eventType + " " + eventName);
+
+            Bundle bundle = new Bundle();
+            bundle.putString(eventType, eventName);
+
+            firebaseAnalytics.logEvent(eventType, bundle);
+        }
+    }
+
+----------------------- For IOS -----------------------

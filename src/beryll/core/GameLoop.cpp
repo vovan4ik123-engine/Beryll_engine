@@ -10,6 +10,7 @@
 #include "beryll/particleSystem/ParticleSystem.h"
 #include "beryll/loadingScreen/LoadingScreen.h"
 #include "beryll/billingSystem/BillingSystem.h"
+#include "beryll/googleAnalytics/GoogleAnalytics.h"
 #include "beryll/network/Network.h"
 
 namespace Beryll
@@ -51,6 +52,8 @@ namespace Beryll
         LoadingScreen::create();
 
         BillingSystem::create();
+
+        GoogleAnalytics::create();
 
         Network::create();
     }

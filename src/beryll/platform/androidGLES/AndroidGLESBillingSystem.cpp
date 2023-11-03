@@ -19,8 +19,8 @@ namespace Beryll
             BR_ASSERT(false, "%s", "m_javaBillingManagerClassID is nullptr.")
         }
 
-        m_inAppMethodID = m_jniEnv->GetStaticMethodID(m_javaBillingManagerClassID, "makeInAppPurchase", "(Ljava/lang/String;)V");
-        if (!m_inAppMethodID)
+        m_makeInAppPurchaseMethodID = m_jniEnv->GetStaticMethodID(m_javaBillingManagerClassID, "makeInAppPurchase", "(Ljava/lang/String;)V");
+        if (!m_makeInAppPurchaseMethodID)
         {
             BR_ASSERT(false, "%s", "m_inAppMethodID is nullptr.")
         }
@@ -40,9 +40,11 @@ namespace Beryll
         AndroidGLESBillingSystem::successCallback = std::move(successCall);
         AndroidGLESBillingSystem::errorCallback = std::move(errorCall);
 
-        jstring string = m_jniEnv->NewStringUTF(googlePlayProductID.c_str());
-        m_jniEnv->CallStaticVoidMethod(m_javaBillingManagerClassID, m_inAppMethodID, string);
-        m_jniEnv->DeleteLocalRef(string);
+        jstring productID = m_jniEnv->NewStringUTF(googlePlayProductID.c_str());
+
+        m_jniEnv->CallStaticVoidMethod(m_javaBillingManagerClassID, m_makeInAppPurchaseMethodID, productID);
+
+        m_jniEnv->DeleteLocalRef(productID);
     }
 }
 

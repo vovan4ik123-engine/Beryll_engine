@@ -9,7 +9,7 @@ enable_language(C CXX ASM)
 add_compile_options(-fexceptions -frtti -fPIC) # -fopenmp -pthread -fexceptions -frtti -fPIC
 
 # for info/warning/assert messages
-add_definitions(-DBR_DEBUG)
+#add_definitions(-DBR_DEBUG)
 
 # add flags for specyfic compiler
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
@@ -43,6 +43,7 @@ if(ANDROID)
             src/beryll/platform/androidGLES/AndroidGLESShadowMapTexture.cpp
             src/beryll/platform/androidGLES/AndroidGLESGlobal.cpp
             src/beryll/platform/androidGLES/AndroidGLESBillingSystem.cpp
+            src/beryll/platform/androidGLES/AndroidGLESGoogleAnalytics.cpp
             )
 elseif(APPLE)
     set(IOSMetal_SRC
@@ -95,6 +96,8 @@ set(Common_SRC
         src/beryll/loadingScreen/LoadingScreen.cpp
 
         src/beryll/billingSystem/BillingSystem.cpp
+
+        src/beryll/googleAnalytics/GoogleAnalytics.cpp
 
         src/beryll/network/Network.cpp
 )

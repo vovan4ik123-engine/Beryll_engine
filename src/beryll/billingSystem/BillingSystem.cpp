@@ -19,7 +19,7 @@ namespace Beryll
 #elif defined(APPLE)
 
 #else
-        BR_ASSERT(false, "%s", "Can not create Window. Unknown platform.");
+        BR_ASSERT(false, "%s", "Can not create BillingSystem. Unknown platform.");
 #endif
     }
 }
