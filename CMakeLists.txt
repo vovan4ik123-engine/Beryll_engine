@@ -9,7 +9,7 @@ enable_language(C CXX ASM)
 add_compile_options(-fexceptions -frtti -fPIC) # -fopenmp -pthread -fexceptions -frtti -fPIC
 
 # for info/warning/assert messages
-#add_definitions(-DBR_DEBUG)
+add_definitions(-DBR_DEBUG)
 
 # add flags for specyfic compiler
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")

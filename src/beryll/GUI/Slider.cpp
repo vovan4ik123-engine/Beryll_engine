@@ -34,8 +34,9 @@ namespace Beryll
 
     void Slider::updateBeforePhysics()
     {
-        std::vector<Finger>& fingers = EventHandler::getFingers();
+        m_valueChanging = false;
 
+        std::vector<Finger>& fingers = EventHandler::getFingers();
         for(Finger& f : fingers)
         {
             if(f.normalizedPos.x > m_leftPos && f.normalizedPos.x < m_leftPos + m_width
@@ -44,9 +45,18 @@ namespace Beryll
             {
                 // If any finger in slider area.
                 if(f.downEvent && !f.handled)
-                {
                     f.handled = true;
-                }
+
+                // Calculate position on slider and set m_sliderValue here because ImGUI ignore screen multitouch.
+                // Next modify ImGUI library:
+                // In method bool ImGui::SliderBehaviorT() in file imgui_widgets.cpp delete if (set_new_value) {...}
+                // Now we calculate slider value. Not ImGUI.
+                float valueRange = m_max - m_min;
+                float normalizedSliderProgress = (f.normalizedPos.x - m_leftPos) / m_width;
+                BR_ASSERT((normalizedSliderProgress >= 0.0f &&
+                           normalizedSliderProgress <= 1.0f), "%s", "normalizedSliderProgress is out of 0...1 range.");
+                m_sliderValue = m_min + (valueRange * normalizedSliderProgress);
+                m_valueChanging = true;
             }
         }
     }
@@ -75,20 +85,20 @@ namespace Beryll
         if(m_font)
         {
             ImGui::PushFont(m_font);
-            m_valueChanging = ImGui::SliderFloat(m_text.c_str(),
-                                                 ImVec2(m_width * MainImGUI::getInstance()->getGUIWidth(), m_height * MainImGUI::getInstance()->getGUIHeight()),
-                                                 &m_sliderValue,
-                                                 m_min,
-                                                 m_max);
+            ImGui::SliderFloat(m_text.c_str(),
+                               ImVec2(m_width * MainImGUI::getInstance()->getGUIWidth(), m_height * MainImGUI::getInstance()->getGUIHeight()),
+                               &m_sliderValue,
+                               m_min,
+                               m_max);
             ImGui::PopFont();
         }
         else
         {
-            m_valueChanging = ImGui::SliderFloat(m_text.c_str(),
-                                                 ImVec2(m_width * MainImGUI::getInstance()->getGUIWidth(), m_height * MainImGUI::getInstance()->getGUIHeight()),
-                                                 &m_sliderValue,
-                                                 m_min,
-                                                 m_max);
+            ImGui::SliderFloat(m_text.c_str(),
+                               ImVec2(m_width * MainImGUI::getInstance()->getGUIWidth(), m_height * MainImGUI::getInstance()->getGUIHeight()),
+                               &m_sliderValue,
+                               m_min,
+                               m_max);
         }
 
         ImGui::End();
