@@ -1,11 +1,9 @@
 ---------------------plan:---------------------
 
-Remove blue background under transparent pixels in ImGUI.
-Add networking. send one text message to specific URL.
 Add scene banner with texture set and timer.
+2D text on 3D scene.
 
 Draw thread?
-
 
 #include <android/log.h>
 __android_log_print(ANDROID_LOG_DEBUG, "TAG", "message");
