@@ -29,7 +29,8 @@ Add to SDLActivity
     GoogleAnalyticsManager.init(mSingleton);
 
 GoogleAnalyticsManager
-    package com.controlledbattles.bigbattlesimulator.app;
+    package your package name....
+
     import android.os.Bundle;
     import android.util.Log;
 

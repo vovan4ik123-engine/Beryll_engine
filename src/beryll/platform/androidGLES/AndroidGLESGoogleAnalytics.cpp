@@ -10,7 +10,7 @@ namespace Beryll
             BR_ASSERT(false, "%s", "SDL_AndroidGetJNIEnv() returned nullptr.")
         }
 
-        m_javaGoogleAnalyticsManagerClassID = m_jniEnv->FindClass("com/controlledbattles/bigbattlesimulator/app/GoogleAnalyticsManager");
+        m_javaGoogleAnalyticsManagerClassID = m_jniEnv->FindClass("managers/GoogleAnalyticsManager"); // app/src/main/java/managers/GoogleAnalyticsManager.java
         if (!m_javaGoogleAnalyticsManagerClassID)
         {
             BR_ASSERT(false, "%s", "m_javaGoogleAnalyticsManagerClassID is nullptr.")

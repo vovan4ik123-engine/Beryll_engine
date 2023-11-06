@@ -13,7 +13,7 @@ namespace Beryll
             BR_ASSERT(false, "%s", "SDL_AndroidGetJNIEnv() returned nullptr.")
         }
 
-        m_javaBillingManagerClassID = m_jniEnv->FindClass("com/controlledbattles/bigbattlesimulator/app/BillingManager");
+        m_javaBillingManagerClassID = m_jniEnv->FindClass("managers/BillingManager"); // app/src/main/java/managers/BillingManager.java
         if (!m_javaBillingManagerClassID)
         {
             BR_ASSERT(false, "%s", "m_javaBillingManagerClassID is nullptr.")

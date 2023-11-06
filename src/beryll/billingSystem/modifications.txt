@@ -30,7 +30,7 @@ Add to SDLActivity
     BillingManager.init(mSingleton);
 
 BillingManager
-    package com.controlledbattles.bigbattlesimulator.app;
+    package your package name....
 
     import android.util.Log;
 
