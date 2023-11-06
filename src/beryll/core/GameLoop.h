@@ -16,7 +16,7 @@ namespace Beryll
 
         static void setFPSMaxLimit(float fps)
         {
-            if(m_FPSMaxLimit > m_FPSMinLimit)
+            if(fps > m_FPSMinLimit)
                 m_FPSMaxLimit = fps;
         }
 

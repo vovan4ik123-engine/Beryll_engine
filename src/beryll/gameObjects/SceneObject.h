@@ -228,7 +228,7 @@ namespace Beryll
         SceneObjectGroups getSceneObjectGroup() { return m_sceneObjectGroup; }
         glm::vec3 getFaceDirXYZ()
         {
-            return glm::normalize(glm::vec3(glm::toMat4(glm::normalize(m_engineAddedRotation * m_originalRotationFromBlenderFile)) * glm::vec4(m_sceneObjectFaceDir, 1.0f)));
+            return glm::normalize(glm::vec3(glm::toMat4(glm::normalize(m_engineAddedRotation * m_originalRotationFromBlenderFile)) * m_sceneObjectFaceDir));
         }
         glm::vec3 getFaceDirXZ()
         {
@@ -237,7 +237,7 @@ namespace Beryll
         }
         glm::vec3 getRightDirXYZ()
         {
-            return glm::normalize(glm::vec3(glm::toMat4(glm::normalize(m_engineAddedRotation * m_originalRotationFromBlenderFile)) * glm::vec4(m_sceneObjectRightDir, 1.0f)));
+            return glm::normalize(glm::vec3(glm::toMat4(glm::normalize(m_engineAddedRotation * m_originalRotationFromBlenderFile)) * m_sceneObjectRightDir));
         }
         glm::vec3 getRightDirXZ()
         {
@@ -246,7 +246,7 @@ namespace Beryll
         }
         glm::vec3 getUpDirXYZ()
         {
-            return glm::normalize(glm::vec3(glm::toMat4(glm::normalize(m_engineAddedRotation * m_originalRotationFromBlenderFile)) * glm::vec4(m_sceneObjectUpDir, 1.0f)));
+            return glm::normalize(glm::vec3(glm::toMat4(glm::normalize(m_engineAddedRotation * m_originalRotationFromBlenderFile)) * m_sceneObjectUpDir));
         }
 
         void enableDraw()
@@ -306,10 +306,9 @@ namespace Beryll
     protected:
         //float m_scale = 1.0f; // Unused for now.
         glm::quat m_originalRotationFromBlenderFile{1.0f, 0.0f, 0.0f, 0.0f}; // Loaded with model from blender exported file.
-        glm::quat m_engineAddedRotation{1.0f, 0.0f, 0.0f, 0.0f}; // Rotation added by user to model.
+        glm::quat m_engineAddedRotation{1.0f, 0.0f, 0.0f, 0.0f}; // Rotation added by engine(generally after physics simulation) to model.
         glm::vec3 m_origin{0.0f, 0.0f, 0.0f};
-        // For synchronization when one thread set origin and other calls getOrigin().
-        // for same object.
+        // std::atomic for synchronization when one thread set origin and other calls getOrigin() for same object.
         std::atomic<float> m_originX = 0.0f;
         std::atomic<float> m_originY = 0.0f;
         std::atomic<float> m_originZ = 0.0f;
@@ -341,8 +340,8 @@ namespace Beryll
         // and during exporting model you change axis to: up +Y, forward -Z.
         // That will add rotation to exported model: 90 degrees around -X axis or 270 degrees around +X axis.
         // If you want take models faceDir or upDir just multiply these vectors by m_rotateMatrix.
-        const glm::vec3 m_sceneObjectFaceDir{1.0f, 0.0f, 0.0f};
-        const glm::vec3 m_sceneObjectRightDir{0.0f, -1.0f, 0.0f};
-        const glm::vec3 m_sceneObjectUpDir{0.0f, 0.0f, 1.0f};
+        const glm::vec4 m_sceneObjectFaceDir{1.0f, 0.0f, 0.0f, 1.0f};
+        const glm::vec4 m_sceneObjectRightDir{0.0f, -1.0f, 0.0f, 1.0f};
+        const glm::vec4 m_sceneObjectUpDir{0.0f, 0.0f, 1.0f, 1.0f};
     };
 }
