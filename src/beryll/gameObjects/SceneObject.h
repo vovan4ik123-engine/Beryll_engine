@@ -54,10 +54,7 @@ namespace Beryll
             m_originZ = m_origin.z;
 
             if(m_hasCollisionObject)
-            {
-                // Game object with collision object will take transforms from physics module after simulation.
                 Physics::setOrigin(m_ID, orig, resetVelocities);
-            }
         }
 
         void addToOrigin(const glm::vec3& distance, bool resetVelocities = false)
@@ -68,40 +65,33 @@ namespace Beryll
             m_originZ = m_origin.z;
 
             if(m_hasCollisionObject)
-            {
-                // Game object with collision object will take transforms from physics module after simulation.
                 Physics::addToOrigin(m_ID, distance, resetVelocities);
-            }
         }
 
         void addToRotation(float angleRad, const glm::vec3& axis, bool resetVelocities = false)
         {
-            if(angleRad < 0.0035f) { return; } // Less that 0.2 degree.
+            if(angleRad < 0.0017f) { return; } // Less that 0.1 degree.
 
             glm::quat normQuat = glm::normalize(glm::angleAxis(angleRad, glm::normalize(axis)));
 
+            m_totalRotation = glm::normalize(normQuat * m_totalRotation);
             m_engineAddedRotation = glm::normalize(normQuat * m_engineAddedRotation);
 
             if(m_hasCollisionObject)
-            {
-                // Game object with collision object will take transforms from physics module after simulation.
                 Physics::addToRotation(m_ID, normQuat, resetVelocities);
-            }
         }
 
         void addToRotation(const glm::quat& qua, bool resetVelocities = false)
         {
             glm::quat normQuat = glm::normalize(qua);
 
-            if(glm::angle(normQuat) < 0.0035f) { return; } // Less than 0.2 degree.
+            if(glm::angle(normQuat) < 0.0017f) { return; } // Less than 0.1 degree.
 
+            m_totalRotation = glm::normalize(normQuat * m_totalRotation);
             m_engineAddedRotation = glm::normalize(normQuat * m_engineAddedRotation);
 
             if(m_hasCollisionObject)
-            {
-                // Game object with collision object will take transforms from physics module after simulation.
                 Physics::addToRotation(m_ID, normQuat, resetVelocities);
-            }
         }
 
         void rotateToPoint(const glm::vec3& point, bool ignoreYAxisWhenRotate)
@@ -201,11 +191,11 @@ namespace Beryll
             }
         }
 
-        glm::mat4 getModelMatrix(bool includeBlenderFileRotation = true)
+        glm::mat4 getModelMatrix(bool includeTotalRotation = true)
         {
             // translate * rotate * scale.
-            if(includeBlenderFileRotation)
-                return glm::translate(glm::mat4{1.0f}, m_origin) * glm::toMat4(glm::normalize(m_engineAddedRotation * m_originalRotationFromBlenderFile));
+            if(includeTotalRotation)
+                return glm::translate(glm::mat4{1.0f}, m_origin) * glm::toMat4(m_totalRotation);
             else
                 return glm::translate(glm::mat4{1.0f}, m_origin) * glm::toMat4(m_engineAddedRotation);
         }
@@ -228,7 +218,7 @@ namespace Beryll
         SceneObjectGroups getSceneObjectGroup() { return m_sceneObjectGroup; }
         glm::vec3 getFaceDirXYZ()
         {
-            return glm::normalize(glm::vec3(glm::toMat4(glm::normalize(m_engineAddedRotation * m_originalRotationFromBlenderFile)) * m_sceneObjectFaceDir));
+            return glm::normalize(glm::vec3(m_totalRotation * m_sceneObjectFaceDir));
         }
         glm::vec3 getFaceDirXZ()
         {
@@ -237,7 +227,7 @@ namespace Beryll
         }
         glm::vec3 getRightDirXYZ()
         {
-            return glm::normalize(glm::vec3(glm::toMat4(glm::normalize(m_engineAddedRotation * m_originalRotationFromBlenderFile)) * m_sceneObjectRightDir));
+            return glm::normalize(glm::vec3(m_totalRotation * m_sceneObjectRightDir));
         }
         glm::vec3 getRightDirXZ()
         {
@@ -246,7 +236,7 @@ namespace Beryll
         }
         glm::vec3 getUpDirXYZ()
         {
-            return glm::normalize(glm::vec3(glm::toMat4(glm::normalize(m_engineAddedRotation * m_originalRotationFromBlenderFile)) * m_sceneObjectUpDir));
+            return glm::normalize(glm::vec3(m_totalRotation * m_sceneObjectUpDir));
         }
 
         void enableDraw()
@@ -305,8 +295,14 @@ namespace Beryll
 
     protected:
         //float m_scale = 1.0f; // Unused for now.
-        glm::quat m_originalRotationFromBlenderFile{1.0f, 0.0f, 0.0f, 0.0f}; // Loaded with model from blender exported file.
-        glm::quat m_engineAddedRotation{1.0f, 0.0f, 0.0f, 0.0f}; // Rotation added by engine(generally after physics simulation) to model.
+
+        // Total rotation include all rotations:
+        //     loaded with model from Blender exported file,
+        //     added by physics simulation,
+        //     added by engine methods addToRotation(...).
+        glm::quat m_totalRotation{1.0f, 0.0f, 0.0f, 0.0f};
+        // Only sum of rotations added by engine methods addToRotation(...)
+        glm::quat m_engineAddedRotation{1.0f, 0.0f, 0.0f, 0.0f};
         glm::vec3 m_origin{0.0f, 0.0f, 0.0f};
         // std::atomic for synchronization when one thread set origin and other calls getOrigin() for same object.
         std::atomic<float> m_originX = 0.0f;
@@ -336,7 +332,7 @@ namespace Beryll
         bool m_isEnabledUpdate = true; // For methods updateBeforePhysics() + updateAfterPhysics().
 
         // If objects on scene has face it should be created in Blender with face directed along +X axis.
-        // Engine assume you create 3D models in tool where up axis is +Z (like Blender)
+        // Engine assume you create 3D models in Blender where up axis is +Z
         // and during exporting model you change axis to: up +Y, forward -Z.
         // That will add rotation to exported model: 90 degrees around -X axis or 270 degrees around +X axis.
         // If you want take models faceDir or upDir just multiply these vectors by m_rotateMatrix.

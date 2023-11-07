@@ -43,40 +43,27 @@ namespace Beryll
             if(meshName.find("Collision") != std::string::npos)
             {
                 // Collect collision mesh dimensions.
+                // Model should be created in Blender where up axis = +Z.
                 for (int g = 0; g < scene->mMeshes[i]->mNumVertices; ++g)
                 {
-                    if (scene->mMeshes[i]->mVertices[g].y < m_mostBottomVertex)
-                        m_mostBottomVertex = scene->mMeshes[i]->mVertices[g].y;
-
-                    if (scene->mMeshes[i]->mVertices[g].y > m_mostTopVertex)
-                        m_mostTopVertex = scene->mMeshes[i]->mVertices[g].y;
+                    // Top and bottom points must be taken from Z axis.
+                    if (scene->mMeshes[i]->mVertices[g].z < m_mostBottomVertex)
+                        m_mostBottomVertex = scene->mMeshes[i]->mVertices[g].z;
+                    if (scene->mMeshes[i]->mVertices[g].z > m_mostTopVertex)
+                        m_mostTopVertex = scene->mMeshes[i]->mVertices[g].z;
 
                     if (scene->mMeshes[i]->mVertices[g].x < m_smallestX)
                         m_smallestX = scene->mMeshes[i]->mVertices[g].x;
-
                     if (scene->mMeshes[i]->mVertices[g].x > m_biggestX)
                         m_biggestX = scene->mMeshes[i]->mVertices[g].x;
 
-                    if (scene->mMeshes[i]->mVertices[g].z < m_smallestZ)
-                        m_smallestZ = scene->mMeshes[i]->mVertices[g].z;
-
-                    if (scene->mMeshes[i]->mVertices[g].z > m_biggestZ)
-                        m_biggestZ = scene->mMeshes[i]->mVertices[g].z;
+                    // Z dimensions should be taken from Y axis.
+                    // In Blender Y axis is horizontal and will replaced by Z after exporting.
+                    if (scene->mMeshes[i]->mVertices[g].y < m_smallestZ)
+                        m_smallestZ = scene->mMeshes[i]->mVertices[g].y;
+                    if (scene->mMeshes[i]->mVertices[g].y > m_biggestZ)
+                        m_biggestZ = scene->mMeshes[i]->mVertices[g].y;
                 }
-
-                glm::vec3 scale{1.0f, 1.0f, 1.0f};
-                const aiNode* collisionNode = Utils::Common::findAinodeForAimesh(scene, scene->mRootNode, scene->mMeshes[i]->mName);
-                if(collisionNode)
-                {
-                    glm::mat4 collisionTransforms = Utils::Matrix::aiToGlm(collisionNode->mTransformation);
-                    scale = Utils::Matrix::getScaleFrom4x4Glm(collisionTransforms);
-                }
-                m_mostTopVertex *= scale.y;
-                m_mostBottomVertex *= scale.y;
-                m_biggestX *= scale.x;
-                m_smallestX *= scale.x;
-                m_biggestZ *= scale.z;
-                m_smallestZ *= scale.z;
 
                 m_hasCollisionObject = true;
                 m_isEnabledInPhysicsSimulation = true;
@@ -264,7 +251,7 @@ namespace Beryll
                 glm::vec3 scale = Utils::Matrix::getScaleFrom4x4Glm(modelMatrix);
                 BR_ASSERT((scale.x == 1.0f && scale.y == 1.0f && scale.z == 1.0f), "%s", "Scale should be baked to 1 in modeling tool.");
 
-                m_originalRotationFromBlenderFile = Utils::Matrix::getRotationFrom4x4Glm(modelMatrix);
+                m_totalRotation = Utils::Matrix::getRotationFrom4x4Glm(modelMatrix);
                 m_origin = Utils::Matrix::getTranslationFrom4x4Glm(modelMatrix);
                 m_originX = m_origin.x;
                 m_originY = m_origin.y;
@@ -289,7 +276,7 @@ namespace Beryll
 
         m_physicsTransforms = Physics::getTransforms(m_ID);
 
-        m_engineAddedRotation = glm::normalize(m_physicsTransforms.rotation);
+        m_totalRotation = glm::normalize(m_physicsTransforms.rotation);
         m_origin = m_physicsTransforms.origin;
         m_originX = m_origin.x;
         m_originY = m_origin.y;

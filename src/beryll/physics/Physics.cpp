@@ -138,7 +138,7 @@ namespace Beryll
                                  CollisionGroups collGroup,
                                  CollisionGroups collMask)
     {
-        BR_ASSERT((mass == 0.0f), "%s", "ConcaveMesh can be only static or kinematic. means mass = 0.");
+        BR_ASSERT((mass == 0.0f), "%s", "ConcaveMesh can be only static or kinematic. mass = 0.");
         BR_ASSERT((collFlag != CollisionFlags::DYNAMIC), "%s", "ConcaveMesh can be only static or kinematic.");
         BR_ASSERT((vertices.empty() == false), "%s", "Vertices empty.");
 
@@ -175,7 +175,8 @@ namespace Beryll
         startTransform.setRotation(btQuaternion(rot.x, rot.y, rot.z, rot.w));
 
         btVector3 localInertia(0, 0, 0);
-        if(mass != 0.0f) shape->calculateLocalInertia(mass, localInertia);
+        if(mass != 0.0f)
+            shape->calculateLocalInertia(mass, localInertia);
 
         std::shared_ptr<btDefaultMotionState> motionState = std::make_shared<btDefaultMotionState>(startTransform);
         m_motionStates.push_back(motionState);
@@ -229,7 +230,8 @@ namespace Beryll
         startTransform.setRotation(btQuaternion(rot.x, rot.y, rot.z, rot.w));
 
         btVector3 localInertia(0, 0, 0);
-        if(mass != 0.0f) shape->calculateLocalInertia(mass, localInertia);
+        if(mass != 0.0f)
+            shape->calculateLocalInertia(mass, localInertia);
 
         std::shared_ptr<btDefaultMotionState> motionState = std::make_shared<btDefaultMotionState>(startTransform);
         m_motionStates.push_back(motionState);
@@ -285,11 +287,11 @@ namespace Beryll
             if(vert.z > topZ) topZ = vert.z;
         }
 
-        float Xsize = topX - bottomX;
-        float Ysize = topY - bottomY;
-        float Zsize = topZ - bottomZ;
+        float xSize = topX - bottomX;
+        float ySize = topY - bottomY;
+        float zSize = topZ - bottomZ;
 
-        std::shared_ptr<btBoxShape> boxShape = std::make_shared<btBoxShape>(btVector3(Xsize / 2.0f, Ysize / 2.0f, Zsize / 2.0f));
+        std::shared_ptr<btBoxShape> boxShape = std::make_shared<btBoxShape>(btVector3(xSize / 2.0f, ySize / 2.0f, zSize / 2.0f));
         m_collisionShapes.push_back(boxShape);
 
         glm::vec3 transl = Utils::Matrix::getTranslationFrom4x4Glm(transforms);
@@ -300,7 +302,8 @@ namespace Beryll
         startTransform.setRotation(btQuaternion(rot.x, rot.y, rot.z, rot.w));
 
         btVector3 localInertia(0, 0, 0);
-        if(mass != 0.0f) boxShape->calculateLocalInertia(mass, localInertia);
+        if(mass != 0.0f)
+            boxShape->calculateLocalInertia(mass, localInertia);
 
         std::shared_ptr<btDefaultMotionState> motionState = std::make_shared<btDefaultMotionState>(startTransform);
         m_motionStates.push_back(motionState);
@@ -337,8 +340,7 @@ namespace Beryll
                    (mass > 0.0f && collFlag == CollisionFlags::DYNAMIC)), "%s", "Wrong parameters for sphere shape.");
         BR_ASSERT((vertices.empty() == false), "%s", "Vertices empty.");
 
-        glm::vec3 point = glm::vec3(vertices[0].x, vertices[0].y, vertices[0].z);
-        float radius = glm::distance(glm::vec3(0.0f, 0.0f, 0.0f), point);
+        float radius = glm::length(vertices[0]);
 
         std::shared_ptr<btSphereShape> sphereShape = std::make_shared<btSphereShape>(radius);
         m_collisionShapes.push_back(sphereShape);
@@ -351,7 +353,8 @@ namespace Beryll
         startTransform.setRotation(btQuaternion(rot.x, rot.y, rot.z, rot.w));
 
         btVector3 localInertia(0, 0, 0);
-        if(mass != 0.0f) sphereShape->calculateLocalInertia(mass, localInertia);
+        if(mass != 0.0f)
+            sphereShape->calculateLocalInertia(mass, localInertia);
 
         std::shared_ptr<btDefaultMotionState> motionState = std::make_shared<btDefaultMotionState>(startTransform);
         m_motionStates.push_back(motionState);
@@ -404,9 +407,10 @@ namespace Beryll
 
         float radius = (topX - bottomX) / 2.0f;
         float totalHeight = topZ - bottomZ;
-        BR_ASSERT((totalHeight > radius), "%s", "Original Capsule position should be along with the Z axis.");
+        BR_ASSERT((totalHeight > (radius * 2.0f)), "%s", "Capsule looks like sphere.");
 
-        // Original capsule position should be along with the Z axis.
+        // Originally capsule should be created in Blender around Z axis.
+        // Next you can rotate it and move to desired position.
         std::shared_ptr<btCapsuleShapeZ> capsuleShape = std::make_shared<btCapsuleShapeZ>(radius, (totalHeight - radius * 2.0f));
         m_collisionShapes.push_back(capsuleShape);
 
@@ -418,7 +422,8 @@ namespace Beryll
         startTransform.setRotation(btQuaternion(rot.x, rot.y, rot.z, rot.w));
 
         btVector3 localInertia(0, 0, 0);
-        if(mass != 0.0f) capsuleShape->calculateLocalInertia(mass, localInertia);
+        if(mass != 0.0f)
+            capsuleShape->calculateLocalInertia(mass, localInertia);
 
         std::shared_ptr<btDefaultMotionState> motionState = std::make_shared<btDefaultMotionState>(startTransform);
         m_motionStates.push_back(motionState);
