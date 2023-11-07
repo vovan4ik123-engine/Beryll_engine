@@ -16,6 +16,8 @@ namespace Beryll
         PLAYER = 2,
         ENEMY = 3,
         BULLET = 4,
+        STATIC_ENVIRONMENT = 5,
+        DYNAMIC_ENVIRONMENT = 6,
 
         PLAYER_GROUP_1,
         PLAYER_GROUP_2,

@@ -76,7 +76,7 @@ namespace Beryll
         // maxSubSteps: timeStep < maxSubSteps * fixedTimeStep
         // fixedTimeStep: simulation resolution increases as this value decreases.
         //                If your balls penetrates your walls instead of colliding with them decrease it
-        m_timeStep = std::min(m_timer.getElapsedSec(), 0.07f); // protection from lag (FPS dropped down and is < 14 FPS)
+        m_timeStep = std::min(m_timer.getElapsedSec(), 0.1f); // Protection from lag (FPS dropped down and is < 10 FPS).
         m_timer.reset();
 
         m_dynamicsWorldMT->stepSimulation(m_timeStep,
@@ -121,6 +121,10 @@ namespace Beryll
         else if(meshName.find("CollisionCapsule") != std::string::npos)
         {
             addCapsuleShape(vertices, transforms, objectID, mass, wantCallBack, collFlag, collGroup, collMask);
+        }
+        else if(meshName.find("CollisionCylinder") != std::string::npos)
+        {
+            addCylinderShape(vertices, transforms, objectID, mass, wantCallBack, collFlag, collGroup, collMask);
         }
         else
         {
@@ -184,7 +188,7 @@ namespace Beryll
         std::shared_ptr<btRigidBody> body = std::make_shared<btRigidBody>(rbInfo, objectID);
 
         std::shared_ptr<RigidBodyData> rigidBodyData = std::make_shared<RigidBodyData>(objectID, body, true, collGroup, collMask, collFlag, mass);
-        body->setUserPointer(rigidBodyData.get()); // Then we can fetch this rigidBodyData from CollisionObject ->getUserPointer().
+        body->setUserPointer(rigidBodyData.get()); // Then we can fetch this rigidBodyData from CollisionObject->getUserPointer().
 
         if(collFlag == CollisionFlags::STATIC && mass == 0.0f)
             body->setCollisionFlags(btCollisionObject::CF_STATIC_OBJECT);
@@ -239,7 +243,7 @@ namespace Beryll
         std::shared_ptr<btRigidBody> body = std::make_shared<btRigidBody>(rbInfo, objectID);
 
         std::shared_ptr<RigidBodyData> rigidBodyData = std::make_shared<RigidBodyData>(objectID, body, true, collGroup, collMask, collFlag, mass);
-        body->setUserPointer(rigidBodyData.get()); // Then we can fetch this rigidBodyData from CollisionObject ->getUserPointer().
+        body->setUserPointer(rigidBodyData.get()); // Then we can fetch this rigidBodyData from CollisionObject->getUserPointer().
 
         if(collFlag == CollisionFlags::STATIC && mass == 0.0f)
             body->setCollisionFlags(btCollisionObject::CF_STATIC_OBJECT);
@@ -311,7 +315,7 @@ namespace Beryll
         std::shared_ptr<btRigidBody> body = std::make_shared<btRigidBody>(rbInfo, objectID);
 
         std::shared_ptr<RigidBodyData> rigidBodyData = std::make_shared<RigidBodyData>(objectID, body, true, collGroup, collMask, collFlag, mass);
-        body->setUserPointer(rigidBodyData.get()); // Then we can fetch this rigidBodyData from CollisionObject ->getUserPointer().
+        body->setUserPointer(rigidBodyData.get()); // Then we can fetch this rigidBodyData from CollisionObject->getUserPointer().
 
         if(collFlag == CollisionFlags::STATIC && mass == 0.0f)
             body->setCollisionFlags(btCollisionObject::CF_STATIC_OBJECT);
@@ -362,7 +366,7 @@ namespace Beryll
         std::shared_ptr<btRigidBody> body = std::make_shared<btRigidBody>(rbInfo, objectID);
 
         std::shared_ptr<RigidBodyData> rigidBodyData = std::make_shared<RigidBodyData>(objectID, body, true, collGroup, collMask, collFlag, mass);
-        body->setUserPointer(rigidBodyData.get()); // Then we can fetch this rigidBodyData from CollisionObject ->getUserPointer().
+        body->setUserPointer(rigidBodyData.get()); // Then we can fetch this rigidBodyData from CollisionObject->getUserPointer().
 
         if(collFlag == CollisionFlags::STATIC && mass == 0.0f)
             body->setCollisionFlags(btCollisionObject::CF_STATIC_OBJECT);
@@ -431,7 +435,81 @@ namespace Beryll
         std::shared_ptr<btRigidBody> body = std::make_shared<btRigidBody>(rbInfo, objectID);
 
         std::shared_ptr<RigidBodyData> rigidBodyData = std::make_shared<RigidBodyData>(objectID, body, true, collGroup, collMask, collFlag, mass);
-        body->setUserPointer(rigidBodyData.get()); // Then we can fetch this rigidBodyData from CollisionObject ->getUserPointer().
+        body->setUserPointer(rigidBodyData.get()); // Then we can fetch this rigidBodyData from CollisionObject->getUserPointer().
+
+        if(collFlag == CollisionFlags::STATIC && mass == 0.0f)
+            body->setCollisionFlags(btCollisionObject::CF_STATIC_OBJECT);
+        else if(collFlag == CollisionFlags::KINEMATIC && mass == 0.0f)
+            body->setCollisionFlags(btCollisionObject::CF_KINEMATIC_OBJECT);
+        else if(collFlag == CollisionFlags::DYNAMIC && mass > 0.0f)
+            body->setCollisionFlags(btCollisionObject::CF_DYNAMIC_OBJECT);
+
+        if(wantCallBack)
+            body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
+
+        m_rigidBodiesMap.insert(std::make_pair(objectID, rigidBodyData));
+        m_dynamicsWorldMT->addRigidBody(body.get(), static_cast<int>(collGroup), static_cast<int>(collMask));
+    }
+
+    void Physics::addCylinderShape(const std::vector<glm::vec3>& vertices,
+                                   const glm::mat4& transforms,
+                                   const int objectID,
+                                   float mass,
+                                   bool wantCallBack,
+                                   CollisionFlags collFlag,
+                                   CollisionGroups collGroup,
+                                   CollisionGroups collMask)
+    {
+        BR_ASSERT(((mass == 0.0f && collFlag != CollisionFlags::DYNAMIC) ||
+                   (mass > 0.0f && collFlag == CollisionFlags::DYNAMIC)), "%s", "Wrong parameters for capsule shape.");
+        BR_ASSERT((vertices.empty() == false), "%s", "Vertices empty.");
+
+        float bottomX = std::numeric_limits<float>::max();
+        float topX = std::numeric_limits<float>::min();
+        float bottomY = std::numeric_limits<float>::max();
+        float topY = std::numeric_limits<float>::min();
+        float bottomZ = std::numeric_limits<float>::max();
+        float topZ = std::numeric_limits<float>::min();
+
+        for(const glm::vec3& vert : vertices)
+        {
+            if(vert.x < bottomX) bottomX = vert.x;
+            if(vert.x > topX) topX = vert.x;
+
+            if(vert.y < bottomY) bottomY = vert.y;
+            if(vert.y > topY) topY = vert.y;
+
+            if(vert.z < bottomZ) bottomZ = vert.z;
+            if(vert.z > topZ) topZ = vert.z;
+        }
+
+        float xSize = topX - bottomX;
+        float ySize = topY - bottomY;
+        float zSize = topZ - bottomZ;
+
+        // Originally cylinder should be created in Blender around Z axis.
+        // Next you can rotate it and move to desired position.
+        std::shared_ptr<btCylinderShapeZ> cylinderShape = std::make_shared<btCylinderShapeZ>(btVector3(xSize / 2.0f, ySize / 2.0f, zSize / 2.0f));
+        m_collisionShapes.push_back(cylinderShape);
+
+        glm::vec3 transl = Utils::Matrix::getTranslationFrom4x4Glm(transforms);
+        glm::quat rot = Utils::Matrix::getRotationFrom4x4Glm(transforms);
+        btTransform startTransform;
+        startTransform.setIdentity();
+        startTransform.setOrigin(btVector3(transl.x, transl.y, transl.z));
+        startTransform.setRotation(btQuaternion(rot.x, rot.y, rot.z, rot.w));
+
+        btVector3 localInertia(0, 0, 0);
+        if(mass != 0.0f)
+            cylinderShape->calculateLocalInertia(mass, localInertia);
+
+        std::shared_ptr<btDefaultMotionState> motionState = std::make_shared<btDefaultMotionState>(startTransform);
+        m_motionStates.push_back(motionState);
+        btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState.get(), cylinderShape.get(), localInertia);
+        std::shared_ptr<btRigidBody> body = std::make_shared<btRigidBody>(rbInfo, objectID);
+
+        std::shared_ptr<RigidBodyData> rigidBodyData = std::make_shared<RigidBodyData>(objectID, body, true, collGroup, collMask, collFlag, mass);
+        body->setUserPointer(rigidBodyData.get()); // Then we can fetch this rigidBodyData from CollisionObject->getUserPointer().
 
         if(collFlag == CollisionFlags::STATIC && mass == 0.0f)
             body->setCollisionFlags(btCollisionObject::CF_STATIC_OBJECT);

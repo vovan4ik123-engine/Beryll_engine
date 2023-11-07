@@ -311,5 +311,14 @@ namespace Beryll
                                     CollisionFlags collFlag,
                                     CollisionGroups collGroup,
                                     CollisionGroups collMask);
+
+        static void addCylinderShape(const std::vector<glm::vec3>& vertices,
+                                    const glm::mat4& transforms,
+                                    const int objectID,
+                                    float mass,
+                                    bool wantCallBack,
+                                    CollisionFlags collFlag,
+                                    CollisionGroups collGroup,
+                                    CollisionGroups collMask);
     };
 }
