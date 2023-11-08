@@ -1,4 +1,3 @@
-
 ----------------------- For Android -----------------------
 
 Add to build.gradle
@@ -26,10 +25,11 @@ Download file "google-services.json" from Firebase project and put it to app/
 Add to SDLActivity
     onCreate():
     after mSingleton = this;
+          SDL.setContext(this);
     GoogleAnalyticsManager.init(mSingleton);
 
-GoogleAnalyticsManager
-    package your package name....
+java/managers/GoogleAnalyticsManager
+    package managers;
 
     import android.os.Bundle;
     import android.util.Log;

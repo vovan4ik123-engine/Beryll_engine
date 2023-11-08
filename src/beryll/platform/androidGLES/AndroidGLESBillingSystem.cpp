@@ -50,9 +50,9 @@ namespace Beryll
 
 // Callbacks from java code on android.
 extern "C" JNIEXPORT void JNICALL
-Java_com_controlledbattles_bigbattlesimulator_app_BillingManager_billingSystemSuccessCallback(JNIEnv *env, jclass clazz)
+Java_managers_BillingManager_billingSystemSuccessCallback(JNIEnv *env, jclass clazz)
 {
-    BR_INFO("%s", "testBillingLogs Java_com_controlledbattles_bigbattlesimulator_app_BillingManager_billingSystemSuccessCallback");
+    BR_INFO("%s", "testBillingLogs Java_managers_BillingManager_billingSystemSuccessCallback");
 
     if(Beryll::AndroidGLESBillingSystem::successCallback)
     {
@@ -63,9 +63,9 @@ Java_com_controlledbattles_bigbattlesimulator_app_BillingManager_billingSystemSu
     Beryll::AndroidGLESBillingSystem::errorCallback = nullptr;
 }
 extern "C" JNIEXPORT void JNICALL
-Java_com_controlledbattles_bigbattlesimulator_app_BillingManager_billingSystemErrorCallback(JNIEnv *env, jclass clazz)
+Java_managers_BillingManager_billingSystemErrorCallback(JNIEnv *env, jclass clazz)
 {
-    BR_INFO("%s", "testBillingLogs Java_com_controlledbattles_bigbattlesimulator_app_BillingManager_billingSystemErrorCallback");
+    BR_INFO("%s", "testBillingLogs Java_managers_BillingManager_billingSystemErrorCallback");
 
     if(Beryll::AndroidGLESBillingSystem::errorCallback)
     {

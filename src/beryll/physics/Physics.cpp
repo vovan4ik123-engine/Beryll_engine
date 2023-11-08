@@ -31,7 +31,7 @@ namespace Beryll
 
         btSetTaskScheduler(btCreateTaskSchedulerForBeryll());
 
-        BR_INFO("Number of threads on device: %d", btGetTaskScheduler()->getNumThreads());
+        BR_INFO("Number of available threads for TaskScheduler: %d", btGetTaskScheduler()->getNumThreads());
 
         btDefaultCollisionConstructionInfo cci;
         cci.m_defaultMaxPersistentManifoldPoolSize = 80000;
