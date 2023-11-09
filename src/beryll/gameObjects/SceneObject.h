@@ -195,11 +195,23 @@ namespace Beryll
 
         glm::mat4 getModelMatrix(bool includeTotalRotation = true)
         {
-            // translate * rotate * scale.
+            // modelMatrix = translate * rotate * scale.
             if(includeTotalRotation)
-                return glm::translate(glm::mat4{1.0f}, m_origin) * glm::toMat4(m_totalRotation);
+            {
+                glm::mat4 modelMatrix = glm::toMat4(m_totalRotation);
+                modelMatrix[3][0] = m_origin.x;
+                modelMatrix[3][1] = m_origin.y;
+                modelMatrix[3][2] = m_origin.z;
+                return modelMatrix;
+            }
             else
-                return glm::translate(glm::mat4{1.0f}, m_origin) * glm::toMat4(m_engineAddedRotation);
+            {
+                glm::mat4 modelMatrix = glm::toMat4(m_engineAddedRotation);
+                modelMatrix[3][0] = m_origin.x;
+                modelMatrix[3][1] = m_origin.y;
+                modelMatrix[3][2] = m_origin.z;
+                return modelMatrix;
+            }
         }
 
         glm::vec3 getOrigin()
