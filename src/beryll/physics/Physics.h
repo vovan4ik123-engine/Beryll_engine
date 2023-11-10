@@ -39,25 +39,8 @@ namespace Beryll
         STATIC_ENVIRONMENT = 1 << 1,
         DYNAMIC_ENVIRONMENT = 1 << 2,
         GROUND = 1 << 3,
-        ARMY_RAY = 1 << 4,
-
-        PLAYER_GROUP_1 = 1 << 5,
-        PLAYER_GROUP_2 = 1 << 6,
-        PLAYER_GROUP_3 = 1 << 7,
-        PLAYER_GROUP_4 = 1 << 8,
-        PLAYER_GROUP_5 = 1 << 9,
-        PLAYER_GROUP_6 = 1 << 10,
-        PLAYER_GROUP_7 = 1 << 11,
-        PLAYER_GROUP_8 = 1 << 12,
-
-        ENEMY_GROUP_1 = 1 << 13,
-        ENEMY_GROUP_2 = 1 << 14,
-        ENEMY_GROUP_3 = 1 << 15,
-        ENEMY_GROUP_4 = 1 << 16,
-        ENEMY_GROUP_5 = 1 << 17,
-        ENEMY_GROUP_6 = 1 << 18,
-        ENEMY_GROUP_7 = 1 << 19,
-        ENEMY_GROUP_8 = 1 << 20,
+        PLAYER = 1 << 4,
+        STONE = 1 << 5,
 
         YOU_CAN_COMBINE_GROUPS_WHEN_USE = STATIC_ENVIRONMENT | CAMERA,
 

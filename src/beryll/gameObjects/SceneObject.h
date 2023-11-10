@@ -18,6 +18,7 @@ namespace Beryll
         BULLET = 4,
         STATIC_ENVIRONMENT = 5,
         DYNAMIC_ENVIRONMENT = 6,
+        STONE = 7,
 
         PLAYER_GROUP_1,
         PLAYER_GROUP_2,
@@ -214,7 +215,14 @@ namespace Beryll
             }
         }
 
-        glm::vec3 getOrigin()
+        // Only for one thread.
+        const glm::vec3& getOrigin()
+        {
+            return m_origin;
+        }
+
+        // Use it if you call set/get origin from many threads.
+        glm::vec3 getOriginForMultithreading()
         {
             float x = m_originX;
             float y = m_originY;
@@ -318,7 +326,7 @@ namespace Beryll
         // Only sum of rotations added by engine methods addToRotation(...)
         glm::quat m_engineAddedRotation{1.0f, 0.0f, 0.0f, 0.0f};
         glm::vec3 m_origin{0.0f, 0.0f, 0.0f};
-        // std::atomic for synchronization when one thread set origin and other calls getOrigin() for same object.
+        // std::atomic for synchronization when one thread set origin and other calls getOriginForMultithreading() for same object.
         std::atomic<float> m_originX = 0.0f;
         std::atomic<float> m_originY = 0.0f;
         std::atomic<float> m_originZ = 0.0f;

@@ -19,8 +19,8 @@ namespace Beryll
          * collMask - should contain collGroup or groups with which you want collisions
          * objGroup - game specific group to which this scene object belong
          */
-        AnimatedCollidingCharacter(const char* modelPath,  // common params
-                                   float collisionMass,    // physics params
+        AnimatedCollidingCharacter(const char* modelPath,  // Common params.
+                                   float collisionMass,    // Physics params.
                                    bool wantCollisionCallBack,
                                    CollisionFlags collFlag,
                                    CollisionGroups collGroup,
@@ -28,14 +28,13 @@ namespace Beryll
                                    SceneObjectGroups sceneGroup = SceneObjectGroups::NONE);
         ~AnimatedCollidingCharacter() override;
 
-        // methods from base class
         void updateBeforePhysics() override;
         void updateAfterPhysics() override;
         void draw() override;
 
-        // character controller
-        void moveToDirection(const glm::vec3& direction, bool ignoreYAxisWhenRotate);
-        void moveToPosition(const glm::vec3& position, bool ignoreYAxisWhenRotate);
+        // Character controller.
+        void moveToDirection(glm::vec3 direction, bool rotateWhenMove, bool ignoreYAxisWhenRotate);
+        void moveToPosition(const glm::vec3& position, bool rotateWhenMove, bool ignoreYAxisWhenRotate);
         void jump();
         bool getIsCanStay() { return m_characterCanStay; }
         bool getIsMoving() { return m_characterMoving; }
@@ -47,24 +46,24 @@ namespace Beryll
         float getXZRadius() { return m_XZRadius; }
         float getHeight() { return m_characterHeight; }
 
-        float moveSpeed = 4.16f; // meters in second
-        float backwardMoveFactor = 0.6f; // factor to multiply moveSpeed if character move backward
+        float moveSpeed = 5.0f; // Meters in second.
+        float backwardMoveFactor = 0.6f; // Factor to multiply moveSpeed if character move backward.
         float walkableFloorAngleRadians = glm::radians(60.0f);
-        float maxStepHeight = 2.0f; // in meters. MUST be less than m_characterHeight
+        float maxStepHeight = 1.0f; // In meters. MUST be less than m_characterHeight.
         float startJumpAngleRadians = glm::radians(50.0f);
         float startJumpPower = 1.0f;
-        float startFallingPower = 1.0f; // -y axis impulse when stat falling
-        float airControlFactor = 0.3f; // factor to multiply moveSpeed if character not on ground
-        float jumpExtendTime = 0.0f; // in seconds. time when character moved from ground edge to air but still can jump
+        float startFallingPower = 1.0f; // -Y axis impulse when stat falling.
+        float airControlFactor = 0.1f; // Factor to multiply moveSpeed if character not on ground.
+        float jumpExtendTime = 0.0f; // In seconds. Time when character moved from ground edge to air but still can jump.
 
     private:
-        float m_fromOriginToTop = 0.0f; // distance between origin and character top
-        float m_fromOriginToBottom = 0.0f; // distance between origin and character bottom
-        float m_XZRadius = 0.0f; // radius on X/Z axis. from collision mesh origin
+        float m_fromOriginToTop = 0.0f; // Distance between origin and character top.
+        float m_fromOriginToBottom = 0.0f; // Distance between origin and character bottom.
+        float m_XZRadius = 0.0f; // Radius on X/Z axis. From collision mesh origin.
         float m_characterHeight = 0.0f;
         float m_characterMass = 0.0f;
 
-        bool m_characterCanStay = false; // can stay on any colliding object from group m_collisionMask
+        bool m_characterCanStay = false; // Can stay on any colliding object from group m_collisionMask.
         float m_lastTimeCanStay = 0.0f;
         bool m_characterMoving = false;
 
@@ -75,10 +74,10 @@ namespace Beryll
         bool m_falling = false;
         bool m_canApplyStartFallingImpulse = false;
 
-        std::vector<int> m_collidingObjects; // prevent creation and deletion every frame
-        std::vector<std::pair<glm::vec3, glm::vec3>> m_collidingPoints; // prevent creation and deletion every frame
+        std::vector<int> m_collidingObjects; // Prevent creation and deletion every frame.
+        std::vector<std::pair<glm::vec3, glm::vec3>> m_collidingPoints; // Prevent creation and deletion every frame.
 
-        std::pair<glm::vec3, glm::vec3> m_bottomCollisionPoint; // lowest collision point with ground ant its normal
+        std::pair<glm::vec3, glm::vec3> m_bottomCollisionPoint; // Lowest collision point with ground ant its normal.
 
         void move(glm::vec3 moveVector);
     };

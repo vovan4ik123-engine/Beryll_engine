@@ -8,7 +8,7 @@
 
 namespace Beryll
 {
-    // Not animated object, participates in physics simulation
+    // Not animated object, participates in physics simulation.
     class SimpleCollidingObject : public BaseSimpleObject
     {
     public:
@@ -24,8 +24,8 @@ namespace Beryll
          * collMask - should contain collGroup or groups with which you want collisions
          * objGroup - game specific group to which this scene object belong
          */
-        SimpleCollidingObject(const char* modelPath,  // common params
-                              float collisionMass,    // physics params
+        SimpleCollidingObject(const char* modelPath,  // Common params.
+                              float collisionMass,    // Physics params.
                               bool wantCollisionCallBack,
                               CollisionFlags collFlag,
                               CollisionGroups collGroup,

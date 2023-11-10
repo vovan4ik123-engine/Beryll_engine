@@ -8,7 +8,7 @@
 
 namespace Beryll
 {
-    // Animated object, not participates in physics simulation
+    // Animated object, not participates in physics simulation.
     class AnimatedObject : public BaseAnimatedObject
     {
     public:

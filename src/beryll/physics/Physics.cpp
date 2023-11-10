@@ -574,7 +574,7 @@ namespace Beryll
     std::vector<int> Physics::getCollisionsWithGroup(const int ID, const CollisionGroups group)
     {
         std::vector<int> ids;
-        ids.reserve(3);
+        ids.reserve(5);
 
         for(int i = 0; i < m_dynamicsWorldMT->getNumCollisionObjects(); ++i)
         {
