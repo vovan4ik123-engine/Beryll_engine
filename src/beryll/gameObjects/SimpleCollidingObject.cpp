@@ -70,6 +70,7 @@ namespace Beryll
                 m_collisionFlag = collFlag;
                 m_collisionGroup = collGroup;
                 m_collisionMask = collMask;
+                m_collisionMass = collisionMass;
 
                 processCollisionMesh(scene, scene->mMeshes[i], meshName, collisionMass, wantCollisionCallBack, collFlag, collGroup, collMask);
                 continue;

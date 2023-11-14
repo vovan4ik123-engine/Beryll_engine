@@ -97,6 +97,7 @@ namespace Beryll
                 m_collisionFlag = collFlag;
                 m_collisionGroup = collGroup;
                 m_collisionMask = collMask;
+                m_collisionMass = collisionMass;
 
                 processCollisionMesh(m_scene->mMeshes[i], meshName, collisionMass, wantCollisionCallBack, collFlag, collGroup, collMask);
                 continue;

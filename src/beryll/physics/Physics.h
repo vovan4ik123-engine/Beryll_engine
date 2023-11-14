@@ -161,7 +161,6 @@ namespace Beryll
 
         static void setAngularVelocity(const int ID, const glm::vec3& angVelocity, bool resetVelocities = false); // Set rotation velocity.
         static void setLinearVelocity(const int ID, const glm::vec3& linVelocity, bool resetVelocities = false); // Set translation velocity.
-        static void setGravityForAllWorld(const glm::vec3& gravity); // Change gravity for whole physics world.
 
         static bool getIsCollision(const int ID1, const int ID2);
         static bool getIsCollision(const int ID, const CollisionGroups group);

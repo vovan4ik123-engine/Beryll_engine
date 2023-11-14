@@ -938,19 +938,10 @@ namespace Beryll
         }
     }
 
-    void Physics::setGravityForAllWorld(const glm::vec3& gravity)
-    {
-        std::scoped_lock<std::mutex> lock (m_mutex);
-
-        m_gravity = btVector3(gravity.x, gravity.y, gravity.z);
-        if(m_dynamicsWorldMT)
-            m_dynamicsWorldMT->setGravity(m_gravity);
-    }
-
     void Physics::setGravityForObject(const int ID, const glm::vec3& gravity, bool resetVelocities)
     {
         auto iter = m_rigidBodiesMap.find(ID);
-        if(iter != m_rigidBodiesMap.end())
+        if(iter != m_rigidBodiesMap.end() && !iter->second->rb->isStaticOrKinematicObject())
         {
             iter->second->rb->setGravity(btVector3(gravity.x, gravity.y, gravity.z));
 
