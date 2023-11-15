@@ -40,6 +40,7 @@ namespace Beryll
         glm::vec2 m_joystickOriginInPixels{0.0f};
         glm::vec2 m_touchedDirectionFromOrigin{0.0f};
         const glm::vec2 m_joystickUp{0.0f, 1.0f};
+        long m_fingerIDDownEvent = -1;
 
         std::unique_ptr<Texture> m_defaultTexture;
         std::unique_ptr<Texture> m_touchedTexture;

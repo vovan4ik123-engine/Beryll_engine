@@ -37,26 +37,57 @@ namespace Beryll
         m_valueChanging = false;
 
         std::vector<Finger>& fingers = EventHandler::getFingers();
+
+        if(m_fingerIDDownEvent != -1)
+        {
+            bool touchedFingerStillOnScreen = false;
+            for(Finger& f : fingers)
+            {
+                if(m_fingerIDDownEvent == f.ID)
+                {
+                    touchedFingerStillOnScreen = true;
+                }
+            }
+
+            if(!touchedFingerStillOnScreen)
+                m_fingerIDDownEvent = -1;
+        }
+
         for(Finger& f : fingers)
         {
-            if(f.normalizedPos.x > m_leftPos && f.normalizedPos.x < m_leftPos + m_width
-                // Add 1% of screen to slider bottom because for any reason ImGUI handle a bit more area as slider than slider has.
-               && f.normalizedPos.y > m_topPos && f.normalizedPos.y < m_topPos + m_height + 0.01f)
+            if(f.normalizedPos.x > m_leftPos && f.normalizedPos.x < m_leftPos + m_width &&
+               // Add 1% of screen to slider bottom because for any reason ImGUI handle a bit more area as slider than slider has.
+               f.normalizedPos.y > m_topPos && f.normalizedPos.y < m_topPos + m_height + 0.01f)
             {
                 // If any finger in slider area.
                 if(f.downEvent && !f.handled)
+                {
+                    m_fingerIDDownEvent = f.ID;
                     f.handled = true;
+                }
+            }
 
+            // Touched finger still on screen.
+            if(m_fingerIDDownEvent != -1 && f.ID == m_fingerIDDownEvent)
+            {
                 // Calculate position on slider and set m_sliderValue here because ImGUI ignore screen multitouch.
                 // Next modify ImGUI library:
                 // In method bool ImGui::SliderBehaviorT() in file imgui_widgets.cpp delete if (set_new_value) {...}
                 // Now we calculate slider value. Not ImGUI.
-                float valueRange = m_max - m_min;
-                float normalizedSliderProgress = (f.normalizedPos.x - m_leftPos) / m_width;
+                float fingerXPos = f.normalizedPos.x;
+                if(fingerXPos < m_leftPos)
+                    fingerXPos = m_leftPos;
+                if(fingerXPos > m_leftPos + m_width)
+                    fingerXPos = m_leftPos + m_width;
+
+                float normalizedSliderProgress = (fingerXPos - m_leftPos) / m_width;
                 BR_ASSERT((normalizedSliderProgress >= 0.0f &&
                            normalizedSliderProgress <= 1.0f), "%s", "normalizedSliderProgress is out of 0...1 range.");
+                float valueRange = m_max - m_min;
                 m_sliderValue = m_min + (valueRange * normalizedSliderProgress);
                 m_valueChanging = true;
+
+                return;
             }
         }
     }

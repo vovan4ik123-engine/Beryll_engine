@@ -43,6 +43,7 @@ namespace Beryll
         float m_max = 1.0f;
         float m_sliderValue = 0.0f; // In range 0.0f...1.0f.
         bool m_valueChanging = false;
+        long m_fingerIDDownEvent = -1;
 
         // color can be different for each slider
         ImVec4 m_fontColor { 1.0f, 1.0f, 1.0f, 1.0f }; // 0.0f - 1.0f range.

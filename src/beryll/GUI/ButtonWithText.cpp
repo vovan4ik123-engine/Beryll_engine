@@ -41,8 +41,8 @@ namespace Beryll
                 m_pressed = false;
                 for(Finger& f : fingers)
                 {
-                    if(f.normalizedPos.x > m_leftPos && f.normalizedPos.x < m_leftPos + m_width
-                       && f.normalizedPos.y > m_topPos && f.normalizedPos.y < m_topPos + m_height)
+                    if(f.normalizedPos.x > m_leftPos && f.normalizedPos.x < m_leftPos + m_width &&
+                       f.normalizedPos.y > m_topPos && f.normalizedPos.y < m_topPos + m_height)
                     {
                         // If any finger in button area.
                         m_pressed = true;
@@ -57,8 +57,8 @@ namespace Beryll
             m_touched = false;
             for(Finger& f : fingers)
             {
-                if(f.normalizedPos.x > m_leftPos && f.normalizedPos.x < m_leftPos + m_width
-                   && f.normalizedPos.y > m_topPos && f.normalizedPos.y < m_topPos + m_height)
+                if(f.normalizedPos.x > m_leftPos && f.normalizedPos.x < m_leftPos + m_width &&
+                   f.normalizedPos.y > m_topPos && f.normalizedPos.y < m_topPos + m_height)
                 {
                     // If any finger in button area.
                     m_touched = true;
