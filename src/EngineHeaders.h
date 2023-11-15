@@ -39,7 +39,8 @@
 #include "beryll/GUI/Joystick.h"
 #include "beryll/GUI/CheckBox.h"
 #include "beryll/GUI/Text.h"
-#include "beryll/GUI/Slider.h"
+#include "beryll/GUI/SliderHorizontal.h"
+#include "beryll/GUI/SliderVertical.h"
 
 #include "beryll/physics/Physics.h"
 

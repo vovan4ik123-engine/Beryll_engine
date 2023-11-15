@@ -1,10 +1,10 @@
-#include "Slider.h"
+#include "SliderHorizontal.h"
 #include "beryll/core/EventHandler.h"
 #include "MainImGUI.h"
 
 namespace Beryll
 {
-    Slider::Slider(const std::string& text, const std::string& fontPath, float fontHeightInPercentOfScreen,
+    SliderHorizontal::SliderHorizontal(const std::string& text, const std::string& fontPath, float fontHeightInPercentOfScreen,
                    float left, float top, float width, float height, float min, float max, bool background)
                    : m_text(text), m_min(min), m_max(max)
     {
@@ -27,12 +27,12 @@ namespace Beryll
         m_font = MainImGUI::getInstance()->createFont(fontPath.c_str(), fontHeightInPercentOfScreen);
     }
 
-    Slider::~Slider()
+    SliderHorizontal::~SliderHorizontal()
     {
 
     }
 
-    void Slider::updateBeforePhysics()
+    void SliderHorizontal::updateBeforePhysics()
     {
         m_valueChanging = false;
 
@@ -56,8 +56,7 @@ namespace Beryll
         for(Finger& f : fingers)
         {
             if(f.normalizedPos.x > m_leftPos && f.normalizedPos.x < m_leftPos + m_width &&
-               // Add 1% of screen to slider bottom because for any reason ImGUI handle a bit more area as slider than slider has.
-               f.normalizedPos.y > m_topPos && f.normalizedPos.y < m_topPos + m_height + 0.01f)
+               f.normalizedPos.y > m_topPos && f.normalizedPos.y < m_topPos + m_height)
             {
                 // If any finger in slider area.
                 if(f.downEvent && !f.handled)
@@ -92,12 +91,12 @@ namespace Beryll
         }
     }
 
-    void Slider::updateAfterPhysics()
+    void SliderHorizontal::updateAfterPhysics()
     {
 
     }
 
-    void Slider::draw()
+    void SliderHorizontal::draw()
     {
         ImGui::PushStyleColor(ImGuiCol_Text, m_fontColor);
 

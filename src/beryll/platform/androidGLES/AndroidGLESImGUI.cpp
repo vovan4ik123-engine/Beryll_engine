@@ -1,10 +1,6 @@
 #include "AndroidGLESImGUI.h"
 #include "beryll/core/Window.h"
 #include "beryll/utils/File.h"
-#include "beryll/GUI/ButtonWithText.h"
-#include "beryll/GUI/CheckBox.h"
-#include "beryll/GUI/Text.h"
-#include "beryll/GUI/Slider.h"
 
 namespace Beryll
 {

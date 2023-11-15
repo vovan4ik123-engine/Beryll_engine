@@ -80,7 +80,8 @@ set(Common_SRC
         src/beryll/GUI/Joystick.cpp
         src/beryll/GUI/CheckBox.cpp
         src/beryll/GUI/Text.cpp
-        src/beryll/GUI/Slider.cpp
+        src/beryll/GUI/SliderHorizontal.cpp
+        src/beryll/GUI/SliderVertical.cpp
 
         src/beryll/dataBase/DataBase.cpp
 

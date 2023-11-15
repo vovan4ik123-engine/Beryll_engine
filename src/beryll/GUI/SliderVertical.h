@@ -4,14 +4,14 @@
 
 namespace Beryll
 {
-    class Slider : public GUIObject
+    class SliderVertical : public GUIObject
     {
     public:
-        Slider() = delete;
+        SliderVertical() = delete;
         // Position in percent 0...100% of screen.
-        Slider(const std::string& text, const std::string& fontPath, float fontHeightInPercentOfScreen,
-               float left, float top, float width, float height, float min = 0.0f, float max = 1.0f, bool background = false);
-        ~Slider() override;
+        SliderVertical(const std::string& text, const std::string& fontPath, float fontHeightInPercentOfScreen,
+                         float left, float top, float width, float height, float min = 0.0f, float max = 1.0f, bool background = false);
+        ~SliderVertical() override;
 
         void updateBeforePhysics() override;
         void updateAfterPhysics() override;

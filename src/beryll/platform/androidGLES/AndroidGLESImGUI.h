@@ -4,7 +4,6 @@
 #include "CppHeaders.h"
 
 #include "beryll/GUI/MainImGUI.h"
-#include "beryll/core/Log.h"
 
 namespace Beryll
 {

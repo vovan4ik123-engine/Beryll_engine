@@ -94,12 +94,12 @@ namespace Beryll
                                                  glm::vec2(event.tfinger.x * Window::getInstance()->getScreenWidth(), event.tfinger.y * Window::getInstance()->getScreenHeight()),
                                                   false,
                                                   true,
-                                                  event.tfinger.fingerId});
+                                                  static_cast<int>(event.tfinger.fingerId)});
                     break;
 
                 case SDL_FINGERUP:
                     {
-                        auto it = std::find_if(m_fingers.begin(), m_fingers.end(), [&event](const Finger& f){ return f.ID == event.tfinger.fingerId; });
+                        auto it = std::find_if(m_fingers.begin(), m_fingers.end(), [&event](const Finger& f){ return f.ID == static_cast<int>(event.tfinger.fingerId); });
                         if(it != m_fingers.end())
                         {
                             m_fingers.erase(it);
@@ -109,7 +109,7 @@ namespace Beryll
 
                 case SDL_FINGERMOTION:
                     {
-                        auto it = std::find_if(m_fingers.begin(), m_fingers.end(), [&event](const Finger& f){ return f.ID == event.tfinger.fingerId; });
+                        auto it = std::find_if(m_fingers.begin(), m_fingers.end(), [&event](const Finger& f){ return f.ID == static_cast<int>(event.tfinger.fingerId); });
                         if(it != m_fingers.end())
                         {
                             (*it).normalizedPos.x = event.tfinger.x;
