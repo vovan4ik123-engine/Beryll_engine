@@ -31,7 +31,7 @@ public:
     {
         int numberElements = iEnd - iBegin;
 
-        if(numberElements <= 20 || m_numThreads == 1)
+        if(numberElements < 4 || m_numThreads == 1)
         {
             // Run on main thread.
             body.forLoop(iBegin, iEnd);
@@ -63,7 +63,7 @@ public:
 		float result = 0.0f;
         int numberElements = iEnd - iBegin;
 
-        if(numberElements <= 20 || m_numThreads == 1)
+        if(numberElements < 4 || m_numThreads == 1)
         {
             // Run on main thread.
             return body.sumLoop(iBegin, iEnd);
