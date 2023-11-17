@@ -70,7 +70,7 @@ namespace Beryll
         std::shared_ptr<VertexBuffer> m_vertexPosBuffer;
         std::shared_ptr<IndexBuffer> m_indexBuffer;
         std::unique_ptr<VertexArray> m_vertexArray;
-        std::shared_ptr<Shader> m_internalShader; // Default, simple shader. Use if no shader was bound on scene
+        std::shared_ptr<Shader> m_internalShader; // Default, simple shader.
 
         // Banner was not loaded from Blender. We can specify any faceDir and upDir when create it.
         const glm::vec3 m_bannerFaceDir{0.0f, 0.0f, -1.0f};

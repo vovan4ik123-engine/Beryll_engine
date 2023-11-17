@@ -9,7 +9,7 @@ namespace Beryll
     public:
         SimpleCollidingCharacter() = delete;
         /*
-         * modelPath - path to model file (.DAE or .FBX). start path from first folder inside assets/
+         * filePath - path to model file (.DAE or .FBX). start path from first folder inside assets/
          * collisionMass - mass of this object for physics simulation. 0 for static objects
          * wantCollisionCallBack - drop performance too much because call back use std::scoped_lock<std::mutex>
          *                         if true Physics module will store actual collisions for this object,
@@ -19,13 +19,13 @@ namespace Beryll
          * collMask - should contain collGroup or groups with which you want collisions
          * objGroup - game specific group to which this scene object belong
          */
-        SimpleCollidingCharacter(const char* modelPath,  // Common params.
+        SimpleCollidingCharacter(const char* filePath,  // Common params.
                                  float collisionMass,    // Physics params.
                                  bool wantCollisionCallBack,
                                  CollisionFlags collFlag,
                                  CollisionGroups collGroup,
                                  CollisionGroups collMask,
-                                 SceneObjectGroups sceneGroup = SceneObjectGroups::NONE);
+                                 SceneObjectGroups sceneGroup);
         ~SimpleCollidingCharacter() override;
 
         void updateBeforePhysics() override;

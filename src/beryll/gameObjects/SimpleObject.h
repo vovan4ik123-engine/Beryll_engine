@@ -14,16 +14,23 @@ namespace Beryll
     public:
         SimpleObject() = delete;
         /*
-         * modelPath - path to model file (.DAE or .FBX). start path from first folder inside assets/
+         * filePath - path to model file (.DAE or .FBX). start path from first folder inside assets/
          * objGroup - game specific group to which this scene object belong
          */
-        SimpleObject(const char* modelPath,
-                     SceneObjectGroups sceneGroup = SceneObjectGroups::NONE);
+        SimpleObject(const char* filePath,
+                     SceneObjectGroups sceneGroup);
+        SimpleObject(const std::string& filePath,
+                     const aiScene* scene,
+                     const aiMesh* graphicsMesh,
+                     SceneObjectGroups sceneGroup);
         ~SimpleObject() override;
 
         void updateBeforePhysics() override;
         void updateAfterPhysics() override;
         void draw() override;
+
+        // All loaded objects will have same sceneGroup.
+        static std::vector<std::shared_ptr<SimpleObject>> loadManyModelsFromOneFile(const char* filePath, SceneObjectGroups sceneGroup);
 
     protected:
         std::shared_ptr<VertexBuffer> m_vertexPosBuffer;
@@ -32,9 +39,12 @@ namespace Beryll
         std::shared_ptr<VertexBuffer> m_textureCoordsBuffer;
         std::shared_ptr<IndexBuffer> m_indexBuffer;
         std::unique_ptr<VertexArray> m_vertexArray;
-        std::shared_ptr<Shader> m_internalShader; // Default, simple shader. Use if no shader was bound on scene
+        std::shared_ptr<Shader> m_internalShader; // Default, simple shader.
         std::unique_ptr<Texture> m_diffTexture;
         std::unique_ptr<Texture> m_specTexture;
         std::unique_ptr<Texture> m_normalMapTexture;
+
+    private:
+        void loadGraphicsMesh(const std::string& filePath, const aiScene* scene, const aiMesh* graphicsMesh);
     };
 }

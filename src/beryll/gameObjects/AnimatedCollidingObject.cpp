@@ -12,19 +12,19 @@ namespace Beryll
 {
     std::map<const std::string, std::pair<std::shared_ptr<Assimp::Importer>, const aiScene*>> AnimatedCollidingObject::m_importersScenes;
 
-    AnimatedCollidingObject::AnimatedCollidingObject(const char* modelPath,
+    AnimatedCollidingObject::AnimatedCollidingObject(const char* filePath,
                                                      float collisionMass,
                                                      bool wantCollisionCallBack,
                                                      CollisionFlags collFlag,
                                                      CollisionGroups collGroup,
                                                      CollisionGroups collMask,
-                                                     SceneObjectGroups sceneGroup)  : m_modelPath(modelPath)
+                                                     SceneObjectGroups sceneGroup)  : m_modelPath(filePath)
     {
         const auto search = m_importersScenes.find(m_modelPath);
         if(search != m_importersScenes.end())
         {
             // Scene from same file already was loaded. use it.
-            BR_INFO("Use loaded before colliding animated object: %s", modelPath);
+            BR_INFO("Use loaded before colliding animated object: %s", filePath);
             m_scene = search->second.second;
         }
         else
@@ -32,10 +32,10 @@ namespace Beryll
             std::shared_ptr<Assimp::Importer> importer = std::make_shared<Assimp::Importer>();
             const aiScene* scene = nullptr;
 
-            BR_INFO("Loading colliding animated object: %s", modelPath);
+            BR_INFO("Loading colliding animated object: %s", filePath);
 
             uint32_t bufferSize = 0;
-            char *buffer = Utils::File::readToBuffer(modelPath, &bufferSize);
+            char *buffer = Utils::File::readToBuffer(filePath, &bufferSize);
 
             scene = importer->ReadFileFromMemory(buffer, bufferSize,
                                                  aiProcess_Triangulate |
@@ -44,11 +44,11 @@ namespace Beryll
             delete[] buffer;
             if(!scene || !scene->mRootNode || scene->mFlags == AI_SCENE_FLAGS_INCOMPLETE)
             {
-                BR_ASSERT(false, "Scene loading error for file: %s", modelPath);
+                BR_ASSERT(false, "Scene loading error for file: %s", filePath);
             }
 
             BR_ASSERT((scene->mNumMeshes == 2),
-                      "Colliding animated object: %s MUST contain 2 meshes. For draw and physics simulation", modelPath);
+                      "Colliding animated object: %s MUST contain 2 meshes. For draw and physics simulation", filePath);
 
             BR_ASSERT((scene->HasAnimations() && (scene->mMeshes[0]->mNumBones > 0 || scene->mMeshes[1]->mNumBones > 0)),
                       "%s", "Animated object must have animation + bone");
@@ -99,7 +99,7 @@ namespace Beryll
                 m_collisionMask = collMask;
                 m_collisionMass = collisionMass;
 
-                processCollisionMesh(m_scene->mMeshes[i], meshName, collisionMass, wantCollisionCallBack, collFlag, collGroup, collMask);
+                loadCollisionMesh(m_scene->mMeshes[i], meshName, collisionMass, wantCollisionCallBack, collFlag, collGroup, collMask);
                 continue;
             }
 
@@ -188,7 +188,7 @@ namespace Beryll
 
                 for(const std::pair<std::string, uint32_t>& element : m_boneNameIndex)
                 {
-                    BR_ASSERT((element.first != boneName), "Many bones have same name in one model: %s", modelPath);
+                    BR_ASSERT((element.first != boneName), "Many bones have same name in one model: %s", filePath);
                 }
 
                 m_bonesMatrices.emplace_back(); // add empty element to back
@@ -685,13 +685,13 @@ namespace Beryll
         }
     }
 
-    void AnimatedCollidingObject::processCollisionMesh(const aiMesh* mesh,
-                                                       const std::string& meshName,
-                                                       float mass,
-                                                       bool wantCallBack,
-                                                       CollisionFlags collFlag,
-                                                       CollisionGroups collGroup,
-                                                       CollisionGroups collMask)
+    void AnimatedCollidingObject::loadCollisionMesh(const aiMesh* mesh,
+                                                    const std::string& meshName,
+                                                    float mass,
+                                                    bool wantCallBack,
+                                                    CollisionFlags collFlag,
+                                                    CollisionGroups collGroup,
+                                                    CollisionGroups collMask)
     {
         glm::mat4 collisionTransforms{1.0f};
 

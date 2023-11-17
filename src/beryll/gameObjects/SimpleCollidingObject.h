@@ -14,7 +14,7 @@ namespace Beryll
     public:
         SimpleCollidingObject() = delete;
         /*
-         * modelPath - path to model file (.DAE or .FBX). start path from first folder inside assets/
+         * filePath - path to model file (.DAE or .FBX). start path from first folder inside assets/
          * collisionMass - mass of this object for physics simulation. 0 for static objects
          * wantCollisionCallBack - drop performance too much because call back use std::scoped_lock<std::mutex>
          *                         if true Physics module will store actual collisions for this object,
@@ -24,18 +24,38 @@ namespace Beryll
          * collMask - should contain collGroup or groups with which you want collisions
          * objGroup - game specific group to which this scene object belong
          */
-        SimpleCollidingObject(const char* modelPath,  // Common params.
+        SimpleCollidingObject(const char* filePath,  // Common params.
                               float collisionMass,    // Physics params.
                               bool wantCollisionCallBack,
                               CollisionFlags collFlag,
                               CollisionGroups collGroup,
                               CollisionGroups collMask,
-                              SceneObjectGroups sceneGroup = SceneObjectGroups::NONE);
+                              SceneObjectGroups sceneGroup);
+        SimpleCollidingObject(const std::string& filePath,
+                              const aiScene* scene,
+                              const aiMesh* graphicsMesh,
+                              const aiMesh* collisionMesh,
+                              const std::string& collisionMeshName,
+                              float collisionMass,
+                              bool wantCollisionCallBack,
+                              CollisionFlags collFlag,
+                              CollisionGroups collGroup,
+                              CollisionGroups collMask,
+                              SceneObjectGroups sceneGroup);
         ~SimpleCollidingObject() override;
 
         void updateBeforePhysics() override;
         void updateAfterPhysics() override;
         void draw() override;
+
+        // All loaded objects will have same parameters(mass, flags, groups, ...).
+        static std::vector<std::shared_ptr<SimpleCollidingObject>> loadManyModelsFromOneFile(const char* filePath,
+                                                                                             float collisionMass,
+                                                                                             bool wantCollisionCallBack,
+                                                                                             CollisionFlags collFlag,
+                                                                                             CollisionGroups collGroup,
+                                                                                             CollisionGroups collMask,
+                                                                                             SceneObjectGroups sceneGroup);
 
     protected:
         std::shared_ptr<VertexBuffer> m_vertexPosBuffer;
@@ -44,7 +64,7 @@ namespace Beryll
         std::shared_ptr<VertexBuffer> m_textureCoordsBuffer;
         std::shared_ptr<IndexBuffer> m_indexBuffer;
         std::unique_ptr<VertexArray> m_vertexArray;
-        std::shared_ptr<Shader> m_internalShader; // Default, simple shader. Use if no shader was bound on scene
+        std::shared_ptr<Shader> m_internalShader; // Default, simple shader.
         std::unique_ptr<Texture> m_diffTexture;
         std::unique_ptr<Texture> m_specTexture;
         std::unique_ptr<Texture> m_normalMapTexture;
@@ -58,13 +78,15 @@ namespace Beryll
         float m_mostTopVertex = std::numeric_limits<float>::min();
 
     private:
-        void processCollisionMesh(const aiScene* scene,
-                                  const aiMesh* mesh,
-                                  const std::string& meshName,
-                                  float mass,
-                                  bool wantCallBack,
-                                  CollisionFlags collFlag,
-                                  CollisionGroups collGroup,
-                                  CollisionGroups collMask);
+        void loadGraphicsMesh(const std::string& filePath, const aiScene* scene, const aiMesh* graphicsMesh);
+
+        void loadCollisionMesh(const aiScene* scene,
+                               const aiMesh* collisionMesh,
+                               const std::string& meshName,
+                               float mass,
+                               bool wantCallBack,
+                               CollisionFlags collFlag,
+                               CollisionGroups collGroup,
+                               CollisionGroups collMask);
     };
 }

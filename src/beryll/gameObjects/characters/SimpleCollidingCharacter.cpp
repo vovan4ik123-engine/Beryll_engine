@@ -3,7 +3,7 @@
 
 namespace Beryll
 {
-    SimpleCollidingCharacter::SimpleCollidingCharacter(const char* modelPath,  // Common params.
+    SimpleCollidingCharacter::SimpleCollidingCharacter(const char* filePath,  // Common params.
                                                        float collisionMass,    // Physics params.
                                                        bool wantCollisionCallBack,
                                                        CollisionFlags collFlag,
@@ -11,7 +11,7 @@ namespace Beryll
                                                        CollisionGroups collMask,
                                                        SceneObjectGroups sceneGroup)
                                                        // Call base class constructor.
-                                                       : SimpleCollidingObject(modelPath,
+                                                       : SimpleCollidingObject(filePath,
                                                                                collisionMass,
                                                                                wantCollisionCallBack,
                                                                                collFlag,

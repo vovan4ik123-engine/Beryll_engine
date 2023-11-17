@@ -14,11 +14,11 @@ namespace Beryll
     public:
         AnimatedObject() = delete;
         /*
-         * modelPath - path to model file (.DAE or .FBX). start path from first folder inside assets/
+         * filePath - path to model file (.DAE or .FBX). start path from first folder inside assets/
          * objGroup - game specific group to which this scene object belong
          */
-        AnimatedObject(const char* modelPath,
-                       SceneObjectGroups sceneGroup = SceneObjectGroups::NONE);
+        AnimatedObject(const char* filePath,
+                       SceneObjectGroups sceneGroup);
         ~AnimatedObject() override;
 
         void updateBeforePhysics() override;
@@ -41,8 +41,12 @@ namespace Beryll
             return m_bonesMatrices;
         }
 
+        // Call it sometimes between game levels/maps to free some memory.
+        // Or dont call if you will load same models again. They will be taken from cache for faster loading.
+        static void clearCachedModels() { m_importersScenes.clear(); };
+
     protected:
-        // animation data
+        // Animation data.
         static constexpr uint32_t NUM_BONES_PER_VERTEX = 4; // one vertex can be affected maximum by 4 bones
         uint32_t m_boneCount = 0;
         std::vector<std::pair<std::string, uint32_t>> m_boneNameIndex;
@@ -64,9 +68,9 @@ namespace Beryll
         aiMatrix4x4 interpolateScaling(const aiNodeAnim* nodeAnim, const uint32_t currentFrameIndex, const uint32_t nextFrameIndex, const float factor);
 
         aiMatrix4x4 m_globalInverseMatrix;
-        // animation data end
+        // Animation data end.
 
-        // model data
+        // Model data.
         std::shared_ptr<VertexBuffer> m_vertexPosBuffer;
         std::shared_ptr<VertexBuffer> m_vertexNormalsBuffer;
         std::shared_ptr<VertexBuffer> m_vertexTangentsBuffer;
@@ -75,19 +79,20 @@ namespace Beryll
         std::shared_ptr<VertexBuffer> m_boneWeightsBuffer;
         std::shared_ptr<IndexBuffer> m_indexBuffer;
         std::unique_ptr<VertexArray> m_vertexArray;
-        std::shared_ptr<Shader> m_internalShader; // Default, simple shader. Use if no shader was bound on scene
+        std::shared_ptr<Shader> m_internalShader; // Default, simple shader.
         std::unique_ptr<Texture> m_diffTexture;
         std::unique_ptr<Texture> m_specTexture;
         std::unique_ptr<Texture> m_normalMapTexture;
-        // model data end
+        // Model data end.
 
         const aiScene* m_scene = nullptr;
 
     private:
-        // aiScene + Assimp::Importer lifetime for animated object should be same as animated object
-        // aiScene + Assimp::Importer has big size in memory
-        // this map will share same scene across animated objects loaded from same file
-        // id = file path. If other object load model from same file(id = file path) it will get pointer to aiScene from this map
+        // aiScene + Assimp::Importer lifetime for animated object should be same as animated object.
+        // aiScene + Assimp::Importer has big size in memory.
+        // This map will cache animated objects and reuse them if you load again from same file.
+        // If many of AnimatedCollidingObject load model from same file(id = file path) it will get pointer to aiScene from this map after first loading.
+        // id = file path.
         static std::map<const std::string, std::pair<std::shared_ptr<Assimp::Importer>, const aiScene*>> m_importersScenes;
 
         const std::string m_modelPath; // object ID in m_importersScenes map

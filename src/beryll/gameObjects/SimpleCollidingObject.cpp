@@ -7,7 +7,7 @@
 
 namespace Beryll
 {
-    SimpleCollidingObject::SimpleCollidingObject(const char* modelPath,
+    SimpleCollidingObject::SimpleCollidingObject(const char* filePath,
                                                  float collisionMass,
                                                  bool wantCollisionCallBack,
                                                  CollisionFlags collFlag,
@@ -15,10 +15,10 @@ namespace Beryll
                                                  CollisionGroups collMask,
                                                  SceneObjectGroups sceneGroup)
     {
-        BR_INFO("Loading colliding simple object: %s", modelPath);
+        BR_INFO("Loading colliding simple object: %s", filePath);
 
         uint32_t bufferSize = 0;
-        char* buffer = Utils::File::readToBuffer(modelPath, &bufferSize);
+        char* buffer = Utils::File::readToBuffer(filePath, &bufferSize);
 
         Assimp::Importer importer;
         const aiScene* scene = importer.ReadFileFromMemory(buffer, bufferSize,
@@ -28,11 +28,10 @@ namespace Beryll
         delete[] buffer;
         if( !scene || !scene->mRootNode || scene->mFlags == AI_SCENE_FLAGS_INCOMPLETE)
         {
-            BR_ASSERT(false, "Scene loading error for file: %s", modelPath);
+            BR_ASSERT(false, "Scene loading error for file: %s", filePath);
         }
 
-        BR_ASSERT((scene->mNumMeshes == 2),
-                  "Colliding simple object: %s MUST contain 2 meshes. For draw and physics simulation", modelPath);
+        BR_ASSERT((scene->mNumMeshes == 2), "Colliding simple object: %s MUST contain 2 meshes. For draw and physics simulation", filePath);
 
         m_sceneObjectGroup = sceneGroup;
 
@@ -41,224 +40,28 @@ namespace Beryll
             std::string meshName = scene->mMeshes[i]->mName.C_Str();
 
             if(meshName.find("Collision") != std::string::npos)
-            {
-                // Collect collision mesh dimensions.
-                // Model should be created in Blender where up axis = +Z.
-                for (int g = 0; g < scene->mMeshes[i]->mNumVertices; ++g)
-                {
-                    // Top and bottom points must be taken from Z axis.
-                    if (scene->mMeshes[i]->mVertices[g].z < m_mostBottomVertex)
-                        m_mostBottomVertex = scene->mMeshes[i]->mVertices[g].z;
-                    if (scene->mMeshes[i]->mVertices[g].z > m_mostTopVertex)
-                        m_mostTopVertex = scene->mMeshes[i]->mVertices[g].z;
-
-                    if (scene->mMeshes[i]->mVertices[g].x < m_smallestX)
-                        m_smallestX = scene->mMeshes[i]->mVertices[g].x;
-                    if (scene->mMeshes[i]->mVertices[g].x > m_biggestX)
-                        m_biggestX = scene->mMeshes[i]->mVertices[g].x;
-
-                    // Z dimensions should be taken from Y axis.
-                    // In Blender Y axis is horizontal and will replaced by Z after exporting.
-                    if (scene->mMeshes[i]->mVertices[g].y < m_smallestZ)
-                        m_smallestZ = scene->mMeshes[i]->mVertices[g].y;
-                    if (scene->mMeshes[i]->mVertices[g].y > m_biggestZ)
-                        m_biggestZ = scene->mMeshes[i]->mVertices[g].y;
-                }
-
-                m_hasCollisionObject = true;
-                m_isEnabledInPhysicsSimulation = true;
-                m_collisionFlag = collFlag;
-                m_collisionGroup = collGroup;
-                m_collisionMask = collMask;
-                m_collisionMass = collisionMass;
-
-                processCollisionMesh(scene, scene->mMeshes[i], meshName, collisionMass, wantCollisionCallBack, collFlag, collGroup, collMask);
-                continue;
-            }
-
-            // prepare vectors
-            std::vector<glm::vec3> vertices;
-            std::vector<glm::vec3> normals;
-            std::vector<glm::vec3> tangents;
-            std::vector<glm::vec2> textureCoords;
-            std::vector<uint32_t> indices;
-            vertices.reserve(scene->mMeshes[i]->mNumVertices);
-            normals.reserve(scene->mMeshes[i]->mNumVertices);
-            tangents.reserve(scene->mMeshes[i]->mNumVertices);
-            textureCoords.reserve(scene->mMeshes[i]->mNumVertices);
-            indices.reserve(scene->mMeshes[i]->mNumFaces * 3);
-
-            // vertices
-            for(int g = 0; g < scene->mMeshes[i]->mNumVertices; ++g)
-            {
-                vertices.emplace_back(scene->mMeshes[i]->mVertices[g].x,
-                                      scene->mMeshes[i]->mVertices[g].y,
-                                      scene->mMeshes[i]->mVertices[g].z);
-
-                if(scene->mMeshes[i]->mNormals)
-                {
-                    glm::vec3 normal = glm::vec3(scene->mMeshes[i]->mNormals[g].x,
-                                                 scene->mMeshes[i]->mNormals[g].y,
-                                                 scene->mMeshes[i]->mNormals[g].z);
-
-                    normals.emplace_back(glm::normalize(normal));
-                }
-                else
-                {
-                    normals.emplace_back(0.0f, 0.0f, 0.0f);
-                }
-
-                if(scene->mMeshes[i]->mTangents)
-                {
-                    glm::vec3 tangent = glm::vec3(scene->mMeshes[i]->mTangents[g].x,
-                                                  scene->mMeshes[i]->mTangents[g].y,
-                                                  scene->mMeshes[i]->mTangents[g].z);
-
-                    tangents.emplace_back(glm::normalize(tangent));
-                }
-                else
-                {
-                    tangents.emplace_back(0.0f, 0.0f, 0.0f);
-                }
-
-                // use only first set of texture coordinates
-                if(scene->mMeshes[i]->mTextureCoords[0])
-                {
-                    textureCoords.emplace_back(scene->mMeshes[i]->mTextureCoords[0][g].x,
-                                               scene->mMeshes[i]->mTextureCoords[0][g].y);
-                }
-                else
-                {
-                    textureCoords.emplace_back(0.0f, 0.0f);
-                }
-            }
-            BR_INFO("Vertex count: %d", vertices.size());
-            m_vertexPosBuffer = Renderer::createStaticVertexBuffer(vertices);
-            m_vertexNormalsBuffer = Renderer::createStaticVertexBuffer(normals);
-            m_textureCoordsBuffer = Renderer::createStaticVertexBuffer(textureCoords);
-            // tangents buffer will created if model has normal map
-
-            // indices
-            for(int g = 0; g < scene->mMeshes[i]->mNumFaces; ++g) // every face MUST be a triangle !!!!
-            {
-                indices.emplace_back(scene->mMeshes[i]->mFaces[g].mIndices[0]);
-                indices.emplace_back(scene->mMeshes[i]->mFaces[g].mIndices[1]);
-                indices.emplace_back(scene->mMeshes[i]->mFaces[g].mIndices[2]);
-            }
-            BR_INFO("Indices count: %d", indices.size());
-            m_indexBuffer = Renderer::createStaticIndexBuffer(indices);
-
-            m_vertexArray = Renderer::createVertexArray();
-            m_vertexArray->addVertexBuffer(m_vertexPosBuffer);
-            m_vertexArray->addVertexBuffer(m_vertexNormalsBuffer);
-            m_vertexArray->addVertexBuffer(m_textureCoordsBuffer);
-            // tangents buffer will added if model has normal map
-            m_vertexArray->setIndexBuffer(m_indexBuffer);
-
-            m_internalShader = Renderer::createShader(BeryllConstants::simpleObjDefaultVertexPath.data(),
-                                                      BeryllConstants::simpleObjDefaultFragmentPath.data());
-            m_internalShader->bind();
-
-            // material
-            if(scene->mMeshes[i]->mMaterialIndex >= 0)
-            {
-                aiMaterial* material = scene->mMaterials[scene->mMeshes[i]->mMaterialIndex];
-
-                const std::string mP = modelPath;
-                BR_ASSERT((mP.find_last_of('/') != std::string::npos), "Texture + model must be in folder: %s", mP.c_str());
-
-                std::string texturePath;
-
-                if(material->GetTextureCount(aiTextureType_DIFFUSE) > 0)
-                {
-                    aiString textName;
-                    material->GetTexture(aiTextureType_DIFFUSE, 0, &textName);
-
-                    std::string textName2 = textName.C_Str();
-                    for(int g = static_cast<int>(textName2.size()) - 1; g >= 0; --g)
-                    {
-                        if(textName2[g] == '/' || textName2[g] == '\\')
-                        {
-                            textName2 = textName2.substr(g + 1);
-                            break;
-                        }
-                    }
-                    texturePath = mP.substr(0, mP.find_last_of('/'));
-                    texturePath += '/';
-                    texturePath += textName2;
-                    BR_INFO("Diffuse texture here: %s", texturePath.c_str());
-
-                    m_diffTexture = Renderer::createTexture(texturePath.c_str(), TextureType::DIFFUSE_TEXTURE);
-                    m_internalShader->activateDiffuseTexture();
-                }
-
-                if(material->GetTextureCount(aiTextureType_SPECULAR) > 0)
-                {
-                    aiString textName;
-                    material->GetTexture(aiTextureType_SPECULAR, 0, &textName);
-
-                    std::string textName2 = textName.C_Str();
-                    for(int g = static_cast<int>(textName2.size()) - 1; g >= 0; --g)
-                    {
-                        if(textName2[g] == '/' || textName2[g] == '\\')
-                        {
-                            textName2 = textName2.substr(g + 1);
-                            break;
-                        }
-                    }
-                    texturePath = mP.substr(0, mP.find_last_of('/'));
-                    texturePath += '/';
-                    texturePath += textName2;
-                    BR_INFO("Specular texture here: %s", texturePath.c_str());
-
-                    m_specTexture = Renderer::createTexture(texturePath.c_str(), TextureType::SPECULAR_TEXTURE);
-                    m_internalShader->activateSpecularTexture();
-                }
-
-                if(material->GetTextureCount(aiTextureType_NORMALS) > 0)
-                {
-                    aiString textName;
-                    material->GetTexture(aiTextureType_NORMALS, 0, &textName);
-
-                    std::string textName2 = textName.C_Str();
-                    for(int g = static_cast<int>(textName2.size()) - 1; g >= 0; --g)
-                    {
-                        if(textName2[g] == '/' || textName2[g] == '\\')
-                        {
-                            textName2 = textName2.substr(g + 1);
-                            break;
-                        }
-                    }
-                    texturePath = mP.substr(0, mP.find_last_of('/'));
-                    texturePath += '/';
-                    texturePath += textName2;
-                    BR_INFO("Normal map texture here: %s", texturePath.c_str());
-
-                    m_normalMapTexture = Renderer::createTexture(texturePath.c_str(), TextureType::NORMAL_MAP_TEXTURE);
-                    m_internalShader->activateNormalMapTexture();
-
-                    BR_INFO("%s", "Create tangents buffer because model has normal map");
-                    m_vertexTangentsBuffer = Renderer::createStaticVertexBuffer(tangents);
-
-                    m_vertexArray->addVertexBuffer(m_vertexTangentsBuffer);
-                }
-            }
-
-            const aiNode* node = Utils::Common::findAinodeForAimesh(scene, scene->mRootNode, scene->mMeshes[i]->mName);
-            if(node)
-            {
-                glm::mat4 modelMatrix = Utils::Matrix::aiToGlm(node->mTransformation);
-
-                glm::vec3 scale = Utils::Matrix::getScaleFrom4x4Glm(modelMatrix);
-                BR_ASSERT((scale.x == 1.0f && scale.y == 1.0f && scale.z == 1.0f), "%s", "Scale should be baked to 1 in modeling tool.");
-
-                m_totalRotation = Utils::Matrix::getRotationFrom4x4Glm(modelMatrix);
-                m_origin = Utils::Matrix::getTranslationFrom4x4Glm(modelMatrix);
-                m_originX = m_origin.x;
-                m_originY = m_origin.y;
-                m_originZ = m_origin.z;
-            }
+                loadCollisionMesh(scene, scene->mMeshes[i], meshName, collisionMass, wantCollisionCallBack, collFlag, collGroup, collMask);
+            else
+                loadGraphicsMesh(filePath, scene, scene->mMeshes[i]);
         }
+    }
+
+    SimpleCollidingObject::SimpleCollidingObject(const std::string& filePath,
+                                                 const aiScene* scene,
+                                                 const aiMesh* graphicsMesh,
+                                                 const aiMesh* collisionMesh,
+                                                 const std::string& collisionMeshName,
+                                                 float collisionMass,
+                                                 bool wantCollisionCallBack,
+                                                 CollisionFlags collFlag,
+                                                 CollisionGroups collGroup,
+                                                 CollisionGroups collMask,
+                                                 SceneObjectGroups sceneGroup)
+    {
+        m_sceneObjectGroup = sceneGroup;
+
+        loadGraphicsMesh(filePath, scene, graphicsMesh);
+        loadCollisionMesh(scene, collisionMesh, collisionMeshName, collisionMass, wantCollisionCallBack, collFlag, collGroup, collMask);
     }
 
     SimpleCollidingObject::~SimpleCollidingObject()
@@ -301,39 +104,330 @@ namespace Beryll
         m_vertexArray->draw();
     }
 
-    void SimpleCollidingObject::processCollisionMesh(const aiScene* scene,
-                                                     const aiMesh* mesh,
-                                                     const std::string& meshName,
-                                                     float mass,
-                                                     bool wantCallBack,
-                                                     CollisionFlags collFlag,
-                                                     CollisionGroups collGroup,
-                                                     CollisionGroups collMask)
+    void SimpleCollidingObject::loadGraphicsMesh(const std::string& filePath, const aiScene* scene, const aiMesh* graphicsMesh)
     {
+        BR_INFO("Graphics mesh name: %s", graphicsMesh->mName.C_Str());
+
+        // Prepare vectors.
+        std::vector<glm::vec3> vertices;
+        std::vector<glm::vec3> normals;
+        std::vector<glm::vec3> tangents;
+        std::vector<glm::vec2> textureCoords;
+        std::vector<uint32_t> indices;
+        vertices.reserve(graphicsMesh->mNumVertices);
+        normals.reserve(graphicsMesh->mNumVertices);
+        tangents.reserve(graphicsMesh->mNumVertices);
+        textureCoords.reserve(graphicsMesh->mNumVertices);
+        indices.reserve(graphicsMesh->mNumFaces * 3);
+
+        // Vertices.
+        for(int g = 0; g < graphicsMesh->mNumVertices; ++g)
+        {
+            vertices.emplace_back(graphicsMesh->mVertices[g].x,
+                                  graphicsMesh->mVertices[g].y,
+                                  graphicsMesh->mVertices[g].z);
+
+            if(graphicsMesh->mNormals)
+            {
+                glm::vec3 normal = glm::vec3(graphicsMesh->mNormals[g].x,
+                                             graphicsMesh->mNormals[g].y,
+                                             graphicsMesh->mNormals[g].z);
+
+                normals.emplace_back(glm::normalize(normal));
+            }
+            else
+            {
+                normals.emplace_back(0.0f, 0.0f, 0.0f);
+            }
+
+            if(graphicsMesh->mTangents)
+            {
+                glm::vec3 tangent = glm::vec3(graphicsMesh->mTangents[g].x,
+                                              graphicsMesh->mTangents[g].y,
+                                              graphicsMesh->mTangents[g].z);
+
+                tangents.emplace_back(glm::normalize(tangent));
+            }
+            else
+            {
+                tangents.emplace_back(0.0f, 0.0f, 0.0f);
+            }
+
+            // Use only first set of texture coordinates.
+            if(graphicsMesh->mTextureCoords[0])
+            {
+                textureCoords.emplace_back(graphicsMesh->mTextureCoords[0][g].x,
+                                           graphicsMesh->mTextureCoords[0][g].y);
+            }
+            else
+            {
+                textureCoords.emplace_back(0.0f, 0.0f);
+            }
+        }
+        BR_INFO("Vertex count: %d", vertices.size());
+        m_vertexPosBuffer = Renderer::createStaticVertexBuffer(vertices);
+        m_vertexNormalsBuffer = Renderer::createStaticVertexBuffer(normals);
+        m_textureCoordsBuffer = Renderer::createStaticVertexBuffer(textureCoords);
+        // Tangents buffer will created if model has normal map.
+
+        // Indices.
+        for(int g = 0; g < graphicsMesh->mNumFaces; ++g) // Every face MUST be a triangle !!!!
+        {
+            indices.emplace_back(graphicsMesh->mFaces[g].mIndices[0]);
+            indices.emplace_back(graphicsMesh->mFaces[g].mIndices[1]);
+            indices.emplace_back(graphicsMesh->mFaces[g].mIndices[2]);
+        }
+        BR_INFO("Indices count: %d", indices.size());
+        m_indexBuffer = Renderer::createStaticIndexBuffer(indices);
+
+        m_vertexArray = Renderer::createVertexArray();
+        m_vertexArray->addVertexBuffer(m_vertexPosBuffer);
+        m_vertexArray->addVertexBuffer(m_vertexNormalsBuffer);
+        m_vertexArray->addVertexBuffer(m_textureCoordsBuffer);
+        // Tangents buffer will added if model has normal map.
+        m_vertexArray->setIndexBuffer(m_indexBuffer);
+
+        m_internalShader = Renderer::createShader(BeryllConstants::simpleObjDefaultVertexPath.data(),
+                                                  BeryllConstants::simpleObjDefaultFragmentPath.data());
+        m_internalShader->bind();
+
+        // Material.
+        if(graphicsMesh->mMaterialIndex >= 0)
+        {
+            aiMaterial* material = scene->mMaterials[graphicsMesh->mMaterialIndex];
+
+            BR_ASSERT((filePath.find_last_of('/') != std::string::npos), "Texture + model must be in folder: %s", filePath.c_str());
+
+            std::string texturePath;
+
+            if(material->GetTextureCount(aiTextureType_DIFFUSE) > 0)
+            {
+                aiString textName;
+                material->GetTexture(aiTextureType_DIFFUSE, 0, &textName);
+
+                std::string textName2 = textName.C_Str();
+                for(int g = static_cast<int>(textName2.size()) - 1; g >= 0; --g)
+                {
+                    if(textName2[g] == '/' || textName2[g] == '\\')
+                    {
+                        textName2 = textName2.substr(g + 1);
+                        break;
+                    }
+                }
+                texturePath = filePath.substr(0, filePath.find_last_of('/'));
+                texturePath += '/';
+                texturePath += textName2;
+                BR_INFO("Diffuse texture here: %s", texturePath.c_str());
+
+                m_diffTexture = Renderer::createTexture(texturePath.c_str(), TextureType::DIFFUSE_TEXTURE);
+                m_internalShader->activateDiffuseTexture();
+            }
+
+            if(material->GetTextureCount(aiTextureType_SPECULAR) > 0)
+            {
+                aiString textName;
+                material->GetTexture(aiTextureType_SPECULAR, 0, &textName);
+
+                std::string textName2 = textName.C_Str();
+                for(int g = static_cast<int>(textName2.size()) - 1; g >= 0; --g)
+                {
+                    if(textName2[g] == '/' || textName2[g] == '\\')
+                    {
+                        textName2 = textName2.substr(g + 1);
+                        break;
+                    }
+                }
+                texturePath = filePath.substr(0, filePath.find_last_of('/'));
+                texturePath += '/';
+                texturePath += textName2;
+                BR_INFO("Specular texture here: %s", texturePath.c_str());
+
+                m_specTexture = Renderer::createTexture(texturePath.c_str(), TextureType::SPECULAR_TEXTURE);
+                m_internalShader->activateSpecularTexture();
+            }
+
+            if(material->GetTextureCount(aiTextureType_NORMALS) > 0)
+            {
+                aiString textName;
+                material->GetTexture(aiTextureType_NORMALS, 0, &textName);
+
+                std::string textName2 = textName.C_Str();
+                for(int g = static_cast<int>(textName2.size()) - 1; g >= 0; --g)
+                {
+                    if(textName2[g] == '/' || textName2[g] == '\\')
+                    {
+                        textName2 = textName2.substr(g + 1);
+                        break;
+                    }
+                }
+                texturePath = filePath.substr(0, filePath.find_last_of('/'));
+                texturePath += '/';
+                texturePath += textName2;
+                BR_INFO("Normal map texture here: %s", texturePath.c_str());
+
+                m_normalMapTexture = Renderer::createTexture(texturePath.c_str(), TextureType::NORMAL_MAP_TEXTURE);
+                m_internalShader->activateNormalMapTexture();
+
+                BR_INFO("%s", "Create tangents buffer because model has normal map.");
+                m_vertexTangentsBuffer = Renderer::createStaticVertexBuffer(tangents);
+
+                m_vertexArray->addVertexBuffer(m_vertexTangentsBuffer);
+            }
+        }
+
+        const aiNode* node = Utils::Common::findAinodeForAimesh(scene, scene->mRootNode, graphicsMesh->mName);
+        if(node)
+        {
+            glm::mat4 modelMatrix = Utils::Matrix::aiToGlm(node->mTransformation);
+
+            glm::vec3 scale = Utils::Matrix::getScaleFrom4x4Glm(modelMatrix);
+            BR_ASSERT((scale.x == 1.0f && scale.y == 1.0f && scale.z == 1.0f), "%s", "Scale should be baked to 1 in modeling tool.");
+
+            m_totalRotation = Utils::Matrix::getRotationFrom4x4Glm(modelMatrix);
+            m_origin = Utils::Matrix::getTranslationFrom4x4Glm(modelMatrix);
+            m_originX = m_origin.x;
+            m_originY = m_origin.y;
+            m_originZ = m_origin.z;
+        }
+    }
+
+    void SimpleCollidingObject::loadCollisionMesh(const aiScene* scene,
+                                                  const aiMesh* collisionMesh,
+                                                  const std::string& meshName,
+                                                  float mass,
+                                                  bool wantCallBack,
+                                                  CollisionFlags collFlag,
+                                                  CollisionGroups collGroup,
+                                                  CollisionGroups collMask)
+    {
+        BR_INFO("Collision mesh name: %s", collisionMesh->mName.C_Str());
+
+        // Collect collision mesh dimensions.
+        // Model should be created in Blender where up axis = +Z.
+        for (int g = 0; g < collisionMesh->mNumVertices; ++g)
+        {
+            // Top and bottom points must be taken from Z axis.
+            if (collisionMesh->mVertices[g].z < m_mostBottomVertex)
+                m_mostBottomVertex = collisionMesh->mVertices[g].z;
+            if (collisionMesh->mVertices[g].z > m_mostTopVertex)
+                m_mostTopVertex = collisionMesh->mVertices[g].z;
+
+            if (collisionMesh->mVertices[g].x < m_smallestX)
+                m_smallestX = collisionMesh->mVertices[g].x;
+            if (collisionMesh->mVertices[g].x > m_biggestX)
+                m_biggestX = collisionMesh->mVertices[g].x;
+
+            // Z dimensions should be taken from Y axis.
+            // In Blender Y axis is horizontal and will replaced by Z after exporting.
+            if (collisionMesh->mVertices[g].y < m_smallestZ)
+                m_smallestZ = collisionMesh->mVertices[g].y;
+            if (collisionMesh->mVertices[g].y > m_biggestZ)
+                m_biggestZ = collisionMesh->mVertices[g].y;
+        }
+
+        m_hasCollisionObject = true;
+        m_isEnabledInPhysicsSimulation = true;
+        m_collisionFlag = collFlag;
+        m_collisionGroup = collGroup;
+        m_collisionMask = collMask;
+        m_collisionMass = mass;
+
         glm::mat4 collisionTransforms{1.0f};
 
-        const aiNode* node = Utils::Common::findAinodeForAimesh(scene, scene->mRootNode, mesh->mName);
+        const aiNode* node = Utils::Common::findAinodeForAimesh(scene, scene->mRootNode, collisionMesh->mName);
         if(node)
         {
             collisionTransforms = Utils::Matrix::aiToGlm(node->mTransformation);
         }
 
         std::vector<glm::vec3> vertices;
-        vertices.reserve(mesh->mNumVertices);
-        for(int i = 0; i < mesh->mNumVertices; ++i)
+        vertices.reserve(collisionMesh->mNumVertices);
+        for(int i = 0; i < collisionMesh->mNumVertices; ++i)
         {
-            vertices.emplace_back(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z);
+            vertices.emplace_back(collisionMesh->mVertices[i].x, collisionMesh->mVertices[i].y, collisionMesh->mVertices[i].z);
         }
 
         std::vector<uint32_t> indices;
-        indices.reserve(mesh->mNumFaces * 3);
-        for(int i = 0; i < mesh->mNumFaces; ++i)
+        indices.reserve(collisionMesh->mNumFaces * 3);
+        for(int i = 0; i < collisionMesh->mNumFaces; ++i)
         {
-            indices.emplace_back(mesh->mFaces[i].mIndices[0]);
-            indices.emplace_back(mesh->mFaces[i].mIndices[1]);
-            indices.emplace_back(mesh->mFaces[i].mIndices[2]);
+            indices.emplace_back(collisionMesh->mFaces[i].mIndices[0]);
+            indices.emplace_back(collisionMesh->mFaces[i].mIndices[1]);
+            indices.emplace_back(collisionMesh->mFaces[i].mIndices[2]);
         }
 
         Physics::addObject(vertices, indices, collisionTransforms, meshName, m_ID, mass, wantCallBack, collFlag, collGroup, collMask);
+    }
+
+    std::vector<std::shared_ptr<SimpleCollidingObject>> SimpleCollidingObject::loadManyModelsFromOneFile(const char* filePath,
+                                                                                                         float collisionMass,
+                                                                                                         bool wantCollisionCallBack,
+                                                                                                         CollisionFlags collFlag,
+                                                                                                         CollisionGroups collGroup,
+                                                                                                         CollisionGroups collMask,
+                                                                                                         SceneObjectGroups sceneGroup)
+    {
+        std::vector<std::shared_ptr<SimpleCollidingObject>> objects;
+        std::shared_ptr<SimpleCollidingObject> obj;
+
+        BR_INFO("Load many colliding simple objects from one file: %s", filePath);
+
+        uint32_t bufferSize = 0;
+        char* buffer = Utils::File::readToBuffer(filePath, &bufferSize);
+
+        Assimp::Importer importer;
+        const aiScene* scene = importer.ReadFileFromMemory(buffer, bufferSize,
+                                                           aiProcess_Triangulate |
+                                                           aiProcess_FlipUVs |
+                                                           aiProcess_CalcTangentSpace);
+        delete[] buffer;
+        if( !scene || !scene->mRootNode || scene->mFlags == AI_SCENE_FLAGS_INCOMPLETE)
+        {
+            BR_ASSERT(false, "Scene loading error for file: %s", filePath);
+        }
+
+        BR_INFO("Total mesh count in file: %d", scene->mNumMeshes);
+
+        std::string graphicsMeshName;
+        std::string collisionMeshName;
+
+        for(int i = 0; i < scene->mNumMeshes; ++i)
+        {
+            graphicsMeshName = scene->mMeshes[i]->mName.C_Str();
+            if(graphicsMeshName.find("Collision") != std::string::npos)
+                continue;
+
+            // Found graphics mesh.
+            const aiMesh* graphicsMesh = scene->mMeshes[i];
+            const aiMesh* collisionMesh = nullptr;
+
+            // Look for collision mesh for found graphics mesh.
+            for(int j = 0; j < scene->mNumMeshes; ++j)
+            {
+                collisionMeshName = scene->mMeshes[j]->mName.C_Str();
+                if(collisionMeshName.find(graphicsMeshName) != std::string::npos && collisionMeshName.find("Collision") != std::string::npos)
+                {
+                    collisionMesh = scene->mMeshes[j];
+                    break;
+                }
+            }
+
+            BR_ASSERT((graphicsMesh != nullptr && collisionMesh != nullptr), "Collision mesh not found for graphics mesh: %s", graphicsMeshName.c_str());
+
+            obj = std::make_shared<SimpleCollidingObject>(filePath,
+                                                          scene,
+                                                          graphicsMesh,
+                                                          collisionMesh,
+                                                          collisionMeshName,
+                                                          collisionMass,
+                                                          wantCollisionCallBack,
+                                                          collFlag,
+                                                          collGroup,
+                                                          collMask,
+                                                          sceneGroup);
+            objects.push_back(obj);
+        }
+
+        return objects;
     }
 }

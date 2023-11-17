@@ -3,7 +3,7 @@
 
 namespace Beryll
 {
-    AnimatedCollidingCharacter::AnimatedCollidingCharacter(const char* modelPath,  // Common params.
+    AnimatedCollidingCharacter::AnimatedCollidingCharacter(const char* filePath,  // Common params.
                                                            float collisionMass,    // Physics params.
                                                            bool wantCollisionCallBack,
                                                            CollisionFlags collFlag,
@@ -11,7 +11,7 @@ namespace Beryll
                                                            CollisionGroups collMask,
                                                            SceneObjectGroups sceneGroup)
                                                            // Call base class constructor.
-                                                           : AnimatedCollidingObject(modelPath,
+                                                           : AnimatedCollidingObject(filePath,
                                                                                      collisionMass,
                                                                                      wantCollisionCallBack,
                                                                                      collFlag,
