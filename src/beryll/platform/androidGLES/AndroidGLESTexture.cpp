@@ -16,7 +16,7 @@ namespace Beryll
         auto result =  m_textures.find(m_ID);
         if(result != m_textures.end())
         {
-            // texture was added before, use it
+            // Texture was added before, use it.
             //BR_INFO("%s", "texture was added before");
             m_openGLID = result->second; // copy shared pointer
             return;
@@ -74,12 +74,12 @@ namespace Beryll
             auto result =  m_textures.find(m_ID);
             if(result != m_textures.end())
             {
-                if(m_type == TextureType::DIFFUSE_TEXTURE  && GLESStateVariables::currentTexture0 == *m_openGLID)
-                    GLESStateVariables::currentTexture0 = 0;
-                else if(m_type == TextureType::SPECULAR_TEXTURE && GLESStateVariables::currentTexture1 == *m_openGLID)
-                    GLESStateVariables::currentTexture1 = 0;
-                else if(m_type == TextureType::NORMAL_MAP_TEXTURE && GLESStateVariables::currentTexture2 == *m_openGLID)
-                    GLESStateVariables::currentTexture2 = 0;
+                if(m_type == TextureType::DIFFUSE_TEXTURE  && GLESStateVariables::currentDiffuseTextureID0 == *m_openGLID)
+                    GLESStateVariables::currentDiffuseTextureID0 = 0;
+                else if(m_type == TextureType::SPECULAR_TEXTURE && GLESStateVariables::currentSpecularTextureID1 == *m_openGLID)
+                    GLESStateVariables::currentSpecularTextureID1 = 0;
+                else if(m_type == TextureType::NORMAL_MAP_TEXTURE && GLESStateVariables::currentNormalMapTextureID2 == *m_openGLID)
+                    GLESStateVariables::currentNormalMapTextureID2 = 0;
 
                 glDeleteTextures(1, m_openGLID.get());
                 m_textures.erase(result);
@@ -90,49 +90,49 @@ namespace Beryll
     void AndroidGLESTexture::bind()
     {
         // Dont bind if m_openGLID already bound.
-        if(m_type == TextureType::DIFFUSE_TEXTURE && GLESStateVariables::currentTexture0 != *m_openGLID)
+        if(m_type == TextureType::DIFFUSE_TEXTURE && GLESStateVariables::currentDiffuseTextureID0 != *m_openGLID)
         {
             //BR_INFO("%s", "bind diffuse texture");
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, *m_openGLID);
-            GLESStateVariables::currentTexture0 = *m_openGLID;
+            GLESStateVariables::currentDiffuseTextureID0 = *m_openGLID;
         }
-        else if(m_type == TextureType::SPECULAR_TEXTURE && GLESStateVariables::currentTexture1 != *m_openGLID)
+        else if(m_type == TextureType::SPECULAR_TEXTURE && GLESStateVariables::currentSpecularTextureID1 != *m_openGLID)
         {
             //BR_INFO("%s", "bind specular texture");
             glActiveTexture(GL_TEXTURE1);
             glBindTexture(GL_TEXTURE_2D, *m_openGLID);
-            GLESStateVariables::currentTexture1 = *m_openGLID;
+            GLESStateVariables::currentSpecularTextureID1 = *m_openGLID;
         }
-        else if(m_type == TextureType::NORMAL_MAP_TEXTURE && GLESStateVariables::currentTexture2 != *m_openGLID)
+        else if(m_type == TextureType::NORMAL_MAP_TEXTURE && GLESStateVariables::currentNormalMapTextureID2 != *m_openGLID)
         {
             //BR_INFO("%s", "bind normal map texture");
             glActiveTexture(GL_TEXTURE2);
             glBindTexture(GL_TEXTURE_2D, *m_openGLID);
-            GLESStateVariables::currentTexture2 = *m_openGLID;
+            GLESStateVariables::currentNormalMapTextureID2 = *m_openGLID;
         }
     }
 
     void AndroidGLESTexture::unBind()
     {
         // This object can unbind only his own texture.
-        if(m_type == TextureType::DIFFUSE_TEXTURE  && GLESStateVariables::currentTexture0 == *m_openGLID)
+        if(m_type == TextureType::DIFFUSE_TEXTURE  && GLESStateVariables::currentDiffuseTextureID0 == *m_openGLID)
         {
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, 0);
-            GLESStateVariables::currentTexture0 = 0;
+            GLESStateVariables::currentDiffuseTextureID0 = 0;
         }
-        else if(m_type == TextureType::SPECULAR_TEXTURE && GLESStateVariables::currentTexture1 == *m_openGLID)
+        else if(m_type == TextureType::SPECULAR_TEXTURE && GLESStateVariables::currentSpecularTextureID1 == *m_openGLID)
         {
             glActiveTexture(GL_TEXTURE1);
             glBindTexture(GL_TEXTURE_2D, 0);
-            GLESStateVariables::currentTexture1 = 0;
+            GLESStateVariables::currentSpecularTextureID1 = 0;
         }
-        else if(m_type == TextureType::NORMAL_MAP_TEXTURE && GLESStateVariables::currentTexture2 == *m_openGLID)
+        else if(m_type == TextureType::NORMAL_MAP_TEXTURE && GLESStateVariables::currentNormalMapTextureID2 == *m_openGLID)
         {
             glActiveTexture(GL_TEXTURE2);
             glBindTexture(GL_TEXTURE_2D, 0);
-            GLESStateVariables::currentTexture2 = 0;
+            GLESStateVariables::currentNormalMapTextureID2 = 0;
         }
     }
 }

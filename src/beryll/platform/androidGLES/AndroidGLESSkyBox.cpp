@@ -140,7 +140,7 @@ namespace Beryll
 
     AndroidGLESSkyBox::~AndroidGLESSkyBox()
     {
-        GLESStateVariables::currentTexture5 = 0;
+        GLESStateVariables::currentSkyBoxTextureID5 = 0;
 
         glDeleteTextures(1, &m_openGLID);
     }
@@ -155,11 +155,11 @@ namespace Beryll
         m_perspView = m_persp * m_view;
         m_internalShader->setMatrix4x4Float("VPMatrix", m_perspView);
 
-        if(GLESStateVariables::currentTexture5 != m_openGLID)
+        if(GLESStateVariables::currentSkyBoxTextureID5 != m_openGLID)
         {
             glActiveTexture(GL_TEXTURE5);
             glBindTexture(GL_TEXTURE_CUBE_MAP, m_openGLID);
-            GLESStateVariables::currentTexture5 = m_openGLID;
+            GLESStateVariables::currentSkyBoxTextureID5 = m_openGLID;
         }
 
         m_vertexArray->bind();
