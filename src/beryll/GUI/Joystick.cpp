@@ -42,38 +42,15 @@ namespace Beryll
         m_touchedDirectionFromOrigin.y = 0.0f;
 
         std::vector<Finger>& fingers = EventHandler::getFingers();
-
-        if(m_fingerIDDownEvent != -1)
-        {
-            bool touchedFingerStillOnScreen = false;
-            for(Finger& f : fingers)
-            {
-                if(m_fingerIDDownEvent == f.ID)
-                {
-                    touchedFingerStillOnScreen = true;
-                }
-            }
-
-            if(!touchedFingerStillOnScreen)
-                m_fingerIDDownEvent = -1;
-        }
-
         for(Finger& f : fingers)
         {
             if(f.normalizedPos.x > m_leftPos && f.normalizedPos.x < m_leftPos + m_width &&
                f.normalizedPos.y > m_topPos && f.normalizedPos.y < m_topPos + m_height)
             {
                 // If any finger in joystick area.
-                if(f.downEvent && !f.handled)
-                {
-                    m_fingerIDDownEvent = f.ID;
+                if(!f.handled)
                     f.handled = true;
-                }
-            }
 
-            // Touched finger still on screen.
-            if(m_fingerIDDownEvent != -1 && f.ID == m_fingerIDDownEvent)
-            {
                 m_touched = true;
 
                 glm::vec2 touchDistanceFromOriginInPixels = f.ImGuiScreenPos - m_joystickOriginInPixels;
@@ -82,8 +59,6 @@ namespace Beryll
                     m_touchedDirectionFromOrigin = glm::normalize(touchDistanceFromOriginInPixels);
                     m_touchedDirectionFromOrigin.y = -m_touchedDirectionFromOrigin.y;
                 }
-
-                return;
             }
         }
     }

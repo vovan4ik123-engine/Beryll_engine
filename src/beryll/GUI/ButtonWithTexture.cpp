@@ -68,7 +68,7 @@ namespace Beryll
                 if(f.normalizedPos.x > m_leftPos && f.normalizedPos.x < m_leftPos + m_width &&
                    f.normalizedPos.y > m_topPos && f.normalizedPos.y < m_topPos + m_height)
                 {
-                    // if any finger in button area
+                    // If any finger in button area.
                     m_touched = true;
 
                     if(f.downEvent && !f.handled)
