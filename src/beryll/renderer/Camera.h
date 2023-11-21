@@ -46,6 +46,23 @@ namespace Beryll
             m_viewProjection = m_projection * m_view;
         }
 
+        static void updateCameraVectors()
+        {
+            m_cameraDirectionXYZ = glm::normalize(m_cameraFrontPos - m_cameraPos);
+            m_cameraDirectionXZ = glm::normalize(glm::vec3(m_cameraDirectionXYZ.x, 0.0f, m_cameraDirectionXYZ.z));
+
+            m_cameraBackDirectionXYZ = -m_cameraDirectionXYZ;
+            m_cameraBackDirectionXZ = -m_cameraDirectionXZ;
+
+            m_cameraRightXYZ = glm::normalize(glm::cross(m_cameraDirectionXYZ, BeryllConstants::worldUp));
+            m_cameraRightXZ = glm::normalize(glm::vec3(m_cameraRightXYZ.x, 0.0f, m_cameraRightXYZ.z));
+
+            m_cameraLeftXYZ = -m_cameraRightXYZ;
+            m_cameraLeftXZ = -m_cameraRightXZ;
+
+            m_cameraUp = glm::normalize(glm::cross(m_cameraRightXYZ, m_cameraDirectionXYZ));
+        }
+
         // check does camera see object or object is out of view
         static bool getIsSeeObject(const glm::vec3& objectPos, float fovMultiplier = 1.0f, float maxViewDistance = m_objectsViewDistance)
         {
@@ -135,23 +152,6 @@ namespace Beryll
         static glm::mat4 m_view;
 
         static glm::mat4 m_loadingScreenCamera;
-
-        static void updateCameraVectors()
-        {
-            m_cameraDirectionXYZ = glm::normalize(m_cameraFrontPos - m_cameraPos);
-            m_cameraDirectionXZ = glm::normalize(glm::vec3(m_cameraDirectionXYZ.x, 0.0f, m_cameraDirectionXYZ.z));
-
-            m_cameraBackDirectionXYZ = -m_cameraDirectionXYZ;
-            m_cameraBackDirectionXZ = -m_cameraDirectionXZ;
-
-            m_cameraRightXYZ = glm::normalize(glm::cross(m_cameraDirectionXYZ, BeryllConstants::worldUp));
-            m_cameraRightXZ = glm::normalize(glm::vec3(m_cameraRightXYZ.x, 0.0f, m_cameraRightXYZ.z));
-
-            m_cameraLeftXYZ = -m_cameraRightXYZ;
-            m_cameraLeftXZ = -m_cameraRightXZ;
-
-            m_cameraUp = glm::normalize(glm::cross(m_cameraRightXYZ, m_cameraDirectionXYZ));
-        }
 
         static glm::mat4 getVeiw3D() // updateCameraVectors() MUST be called before this method !!!
         {

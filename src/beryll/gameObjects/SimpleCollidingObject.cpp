@@ -405,10 +405,15 @@ namespace Beryll
             for(int j = 0; j < scene->mNumMeshes; ++j)
             {
                 collisionMeshName = scene->mMeshes[j]->mName.C_Str();
-                if(collisionMeshName.find(graphicsMeshName) != std::string::npos && collisionMeshName.find("Collision") != std::string::npos)
+
+                std::string::size_type collisionWordIndex = collisionMeshName.find("Collision");
+                if(collisionWordIndex != std::string::npos)
                 {
-                    collisionMesh = scene->mMeshes[j];
-                    break;
+                    if(graphicsMeshName == collisionMeshName.substr(0, collisionWordIndex))
+                    {
+                        collisionMesh = scene->mMeshes[j];
+                        break;
+                    }
                 }
             }
 

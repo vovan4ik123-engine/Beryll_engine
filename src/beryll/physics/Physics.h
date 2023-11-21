@@ -129,6 +129,18 @@ namespace Beryll
                 m_resolutionFactor = res;
         }
 
+        // Min Acceptable FPS by physics simulation.
+        // Default value = 10. You can increase it for more smooth simulation and better physics precision.
+        // If real fps < m_minAcceptableFPS simulation will act like real fps = m_minAcceptableFPS
+        // and dynamic objects will move slower than they should.
+        // If real fps too much less than m_minAcceptableFPS, dynamics objects will move like in slow motion
+        // but movement will be smooth with good precision.
+        static void setMinAcceptableFPS(float fps)
+        {
+            m_minAcceptableFPS = fps;
+            m_maxAcceptableFrameTimeSec = 1.0f / m_minAcceptableFPS;
+        }
+
         static void disableSimulation()
         {
             m_simulationEnabled = false;
@@ -206,6 +218,15 @@ namespace Beryll
         // Increase resolution if your ball penetrate wall but you want collision.
         // Physics engine will do more small iteration during one simulation.
         static int m_resolutionFactor;
+
+        // Min Acceptable FPS by physics simulation.
+        // Default value = 10. You can increase it for more smooth simulation and better physics precision.
+        // If real fps < m_minAcceptableFPS simulation will act like real fps = m_minAcceptableFPS
+        // and dynamic objects will move slower than they should.
+        // If real fps too much less than m_minAcceptableFPS, dynamics objects will move like in slow motion
+        // but movement will be smooth with good precision.
+        static float m_minAcceptableFPS;
+        static float m_maxAcceptableFrameTimeSec;
 
         static float m_timeStep;
         static bool m_simulationEnabled;

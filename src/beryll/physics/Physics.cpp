@@ -7,6 +7,8 @@ namespace Beryll
     btVector3 Physics::m_gravity = btVector3(0.0f, -10.0f, 0.0f);
     Timer Physics::m_timer;
     float Physics::m_timeStep = 0.0f;
+    float Physics::m_minAcceptableFPS = 10.0f;
+    float Physics::m_maxAcceptableFrameTimeSec = 0.1f; // Frame time in sec if FPS = 10
     bool Physics::m_simulationEnabled = true;
     float Physics::m_simulationTime = 0.0f;
     int Physics::m_resolutionFactor = 1;
@@ -76,7 +78,7 @@ namespace Beryll
         // maxSubSteps: timeStep < maxSubSteps * fixedTimeStep
         // fixedTimeStep: simulation resolution increases as this value decreases.
         //                If your balls penetrates your walls instead of colliding with them decrease it
-        m_timeStep = std::min(m_timer.getElapsedSec(), 0.1f); // Protection from lag (FPS dropped down and is < 10 FPS).
+        m_timeStep = std::min(m_timer.getElapsedSec(), m_maxAcceptableFrameTimeSec); // Protection from lag (FPS dropped down and is < m_minAcceptableFPS).
         m_timer.reset();
 
         m_dynamicsWorldMT->stepSimulation(m_timeStep,

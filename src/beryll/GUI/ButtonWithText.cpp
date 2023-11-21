@@ -17,7 +17,10 @@ namespace Beryll
 
         m_actRepeat = actRepeat;
 
-        m_font = MainImGUI::getInstance()->createFont(fontPath.c_str(), fontHeightInPercentOfScreen);
+        if(m_text.empty())
+            m_text = "##ImGUILibrarySpecificID" + m_IDAsString;
+
+        m_font = MainImGUI::getInstance()->createFont(fontPath, fontHeightInPercentOfScreen);
     }
 
     ButtonWithText::~ButtonWithText()

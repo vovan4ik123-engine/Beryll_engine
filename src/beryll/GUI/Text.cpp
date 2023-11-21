@@ -17,7 +17,7 @@ namespace Beryll
         else
             m_flags = m_noBackgroundNoFrame;
 
-        m_font = MainImGUI::getInstance()->createFont(fontPath.c_str(), fontHeightInPercentOfScreen);
+        m_font = MainImGUI::getInstance()->createFont(fontPath, fontHeightInPercentOfScreen);
     }
 
     Text::~Text()

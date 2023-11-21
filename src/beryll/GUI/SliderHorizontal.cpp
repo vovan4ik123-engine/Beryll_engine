@@ -22,9 +22,9 @@ namespace Beryll
 
         // m_text can not be empty because it is ID for slider window.
         if(m_text.empty())
-            m_text = "##SomeID" + m_IDAsString;
+            m_text = "##ImGUILibrarySpecificID" + m_IDAsString;
 
-        m_font = MainImGUI::getInstance()->createFont(fontPath.c_str(), fontHeightInPercentOfScreen);
+        m_font = MainImGUI::getInstance()->createFont(fontPath, fontHeightInPercentOfScreen);
     }
 
     SliderHorizontal::~SliderHorizontal()
