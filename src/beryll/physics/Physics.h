@@ -41,6 +41,11 @@ namespace Beryll
         GROUND = 1 << 3,
         PLAYER = 1 << 4,
         STONE = 1 << 5,
+        CONSTRUCTION_1 = 1 << 6,
+        CONSTRUCTION_2 = 1 << 7,
+        CONSTRUCTION_3 = 1 << 8,
+        CONSTRUCTION_4 = 1 << 9,
+        CONSTRUCTION_5 = 1 << 10,
 
         YOU_CAN_COMBINE_GROUPS_WHEN_USE = STATIC_ENVIRONMENT | CAMERA,
 

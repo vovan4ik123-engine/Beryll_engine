@@ -8,7 +8,7 @@ namespace Beryll
     Timer Physics::m_timer;
     float Physics::m_timeStep = 0.0f;
     float Physics::m_minAcceptableFPS = 10.0f;
-    float Physics::m_maxAcceptableFrameTimeSec = 0.1f; // Frame time in sec if FPS = 10
+    float Physics::m_maxAcceptableFrameTimeSec = 0.1f; // Frame time in sec if FPS = 10.
     bool Physics::m_simulationEnabled = true;
     float Physics::m_simulationTime = 0.0f;
     int Physics::m_resolutionFactor = 1;
@@ -51,7 +51,7 @@ namespace Beryll
                                                                         m_collisionConfiguration.get());
 
         m_dynamicsWorldMT->setGravity(m_gravity);
-        m_dynamicsWorldMT->getSolverInfo().m_numIterations = 5;
+        //m_dynamicsWorldMT->getSolverInfo().m_numIterations = 10;
 
         // Set collisions call backs to bullet.
         gContactAddedCallback = collisionsCallBack;

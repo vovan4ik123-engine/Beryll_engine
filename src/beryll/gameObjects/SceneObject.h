@@ -20,6 +20,11 @@ namespace Beryll
         STATIC_ENVIRONMENT = 5,
         DYNAMIC_ENVIRONMENT = 6,
         STONE = 7,
+        CONSTRUCTION_1,
+        CONSTRUCTION_2,
+        CONSTRUCTION_3,
+        CONSTRUCTION_4,
+        CONSTRUCTION_5,
 
         PLAYER_GROUP_1,
         PLAYER_GROUP_2,
