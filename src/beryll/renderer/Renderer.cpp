@@ -164,12 +164,14 @@ namespace Beryll
 #endif
     }
 
-    void Renderer::drawObject(const std::shared_ptr<Beryll::BaseSimpleObject>& obj, const std::shared_ptr<Shader>& shader)
+    void Renderer::drawObject(const std::shared_ptr<Beryll::BaseSimpleObject>& obj,
+                              const glm::mat4& modelMatrix,
+                              const std::shared_ptr<Shader>& shader)
     {
         if(shader)
         {
             shader->bind();
-            shader->setMatrix4x4Float("MVPMatrix", Beryll::Camera::getViewProjection() * obj->getModelMatrix());
+            shader->setMatrix4x4Float("MVPMatrix", Beryll::Camera::getViewProjection() * modelMatrix);
 
             obj->useInternalShader = false;
             obj->draw();
@@ -181,7 +183,9 @@ namespace Beryll
         }
     }
 
-    void Renderer::drawObject(const std::shared_ptr<Beryll::BaseAnimatedObject>& obj, const std::shared_ptr<Shader>& shader)
+    void Renderer::drawObject(const std::shared_ptr<Beryll::BaseAnimatedObject>& obj,
+                              const glm::mat4& modelMatrix,
+                              const std::shared_ptr<Shader>& shader)
     {
         if(shader)
         {
@@ -189,7 +193,7 @@ namespace Beryll
             static uint32_t boneCount = 0;
 
             shader->bind();
-            shader->setMatrix4x4Float("MVPMatrix", Beryll::Camera::getViewProjection() * obj->getModelMatrix());
+            shader->setMatrix4x4Float("MVPMatrix", Beryll::Camera::getViewProjection() * modelMatrix);
 
             boneCount = obj->getBoneCount();
             for(int i = 0; i < boneCount; ++i)

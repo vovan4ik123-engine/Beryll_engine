@@ -44,8 +44,12 @@ namespace Beryll
         // These 2 methods will set BaseSimpleObject and BaseAnimatedObject specific uniform variables
         // which shader must have for draw them.
         // If shader has some extra uniform variables they should be set before this methods call.
-        static void drawObject(const std::shared_ptr<Beryll::BaseSimpleObject>& obj, const std::shared_ptr<Shader>& shader = nullptr);
-        static void drawObject(const std::shared_ptr<Beryll::BaseAnimatedObject>& obj, const std::shared_ptr<Shader>& shader = nullptr);
+        static void drawObject(const std::shared_ptr<Beryll::BaseSimpleObject>& obj,
+                               const glm::mat4& modelMatrix,
+                               const std::shared_ptr<Shader>& shader = nullptr);
+        static void drawObject(const std::shared_ptr<Beryll::BaseAnimatedObject>& obj,
+                               const glm::mat4& modelMatrix,
+                               const std::shared_ptr<Shader>& shader = nullptr);
 
         static void enableFaceCulling();
         static void disableFaceCulling();

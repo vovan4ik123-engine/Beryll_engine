@@ -379,9 +379,6 @@ namespace Beryll
 
                 m_totalRotation = Utils::Matrix::getRotationFrom4x4Glm(modelMatrix);
                 m_origin = Utils::Matrix::getTranslationFrom4x4Glm(modelMatrix);
-                m_originX = m_origin.x;
-                m_originY = m_origin.y;
-                m_originZ = m_origin.z;
             }
         }
     }
@@ -404,9 +401,6 @@ namespace Beryll
 
             m_totalRotation = glm::normalize(m_physicsTransforms.rotation);
             m_origin = m_physicsTransforms.origin;
-            m_originX = m_origin.x;
-            m_originY = m_origin.y;
-            m_originZ = m_origin.z;
         }
 
         calculateTransforms();
@@ -417,8 +411,7 @@ namespace Beryll
         if(useInternalShader)
         {
             m_internalShader->bind();
-            m_MVP = Camera::getViewProjection() * getModelMatrix();
-            m_internalShader->setMatrix4x4Float("MVPMatrix", m_MVP);
+            m_internalShader->setMatrix4x4Float("MVPMatrix", Camera::getViewProjection() * getModelMatrix());
 
             for(int i = 0; i < m_boneCount; ++i)
             {

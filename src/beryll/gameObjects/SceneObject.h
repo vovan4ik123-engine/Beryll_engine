@@ -58,9 +58,6 @@ namespace Beryll
             if(m_origin == orig) { return; }
 
             m_origin = orig;
-            m_originX = m_origin.x;
-            m_originY = m_origin.y;
-            m_originZ = m_origin.z;
 
             if(m_hasCollisionObject)
                 Physics::setOrigin(m_ID, orig, resetVelocities);
@@ -69,9 +66,6 @@ namespace Beryll
         void addToOrigin(const glm::vec3& distance, bool resetVelocities = false)
         {
             m_origin += distance;
-            m_originX = m_origin.x;
-            m_originY = m_origin.y;
-            m_originZ = m_origin.z;
 
             if(m_hasCollisionObject)
                 Physics::addToOrigin(m_ID, distance, resetVelocities);
@@ -256,14 +250,14 @@ namespace Beryll
         }
 
         // Use it if you call set/get origin from many threads.
-        glm::vec3 getOriginForMultithreading()
-        {
-            float x = m_originX;
-            float y = m_originY;
-            float z = m_originZ;
-
-            return glm::vec3{x, y, z};
-        }
+//        glm::vec3 getOriginForMultithreading()
+//        {
+//            float x = m_originX;
+//            float y = m_originY;
+//            float z = m_originZ;
+//
+//            return glm::vec3{x, y, z};
+//        }
         bool getIsDisabledForEver() { return m_isDisabledForEver; } // Use it for avoid object updating and drawing.
         bool getIsEnabledDraw() { return m_isEnabledDraw && !m_isDisabledForEver; } // Use it for avoid object from drawing.
         bool getIsEnabledUpdate() { return m_isEnabledUpdate && !m_isDisabledForEver; } // Use it for avoid object from updating.
@@ -357,15 +351,14 @@ namespace Beryll
         //     added by physics simulation,
         //     added by engine methods addToRotation(...).
         glm::quat m_totalRotation{1.0f, 0.0f, 0.0f, 0.0f};
-        // Only sum of rotations added by engine methods addToRotation(...)
+        // Only sum of rotations added by engine methods addToRotation(...).
         glm::quat m_engineAddedRotation{1.0f, 0.0f, 0.0f, 0.0f};
         glm::vec3 m_origin{0.0f, 0.0f, 0.0f};
         // std::atomic for synchronization when one thread set origin and other calls getOriginForMultithreading() for same object.
-        std::atomic<float> m_originX = 0.0f;
-        std::atomic<float> m_originY = 0.0f;
-        std::atomic<float> m_originZ = 0.0f;
+        //std::atomic<float> m_originX = 0.0f; Assign it in setOrigin()/addToOrigin() if you need getOriginForMultithreading().
+        //std::atomic<float> m_originY = 0.0f;
+        //std::atomic<float> m_originZ = 0.0f;
 
-        glm::mat4 m_MVP{1.0f};
         PhysicsTransforms m_physicsTransforms;
 
         bool m_hasCollisionObject = false; // Set true for all collision objects.

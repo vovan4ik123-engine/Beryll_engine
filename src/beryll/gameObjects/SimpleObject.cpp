@@ -63,8 +63,7 @@ namespace Beryll
         if(useInternalShader)
         {
             m_internalShader->bind();
-            m_MVP = Camera::getViewProjection() * getModelMatrix();
-            m_internalShader->setMatrix4x4Float("MVPMatrix", m_MVP);
+            m_internalShader->setMatrix4x4Float("MVPMatrix", Camera::getViewProjection() * getModelMatrix());
         }
 
         if(m_diffTexture && useInternalTextures) { m_diffTexture->bind(); }
@@ -258,9 +257,6 @@ namespace Beryll
 
             m_totalRotation = Utils::Matrix::getRotationFrom4x4Glm(modelMatrix);
             m_origin = Utils::Matrix::getTranslationFrom4x4Glm(modelMatrix);
-            m_originX = m_origin.x;
-            m_originY = m_origin.y;
-            m_originZ = m_origin.z;
         }
     }
 
