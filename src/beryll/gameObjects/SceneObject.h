@@ -25,27 +25,6 @@ namespace Beryll
         CONSTRUCTION_3,
         CONSTRUCTION_4,
         CONSTRUCTION_5,
-
-        PLAYER_GROUP_1,
-        PLAYER_GROUP_2,
-        PLAYER_GROUP_3,
-        PLAYER_GROUP_4,
-        PLAYER_GROUP_5,
-        PLAYER_GROUP_6,
-        PLAYER_GROUP_7,
-        PLAYER_GROUP_8,
-        PLAYER_GROUP_9,
-        PLAYER_GROUP_10,
-        ENEMY_GROUP_1,
-        ENEMY_GROUP_2,
-        ENEMY_GROUP_3,
-        ENEMY_GROUP_4,
-        ENEMY_GROUP_5,
-        ENEMY_GROUP_6,
-        ENEMY_GROUP_7,
-        ENEMY_GROUP_8,
-        ENEMY_GROUP_9,
-        ENEMY_GROUP_10
     };
 
     class SceneObject : public GameObject

@@ -45,6 +45,11 @@ namespace Beryll
                                                         BeryllConstants::simpleObjShadowMapFragmentPath.data());
         m_shaderAnimated = Beryll::Renderer::createShader(BeryllConstants::animatedObjShadowMapVertexPath.data(),
                                                           BeryllConstants::animatedObjShadowMapFragmentPath.data());
+
+        // Bind. Can be bound 1 time to reserved GL_TEXTURE6. No need call bind() in every frame.
+        glActiveTexture(GL_TEXTURE6);
+        glBindTexture(GL_TEXTURE_2D, m_openGLID);
+        GLESStateVariables::currentShadowMapTextureID6 = m_openGLID;
     }
 
     AndroidGLESShadowMapTexture::~AndroidGLESShadowMapTexture()
@@ -79,7 +84,7 @@ namespace Beryll
 
     void AndroidGLESShadowMapTexture::drawIntoShadowMap(const std::vector<std::shared_ptr<Beryll::BaseSimpleObject>>& simpleObj,
                                                         const std::vector<std::shared_ptr<Beryll::BaseAnimatedObject>>& animatedObj,
-                                                        const glm::mat4& VPMatrix)
+                                                        const glm::mat4& VPLightMatrix)
     {
         glViewport(0, 0, m_mapWidth, m_mapHeight); // For texture resolution.
         glBindFramebuffer(GL_FRAMEBUFFER, m_depthMapFBO);
@@ -98,7 +103,7 @@ namespace Beryll
         {
             if(so->getIsEnabledDraw())
             {
-                m_shaderSimple->setMatrix4x4Float("MVPMatrix", VPMatrix * so->getModelMatrix());
+                m_shaderSimple->setMatrix4x4Float("MVPMatrix", VPLightMatrix * so->getModelMatrix());
                 so->useInternalShader = false;
                 so->useInternalTextures = false;
                 so->draw();
@@ -113,7 +118,7 @@ namespace Beryll
         {
             if(ao->getIsEnabledDraw())
             {
-                m_shaderAnimated->setMatrix4x4Float("MVPMatrix", VPMatrix * ao->getModelMatrix());
+                m_shaderAnimated->setMatrix4x4Float("MVPMatrix", VPLightMatrix * ao->getModelMatrix());
 
                 uint32_t boneCount = ao->getBoneCount();
                 for(int i = 0; i < boneCount; ++i)

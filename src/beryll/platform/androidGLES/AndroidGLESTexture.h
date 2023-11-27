@@ -22,9 +22,9 @@ namespace Beryll
 
         void drawIntoShadowMap(const std::vector<std::shared_ptr<Beryll::BaseSimpleObject>>& simpleObj,
                                const std::vector<std::shared_ptr<Beryll::BaseAnimatedObject>>& animatedObj,
-                               const glm::mat4& VPMatrix) override
+                               const glm::mat4& VPLightMatrix) override
         {
-            BR_ASSERT(false, "%s", "drawIntoShadowMap() can be called only from shadow map texture");
+            BR_ASSERT(false, "%s", "drawIntoShadowMap() can be called only from shadow map texture.");
         }
 
     private:

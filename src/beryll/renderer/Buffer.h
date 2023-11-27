@@ -20,11 +20,11 @@ namespace Beryll
     public:
         virtual ~VertexBuffer() {}
 
-        virtual void bind() = 0; // Must be called only inside VAO
-        virtual void unBind() = 0; // Must be called only inside VAO
+        virtual void bind() = 0; // Must be called only inside VAO.
+        virtual void unBind() = 0; // Must be called only inside VAO.
 
-        // Only for dynamic buffer
-        // elementsCount = data.size() for copy all buffer
+        // Only for dynamic buffer.
+        // elementsCount = data.size() for copy all buffer.
         virtual void setDynamicBufferData(const std::vector<glm::vec3>& data, uint32_t elementsCount) = 0;
         virtual void setDynamicBufferData(const std::vector<glm::vec4>& data, uint32_t elementsCount) = 0;
         virtual void setDynamicBufferData(const std::vector<glm::mat4>& data, uint32_t elementsCount) = 0;
@@ -37,7 +37,7 @@ namespace Beryll
         VertexAttribSize m_vertAttribSize = VertexAttribSize::UNKNOWN;
     };
 
-    // Dynamic index buffer can be achieved by changing m_count inside setCount(uint32_t count)
+    // Dynamic index buffer can be achieved by changing m_count inside setCount(uint32_t count).
     class IndexBuffer
     {
     public:

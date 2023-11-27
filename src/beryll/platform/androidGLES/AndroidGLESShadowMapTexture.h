@@ -25,7 +25,7 @@ namespace Beryll
 
         void drawIntoShadowMap(const std::vector<std::shared_ptr<Beryll::BaseSimpleObject>>& simpleObj,
                                const std::vector<std::shared_ptr<Beryll::BaseAnimatedObject>>& animatedObj,
-                               const glm::mat4& VPMatrix) override;
+                               const glm::mat4& VPLightMatrix) override;
 
     private:
         friend class Renderer;
