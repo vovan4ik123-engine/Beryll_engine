@@ -8,7 +8,7 @@ namespace Beryll
     class TimeStep final
     {
     public:
-        static unsigned long getMilliSecFromStart()
+        static uint64_t getMilliSecFromStart()
         {
             return m_milliSecFromStart;
         }
@@ -18,7 +18,7 @@ namespace Beryll
             return m_secFromStart;
         }
 
-        static unsigned long getTimeStepMilliSec()
+        static uint64_t getTimeStepMilliSec()
         {
             return m_timeStepMilliSec;
         }
@@ -29,11 +29,11 @@ namespace Beryll
         }
 
     private:
-        static unsigned long m_milliSecFromStart; // Time in milliSec passed after application start.
+        static uint64_t m_milliSecFromStart; // Time in milliSec passed after application start.
         static float m_secFromStart; // Time in sec passed after application start.
 
-        static unsigned long m_currentStepStart; // Time in milliSec.
-        static unsigned long m_timeStepMilliSec; // Time between two last fixateTime() call in milliSec.
+        static uint64_t m_currentStepStart; // Time in milliSec.
+        static uint64_t m_timeStepMilliSec; // Time between two last fixateTime() call in milliSec.
         static float m_timeStepSec; // Time between two last fixateTime() call in sec.
 
         friend class GameLoop;

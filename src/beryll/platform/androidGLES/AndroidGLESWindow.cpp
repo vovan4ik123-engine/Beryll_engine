@@ -73,8 +73,14 @@ namespace Beryll
         glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &check);
         BR_INFO("GL_MAX_TEXTURE_IMAGE_UNITS: %d", check);
 
-        glGetIntegerv(GL_MAX_TEXTURE_SIZE, &check);
-        BR_INFO("GL_MAX_TEXTURE_SIZE: %d", check);
+        glGetIntegerv(GL_MAX_RENDERBUFFER_SIZE, &check);
+        BR_INFO("GL_MAX_RENDERBUFFER_SIZE: %d", check);
+
+        glGetIntegerv(GL_MAX_VIEWPORT_DIMS, &m_maxSupportedViewportResolution);
+        BR_INFO("GL_MAX_VIEWPORT_DIMS: %d", m_maxSupportedViewportResolution);
+
+        glGetIntegerv(GL_MAX_TEXTURE_SIZE, &m_maxSupportedTextureResolution);
+        BR_INFO("GL_MAX_TEXTURE_SIZE: %d", m_maxSupportedTextureResolution);
 
         BR_INFO("AndroidGLESWindow created and initialized. width: %d, height: %d", m_screenWidth, m_screenHeight);
     }
@@ -130,4 +136,3 @@ namespace Beryll
         }
     }
 }
-

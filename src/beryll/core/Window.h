@@ -35,7 +35,8 @@ namespace Beryll
         virtual SDL_Window* getWindow() = 0;
         virtual int getScreenWidth() = 0;
         virtual int getScreenHeight() = 0;
-
+        virtual int getMaxSupportedTextureResolution() = 0;
+        virtual int getMaxSupportedViewportResolution() = 0;
 
         virtual void setClearColor(float r, float g, float b, float a) = 0;  // Background color after clear().
         virtual void clear() = 0;

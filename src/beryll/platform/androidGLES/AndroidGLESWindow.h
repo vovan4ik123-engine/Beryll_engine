@@ -21,6 +21,8 @@ namespace Beryll
         SDL_GLContext* getGlContext() override { return &m_glContext; }
         int getScreenWidth() override { return m_screenWidth;}
         int getScreenHeight() override { return m_screenHeight;}
+        int getMaxSupportedTextureResolution() override { return m_maxSupportedTextureResolution;}
+        int getMaxSupportedViewportResolution() override { return m_maxSupportedViewportResolution;}
 
         void setClearColor(float r, float g, float b, float a) override
         {
@@ -53,5 +55,7 @@ namespace Beryll
 
         int m_screenWidth = 0;
         int m_screenHeight = 0;
+        int m_maxSupportedTextureResolution = 0;
+        int m_maxSupportedViewportResolution = 0;
     };
 }

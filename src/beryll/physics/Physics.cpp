@@ -573,6 +573,21 @@ namespace Beryll
         return false;
     }
 
+    int Physics::getAnyObjectCollidingWith(const int ID)
+    {
+        for(const std::pair<const int, const int>& pair : m_collisionPairs)
+        {
+            if(ID == pair.first)
+                return pair.second;
+
+            if(ID == pair.second)
+                return pair.first;
+        }
+
+        // 0 means no any object colliding with ID.
+        return 0;
+    }
+
     std::vector<int> Physics::getCollisionsWithGroup(const int ID, const CollisionGroups group)
     {
         std::vector<int> ids;

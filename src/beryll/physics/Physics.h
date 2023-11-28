@@ -181,6 +181,7 @@ namespace Beryll
 
         static bool getIsCollision(const int ID1, const int ID2);
         static bool getIsCollision(const int ID, const CollisionGroups group);
+        static int getAnyObjectCollidingWith(const int ID); // Return first found ID colliding with. Or 0 if no collisions.
         static std::vector<int> getCollisionsWithGroup(const int id, const CollisionGroups group); // Return IDs of all colliding objects in specific group.
         static const std::vector<std::pair<const int, const int>>& getAllCollisions() { return m_collisionPairs; }
         static std::vector<std::pair<glm::vec3, glm::vec3>> getAllCollisionPoints(const int ID1, const int ID2); // Return point + his normal.
