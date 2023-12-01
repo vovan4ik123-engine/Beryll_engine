@@ -238,10 +238,10 @@ namespace Beryll
 //            return glm::vec3{x, y, z};
 //        }
         bool getIsDisabledForEver() { return m_isDisabledForEver; } // Use it for avoid object updating and drawing.
-        bool getIsEnabledDraw() { return m_isEnabledDraw && !m_isDisabledForEver; } // Use it for avoid object from drawing.
-        bool getIsEnabledUpdate() { return m_isEnabledUpdate && !m_isDisabledForEver; } // Use it for avoid object from updating.
+        bool getIsEnabledDraw() { return m_isEnabledDraw; } // Use it for avoid object from drawing.
+        bool getIsEnabledUpdate() { return m_isEnabledUpdate; } // Use it for avoid object from updating.
         bool getHasCollisionMesh() { return m_hasCollisionObject; }
-        bool getIsEnabledCollisionMesh() { return m_isEnabledInPhysicsSimulation && !m_isDisabledForEver; }
+        bool getIsEnabledCollisionMesh() { return m_isEnabledInPhysicsSimulation; }
         CollisionGroups getCollisionGroup() { return m_collisionGroup; }
         CollisionFlags getCollisionFlag() { return m_collisionFlag; }
         SceneObjectGroups getSceneObjectGroup() { return m_sceneObjectGroup; }
