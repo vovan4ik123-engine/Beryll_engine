@@ -118,7 +118,7 @@ namespace Beryll
         {
             if(m_jumped || (m_lastTimeCanStay + jumpExtendTime) < TimeStep::getSecFromStart())
             {
-                applyImpulse(glm::vec3{0.0f, -1.0f, 0.f} * moveSpeed * startFallingPower);
+                applyCentralImpulse(glm::vec3{0.0f, -1.0f, 0.f} * moveSpeed * startFallingPower);
                 m_canApplyStartFallingImpulse = false;
             }
         }
@@ -320,7 +320,7 @@ namespace Beryll
                 m_jumpDirection = glm::vec3(0.0f, 1.0f, 0.0f);
             }
 
-            applyImpulse(glm::normalize(m_jumpDirection) * moveSpeed * startJumpPower);
+            applyCentralImpulse(glm::normalize(m_jumpDirection) * moveSpeed * startJumpPower);
             m_jumped = true;
             m_characterCanStay = false;
         }

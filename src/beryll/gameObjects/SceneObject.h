@@ -193,11 +193,19 @@ namespace Beryll
             }
         }
 
-        void applyImpulse(const glm::vec3& impulse)
+        void applyCentralImpulse(const glm::vec3& impulse)
         {
             if(m_hasCollisionObject)
             {
                 Physics::applyCentralImpulseForObject(m_ID, impulse);
+            }
+        }
+
+        void applyTorqueImpulse(const glm::vec3& impulse)
+        {
+            if(m_hasCollisionObject)
+            {
+                Physics::applyTorqueImpulseForObject(m_ID, impulse);
             }
         }
 

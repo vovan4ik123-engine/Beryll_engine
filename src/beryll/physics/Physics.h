@@ -252,9 +252,11 @@ namespace Beryll
         static void activateObject(const int ID); // Awake object in physics world.
         static bool getIsObjectActive(const int ID); // Check if object is active.
         static void resetVelocitiesForObject(const int ID);
-        static void applyCentralImpulseForObject(const int ID, const glm::vec3& impulse);
         static void softRemoveObject(const int ID); // Remove from simulation but keep in m_rigidBodiesMap.
         static void restoreObject(const int ID, bool resetVelocities = false); // Restore from m_rigidBodiesMap to simulation.
+        // Impulses
+        static void applyCentralImpulseForObject(const int ID, const glm::vec3& impulse);
+        static void applyTorqueImpulseForObject(const int ID, const glm::vec3& impulse);
 
         // addObject() should be called only from SimpleCollidingObject/AnimatedCollidingObject and only from one thread.
         // getTransforms() should be called only from SimpleCollidingObject/AnimatedCollidingObject and can be called from many threads.

@@ -1106,4 +1106,14 @@ namespace Beryll
             iter->second->rb->applyCentralImpulse(btVector3(impulse.x, impulse.y, impulse.z));
         }
     }
+
+    void Physics::applyTorqueImpulseForObject(const int ID, const glm::vec3& impulse)
+    {
+        auto iter = m_rigidBodiesMap.find(ID);
+        if(iter != m_rigidBodiesMap.end())
+        {
+            iter->second->rb->activate(true);
+            iter->second->rb->applyTorqueImpulse(btVector3(impulse.x, impulse.y, impulse.z));
+        }
+    }
 }
