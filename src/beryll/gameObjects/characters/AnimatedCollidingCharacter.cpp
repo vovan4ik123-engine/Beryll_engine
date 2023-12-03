@@ -4,7 +4,7 @@
 namespace Beryll
 {
     AnimatedCollidingCharacter::AnimatedCollidingCharacter(const char* filePath,  // Common params.
-                                                           float collisionMass,    // Physics params.
+                                                           float collisionMassKg,    // Physics params.
                                                            bool wantCollisionCallBack,
                                                            CollisionFlags collFlag,
                                                            CollisionGroups collGroup,
@@ -12,7 +12,7 @@ namespace Beryll
                                                            SceneObjectGroups sceneGroup)
                                                            // Call base class constructor.
                                                            : AnimatedCollidingObject(filePath,
-                                                                                     collisionMass,
+                                                                                     collisionMassKg,
                                                                                      wantCollisionCallBack,
                                                                                      collFlag,
                                                                                      collGroup,
@@ -31,7 +31,7 @@ namespace Beryll
 
         BR_INFO("m_fromOriginToTop: %f, m_fromOriginToBottom: %f, m_XZRadius: %f, m_characterHeight: %f", m_fromOriginToTop, m_fromOriginToBottom, m_XZRadius, m_characterHeight);
 
-        m_characterMass = collisionMass;
+        m_characterMass = collisionMassKg;
         m_previousYPos = m_origin.y;
     }
 

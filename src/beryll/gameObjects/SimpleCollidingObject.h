@@ -15,7 +15,7 @@ namespace Beryll
         SimpleCollidingObject() = delete;
         /*
          * filePath - path to model file (.DAE or .FBX). start path from first folder inside assets/
-         * collisionMass - mass of this object for physics simulation. 0 for static objects
+         * collisionMassKg - mass of this object for physics simulation. 0 for static objects
          * wantCollisionCallBack - drop performance too much because call back use std::scoped_lock<std::mutex>
          *                         if true Physics module will store actual collisions for this object,
          *                         you can check it with Physics::getIsCollision(id1, id2) or Physics::getAllCollisions()
@@ -25,7 +25,7 @@ namespace Beryll
          * objGroup - game specific group to which this scene object belong
          */
         SimpleCollidingObject(const char* filePath,  // Common params.
-                              float collisionMass,    // Physics params.
+                              float collisionMassKg,    // Physics params.
                               bool wantCollisionCallBack,
                               CollisionFlags collFlag,
                               CollisionGroups collGroup,
@@ -36,7 +36,7 @@ namespace Beryll
                               const aiMesh* graphicsMesh,
                               const aiMesh* collisionMesh,
                               const std::string& collisionMeshName,
-                              float collisionMass,
+                              float collisionMassKg,
                               bool wantCollisionCallBack,
                               CollisionFlags collFlag,
                               CollisionGroups collGroup,
@@ -50,7 +50,7 @@ namespace Beryll
 
         // All loaded objects will have same parameters(mass, flags, groups, ...).
         static std::vector<std::shared_ptr<SimpleCollidingObject>> loadManyModelsFromOneFile(const char* filePath,
-                                                                                             float collisionMass,
+                                                                                             float collisionMassKg,
                                                                                              bool wantCollisionCallBack,
                                                                                              CollisionFlags collFlag,
                                                                                              CollisionGroups collGroup,

@@ -13,7 +13,7 @@ namespace Beryll
     std::map<const std::string, std::pair<std::shared_ptr<Assimp::Importer>, const aiScene*>> AnimatedCollidingObject::m_importersScenes;
 
     AnimatedCollidingObject::AnimatedCollidingObject(const char* filePath,
-                                                     float collisionMass,
+                                                     float collisionMassKg,
                                                      bool wantCollisionCallBack,
                                                      CollisionFlags collFlag,
                                                      CollisionGroups collGroup,
@@ -97,9 +97,9 @@ namespace Beryll
                 m_collisionFlag = collFlag;
                 m_collisionGroup = collGroup;
                 m_collisionMask = collMask;
-                m_collisionMass = collisionMass;
+                m_collisionMass = collisionMassKg;
 
-                loadCollisionMesh(m_scene->mMeshes[i], meshName, collisionMass, wantCollisionCallBack, collFlag, collGroup, collMask);
+                loadCollisionMesh(m_scene->mMeshes[i], meshName, collisionMassKg, wantCollisionCallBack, collFlag, collGroup, collMask);
                 continue;
             }
 

@@ -8,7 +8,7 @@
 namespace Beryll
 {
     SimpleCollidingObject::SimpleCollidingObject(const char* filePath,
-                                                 float collisionMass,
+                                                 float collisionMassKg,
                                                  bool wantCollisionCallBack,
                                                  CollisionFlags collFlag,
                                                  CollisionGroups collGroup,
@@ -40,7 +40,7 @@ namespace Beryll
             std::string meshName = scene->mMeshes[i]->mName.C_Str();
 
             if(meshName.find("Collision") != std::string::npos)
-                loadCollisionMesh(scene, scene->mMeshes[i], meshName, collisionMass, wantCollisionCallBack, collFlag, collGroup, collMask);
+                loadCollisionMesh(scene, scene->mMeshes[i], meshName, collisionMassKg, wantCollisionCallBack, collFlag, collGroup, collMask);
             else
                 loadGraphicsMesh(filePath, scene, scene->mMeshes[i]);
         }
@@ -51,7 +51,7 @@ namespace Beryll
                                                  const aiMesh* graphicsMesh,
                                                  const aiMesh* collisionMesh,
                                                  const std::string& collisionMeshName,
-                                                 float collisionMass,
+                                                 float collisionMassKg,
                                                  bool wantCollisionCallBack,
                                                  CollisionFlags collFlag,
                                                  CollisionGroups collGroup,
@@ -61,7 +61,7 @@ namespace Beryll
         m_sceneObjectGroup = sceneGroup;
 
         loadGraphicsMesh(filePath, scene, graphicsMesh);
-        loadCollisionMesh(scene, collisionMesh, collisionMeshName, collisionMass, wantCollisionCallBack, collFlag, collGroup, collMask);
+        loadCollisionMesh(scene, collisionMesh, collisionMeshName, collisionMassKg, wantCollisionCallBack, collFlag, collGroup, collMask);
     }
 
     SimpleCollidingObject::~SimpleCollidingObject()
@@ -355,7 +355,7 @@ namespace Beryll
     }
 
     std::vector<std::shared_ptr<SimpleCollidingObject>> SimpleCollidingObject::loadManyModelsFromOneFile(const char* filePath,
-                                                                                                         float collisionMass,
+                                                                                                         float collisionMassKg,
                                                                                                          bool wantCollisionCallBack,
                                                                                                          CollisionFlags collFlag,
                                                                                                          CollisionGroups collGroup,
@@ -419,7 +419,7 @@ namespace Beryll
                                                           graphicsMesh,
                                                           collisionMesh,
                                                           collisionMeshName,
-                                                          collisionMass,
+                                                          collisionMassKg,
                                                           wantCollisionCallBack,
                                                           collFlag,
                                                           collGroup,
