@@ -14,12 +14,8 @@ namespace Beryll
          * Inherited pure virtual methods are here.
          */
 
+        void enable() { m_isEnabled = true; }
         bool getIsEnabled() { return m_isEnabled; }
-
-        void enable()
-        {
-            m_isEnabled = true;
-        }
 
         void disable()
         {

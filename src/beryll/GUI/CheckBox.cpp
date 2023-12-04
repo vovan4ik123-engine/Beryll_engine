@@ -1,19 +1,22 @@
 #include "CheckBox.h"
 #include "MainImGUI.h"
+#include "beryll/core/EventHandler.h"
 
 namespace Beryll
 {
-    CheckBox::CheckBox(const std::string& text, const std::string& fontPath, float fontHeightInPercentOfScreen,
-                       float left, float top)
-                       : m_text(text)
+    CheckBox::CheckBox(const std::string& pText, const std::string& fontPath, float fontHeightInPercentOfScreen,
+                       float left, float top, bool disableCheckLogic)
+                       : text(pText), m_disableCheckLogic(disableCheckLogic)
     {
         BR_ASSERT((fontPath.empty() == false && fontHeightInPercentOfScreen > 0.0f), "%s", "fontPath can not be empty and fontHeight must be > 0.0.");
 
         m_leftPos = left / 100.0f;
         m_topPos = top / 100.0f;
+        m_width = fontHeightInPercentOfScreen / 100.0f;
+        m_height = fontHeightInPercentOfScreen / 100.0f;
 
-        if(m_text.empty())
-            m_text = "##ImGUILibrarySpecificID" + m_IDAsString;
+        if(text.empty())
+            text = "##ImGUILibrarySpecificID" + m_IDAsString;
 
         m_font = MainImGUI::getInstance()->createFont(fontPath, fontHeightInPercentOfScreen);
     }
@@ -25,7 +28,21 @@ namespace Beryll
 
     void CheckBox::updateBeforePhysics()
     {
-        if(m_valueChanging && m_action)
+        std::vector<Finger>& fingers = EventHandler::getFingers();
+        for(Finger& f : fingers)
+        {
+            if(f.normalizedPos.x > m_leftPos && f.normalizedPos.x < m_leftPos + m_width &&
+               f.normalizedPos.y > m_topPos && f.normalizedPos.y < m_topPos + m_height)
+            {
+                // If any finger in checkbox area.
+                if(f.downEvent && !f.handled)
+                {
+                    f.handled = true;
+                }
+            }
+        }
+
+        if(m_valueChangingToMarked && m_action)
         {
             m_action();
         }
@@ -38,7 +55,7 @@ namespace Beryll
 
     void CheckBox::draw()
     {
-        m_valueChanging = false;
+        m_valueChangingToMarked = false;
 
         ImGui::PushStyleColor(ImGuiCol_Text, m_fontColor);
         ImGui::PushStyleColor(ImGuiCol_CheckMark, m_checkMarkColor);
@@ -50,21 +67,23 @@ namespace Beryll
         ImGui::Begin(m_IDAsString.c_str(), nullptr, m_noBackgroundNoFrame);
 
         if(m_font)
-        {
             ImGui::PushFont(m_font);
-            if(ImGui::Checkbox(m_text.c_str(), &m_checked) && m_checked) // true only if marked. false if unmarked
-            {
-                m_valueChanging = true;
-            }
-            ImGui::PopFont();
+
+        if(m_disableCheckLogic)
+        {
+            bool avoidCheckLogic = checked;
+            ImGui::Checkbox(text.c_str(), &avoidCheckLogic, true);
         }
         else
         {
-            if(ImGui::Checkbox(m_text.c_str(), &m_checked) && m_checked) // true only if marked. false if unmarked
+            if(ImGui::Checkbox(text.c_str(), &checked, false) && checked) // True only if marked. False if unmarked.
             {
-                m_valueChanging = true;
+                m_valueChangingToMarked = true;
             }
         }
+
+        if(m_font)
+            ImGui::PopFont();
 
         ImGui::End();
 

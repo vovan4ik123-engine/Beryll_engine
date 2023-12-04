@@ -114,23 +114,16 @@ namespace Beryll
         ImGui::Begin(m_IDAsString.c_str(), nullptr, m_flags);
 
         if(m_font)
-        {
             ImGui::PushFont(m_font);
-            ImGui::VSliderFloat(m_text.c_str(),
-                               ImVec2(m_width * MainImGUI::getInstance()->getGUIWidth(), m_height * MainImGUI::getInstance()->getGUIHeight()),
-                               &m_sliderValue,
-                               m_min,
-                               m_max);
+
+        ImGui::VSliderFloat(m_text.c_str(),
+                            ImVec2(m_width * MainImGUI::getInstance()->getGUIWidth(), m_height * MainImGUI::getInstance()->getGUIHeight()),
+                            &m_sliderValue,
+                            m_min,
+                            m_max);
+
+        if(m_font)
             ImGui::PopFont();
-        }
-        else
-        {
-            ImGui::VSliderFloat(m_text.c_str(),
-                               ImVec2(m_width * MainImGUI::getInstance()->getGUIWidth(), m_height * MainImGUI::getInstance()->getGUIHeight()),
-                               &m_sliderValue,
-                               m_min,
-                               m_max);
-        }
 
         ImGui::End();
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "beryll/core/LayerStack.h"
+#include "beryll/core/Log.h"
 
 namespace Beryll
 {

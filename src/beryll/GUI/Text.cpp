@@ -44,15 +44,12 @@ namespace Beryll
         ImGui::Begin(m_IDAsString.c_str(), nullptr, m_flags);
 
         if(m_font)
-        {
             ImGui::PushFont(m_font);
-            ImGui::Text("%s", text.c_str());
+
+        ImGui::Text("%s", text.c_str());
+
+        if(m_font)
             ImGui::PopFont();
-        }
-        else
-        {
-            ImGui::Text("%s", text.c_str());
-        }
 
         ImGui::End();
 

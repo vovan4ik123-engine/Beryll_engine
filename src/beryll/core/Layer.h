@@ -2,18 +2,16 @@
 
 #include "CppHeaders.h"
 
-#include "GameObject.h"
-
 namespace Beryll
 {
     enum class LayerID
     {
         UNKNOWN,
         START_SCREEN_GUI,
-        PLAY_GUI,
-        PLAY_SCENE,
+        PLAY_GUI, PLAY_SCENE,
         PAUSE_GUI,
-        SETTINGS_GUI
+        SETTINGS_GUI,
+        SELECT_MAP_GUI, SELECT_LEVEL_GUI, SELECT_STONES_GUI
     };
 
     class Layer
@@ -32,7 +30,7 @@ namespace Beryll
 
         // Subclasses should create set of game objects, initialize them and manipulate.
         // example:
-        // std::vector<std::shared_ptr<Beryll::SceneObject>> m_sceneObjects; for scene layer
-        // std::vector<std::shared_ptr<Beryll::GUIObject>> m_guiObjects; git GUI layer
+        // std::vector<std::shared_ptr<Beryll::SceneObject>> m_sceneObjects;    For scene layer.
+        // std::vector<std::shared_ptr<Beryll::GUIObject>> m_guiObjects;    For GUI layer.
     };
 }

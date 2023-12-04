@@ -1106,7 +1106,7 @@ bool ImGui::ImageButton(ImTextureID user_texture_id, const ImVec2& size, const I
 }
 #endif // #ifndef IMGUI_DISABLE_OBSOLETE_FUNCTIONS
 
-bool ImGui::Checkbox(const char* label, bool* v)
+bool ImGui::Checkbox(const char* label, bool* v, bool disableCheckLogic)
 {
     ImGuiWindow* window = GetCurrentWindow();
     if (window->SkipItems)
@@ -1129,7 +1129,7 @@ bool ImGui::Checkbox(const char* label, bool* v)
 
     bool hovered, held;
     bool pressed = ButtonBehavior(total_bb, id, &hovered, &held);
-    if (pressed)
+    if (pressed && !disableCheckLogic)
     {
         *v = !(*v);
         MarkItemEdited(id);

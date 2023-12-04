@@ -97,21 +97,15 @@ namespace Beryll
         ImGui::Begin(m_IDAsString.c_str(), nullptr, m_noBackgroundNoFrame);
 
         if(m_font)
-        {
             ImGui::PushFont(m_font);
-            ImGui::Button(m_text.c_str(),
-                          ImVec2(m_width * MainImGUI::getInstance()->getGUIWidth(), m_height * MainImGUI::getInstance()->getGUIHeight()),
-                          ImGuiButtonFlags_PressedOnClick,
-                          &m_touched);
+
+        ImGui::Button(m_text.c_str(),
+                      ImVec2(m_width * MainImGUI::getInstance()->getGUIWidth(), m_height * MainImGUI::getInstance()->getGUIHeight()),
+                      ImGuiButtonFlags_PressedOnClick,
+                      &m_touched);
+
+        if(m_font)
             ImGui::PopFont();
-        }
-        else
-        {
-            ImGui::Button(m_text.c_str(),
-                          ImVec2(m_width * MainImGUI::getInstance()->getGUIWidth(), m_height * MainImGUI::getInstance()->getGUIHeight()),
-                          ImGuiButtonFlags_PressedOnClick,
-                          &m_touched);
-        }
 
         ImGui::End();
 
