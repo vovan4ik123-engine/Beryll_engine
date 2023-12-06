@@ -28,10 +28,10 @@ namespace Beryll
 
         // Setup Platform/Renderer backends.
         ImGui_ImplSDL2_InitForOpenGL(Window::getInstance()->getWindow(), Window::getInstance()->getGlContext());
-        ImGui_ImplOpenGL3_Init(); // glsl_version = "#version 300 es" = default
+        ImGui_ImplOpenGL3_Init(); // glsl_version = "#version 300 es" = default.
 
         // Complete initialization by calling first frame.
-        // Start the Dear ImGui frame.
+        // Start the ImGui frame.
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplSDL2_NewFrame(Window::getInstance()->getWindow());
         ImGui::NewFrame();
@@ -40,7 +40,7 @@ namespace Beryll
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
         // Load default font.
-        float fontHeight = 5.0f / 100.0f; // 5.0% of screen height
+        float fontHeight = 5.0f / 100.0f; // 5.0% of screen height.
 
         uint32_t bufferSize = 0;
         char* buffer = Utils::File::readToBuffer("fonts/roboto.ttf", &bufferSize);
@@ -77,7 +77,7 @@ namespace Beryll
 
     void AndroidGLESImGUI::beginFrame()
     {
-        // Start the Dear ImGui frame
+        // Start the Dear ImGui frame.
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplSDL2_NewFrame(Window::getInstance()->getWindow());
         ImGui::NewFrame();
@@ -85,7 +85,7 @@ namespace Beryll
 
     void AndroidGLESImGUI::endFrame()
     {
-        // Rendering ImGUI
+        // Rendering ImGUI.
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     }
@@ -98,6 +98,14 @@ namespace Beryll
     float AndroidGLESImGUI::getGUIHeight()
     {
         return ImGui::GetIO().DisplaySize.y;
+    }
+
+    float AndroidGLESImGUI::getGUIScreenAspectRation()
+    {
+        if(ImGui::GetIO().DisplaySize.x > ImGui::GetIO().DisplaySize.y)
+            return ImGui::GetIO().DisplaySize.x / ImGui::GetIO().DisplaySize.y;
+        else
+            return ImGui::GetIO().DisplaySize.y / ImGui::GetIO().DisplaySize.x;
     }
 
     ImFont* AndroidGLESImGUI::createFont(const std::string& path, float heightInPercentOfScreen)
@@ -123,8 +131,7 @@ namespace Beryll
 
     void AndroidGLESImGUI::deleteFont(ImFont* font)
     {
-        // IMGUI does not support delete one font.
-        // Only ImGui::GetIO().Fonts->Clear(); can be called to delete all fonts.
+        BR_ASSERT(false, "%s", "ImGUI does not support delete one font. Only ImGui::GetIO().Fonts->Clear(); can be called to delete all fonts.");
     }
 
     void AndroidGLESImGUI::setDefaultFont(const std::string& path, float heightInPercentOfScreen)

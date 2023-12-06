@@ -17,7 +17,7 @@ namespace Beryll
          * collFlag - type of collision object in physics world
          * collGroup - group or groups of current object in physics world
          * collMask - should contain collGroup or groups with which you want collisions
-         * objGroup - game specific group to which this scene object belong
+         * sceneGroup - game specific group to which this scene object belong
          */
         AnimatedCollidingCharacter(const char* filePath,  // Common params.
                                    float collisionMassKg,    // Physics params.

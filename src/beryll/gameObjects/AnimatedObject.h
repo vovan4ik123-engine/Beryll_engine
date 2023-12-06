@@ -15,7 +15,7 @@ namespace Beryll
         AnimatedObject() = delete;
         /*
          * filePath - path to model file (.DAE or .FBX). start path from first folder inside assets/
-         * objGroup - game specific group to which this scene object belong
+         * sceneGroup - game specific group to which this scene object belong
          */
         AnimatedObject(const char* filePath,
                        SceneObjectGroups sceneGroup);

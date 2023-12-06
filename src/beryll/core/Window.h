@@ -37,6 +37,7 @@ namespace Beryll
         virtual int getScreenHeight() = 0;
         virtual int getMaxSupportedTextureResolution() = 0;
         virtual int getMaxSupportedViewportResolution() = 0;
+        virtual float getScreenAspectRation() = 0;
 
         virtual void setClearColor(float r, float g, float b, float a) = 0;  // Background color after clear().
         virtual void clear() = 0;
@@ -48,6 +49,7 @@ namespace Beryll
         virtual SDL_GLContext* getGlContext() = 0;
 
         // Metal specific methods.
+        // ...
 
         SDL_DisplayOrientation currentOrientation = SDL_ORIENTATION_UNKNOWN;
 

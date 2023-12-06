@@ -15,7 +15,7 @@ namespace Beryll
         ImFont* font = nullptr;
 
         std::string path;
-        float heightInPercent = 0.0f; // In range 0...100
+        float heightInPercent = 0.0f; // In range 0...100.
     };
 
     // For all ImGUI elements.
@@ -42,6 +42,7 @@ namespace Beryll
 
         virtual float getGUIWidth() = 0;
         virtual float getGUIHeight() = 0;
+        virtual float getGUIScreenAspectRation() = 0;
 
         /*
         * path must skip assets/ folder and starts from next folder inside assets/.
