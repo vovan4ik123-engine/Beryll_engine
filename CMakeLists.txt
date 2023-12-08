@@ -41,7 +41,6 @@ if(ANDROID)
             src/beryll/platform/androidGLES/AndroidGLESTexture.cpp
             src/beryll/platform/androidGLES/AndroidGLESSkyBox.cpp
             src/beryll/platform/androidGLES/AndroidGLESShadowMapTexture.cpp
-            src/beryll/platform/androidGLES/AndroidGLESGlobal.cpp
             src/beryll/platform/androidGLES/AndroidGLESBillingSystem.cpp
             src/beryll/platform/androidGLES/AndroidGLESGoogleAnalytics.cpp
             )

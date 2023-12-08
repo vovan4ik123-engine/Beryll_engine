@@ -12,7 +12,8 @@ namespace Beryll
         START_SCREEN,
         PLAY,
         PAUSE,
-        SETTINGS
+        SETTINGS,
+        SELECT_MAP, SELECT_LEVEL, SELECT_STONES
     };
 
     // You can create many objects of this class with different layers in layerStack.
