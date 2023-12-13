@@ -85,7 +85,7 @@ namespace Beryll
                     }
 
                     // point.second is normal vector on collision point.
-                    float floorAngleRadians = Utils::Common::getAngleInRadians(BeryllConstants::worldUp, point.second);
+                    float floorAngleRadians = BeryllUtils::Common::getAngleInRadians(BeryllConstants::worldUp, point.second);
                     if(floorAngleRadians < walkableFloorAngleRadians)
                     {
                         //BR_INFO("%s", "characterOnGround = true");
@@ -180,7 +180,7 @@ namespace Beryll
         if(headSomethingHit)
         {
             glm::vec3 headBackwardMoveVector = glm::normalize(characterHeadUp - characterHeadUpNextPos);
-            if(Utils::Common::getAngleInRadians(headBackwardMoveVector, headSomethingHit.hitNormal) < 0.698f && // < than 40 degrees.
+            if(BeryllUtils::Common::getAngleInRadians(headBackwardMoveVector, headSomethingHit.hitNormal) < 0.698f && // < than 40 degrees.
                headSomethingHit.collFlag != CollisionFlags::DYNAMIC)
             {
                 // Characters head moving directly into static wall = can not move.
@@ -204,7 +204,7 @@ namespace Beryll
             {
                 BR_INFO("%s", "legsSomethingHit");
                 glm::vec3 legsBackwardMoveVector = glm::normalize(characterLegs - characterLegsNextPos);
-                if(Utils::Common::getAngleInRadians(legsBackwardMoveVector, legsSomethingHit.hitNormal) < 0.698f && // < than 40 degrees.
+                if(BeryllUtils::Common::getAngleInRadians(legsBackwardMoveVector, legsSomethingHit.hitNormal) < 0.698f && // < than 40 degrees.
                    legsSomethingHit.collFlag != CollisionFlags::DYNAMIC)
                 {
                     BR_INFO("%s", "legsSomethingHit < than 40 degrees.");
@@ -220,7 +220,7 @@ namespace Beryll
                     if(potentialStepHit)
                     {
                         BR_INFO("potentialStepHit y: %f", potentialStepHit.hitPoint.y);
-                        float surfaceSlopeRadians = Utils::Common::getAngleInRadians(BeryllConstants::worldUp, potentialStepHit.hitNormal);
+                        float surfaceSlopeRadians = BeryllUtils::Common::getAngleInRadians(BeryllConstants::worldUp, potentialStepHit.hitNormal);
                         if(surfaceSlopeRadians < glm::radians(3.0f)) // Allow stair step surface be slope 0-3 degrees.
                         {
                             // Probably we found stair step.

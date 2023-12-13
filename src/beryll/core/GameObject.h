@@ -23,6 +23,6 @@ namespace Beryll
         int getID() { return m_ID; }
 
     protected:
-        const int m_ID = Utils::Common::generateID(); // Unique.
+        const int m_ID = BeryllUtils::Common::generateID(); // Unique.
     };
 }

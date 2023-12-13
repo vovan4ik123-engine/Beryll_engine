@@ -5,7 +5,7 @@
 
 #include "beryll/core/Log.h"
 
-namespace Utils
+namespace BeryllUtils
 {
     class File
     {

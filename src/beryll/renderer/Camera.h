@@ -72,15 +72,15 @@ namespace Beryll
             if(Window::getInstance()->currentOrientation == SDL_ORIENTATION_LANDSCAPE ||
                Window::getInstance()->currentOrientation == SDL_ORIENTATION_LANDSCAPE_FLIPPED)
             {
-                if(Utils::Common::getAngleInRadians(m_cameraDirectionXYZ, glm::normalize(objectPos - m_cameraPos)) > (m_fovRadians * fovMultiplier))
+                if(BeryllUtils::Common::getAngleInRadians(m_cameraDirectionXYZ, glm::normalize(objectPos - m_cameraPos)) > (m_fovRadians * fovMultiplier))
                 {
                     return false;
                 }
             }
             else if(Window::getInstance()->currentOrientation == SDL_ORIENTATION_PORTRAIT ||
-               Window::getInstance()->currentOrientation == SDL_ORIENTATION_PORTRAIT_FLIPPED)
+                    Window::getInstance()->currentOrientation == SDL_ORIENTATION_PORTRAIT_FLIPPED)
             {
-                if(Utils::Common::getAngleInRadians(m_cameraDirectionXYZ, glm::normalize(objectPos - m_cameraPos)) > (m_halfFovRadians * fovMultiplier))
+                if(BeryllUtils::Common::getAngleInRadians(m_cameraDirectionXYZ, glm::normalize(objectPos - m_cameraPos)) > (m_halfFovRadians * fovMultiplier))
                 {
                     return false;
                 }

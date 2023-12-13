@@ -1,6 +1,6 @@
 #include "CommonUtils.h"
 
-namespace Utils
+namespace BeryllUtils
 {
     int Common::m_id = 0;
 }

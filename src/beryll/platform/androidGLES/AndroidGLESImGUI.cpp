@@ -43,7 +43,7 @@ namespace Beryll
         float fontHeight = 5.0f / 100.0f; // 5.0% of screen height.
 
         uint32_t bufferSize = 0;
-        char* buffer = Utils::File::readToBuffer("fonts/roboto.ttf", &bufferSize);
+        char* buffer = BeryllUtils::File::readToBuffer("fonts/roboto.ttf", &bufferSize);
         ImFont* fontDefault = io.Fonts->AddFontFromMemoryTTF(buffer, bufferSize, fontHeight  * ImGui::GetIO().DisplaySize.y);
         BR_ASSERT((fontDefault != nullptr), "%s", "Font was not created.");
         m_loadedFonts.emplace_back(fontDefault, "fonts/roboto.ttf", 5.0f);
@@ -120,7 +120,7 @@ namespace Beryll
         float fontHeight = heightInPercentOfScreen / 100.0f;
 
         uint32_t bufferSize = 0;
-        char* buffer = Utils::File::readToBuffer(path.c_str(), &bufferSize);
+        char* buffer = BeryllUtils::File::readToBuffer(path.c_str(), &bufferSize);
         ImFont* f = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(buffer, bufferSize, fontHeight * ImGui::GetIO().DisplaySize.y);
         BR_ASSERT((f != nullptr), "%s", "Font was not created.");
         m_loadedFonts.emplace_back(f, path, heightInPercentOfScreen);

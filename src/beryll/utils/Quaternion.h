@@ -5,7 +5,7 @@
 
 #include "beryll/core/Log.h"
 
-namespace Utils
+namespace BeryllUtils
 {
     // quaternion(cos(angle/2), sin(angle/2) * axis)
 

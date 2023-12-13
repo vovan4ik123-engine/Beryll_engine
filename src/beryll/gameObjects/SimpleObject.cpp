@@ -13,7 +13,7 @@ namespace Beryll
         BR_INFO("Loading simple object: %s", filePath);
 
         uint32_t bufferSize = 0;
-        char* buffer = Utils::File::readToBuffer(filePath, &bufferSize);
+        char* buffer = BeryllUtils::File::readToBuffer(filePath, &bufferSize);
 
         Assimp::Importer importer;
         const aiScene* scene = importer.ReadFileFromMemory(buffer, bufferSize,
@@ -245,18 +245,18 @@ namespace Beryll
             }
         }
 
-        const aiNode* node = Utils::Common::findAinodeForAimesh(scene, scene->mRootNode, graphicsMesh->mName);
+        const aiNode* node = BeryllUtils::Common::findAinodeForAimesh(scene, scene->mRootNode, graphicsMesh->mName);
         if(node)
         {
-            glm::mat4 modelMatrix = Utils::Matrix::aiToGlm(node->mTransformation);
+            glm::mat4 modelMatrix = BeryllUtils::Matrix::aiToGlm(node->mTransformation);
 
-            glm::vec3 scale = Utils::Matrix::getScaleFrom4x4Glm(modelMatrix);
+            glm::vec3 scale = BeryllUtils::Matrix::getScaleFrom4x4Glm(modelMatrix);
             BR_ASSERT((scale.x > 0.9999f && scale.x < 1.0001f &&
                        scale.y > 0.9999f && scale.y < 1.0001f &&
                        scale.z > 0.9999f && scale.z < 1.0001f), "%s", "Scale should be baked to 1 in modeling tool.");
 
-            m_totalRotation = Utils::Matrix::getRotationFrom4x4Glm(modelMatrix);
-            m_origin = Utils::Matrix::getTranslationFrom4x4Glm(modelMatrix);
+            m_totalRotation = BeryllUtils::Matrix::getRotationFrom4x4Glm(modelMatrix);
+            m_origin = BeryllUtils::Matrix::getTranslationFrom4x4Glm(modelMatrix);
         }
     }
 
@@ -268,7 +268,7 @@ namespace Beryll
         BR_INFO("Load many simple objects from one file: %s", filePath);
 
         uint32_t bufferSize = 0;
-        char* buffer = Utils::File::readToBuffer(filePath, &bufferSize);
+        char* buffer = BeryllUtils::File::readToBuffer(filePath, &bufferSize);
 
         Assimp::Importer importer;
         const aiScene* scene = importer.ReadFileFromMemory(buffer, bufferSize,

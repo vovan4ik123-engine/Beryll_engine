@@ -30,7 +30,7 @@ namespace Beryll
             BR_INFO("Loading animated object: %s", filePath);
 
             uint32_t bufferSize = 0;
-            char *buffer = Utils::File::readToBuffer(filePath, &bufferSize);
+            char *buffer = BeryllUtils::File::readToBuffer(filePath, &bufferSize);
 
             scene = importer->ReadFileFromMemory(buffer, bufferSize,
                                                  aiProcess_Triangulate |
@@ -317,18 +317,18 @@ namespace Beryll
 
         m_animStartTimeInSec = TimeStep::getSecFromStart();
 
-        const aiNode* node = Utils::Common::findAinodeForAimesh(m_scene, m_scene->mRootNode, m_scene->mMeshes[0]->mName);
+        const aiNode* node = BeryllUtils::Common::findAinodeForAimesh(m_scene, m_scene->mRootNode, m_scene->mMeshes[0]->mName);
         if(node)
         {
-            glm::mat4 modelMatrix = Utils::Matrix::aiToGlm(node->mTransformation);
+            glm::mat4 modelMatrix = BeryllUtils::Matrix::aiToGlm(node->mTransformation);
 
-            glm::vec3 scale = Utils::Matrix::getScaleFrom4x4Glm(modelMatrix);
+            glm::vec3 scale = BeryllUtils::Matrix::getScaleFrom4x4Glm(modelMatrix);
             BR_ASSERT((scale.x > 0.9999f && scale.x < 1.0001f &&
                        scale.y > 0.9999f && scale.y < 1.0001f &&
                        scale.z > 0.9999f && scale.z < 1.0001f), "%s", "Scale should be baked to 1 in modeling tool.");
 
-            m_totalRotation = Utils::Matrix::getRotationFrom4x4Glm(modelMatrix);
-            m_origin = Utils::Matrix::getTranslationFrom4x4Glm(modelMatrix);
+            m_totalRotation = BeryllUtils::Matrix::getRotationFrom4x4Glm(modelMatrix);
+            m_origin = BeryllUtils::Matrix::getTranslationFrom4x4Glm(modelMatrix);
         }
     }
 
@@ -534,7 +534,7 @@ namespace Beryll
                    ((start.x * start.x + start.y * start.y + start.z * start.z + start.w * start.w) < 1.0001f)), "%s", "start quaternion must be unit");
         BR_ASSERT((((end.x * end.x + end.y * end.y + end.z * end.z + end.w * end.w) > 0.9999f) &&
                    ((end.x * end.x + end.y * end.y + end.z * end.z + end.w * end.w) < 1.0001f)), "%s", "end quaternion must be unit");
-        return aiMatrix4x4(Utils::Quaternion::nlerp(start, end, factor).GetMatrix());
+        return aiMatrix4x4(BeryllUtils::Quaternion::nlerp(start, end, factor).GetMatrix());
     }
 
     aiMatrix4x4 AnimatedObject::interpolateScaling(const aiNodeAnim* nodeAnim, const uint32_t currentFrameIndex, const uint32_t nextFrameIndex, const float factor)

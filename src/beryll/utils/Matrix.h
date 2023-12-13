@@ -3,7 +3,7 @@
 #include "LibsHeaders.h"
 #include "CppHeaders.h"
 
-namespace Utils
+namespace BeryllUtils
 {
     //mat4 m;
     //m[1] = vec4(2.0); // sets the second column to all 2.0

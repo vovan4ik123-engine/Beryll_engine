@@ -116,7 +116,7 @@ namespace Beryll
                 v[i].finalColor = glm::lerp(v[i].colorBegin, v[i].colorEnd, lifeInRange_0_1);
                 v[i].finalSize = glm::lerp(v[i].sizeBegin, v[i].sizeEnd, lifeInRange_0_1);
                 glm::quat faceDirToCameraDirRotation;
-                if(Utils::Common::getAngleInRadians(v[i].faceDir, Camera::getCameraDirectionXYZ()) < glm::half_pi<float>())
+                if(BeryllUtils::Common::getAngleInRadians(v[i].faceDir, Camera::getCameraDirectionXYZ()) < glm::half_pi<float>())
                     faceDirToCameraDirRotation = glm::rotation(v[i].faceDir, Camera::getCameraDirectionXYZ());
                 else
                     faceDirToCameraDirRotation = glm::rotation(-v[i].faceDir, Camera::getCameraDirectionXYZ());

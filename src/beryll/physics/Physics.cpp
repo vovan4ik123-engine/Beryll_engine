@@ -173,8 +173,8 @@ namespace Beryll
         std::shared_ptr<btBvhTriangleMeshShape> shape = std::make_shared<btBvhTriangleMeshShape>(triangleMesh.get(), true, true);
         m_collisionShapes.push_back(shape);
 
-        glm::vec3 transl = Utils::Matrix::getTranslationFrom4x4Glm(transforms);
-        glm::quat rot = Utils::Matrix::getRotationFrom4x4Glm(transforms);
+        glm::vec3 transl = BeryllUtils::Matrix::getTranslationFrom4x4Glm(transforms);
+        glm::quat rot = BeryllUtils::Matrix::getRotationFrom4x4Glm(transforms);
         btTransform startTransform;
         startTransform.setIdentity();
         startTransform.setOrigin(btVector3(transl.x, transl.y, transl.z));
@@ -228,8 +228,8 @@ namespace Beryll
         }
         shape->recalcLocalAabb();
 
-        glm::vec3 transl = Utils::Matrix::getTranslationFrom4x4Glm(transforms);
-        glm::quat rot = Utils::Matrix::getRotationFrom4x4Glm(transforms);
+        glm::vec3 transl = BeryllUtils::Matrix::getTranslationFrom4x4Glm(transforms);
+        glm::quat rot = BeryllUtils::Matrix::getRotationFrom4x4Glm(transforms);
         btTransform startTransform;
         startTransform.setIdentity();
         startTransform.setOrigin(btVector3(transl.x, transl.y, transl.z));
@@ -300,8 +300,8 @@ namespace Beryll
         std::shared_ptr<btBoxShape> boxShape = std::make_shared<btBoxShape>(btVector3(xSize / 2.0f, ySize / 2.0f, zSize / 2.0f));
         m_collisionShapes.push_back(boxShape);
 
-        glm::vec3 transl = Utils::Matrix::getTranslationFrom4x4Glm(transforms);
-        glm::quat rot = Utils::Matrix::getRotationFrom4x4Glm(transforms);
+        glm::vec3 transl = BeryllUtils::Matrix::getTranslationFrom4x4Glm(transforms);
+        glm::quat rot = BeryllUtils::Matrix::getRotationFrom4x4Glm(transforms);
         btTransform startTransform;
         startTransform.setIdentity();
         startTransform.setOrigin(btVector3(transl.x, transl.y, transl.z));
@@ -351,8 +351,8 @@ namespace Beryll
         std::shared_ptr<btSphereShape> sphereShape = std::make_shared<btSphereShape>(radius);
         m_collisionShapes.push_back(sphereShape);
 
-        glm::vec3 transl = Utils::Matrix::getTranslationFrom4x4Glm(transforms);
-        glm::quat rot = Utils::Matrix::getRotationFrom4x4Glm(transforms);
+        glm::vec3 transl = BeryllUtils::Matrix::getTranslationFrom4x4Glm(transforms);
+        glm::quat rot = BeryllUtils::Matrix::getRotationFrom4x4Glm(transforms);
         btTransform startTransform;
         startTransform.setIdentity();
         startTransform.setOrigin(btVector3(transl.x, transl.y, transl.z));
@@ -420,8 +420,8 @@ namespace Beryll
         std::shared_ptr<btCapsuleShapeZ> capsuleShape = std::make_shared<btCapsuleShapeZ>(radius, (totalHeight - radius * 2.0f));
         m_collisionShapes.push_back(capsuleShape);
 
-        glm::vec3 transl = Utils::Matrix::getTranslationFrom4x4Glm(transforms);
-        glm::quat rot = Utils::Matrix::getRotationFrom4x4Glm(transforms);
+        glm::vec3 transl = BeryllUtils::Matrix::getTranslationFrom4x4Glm(transforms);
+        glm::quat rot = BeryllUtils::Matrix::getRotationFrom4x4Glm(transforms);
         btTransform startTransform;
         startTransform.setIdentity();
         startTransform.setOrigin(btVector3(transl.x, transl.y, transl.z));
@@ -494,8 +494,8 @@ namespace Beryll
         std::shared_ptr<btCylinderShapeZ> cylinderShape = std::make_shared<btCylinderShapeZ>(btVector3(xSize / 2.0f, ySize / 2.0f, zSize / 2.0f));
         m_collisionShapes.push_back(cylinderShape);
 
-        glm::vec3 transl = Utils::Matrix::getTranslationFrom4x4Glm(transforms);
-        glm::quat rot = Utils::Matrix::getRotationFrom4x4Glm(transforms);
+        glm::vec3 transl = BeryllUtils::Matrix::getTranslationFrom4x4Glm(transforms);
+        glm::quat rot = BeryllUtils::Matrix::getRotationFrom4x4Glm(transforms);
         btTransform startTransform;
         startTransform.setIdentity();
         startTransform.setOrigin(btVector3(transl.x, transl.y, transl.z));

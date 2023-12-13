@@ -6,7 +6,7 @@
 #include "beryll/core/BeryllConstants.h"
 #include "beryll/core/Log.h"
 
-namespace Utils
+namespace BeryllUtils
 {
     class Common
     {
