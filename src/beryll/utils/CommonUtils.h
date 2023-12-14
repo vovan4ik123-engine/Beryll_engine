@@ -89,6 +89,18 @@ namespace BeryllUtils
                 return false;
         }
 
+        static glm::vec3 getRightVector(const glm::vec3& v1)
+        {
+            BR_ASSERT((v1 != BeryllConstants::worldUp), "%s", "Can not do cross() from two same vectors.");
+            return glm::normalize(glm::cross(v1, BeryllConstants::worldUp));
+        }
+
+        static glm::vec3 getLeftVector(const glm::vec3& v1)
+        {
+            BR_ASSERT((v1 != BeryllConstants::worldUp), "%s", "Can not do cross() from two same vectors.");
+            return glm::normalize(glm::cross(BeryllConstants::worldUp, v1));
+        }
+
         // Return angle in range between 0 and PI.
         static float getAngleInRadians(const glm::vec2& v1, const glm::vec2& v2)
         {

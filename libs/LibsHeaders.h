@@ -20,6 +20,7 @@
 #include "glm/gtx/compatibility.hpp"
 #include "glm/gtx/quaternion.hpp"
 #include "glm/ext/quaternion_trigonometric.hpp"
+#include "glm/gtx/rotate_vector.hpp"
 
 #include "imgui/imgui.h"
 #include "imgui/imgui_internal.h"

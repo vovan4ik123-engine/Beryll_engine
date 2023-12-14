@@ -33,8 +33,8 @@ namespace Beryll
         void draw() override;
 
         // Character controller.
-        void moveToDirection(glm::vec3 direction, bool rotateWhenMove, bool ignoreYAxisWhenRotate);
-        void moveToPosition(const glm::vec3& position, bool rotateWhenMove, bool ignoreYAxisWhenRotate);
+        void moveToDirection(glm::vec3 direction, bool rotateWhenMove, bool ignoreYAxisWhenRotate, bool pushDynamicObjects);
+        void moveToPosition(const glm::vec3& position, bool rotateWhenMove, bool ignoreYAxisWhenRotate, bool pushDynamicObjects);
         void jump();
         bool getIsCanStay() { return m_characterCanStay; }
         bool getIsMoving() { return m_characterMoving; }
@@ -46,25 +46,25 @@ namespace Beryll
         float getXZRadius() { return m_XZRadius; }
         float getHeight() { return m_characterHeight; }
 
-        float moveSpeed = 5.0f; // Meters in second.
+        float moveSpeed = 0.0f; // Calculated in constructor. For average human = 13 km/h = 3m/s.
         float backwardMoveFactor = 0.6f; // Factor to multiply moveSpeed if character move backward.
         float walkableFloorAngleRadians = glm::radians(60.0f);
-        float maxStepHeight = 1.0f; // In meters. MUST be less than m_characterHeight.
+        float maxStepHeight = 0.0f; // Calculated in constructor.
         float startJumpAngleRadians = glm::radians(50.0f);
         float startJumpPower = 1.0f;
         float startFallingPower = 1.0f; // -Y axis impulse when stat falling.
         float airControlFactor = 0.1f; // Factor to multiply moveSpeed if character not on ground.
         float jumpExtendTime = 0.0f; // In seconds. Time when character moved from ground edge to air but still can jump.
+        float canStayExtendTime = 0.0f; // In seconds. For eliminate cases when player is very close to ground but not touch ground.
 
     private:
         float m_fromOriginToTop = 0.0f; // Distance between origin and character top.
         float m_fromOriginToBottom = 0.0f; // Distance between origin and character bottom.
         float m_XZRadius = 0.0f; // Radius on X/Z axis. From collision mesh origin.
         float m_characterHeight = 0.0f;
-        float m_characterMass = 0.0f;
 
         bool m_characterCanStay = false; // Can stay on any colliding object from group m_collisionMask.
-        float m_lastTimeCanStay = 0.0f;
+        float m_lastTimeOnGround = 0.0f;
         bool m_characterMoving = false;
 
         float m_previousYPos = 0.0f;
@@ -79,6 +79,6 @@ namespace Beryll
 
         std::pair<glm::vec3, glm::vec3> m_bottomCollisionPoint; // Lowest collision point with ground ant its normal.
 
-        void move(glm::vec3 moveVector);
+        void move(glm::vec3 moveVector, bool pushDynamicObjects);
     };
 }
