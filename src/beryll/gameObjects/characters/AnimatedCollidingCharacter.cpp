@@ -33,6 +33,8 @@ namespace Beryll
 
         moveSpeed = (m_characterHeight / 1.8f) * 3.0f; // For human 1.8m height average speed is 3m|s.
         maxStepHeight = m_characterHeight * 0.2f;
+        startJumpPower = collisionMassKg;
+        startFallingPower = collisionMassKg * 0.5f;
 
         m_previousYPos = m_origin.y;
     }
@@ -93,7 +95,7 @@ namespace Beryll
                     }
                 }
             }
-            else if(m_lastTimeOnGround + canStayExtendTime > TimeStep::getSecFromStart())
+            else if(!m_jumped && m_lastTimeOnGround + canStayExtendTime > TimeStep::getSecFromStart())
             {
                 m_characterCanStay = true;
             }
@@ -231,24 +233,23 @@ namespace Beryll
 
         if(headFrontObstacle && headLeftObstacle && headRightObstacle)
         {
-            BR_INFO("%s", "headFrontObstacle && headLeftObstacle && headRightObstacle. Can not move. return.");
+            //BR_INFO("%s", "headFrontObstacle && headLeftObstacle && headRightObstacle. Can not move. return.");
             return;
         }
 
         if(headHitObstacle)
         {
             glm::vec3 headFrontBackwardVector = glm::normalize(characterHeadUp - characterHeadFront);
-            //BR_INFO("angle %f", BeryllUtils::Common::getAngleInDegrees(headFrontBackwardVector, headObstacleNormal));
             float backwardMoveToNormalAngle = BeryllUtils::Common::getAngleInRadians(headFrontBackwardVector, headObstacleNormal);
             if(backwardMoveToNormalAngle < 0.5236) // < than 30 degrees.
             {
                 // Characters head moving into wall = can not move.
-                BR_INFO("%s", "headFrontHit hit something that we can not push, return.");
+                //BR_INFO("%s", "headFrontHit hit something that we can not push, return.");
                 return;
             }
             else
             {
-                BR_INFO("%s", "Move along wall.");
+                //BR_INFO("%s", "Move along wall.");
                 if(BeryllUtils::Common::getIsVectorOnRightSide(headObstacleNormal, glm::normalize(moveVector)))
                     moveVector = BeryllUtils::Common::getRightVector(headObstacleNormal) * moveVectorLength;
                 else
@@ -259,10 +260,10 @@ namespace Beryll
         if(m_characterCanStay)
         {
             bool allowedStairStepFound = false;
-            bool potentialStairStepFound = false;
-            glm::vec3 stairStepHitPoint{0.0f};
-            glm::vec3 stairStepHitNormal{0.0f};
-            CollisionFlags stairStepCollFlag = CollisionFlags::NONE;
+            bool somethingHitInFront = false;
+            glm::vec3 somethingHitPoint{0.0f};
+            glm::vec3 somethingHitNormal{0.0f};
+            CollisionFlags somethingHitCollFlag = CollisionFlags::NONE;
             float directionScaledByRadiusLength = 0.0f;
             float characterTopY = m_origin.y + m_fromOriginToTop;
             float characterBottomY = m_origin.y - m_fromOriginToBottom;
@@ -272,17 +273,17 @@ namespace Beryll
             glm::vec3 stepCheckUp = glm::vec3(characterBodyMoveFront.x, characterTopY, characterBodyMoveFront.z);
             glm::vec3 stepCheckBottom = glm::vec3(characterBodyMoveFront.x, characterBottomY, characterBodyMoveFront.z);
             stepCheckBottom.y += 0.005f; // A bit upped than player bottom to avoid hit flat ground.
-            RayClosestHit stairStepOnFront = Physics::castRayClosestHit(stepCheckUp,
-                                                                        stepCheckBottom,
-                                                                        m_collisionGroup,
-                                                                        m_collisionMask);
-            if(stairStepOnFront)
+            RayClosestHit somethingHitOnFront = Physics::castRayClosestHit(stepCheckUp,
+                                                                           stepCheckBottom,
+                                                                           m_collisionGroup,
+                                                                           m_collisionMask);
+            if(somethingHitOnFront)
             {
-                //BR_INFO("%s", "stairStepOnFront");
-                potentialStairStepFound = true;
-                stairStepHitPoint = stairStepOnFront.hitPoint;
-                stairStepHitNormal = stairStepOnFront.hitNormal;
-                stairStepCollFlag = stairStepOnFront.collFlag;
+                //BR_INFO("%s", "somethingHitOnFront");
+                somethingHitInFront = true;
+                somethingHitPoint = somethingHitOnFront.hitPoint;
+                somethingHitNormal = somethingHitOnFront.hitNormal;
+                somethingHitCollFlag = somethingHitOnFront.collFlag;
                 directionScaledByRadiusLength = glm::length(frontDirectionScaledByRadius);
             }
             else // Check left side.
@@ -293,17 +294,17 @@ namespace Beryll
                 stepCheckUp = glm::vec3(characterBodyMoveLeft.x, characterTopY, characterBodyMoveLeft.z);
                 stepCheckBottom = glm::vec3(characterBodyMoveLeft.x, characterBottomY, characterBodyMoveLeft.z);
                 stepCheckBottom.y += 0.005f; // A bit upped than player bottom to avoid hit flat ground.
-                RayClosestHit stairStepOnLeft = Physics::castRayClosestHit(stepCheckUp,
-                                                                           stepCheckBottom,
-                                                                           m_collisionGroup,
-                                                                           m_collisionMask);
-                if(stairStepOnLeft)
+                RayClosestHit somethingHitOnLeft = Physics::castRayClosestHit(stepCheckUp,
+                                                                              stepCheckBottom,
+                                                                              m_collisionGroup,
+                                                                              m_collisionMask);
+                if(somethingHitOnLeft)
                 {
-                    //BR_INFO("%s", "stairStepOnLeft");
-                    potentialStairStepFound = true;
-                    stairStepHitPoint = stairStepOnLeft.hitPoint;
-                    stairStepHitNormal = stairStepOnLeft.hitNormal;
-                    stairStepCollFlag = stairStepOnLeft.collFlag;
+                    //BR_INFO("%s", "somethingHitOnLeft");
+                    somethingHitInFront = true;
+                    somethingHitPoint = somethingHitOnLeft.hitPoint;
+                    somethingHitNormal = somethingHitOnLeft.hitNormal;
+                    somethingHitCollFlag = somethingHitOnLeft.collFlag;
                     directionScaledByRadiusLength = glm::length(leftDirectionScaledByRadius);
                 }
                 else // Check right side.
@@ -314,48 +315,49 @@ namespace Beryll
                     stepCheckUp = glm::vec3(characterBodyMoveRight.x, characterTopY, characterBodyMoveRight.z);
                     stepCheckBottom = glm::vec3(characterBodyMoveRight.x, characterBottomY, characterBodyMoveRight.z);
                     stepCheckBottom.y += 0.005f; // A bit upped than player bottom to avoid hit flat ground.
-                    RayClosestHit stairStepOnRight = Physics::castRayClosestHit(stepCheckUp,
-                                                                                stepCheckBottom,
-                                                                                m_collisionGroup,
-                                                                                m_collisionMask);
-                    if(stairStepOnRight)
+                    RayClosestHit somethingHitOnRight = Physics::castRayClosestHit(stepCheckUp,
+                                                                                   stepCheckBottom,
+                                                                                   m_collisionGroup,
+                                                                                   m_collisionMask);
+                    if(somethingHitOnRight)
                     {
-                        //BR_INFO("%s", "stairStepOnRight");
-                        potentialStairStepFound = true;
-                        stairStepHitPoint = stairStepOnRight.hitPoint;
-                        stairStepHitNormal = stairStepOnRight.hitNormal;
-                        stairStepCollFlag = stairStepOnRight.collFlag;
+                        //BR_INFO("%s", "somethingHitOnRight");
+                        somethingHitInFront = true;
+                        somethingHitPoint = somethingHitOnRight.hitPoint;
+                        somethingHitNormal = somethingHitOnRight.hitNormal;
+                        somethingHitCollFlag = somethingHitOnRight.collFlag;
                         directionScaledByRadiusLength = glm::length(rightDirectionScaledByRadius);
                     }
                 }
             }
 
-            if(potentialStairStepFound)
+            if(somethingHitInFront)
             {
-                BR_INFO("potentialStairStepFound height: %f", stairStepHitPoint.y - characterBottomY);
+                //BR_INFO("Something hit in front at height: %f, check for stair step or ground slope.", somethingHitPoint.y - characterBottomY);
                 // Probably we found stair step.
                 // Calculate where should be character if that is not stair step, but only ground slope.
-                float surfaceSlopeRadians = BeryllUtils::Common::getAngleInRadians(BeryllConstants::worldUp, stairStepHitNormal);
+                float surfaceSlopeRadians = BeryllUtils::Common::getAngleInRadians(BeryllConstants::worldUp, somethingHitNormal);
                 float oppositeSideLength = glm::tan(surfaceSlopeRadians) * directionScaledByRadiusLength;
                 oppositeSideLength *= 1.01f; // Add 1%.
                 if(oppositeSideLength == 0.0f) { oppositeSideLength += 0.01f; } // Add 1 cm.
                 float nextYOfCharacter = characterBottomY + oppositeSideLength; // After move on this ground slope(if not stair step).
-                if(stairStepHitPoint.y > nextYOfCharacter &&
-                   (stairStepCollFlag != CollisionFlags::DYNAMIC || (stairStepCollFlag == CollisionFlags::DYNAMIC && !pushDynamicObjects)))
+                //BR_INFO("%s", somethingHitPoint.y > nextYOfCharacter ? "That is something like stair step." : "That is ground slope.");
+                if(somethingHitPoint.y > nextYOfCharacter &&
+                   (somethingHitCollFlag != CollisionFlags::DYNAMIC || (somethingHitCollFlag == CollisionFlags::DYNAMIC && !pushDynamicObjects)))
                 {
                     // Stair step in front + we can not push object.
-                    float diffStepHeightCharacterBottom = stairStepHitPoint.y - characterBottomY;
+                    float diffStepHeightCharacterBottom = somethingHitPoint.y - characterBottomY;
                     if(diffStepHeightCharacterBottom <= maxStepHeight)
                     {
                         // Character can move to this stair step.
-                        BR_INFO("%s", "Character moved to stair step because can not push object.");
+                        //BR_INFO("%s", "Character moved to stair step because can not push object and stair step height is allowed.");
                         allowedStairStepFound = true;
                         moveVector.y = diffStepHeightCharacterBottom;
                     }
                     else
                     {
                         // Stair step in front is too height.
-                        BR_INFO("%s", "Stair step in front is too height and we can not push object. return");
+                        //BR_INFO("%s", "Stair step in front is too height and we can not push object, return");
                         return;
                     }
                 }
@@ -392,7 +394,7 @@ namespace Beryll
             m_characterMoving = true;
             m_jumpDirection = moveVector;
         }
-        else if(m_falling)
+        else
         {
             addToOrigin(moveVector * airControlFactor);
         }
