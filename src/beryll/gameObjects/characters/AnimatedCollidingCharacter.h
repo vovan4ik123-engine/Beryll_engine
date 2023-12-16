@@ -54,8 +54,7 @@ namespace Beryll
         float startJumpPower = 1.0f;
         float startFallingPower = 1.0f; // -Y axis impulse when stat falling.
         float airControlFactor = 0.1f; // Factor to multiply moveSpeed if character not on ground.
-        float jumpExtendTime = 0.0f; // In seconds. Time when character moved from ground edge to air but still can jump.
-        float canStayExtendTime = 0.0f; // In seconds. For eliminate cases when player is very close to ground but not touch ground.
+        float canStayOrJumpExtendTime = 0.0f; // In seconds. For eliminate cases when player is very close to ground but not touch ground.
 
     private:
         float m_fromOriginToTop = 0.0f; // Distance between origin and character top.

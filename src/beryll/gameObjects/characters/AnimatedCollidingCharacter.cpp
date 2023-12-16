@@ -95,7 +95,7 @@ namespace Beryll
                     }
                 }
             }
-            else if(!m_jumped && m_lastTimeOnGround + canStayExtendTime > TimeStep::getSecFromStart())
+            else if(!m_jumped && m_lastTimeOnGround + canStayOrJumpExtendTime >= TimeStep::getSecFromStart())
             {
                 m_characterCanStay = true;
             }
@@ -120,7 +120,7 @@ namespace Beryll
 
         if(m_canApplyStartFallingImpulse && m_falling)
         {
-            if(m_jumped || (m_lastTimeOnGround + jumpExtendTime) < TimeStep::getSecFromStart())
+            if(m_jumped || !m_characterCanStay)
             {
                 applyCentralImpulse(glm::vec3{0.0f, -1.0f, 0.f} * moveSpeed * startFallingPower);
                 m_canApplyStartFallingImpulse = false;
@@ -406,7 +406,7 @@ namespace Beryll
 
         if(m_jumped) { return; }
 
-        if(m_characterCanStay || (m_lastTimeOnGround + jumpExtendTime) > TimeStep::getSecFromStart())
+        if(m_characterCanStay)
         {
             if(m_characterMoving)
                 m_jumpDirection.y = glm::tan(startJumpAngleRadians);
