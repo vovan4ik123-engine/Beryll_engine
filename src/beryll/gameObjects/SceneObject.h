@@ -25,6 +25,11 @@ namespace Beryll
         CONSTRUCTION_3,
         CONSTRUCTION_4,
         CONSTRUCTION_5,
+        CONSTRUCTION_6,
+        CONSTRUCTION_7,
+        CONSTRUCTION_8,
+        CONSTRUCTION_9,
+        CONSTRUCTION_10
     };
 
     class SceneObject : public GameObject

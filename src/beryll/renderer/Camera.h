@@ -100,9 +100,10 @@ namespace Beryll
 
         static void setCameraPos(const glm::vec3& pos) { m_cameraPos = pos; }
         static const glm::vec3& getCameraPos() { return m_cameraPos; }
+        static const glm::vec3& getCameraFrontPos() { return m_cameraFrontPos; }
         static const glm::vec3& getCameraUp() { return m_cameraUp; }
 
-        static void setCameraFront(const glm::vec3& front) { m_cameraFrontPos = front; }
+        static void setCameraFrontPos(const glm::vec3& front) { m_cameraFrontPos = front; }
         static void setCameraFov(const float fovDegrees)
         {
             m_fovRadians = glm::radians(fovDegrees);
@@ -114,8 +115,8 @@ namespace Beryll
 
         static float getObjectsViewDistance() { return m_objectsViewDistance; }
         static float getProjectionFarClipPlane() { return m_projFarClipPlane; }
-        static const glm::vec3& getCameraDirectionXYZ() { return m_cameraDirectionXYZ; }
-        static const glm::vec3& getCameraDirectionXZ() { return m_cameraDirectionXZ; }
+        static const glm::vec3& getCameraFrontDirectionXYZ() { return m_cameraDirectionXYZ; }
+        static const glm::vec3& getCameraFrontDirectionXZ() { return m_cameraDirectionXZ; }
         static const glm::vec3& getCameraBackDirectionXYZ() { return m_cameraBackDirectionXYZ; }
         static const glm::vec3& getCameraBackDirectionXZ() { return m_cameraBackDirectionXZ; }
         static const glm::vec3& getCameraRightXYZ() { return m_cameraRightXYZ; }

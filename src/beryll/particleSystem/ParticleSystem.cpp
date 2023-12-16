@@ -116,10 +116,10 @@ namespace Beryll
                 v[i].finalColor = glm::lerp(v[i].colorBegin, v[i].colorEnd, lifeInRange_0_1);
                 v[i].finalSize = glm::lerp(v[i].sizeBegin, v[i].sizeEnd, lifeInRange_0_1);
                 glm::quat faceDirToCameraDirRotation;
-                if(BeryllUtils::Common::getAngleInRadians(v[i].faceDir, Camera::getCameraDirectionXYZ()) < glm::half_pi<float>())
-                    faceDirToCameraDirRotation = glm::rotation(v[i].faceDir, Camera::getCameraDirectionXYZ());
+                if(BeryllUtils::Common::getAngleInRadians(v[i].faceDir, Camera::getCameraFrontDirectionXYZ()) < glm::half_pi<float>())
+                    faceDirToCameraDirRotation = glm::rotation(v[i].faceDir, Camera::getCameraFrontDirectionXYZ());
                 else
-                    faceDirToCameraDirRotation = glm::rotation(-v[i].faceDir, Camera::getCameraDirectionXYZ());
+                    faceDirToCameraDirRotation = glm::rotation(-v[i].faceDir, Camera::getCameraFrontDirectionXYZ());
 
                 v[i].MVPMatrix = Camera::getViewProjection() *
                                  // Model matrix.

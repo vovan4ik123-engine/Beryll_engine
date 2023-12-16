@@ -46,10 +46,15 @@ namespace Beryll
         CONSTRUCTION_3 = 1 << 8,
         CONSTRUCTION_4 = 1 << 9,
         CONSTRUCTION_5 = 1 << 10,
+        CONSTRUCTION_6 = 1 << 11,
+        CONSTRUCTION_7 = 1 << 12,
+        CONSTRUCTION_8 = 1 << 13,
+        CONSTRUCTION_9 = 1 << 14,
+        CONSTRUCTION_10 = 1 << 15,
 
         YOU_CAN_COMBINE_GROUPS_WHEN_USE = STATIC_ENVIRONMENT | CAMERA,
 
-        ALL_GROUPS = -1 // all bits = 1
+        ALL_GROUPS = -1 // All bits = 1.
     };
     inline CollisionGroups operator | (CollisionGroups gr1, CollisionGroups gr2)
     {
