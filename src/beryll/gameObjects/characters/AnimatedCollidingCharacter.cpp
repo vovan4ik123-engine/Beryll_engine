@@ -67,6 +67,7 @@ namespace Beryll
 
         m_characterCanStay = false;
         m_characterMoving = false;
+        m_touchGroundAfterFall = false;
 
         m_bottomCollisionPoint = std::make_pair(glm::vec3(0.0f, std::numeric_limits<float>::max(), 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 
@@ -91,6 +92,12 @@ namespace Beryll
                         // Character stay on allowed floor angle.
                         m_characterCanStay = true;
                         m_lastTimeOnGround = TimeStep::getSecFromStart();
+
+                        if(m_falling)
+                        {
+                            m_touchGroundAfterFall = true;
+                            m_fallDistance = glm::distance(m_startFallingHeight, m_origin.y - m_fromOriginToBottom);
+                        }
                         // DONT break loop here !!! Continue collect m_bottomCollisionPoint.
                     }
                 }
@@ -107,11 +114,19 @@ namespace Beryll
 
             m_jumped = false;
             m_falling = false;
+            m_startFalling = false;
             m_canApplyStartFallingImpulse = true;
         }
         else if(m_previousYPos > m_origin.y)
         {
+            if(!m_startFalling)
+            {
+                m_startFalling = true;
+                m_startFallingHeight = m_origin.y - m_fromOriginToBottom; // Bottom Y position.
+            }
+
             m_falling = true;
+            m_fallDistance = glm::distance(m_startFallingHeight, m_origin.y - m_fromOriginToBottom);
         }
         else
         {
@@ -179,7 +194,7 @@ namespace Beryll
 
         glm::vec3 characterHeadUp = m_origin;
         characterHeadUp.y += m_fromOriginToTop;
-        glm::vec3 characterHeadFront = characterHeadUp + ((m_XZRadius * 2.6f) / moveVectorLength) * moveVector;
+        glm::vec3 characterHeadFront = characterHeadUp + ((m_XZRadius * 2.3f) / moveVectorLength) * moveVector;
         RayClosestHit headFrontHit = Physics::castRayClosestHit(characterHeadUp,
                                                                 characterHeadFront,
                                                                 m_collisionGroup,
@@ -400,22 +415,29 @@ namespace Beryll
         }
     }
 
-    void AnimatedCollidingCharacter::jump()
+    bool AnimatedCollidingCharacter::jump()
     {
-        if(m_collisionFlag != CollisionFlags::DYNAMIC) { return; }
-
-        if(m_jumped) { return; }
+        if(m_collisionFlag != CollisionFlags::DYNAMIC || m_jumped) { return false; }
 
         if(m_characterCanStay)
         {
             if(m_characterMoving)
+            {
                 m_jumpDirection.y = glm::tan(startJumpAngleRadians);
+                applyCentralImpulse((glm::normalize(m_jumpDirection) * moveSpeed * startJumpPower) * 2.0f);
+            }
             else
+            {
                 m_jumpDirection = glm::vec3(0.0f, 1.0f, 0.0f);
+                applyCentralImpulse(glm::normalize(m_jumpDirection) * moveSpeed * startJumpPower);
+            }
 
-            applyCentralImpulse(glm::normalize(m_jumpDirection) * moveSpeed * startJumpPower);
             m_jumped = true;
             m_characterCanStay = false;
+
+            return true;
         }
+
+        return false;
     }
 }
