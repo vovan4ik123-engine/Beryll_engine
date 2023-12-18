@@ -16,6 +16,7 @@
 namespace Beryll
 {
     bool GameLoop::m_isRun = true;
+    bool GameLoop::needDraw = true;
 
     float GameLoop::m_loopTime = 0.0f;
     float GameLoop::m_frameStart = 0.0f;
@@ -98,15 +99,18 @@ namespace Beryll
             m_GPUTimeStart = m_timer.getElapsedMicroSec();
 
         // Draw start.
-            Window::getInstance()->clear();
-            MainImGUI::getInstance()->beginFrame();
+            if(GameLoop::needDraw)
+            {
+                Window::getInstance()->clear();
+                MainImGUI::getInstance()->beginFrame();
 
-            GameStateMachine::draw();
+                GameStateMachine::draw();
 
-            MainImGUI::getInstance()->endFrame();
-            //Window::getInstance()->finishDraw(); // Very slow.
-            //Window::getInstance()->flushDraw(); // Potentially can be called but not necessary.
-            Window::getInstance()->swapWindow();
+                MainImGUI::getInstance()->endFrame();
+                //Window::getInstance()->finishDraw(); // Very slow. Call only if you have rendering artefacts.
+                //Window::getInstance()->flushDraw(); // Potentially can be called but not necessary.
+                Window::getInstance()->swapWindow();
+            }
         // Draw finish.
 
             m_GPUTime = m_timer.getElapsedMicroSec() - m_GPUTimeStart;
@@ -152,7 +156,7 @@ namespace Beryll
         }
         else
         {
-            // Some very long operation can happen in frame(like change game state with game loading).
+            // Some very long operation can happen in frame (like change game state with game loading).
             // Avoid frame if its time > 0.5 sec to avoid drop FPS.
             if(m_frameTime > 500000.0f)
                 return;

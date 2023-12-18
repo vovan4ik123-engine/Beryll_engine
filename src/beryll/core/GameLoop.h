@@ -22,10 +22,12 @@ namespace Beryll
 
         static float getFPS() { return 1000000.0f / m_frameTimeIncludeSleep; }
 
-        static float getFrameTime() { return m_frameTime * 0.001; } // Convert to milliSec.
-        static float getCPUTime() { return m_CPUTime * 0.001; } // All logic + Physics simulation // convert to milliSec.
-        static float getGPUTime() { return m_GPUTime * 0.001; } // Draw calls + GPU synchronization // convert to milliSec.
+        static float getFrameTime() { return m_frameTime * 0.001; } // All frame time. Convert to milliSec.
+        static float getCPUTime() { return m_CPUTime * 0.001; } // All logic + Physics simulation. Convert to milliSec.
+        static float getGPUTime() { return m_GPUTime * 0.001; } // Draw calls + GPU synchronization. Convert to milliSec.
         static void stopLoop() { m_isRun = false; }
+
+        static bool needDraw;
 
     private:
         friend int ::main(int argc, char *argv[]);
