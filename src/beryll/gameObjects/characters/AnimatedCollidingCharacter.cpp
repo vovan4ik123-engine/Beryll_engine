@@ -407,7 +407,7 @@ namespace Beryll
             addToOrigin(moveVector);
 
             m_characterMoving = true;
-            m_jumpDirection = moveVector;
+            m_jumpDirection = moveVector; // Be careful. Y can be != 0.0f and length != 1.0f.
         }
         else
         {
@@ -423,13 +423,15 @@ namespace Beryll
         {
             if(m_characterMoving)
             {
+                m_jumpDirection.y = 0.0f;
+                m_jumpDirection = glm::normalize(m_jumpDirection);
                 m_jumpDirection.y = glm::tan(startJumpAngleRadians);
-                applyCentralImpulse((glm::normalize(m_jumpDirection) * moveSpeed * startJumpPower) * 2.0f);
+                applyCentralImpulse((glm::normalize(m_jumpDirection) * moveSpeed * startJumpPower) * 1.8f);
             }
             else
             {
-                m_jumpDirection = glm::vec3(0.0f, 1.0f, 0.0f);
-                applyCentralImpulse(glm::normalize(m_jumpDirection) * moveSpeed * startJumpPower);
+                // Jump up if stay.
+                applyCentralImpulse(glm::vec3(0.0f, 1.0f, 0.0f) * moveSpeed * startJumpPower);
             }
 
             m_jumped = true;

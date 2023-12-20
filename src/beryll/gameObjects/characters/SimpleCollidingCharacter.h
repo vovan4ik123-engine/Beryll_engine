@@ -52,7 +52,7 @@ namespace Beryll
         float backwardMoveFactor = 0.6f; // Factor to multiply moveSpeed if character move backward.
         float walkableFloorAngleRadians = glm::radians(60.0f);
         float maxStepHeight = 0.0f; // Calculated in constructor.
-        float startJumpAngleRadians = glm::radians(25.0f);
+        float startJumpAngleRadians = glm::radians(30.0f);
         float startJumpPower = 1.0f;
         float startFallingPower = 1.0f; // -Y axis impulse when stat falling.
         float airControlFactor = 0.1f; // Factor to multiply moveSpeed if character not on ground.

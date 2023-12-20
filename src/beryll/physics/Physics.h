@@ -38,19 +38,28 @@ namespace Beryll
         CAMERA = 1 << 0,
         STATIC_ENVIRONMENT = 1 << 1,
         DYNAMIC_ENVIRONMENT = 1 << 2,
-        GROUND = 1 << 3,
-        PLAYER = 1 << 4,
-        STONE = 1 << 5,
-        CONSTRUCTION_1 = 1 << 6,
-        CONSTRUCTION_2 = 1 << 7,
-        CONSTRUCTION_3 = 1 << 8,
-        CONSTRUCTION_4 = 1 << 9,
-        CONSTRUCTION_5 = 1 << 10,
-        CONSTRUCTION_6 = 1 << 11,
-        CONSTRUCTION_7 = 1 << 12,
-        CONSTRUCTION_8 = 1 << 13,
-        CONSTRUCTION_9 = 1 << 14,
-        CONSTRUCTION_10 = 1 << 15,
+        PLAYER = 1 << 3,
+        STONE = 1 << 4,
+        CONSTRUCTION_1 = 1 << 5,
+        CONSTRUCTION_2 = 1 << 6,
+        CONSTRUCTION_3 = 1 << 7,
+        CONSTRUCTION_4 = 1 << 8,
+        CONSTRUCTION_5 = 1 << 9,
+        CONSTRUCTION_6 = 1 << 10,
+        CONSTRUCTION_7 = 1 << 11,
+        CONSTRUCTION_8 = 1 << 12,
+        CONSTRUCTION_9 = 1 << 13,
+        CONSTRUCTION_10 = 1 << 14,
+        CONSTRUCTION_11 = 1 << 15,
+        CONSTRUCTION_12 = 1 << 16,
+        CONSTRUCTION_13 = 1 << 17,
+        CONSTRUCTION_14 = 1 << 18,
+        CONSTRUCTION_15 = 1 << 19,
+        CONSTRUCTION_16 = 1 << 20,
+        CONSTRUCTION_17 = 1 << 21,
+        CONSTRUCTION_18 = 1 << 22,
+        CONSTRUCTION_19 = 1 << 23,
+        CONSTRUCTION_20 = 1 << 24,
 
         YOU_CAN_COMBINE_GROUPS_WHEN_USE = STATIC_ENVIRONMENT | CAMERA,
 
@@ -231,7 +240,7 @@ namespace Beryll
         static int m_resolutionFactor;
 
         // Min Acceptable FPS by physics simulation.
-        // Default value = 10. You can increase it for more smooth simulation and better physics precision.
+        // Default value = 5. You can increase it for more smooth simulation and better physics precision.
         // If real fps < m_minAcceptableFPS simulation will act like real fps = m_minAcceptableFPS
         // and dynamic objects will move slower than they should.
         // If real fps too much less than m_minAcceptableFPS, dynamics objects will move like in slow motion

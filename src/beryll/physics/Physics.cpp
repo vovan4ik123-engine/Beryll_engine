@@ -7,8 +7,8 @@ namespace Beryll
     btVector3 Physics::m_gravity = btVector3(0.0f, -10.0f, 0.0f);
     Timer Physics::m_timer;
     float Physics::m_timeStep = 0.0f;
-    float Physics::m_minAcceptableFPS = 10.0f;
-    float Physics::m_maxAcceptableFrameTimeSec = 0.1f; // Frame time in sec if FPS = 10.
+    float Physics::m_minAcceptableFPS = 5.0f;
+    float Physics::m_maxAcceptableFrameTimeSec = 0.2f; // Frame time in sec if FPS = 5.
     bool Physics::m_simulationEnabled = true;
     float Physics::m_simulationTime = 0.0f;
     int Physics::m_resolutionFactor = 1;
