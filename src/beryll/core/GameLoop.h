@@ -14,10 +14,12 @@ namespace Beryll
         GameLoop() = delete;
         ~GameLoop() = delete;
 
-        static void setFPSMaxLimit(float fps)
+        static void setFPSLimit(float fps)
         {
-            if(fps > m_FPSMinLimit)
-                m_FPSMaxLimit = fps;
+            if(fps < 2.0f) { return; }
+
+            m_FPS = fps;
+            m_loopTimeMicroSec = 1000000.0f / m_FPS;
         }
 
         static float getFPS() { return 1000000.0f / m_frameTimeIncludeSleep; }
@@ -34,11 +36,9 @@ namespace Beryll
 
         static void create(ScreenOrientation orientation);
         static void run();
-        static void regulateFPS();
 
         static bool m_isRun;
 
-        static float m_loopTime; // In microSec.
         static float m_frameStart;
         static float m_frameTime;
         static float m_frameTimeIncludeSleep;
@@ -48,10 +48,7 @@ namespace Beryll
         static Timer m_timer;
 
         static float m_FPS;
-        static float m_FPSMaxLimit;
-        static constexpr float m_FPSMinLimit = 1.0f;
-
-        static int m_regulateFPSFramesCount;
-        static float m_regulateFPSFramesSum;
+        static float m_loopTimeMicroSec;
+        static long long m_sleepTimeMicroSec;
     };
 }
