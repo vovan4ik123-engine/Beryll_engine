@@ -156,7 +156,7 @@ namespace Beryll
 
         static glm::mat4 getVeiw3D() // updateCameraVectors() MUST be called before this method !!!
         {
-            return glm::lookAt(m_cameraPos, m_cameraPos + m_cameraDirectionXYZ, m_cameraUp);
+            return glm::lookAt(m_cameraPos, m_cameraPos + m_cameraDirectionXYZ, BeryllConstants::worldUp);
         }
 
         static glm::mat4 getProjectionPerspective3D(const float screenWidth, const float screenHeight)
