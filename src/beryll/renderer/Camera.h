@@ -1,8 +1,5 @@
 #pragma once
 
-#include "LibsHeaders.h"
-#include "CppHeaders.h"
-
 #include "beryll/core/Window.h"
 #include "beryll/utils/CommonUtils.h"
 
@@ -14,7 +11,7 @@ namespace Beryll
         Camera() = delete;
         ~Camera() = delete;
 
-        // update3DCamera() must be called before
+        // update3DCamera() must be called before.
         static const glm::mat4& getViewProjection()
         {
             return m_viewProjection;
@@ -30,12 +27,12 @@ namespace Beryll
 
         static glm::mat4 getLoadingScreenCamera()
         {
-            // loading image near plan: Z = 1.0f
-            // loading image far plan: Z = 0.0f
+            // Loading image near plan: Z = 1.0f.
+            // Loading image far plan: Z = 0.0f.
             return m_loadingScreenCamera;
         }
 
-        // call before getViewProjection() / getProjection() / getView()
+        // Call before getViewProjection() / getProjection() / getView().
         static void update3DCamera()
         {
             updateCameraVectors();
@@ -63,10 +60,10 @@ namespace Beryll
             m_cameraUp = glm::normalize(glm::cross(m_cameraRightXYZ, m_cameraDirectionXYZ));
         }
 
-        // check does camera see object or object is out of view
+        // Check does camera see object or object is out of view.
         static bool getIsSeeObject(const glm::vec3& objectPos, float fovMultiplier = 1.0f, float maxViewDistance = m_objectsViewDistance)
         {
-            // check distance
+            // Check distance.
             if(glm::distance(m_cameraPos, objectPos) > maxViewDistance) { return false; }
 
             if(Window::getInstance()->currentOrientation == SDL_ORIENTATION_LANDSCAPE ||
@@ -93,7 +90,7 @@ namespace Beryll
             return true;
         }
 
-        static float getDistanceToObject(const glm::vec3& objectPos) // check distance between camera and object
+        static float getDistanceToObject(const glm::vec3& objectPos) // Check distance between camera and object.
         {
             return glm::distance(m_cameraPos, objectPos);
         }
@@ -146,7 +143,7 @@ namespace Beryll
         static float m_projNearClipPlane;
         static float m_projFarClipPlane;
 
-        static float m_objectsViewDistance; // for method isSeeObject()
+        static float m_objectsViewDistance; // For method isSeeObject().
 
         static glm::mat4 m_viewProjection;
         static glm::mat4 m_projection;

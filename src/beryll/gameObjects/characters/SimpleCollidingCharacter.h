@@ -50,7 +50,7 @@ namespace Beryll
 
         float moveSpeed = 0.0f; // Calculated in constructor. For average human = 13 km/h = 3m/s.
         float backwardMoveFactor = 0.6f; // Factor to multiply moveSpeed if character move backward.
-        float walkableFloorAngleRadians = glm::radians(60.0f);
+        float walkableFloorAngleRadians = glm::radians(45.0f);
         float maxStepHeight = 0.0f; // Calculated in constructor.
         float startJumpAngleRadians = glm::radians(30.0f);
         float startJumpPower = 1.0f;
@@ -77,7 +77,6 @@ namespace Beryll
         bool m_startFalling = false;
         float m_startFallingHeight = 0.0f;
         float m_fallDistance = 0.0f;
-        bool m_canApplyStartFallingImpulse = false;
 
         std::vector<int> m_collidingObjects; // Prevent creation and deletion every frame.
         std::vector<std::pair<glm::vec3, glm::vec3>> m_collidingPoints; // Prevent creation and deletion every frame.

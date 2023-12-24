@@ -63,7 +63,7 @@ namespace Beryll
             return;
         }
 
-        // Object is active. That means it should have collisions or drop down in the air.
+        // Object is active. That means it should have collisions or moves(up or down) in the air.
 
         m_characterCanStay = false;
         m_characterMoving = false;
@@ -88,8 +88,8 @@ namespace Beryll
                     float floorAngleRadians = BeryllUtils::Common::getAngleInRadians(BeryllConstants::worldUp, point.second);
                     if(floorAngleRadians < walkableFloorAngleRadians)
                     {
-                        //BR_INFO("%s", "m_characterCanStay = true");
                         // Character stay on allowed floor angle.
+                        //BR_INFO("%s", "characterCanStay = true 1");
                         m_characterCanStay = true;
                         m_lastTimeOnGround = TimeStep::getSecFromStart();
 
@@ -115,32 +115,21 @@ namespace Beryll
             m_jumped = false;
             m_falling = false;
             m_startFalling = false;
-            m_canApplyStartFallingImpulse = true;
         }
-        else if(m_previousYPos > m_origin.y)
+        else if(m_previousYPos > m_origin.y) // Character falling.
         {
             if(!m_startFalling)
             {
                 m_startFalling = true;
                 m_startFallingHeight = m_origin.y - m_fromOriginToBottom; // Bottom Y position.
+
+                applyCentralImpulse(glm::vec3{0.0f, -1.0f, 0.f} * moveSpeed * startFallingPower);
             }
 
             m_falling = true;
             m_fallDistance = glm::distance(m_startFallingHeight, m_origin.y - m_fromOriginToBottom);
         }
-        else
-        {
-            m_falling = false;
-        }
-
-        if(m_canApplyStartFallingImpulse && m_falling)
-        {
-            if(m_jumped || !m_characterCanStay)
-            {
-                applyCentralImpulse(glm::vec3{0.0f, -1.0f, 0.f} * moveSpeed * startFallingPower);
-                m_canApplyStartFallingImpulse = false;
-            }
-        }
+        // else {} Character flying up. Probably after jump or maybe explosion happened under character.
 
         m_previousYPos = m_origin.y;
     }
@@ -195,10 +184,7 @@ namespace Beryll
         glm::vec3 characterHeadUp = m_origin;
         characterHeadUp.y += m_fromOriginToTop;
         glm::vec3 characterHeadFront = characterHeadUp + ((m_XZRadius * 2.3f) / moveVectorLength) * moveVector;
-        RayClosestHit headFrontHit = Physics::castRayClosestHit(characterHeadUp,
-                                                                characterHeadFront,
-                                                                m_collisionGroup,
-                                                                m_collisionMask);
+        RayClosestHit headFrontHit = Physics::castRayClosestHit(characterHeadUp, characterHeadFront, m_collisionGroup, m_collisionMask);
         if(headFrontHit &&
            (headFrontHit.collFlag != CollisionFlags::DYNAMIC || (headFrontHit.collFlag == CollisionFlags::DYNAMIC && !pushDynamicObjects)))
         {
@@ -210,10 +196,7 @@ namespace Beryll
 
         glm::vec3 moveVectorLeftSide = glm::rotate(glm::normalize(moveVector), glm::quarter_pi<float>(), BeryllConstants::worldUp) * moveVectorLength;
         glm::vec3 characterHeadLeft = characterHeadUp + ((m_XZRadius * 2.0f) / moveVectorLength) * moveVectorLeftSide;
-        RayClosestHit headLeftHit = Physics::castRayClosestHit(characterHeadUp,
-                                                               characterHeadLeft,
-                                                               m_collisionGroup,
-                                                               m_collisionMask);
+        RayClosestHit headLeftHit = Physics::castRayClosestHit(characterHeadUp, characterHeadLeft, m_collisionGroup, m_collisionMask);
         if(headLeftHit &&
            (headLeftHit.collFlag != CollisionFlags::DYNAMIC || (headLeftHit.collFlag == CollisionFlags::DYNAMIC && !pushDynamicObjects)))
         {
@@ -227,12 +210,10 @@ namespace Beryll
             }
         }
 
-        glm::vec3 moveVectorRightSide = glm::rotate(glm::normalize(moveVector), -glm::quarter_pi<float>(), BeryllConstants::worldUp) * moveVectorLength;
+        glm::vec3 moveVectorRightSide =
+                glm::rotate(glm::normalize(moveVector), -glm::quarter_pi<float>(), BeryllConstants::worldUp) * moveVectorLength;
         glm::vec3 characterHeadRight = characterHeadUp + ((m_XZRadius * 2.0f) / moveVectorLength) * moveVectorRightSide;
-        RayClosestHit headRightHit = Physics::castRayClosestHit(characterHeadUp,
-                                                                characterHeadRight,
-                                                               m_collisionGroup,
-                                                               m_collisionMask);
+        RayClosestHit headRightHit = Physics::castRayClosestHit(characterHeadUp, characterHeadRight, m_collisionGroup, m_collisionMask);
         if(headRightHit &&
            (headRightHit.collFlag != CollisionFlags::DYNAMIC || (headRightHit.collFlag == CollisionFlags::DYNAMIC && !pushDynamicObjects)))
         {
@@ -272,147 +253,135 @@ namespace Beryll
             }
         }
 
-        if(m_characterCanStay)
-        {
-            bool allowedStairStepFound = false;
-            bool somethingHitInFront = false;
-            glm::vec3 somethingHitPoint{0.0f};
-            glm::vec3 somethingHitNormal{0.0f};
-            CollisionFlags somethingHitCollFlag = CollisionFlags::NONE;
-            float directionScaledByRadiusLength = 0.0f;
-            float characterTopY = m_origin.y + m_fromOriginToTop;
-            float characterBottomY = m_origin.y - m_fromOriginToBottom;
-
-            glm::vec3 frontDirectionScaledByRadius = ((m_XZRadius * 1.5f) / moveVectorLength) * moveVector;
-            glm::vec3 characterBodyMoveFront = m_origin + frontDirectionScaledByRadius;
-            glm::vec3 stepCheckUp = glm::vec3(characterBodyMoveFront.x, characterTopY, characterBodyMoveFront.z);
-            glm::vec3 stepCheckBottom = glm::vec3(characterBodyMoveFront.x, characterBottomY, characterBodyMoveFront.z);
-            stepCheckBottom.y += 0.005f; // A bit upped than player bottom to avoid hit flat ground.
-            RayClosestHit somethingHitOnFront = Physics::castRayClosestHit(stepCheckUp,
-                                                                        stepCheckBottom,
-                                                                        m_collisionGroup,
-                                                                        m_collisionMask);
-            if(somethingHitOnFront)
-            {
-                //BR_INFO("%s", "somethingHitOnFront");
-                somethingHitInFront = true;
-                somethingHitPoint = somethingHitOnFront.hitPoint;
-                somethingHitNormal = somethingHitOnFront.hitNormal;
-                somethingHitCollFlag = somethingHitOnFront.collFlag;
-                directionScaledByRadiusLength = glm::length(frontDirectionScaledByRadius);
-            }
-            else // Check left side.
-            {
-                moveVectorLeftSide = glm::rotate(glm::normalize(moveVector), glm::quarter_pi<float>(), BeryllConstants::worldUp) * moveVectorLength;
-                glm::vec3 leftDirectionScaledByRadius = ((m_XZRadius * 1.5f) / moveVectorLength) * moveVectorLeftSide;
-                glm::vec3 characterBodyMoveLeft = m_origin + leftDirectionScaledByRadius;
-                stepCheckUp = glm::vec3(characterBodyMoveLeft.x, characterTopY, characterBodyMoveLeft.z);
-                stepCheckBottom = glm::vec3(characterBodyMoveLeft.x, characterBottomY, characterBodyMoveLeft.z);
-                stepCheckBottom.y += 0.005f; // A bit upped than player bottom to avoid hit flat ground.
-                RayClosestHit somethingHitOnLeft = Physics::castRayClosestHit(stepCheckUp,
-                                                                           stepCheckBottom,
-                                                                           m_collisionGroup,
-                                                                           m_collisionMask);
-                if(somethingHitOnLeft)
-                {
-                    //BR_INFO("%s", "somethingHitOnLeft");
-                    somethingHitInFront = true;
-                    somethingHitPoint = somethingHitOnLeft.hitPoint;
-                    somethingHitNormal = somethingHitOnLeft.hitNormal;
-                    somethingHitCollFlag = somethingHitOnLeft.collFlag;
-                    directionScaledByRadiusLength = glm::length(leftDirectionScaledByRadius);
-                }
-                else // Check right side.
-                {
-                    moveVectorRightSide = glm::rotate(glm::normalize(moveVector), -glm::quarter_pi<float>(), BeryllConstants::worldUp) * moveVectorLength;
-                    glm::vec3 rightDirectionScaledByRadius = ((m_XZRadius * 1.5f) / moveVectorLength) * moveVectorRightSide;
-                    glm::vec3 characterBodyMoveRight = m_origin + rightDirectionScaledByRadius;
-                    stepCheckUp = glm::vec3(characterBodyMoveRight.x, characterTopY, characterBodyMoveRight.z);
-                    stepCheckBottom = glm::vec3(characterBodyMoveRight.x, characterBottomY, characterBodyMoveRight.z);
-                    stepCheckBottom.y += 0.005f; // A bit upped than player bottom to avoid hit flat ground.
-                    RayClosestHit somethingHitOnRight = Physics::castRayClosestHit(stepCheckUp,
-                                                                                stepCheckBottom,
-                                                                                m_collisionGroup,
-                                                                                m_collisionMask);
-                    if(somethingHitOnRight)
-                    {
-                        //BR_INFO("%s", "somethingHitOnRight");
-                        somethingHitInFront = true;
-                        somethingHitPoint = somethingHitOnRight.hitPoint;
-                        somethingHitNormal = somethingHitOnRight.hitNormal;
-                        somethingHitCollFlag = somethingHitOnRight.collFlag;
-                        directionScaledByRadiusLength = glm::length(rightDirectionScaledByRadius);
-                    }
-                }
-            }
-
-            if(somethingHitInFront)
-            {
-                //BR_INFO("Something hit in front at height: %f, check for stair step or ground slope.", somethingHitPoint.y - characterBottomY);
-                // Probably we found stair step.
-                // Calculate where should be character if that is not stair step, but only ground slope.
-                float surfaceSlopeRadians = BeryllUtils::Common::getAngleInRadians(BeryllConstants::worldUp, somethingHitNormal);
-                float oppositeSideLength = glm::tan(surfaceSlopeRadians) * directionScaledByRadiusLength;
-                oppositeSideLength *= 1.01f; // Add 1%.
-                if(oppositeSideLength == 0.0f) { oppositeSideLength += 0.01f; } // Add 1 cm.
-                float nextYOfCharacter = characterBottomY + oppositeSideLength; // After move on this ground slope(if not stair step).
-                //BR_INFO("%s", somethingHitPoint.y > nextYOfCharacter ? "That is something like stair step." : "That is ground slope.");
-                if(somethingHitPoint.y > nextYOfCharacter &&
-                   (somethingHitCollFlag != CollisionFlags::DYNAMIC || (somethingHitCollFlag == CollisionFlags::DYNAMIC && !pushDynamicObjects)))
-                {
-                    // Stair step in front + we can not push object.
-                    float diffStepHeightCharacterBottom = somethingHitPoint.y - characterBottomY;
-                    if(diffStepHeightCharacterBottom <= maxStepHeight)
-                    {
-                        // Character can move to this stair step.
-                        //BR_INFO("%s", "Character moved to stair step because can not push object and stair step height is allowed.");
-                        allowedStairStepFound = true;
-                        moveVector.y = diffStepHeightCharacterBottom;
-                    }
-                    else
-                    {
-                        // Stair step in front is too height.
-                        //BR_INFO("%s", "Stair step in front is too height and we can not push object, return");
-                        return;
-                    }
-                }
-            }
-
-            if(!allowedStairStepFound)
-            {
-                // Approximate next allowed collision points on Y axis(up and bottom) after character move based on walkableFloorAngle.
-                // m_characterCanStay == true, m_bottomCollisionPoint.first.y < std::numeric_limits<float>::max() both should be true.
-                float walkableFloorMaxHeight = glm::tan(walkableFloorAngleRadians) * moveVectorLength;
-                walkableFloorMaxHeight *= 1.01f; // Add 1%.
-
-                glm::vec3 walkableFloorMaxUp = m_bottomCollisionPoint.first + moveVector;
-                walkableFloorMaxUp.y += walkableFloorMaxHeight;
-                glm::vec3 walkableFloorMinBottom = m_bottomCollisionPoint.first + moveVector;
-                walkableFloorMinBottom.y -= walkableFloorMaxHeight;
-                RayClosestHit newPosYHit = Physics::castRayClosestHit(walkableFloorMaxUp,
-                                                                      walkableFloorMinBottom,
-                                                                      m_collisionGroup,
-                                                                      m_collisionMask);
-
-                if(newPosYHit)
-                {
-                    //BR_INFO("%s", "Walkable floor found.");
-                    if(m_bottomCollisionPoint.first.y > newPosYHit.hitPoint.y)
-                        moveVector.y = -(m_bottomCollisionPoint.first.y - newPosYHit.hitPoint.y);
-                    else
-                        moveVector.y = newPosYHit.hitPoint.y - m_bottomCollisionPoint.first.y;
-                }
-            }
-
-            addToOrigin(moveVector);
-
-            m_characterMoving = true;
-            m_jumpDirection = moveVector; // Be careful. Y can be != 0.0f and length != 1.0f.
-        }
-        else
+        if(m_jumped || !m_characterCanStay)
         {
             addToOrigin(moveVector * airControlFactor);
+            return;
         }
+
+        // Here m_characterCanStay == true.
+
+        bool allowedStairStepFound = false;
+        bool somethingHitInFront = false;
+        glm::vec3 somethingHitPoint{0.0f};
+        glm::vec3 somethingHitNormal{0.0f};
+        CollisionFlags somethingHitCollFlag = CollisionFlags::NONE;
+        float directionScaledByRadiusLength = 0.0f;
+        float characterTopY = m_origin.y + m_fromOriginToTop;
+        float characterBottomY = m_origin.y - m_fromOriginToBottom;
+
+        glm::vec3 frontDirectionScaledByRadius = ((m_XZRadius * 1.5f) / moveVectorLength) * moveVector;
+        glm::vec3 characterBodyMoveFront = m_origin + frontDirectionScaledByRadius;
+        glm::vec3 stepCheckUp = glm::vec3(characterBodyMoveFront.x, characterTopY, characterBodyMoveFront.z);
+        glm::vec3 stepCheckBottom = glm::vec3(characterBodyMoveFront.x, characterBottomY, characterBodyMoveFront.z);
+        stepCheckBottom.y += 0.005f; // A bit upped than player bottom to avoid hit flat ground.
+        RayClosestHit somethingHitOnFront = Physics::castRayClosestHit(stepCheckUp, stepCheckBottom, m_collisionGroup, m_collisionMask);
+        if(somethingHitOnFront)
+        {
+            //BR_INFO("%s", "somethingHitOnFront");
+            somethingHitInFront = true;
+            somethingHitPoint = somethingHitOnFront.hitPoint;
+            somethingHitNormal = somethingHitOnFront.hitNormal;
+            somethingHitCollFlag = somethingHitOnFront.collFlag;
+            directionScaledByRadiusLength = glm::length(frontDirectionScaledByRadius);
+        }
+        else // Check left side.
+        {
+            moveVectorLeftSide = glm::rotate(glm::normalize(moveVector), glm::quarter_pi<float>(), BeryllConstants::worldUp) * moveVectorLength;
+            glm::vec3 leftDirectionScaledByRadius = ((m_XZRadius * 1.5f) / moveVectorLength) * moveVectorLeftSide;
+            glm::vec3 characterBodyMoveLeft = m_origin + leftDirectionScaledByRadius;
+            stepCheckUp = glm::vec3(characterBodyMoveLeft.x, characterTopY, characterBodyMoveLeft.z);
+            stepCheckBottom = glm::vec3(characterBodyMoveLeft.x, characterBottomY, characterBodyMoveLeft.z);
+            stepCheckBottom.y += 0.005f; // A bit upped than player bottom to avoid hit flat ground.
+            RayClosestHit somethingHitOnLeft = Physics::castRayClosestHit(stepCheckUp, stepCheckBottom, m_collisionGroup, m_collisionMask);
+            if(somethingHitOnLeft)
+            {
+                //BR_INFO("%s", "somethingHitOnLeft");
+                somethingHitInFront = true;
+                somethingHitPoint = somethingHitOnLeft.hitPoint;
+                somethingHitNormal = somethingHitOnLeft.hitNormal;
+                somethingHitCollFlag = somethingHitOnLeft.collFlag;
+                directionScaledByRadiusLength = glm::length(leftDirectionScaledByRadius);
+            }
+            else // Check right side.
+            {
+                moveVectorRightSide = glm::rotate(glm::normalize(moveVector), -glm::quarter_pi<float>(), BeryllConstants::worldUp) * moveVectorLength;
+                glm::vec3 rightDirectionScaledByRadius = ((m_XZRadius * 1.5f) / moveVectorLength) * moveVectorRightSide;
+                glm::vec3 characterBodyMoveRight = m_origin + rightDirectionScaledByRadius;
+                stepCheckUp = glm::vec3(characterBodyMoveRight.x, characterTopY, characterBodyMoveRight.z);
+                stepCheckBottom = glm::vec3(characterBodyMoveRight.x, characterBottomY, characterBodyMoveRight.z);
+                stepCheckBottom.y += 0.005f; // A bit upped than player bottom to avoid hit flat ground.
+                RayClosestHit somethingHitOnRight = Physics::castRayClosestHit(stepCheckUp, stepCheckBottom, m_collisionGroup, m_collisionMask);
+                if(somethingHitOnRight)
+                {
+                    //BR_INFO("%s", "somethingHitOnRight");
+                    somethingHitInFront = true;
+                    somethingHitPoint = somethingHitOnRight.hitPoint;
+                    somethingHitNormal = somethingHitOnRight.hitNormal;
+                    somethingHitCollFlag = somethingHitOnRight.collFlag;
+                    directionScaledByRadiusLength = glm::length(rightDirectionScaledByRadius);
+                }
+            }
+        }
+
+        if(somethingHitInFront)
+        {
+            //BR_INFO("Something hit in front at height: %f, check for stair step or ground slope.", somethingHitPoint.y - characterBottomY);
+            // Probably we found stair step.
+            // Calculate where should be character if that is not stair step, but only ground slope.
+            float surfaceSlopeRadians = BeryllUtils::Common::getAngleInRadians(BeryllConstants::worldUp, somethingHitNormal);
+            float oppositeSideLength = glm::tan(surfaceSlopeRadians) * directionScaledByRadiusLength;
+            oppositeSideLength *= 1.01f; // Add 1%.
+            if(oppositeSideLength == 0.0f) { oppositeSideLength += 0.01f; } // Add 1 cm.
+            float nextYOfCharacter = characterBottomY + oppositeSideLength; // After move on this ground slope(if not stair step).
+            //BR_INFO("%s", somethingHitPoint.y > nextYOfCharacter ? "That is something like stair step." : "That is ground slope.");
+            if(somethingHitPoint.y > nextYOfCharacter &&
+               (somethingHitCollFlag != CollisionFlags::DYNAMIC || (somethingHitCollFlag == CollisionFlags::DYNAMIC && !pushDynamicObjects)))
+            {
+                // Stair step in front + we can not push object.
+                float diffStepHeightCharacterBottom = somethingHitPoint.y - characterBottomY;
+                if(diffStepHeightCharacterBottom <= maxStepHeight)
+                {
+                    // Character can move to this stair step.
+                    //BR_INFO("%s", "Character moved to stair step because can not push object and stair step height is allowed.");
+                    allowedStairStepFound = true;
+                    moveVector.y = diffStepHeightCharacterBottom;
+                }
+                else
+                {
+                    // Stair step in front is too height.
+                    //BR_INFO("%s", "Stair step in front is too height and we can not push object, return");
+                    return;
+                }
+            }
+        }
+
+        if(!allowedStairStepFound)
+        {
+            // Approximate next allowed collision points on Y axis(up and bottom) after character move based on walkableFloorAngle.
+            // m_characterCanStay == true, m_bottomCollisionPoint.first.y < std::numeric_limits<float>::max() both should be true.
+            float walkableFloorMaxHeight = glm::tan(walkableFloorAngleRadians) * moveVectorLength;
+
+            glm::vec3 walkableFloorMaxUp = m_bottomCollisionPoint.first + moveVector;
+            walkableFloorMaxUp.y += walkableFloorMaxHeight;
+            glm::vec3 walkableFloorMinBottom = m_bottomCollisionPoint.first + moveVector;
+            walkableFloorMinBottom.y -= walkableFloorMaxHeight;
+            RayClosestHit newPosYHit = Physics::castRayClosestHit(walkableFloorMaxUp, walkableFloorMinBottom, m_collisionGroup, m_collisionMask);
+
+            if(newPosYHit)
+            {
+                //BR_INFO("%s", "Walkable floor found.");
+                if(m_bottomCollisionPoint.first.y > newPosYHit.hitPoint.y)
+                    moveVector.y = -(m_bottomCollisionPoint.first.y - newPosYHit.hitPoint.y);
+                else
+                    moveVector.y = newPosYHit.hitPoint.y - m_bottomCollisionPoint.first.y;
+            }
+        }
+
+        addToOrigin(moveVector);
+
+        m_characterMoving = true;
+        m_jumpDirection = moveVector; // Be careful. Y can be != 0.0f and length != 1.0f.
     }
 
     bool SimpleCollidingCharacter::jump()
@@ -435,7 +404,7 @@ namespace Beryll
             }
 
             m_jumped = true;
-            m_characterCanStay = false;
+            m_previousYPos = m_origin.y; // Reset falling mechanism. m_falling calculated based on that.
 
             return true;
         }
