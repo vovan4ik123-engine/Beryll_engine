@@ -66,7 +66,7 @@ namespace Beryll
 
     SimpleCollidingObject::~SimpleCollidingObject()
     {
-        disableCollisionMesh();
+        disableForEver();
     }
 
     void SimpleCollidingObject::updateBeforePhysics()

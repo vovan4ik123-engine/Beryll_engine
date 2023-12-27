@@ -385,7 +385,7 @@ namespace Beryll
 
     AnimatedCollidingObject::~AnimatedCollidingObject()
     {
-        disableCollisionMesh();
+        disableForEver();
     }
 
     void AnimatedCollidingObject::updateBeforePhysics()
