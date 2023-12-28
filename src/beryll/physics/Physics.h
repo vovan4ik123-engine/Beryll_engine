@@ -124,7 +124,7 @@ namespace Beryll
     struct RayAllHits
     {
         bool isHit = false;
-        std::vector<int> objectsID; // All hitted.
+        std::vector<const int> objectsID; // All hitted.
         std::vector<CollisionFlags> objectsCollFlags;
         std::vector<float> hittedObjectsMass;
         std::vector<glm::vec3> hitPoints;
@@ -190,12 +190,16 @@ namespace Beryll
         static void setLinearVelocity(const int ID, const glm::vec3& linVelocity, bool resetVelocities = false); // Set translation velocity.
 
         static bool getIsCollision(const int ID1, const int ID2);
-        static bool getIsCollision(const int ID, const CollisionGroups group);
-        static int getAnyObjectCollidingWith(const int ID); // Return first found ID colliding with. Or 0 if no collisions.
-        static std::vector<int> getCollisionsWithGroup(const int id, const CollisionGroups group); // Return IDs of all colliding objects in specific group.
-        static const std::vector<std::pair<const int, const int>>& getAllCollisions() { return m_collisionPairs; }
+        static bool getIsCollisionWithGroup(const int ID, const CollisionGroups group);
+
+        static int getAnyCollisionForID(const int ID); // Return first found ID colliding with. Or 0 if no collisions.
+        static std::vector<const int> getAllCollisionsForID(const int ID);
+
+        static std::vector<const int> getAllCollisionsForIDWithGroup(const int id, const CollisionGroups group); // Return IDs of all colliding objects in specific group.
+        static std::vector<std::pair<const int, const int>>& getAllCollisions() { return m_collisionPairs; }
         static std::vector<std::pair<glm::vec3, glm::vec3>> getAllCollisionPoints(const int ID1, const int ID2); // Return point + his normal.
-        static std::vector<std::pair<glm::vec3, glm::vec3>> getAllCollisionPoints(const int ID1, const std::vector<int>& IDs); // Return point + his normal.
+        static std::vector<std::pair<glm::vec3, glm::vec3>> getAllCollisionPoints(const int ID1, const std::vector<const int>& IDs); // Return point + his normal.
+
         static glm::vec3 getDefaultGravity() { return glm::vec3(m_gravity.x(), m_gravity.y(), m_gravity.z()); }
 
         // Cast ray. Only objects in physics world can be hit.

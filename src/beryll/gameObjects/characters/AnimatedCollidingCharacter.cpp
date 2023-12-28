@@ -65,7 +65,7 @@ namespace Beryll
         m_moving = false;
         m_touchGroundAfterFall = false;
         m_bottomCollisionPoint = std::make_pair(glm::vec3(0.0f, std::numeric_limits<float>::max(), 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-        m_collidingObjects = Physics::getCollisionsWithGroup(m_ID, m_collisionMask);
+        m_collidingObjects = Physics::getAllCollisionsForIDWithGroup(m_ID, m_collisionMask);
 
         if(!m_collidingObjects.empty())
         {

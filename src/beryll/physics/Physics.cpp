@@ -531,6 +531,9 @@ namespace Beryll
     bool Physics::collisionsCallBack(btManifoldPoint& cp, const btCollisionObjectWrapper* ob1, int ID1, int index1,
                                                           const btCollisionObjectWrapper* ob2, int ID2, int index2)
     {
+        if(ob1->getCollisionObject()->beryllEngineObjectID == ob2->getCollisionObject()->beryllEngineObjectID)
+            return false;
+
         {
             std::scoped_lock<std::mutex> lock (m_mutex);
 
@@ -557,7 +560,7 @@ namespace Beryll
         return false;
     }
 
-    bool Physics::getIsCollision(const int ID, const CollisionGroups group)
+    bool Physics::getIsCollisionWithGroup(const int ID, const CollisionGroups group)
     {
         for(int i = 0; i < m_dynamicsWorldMT->getNumCollisionObjects(); ++i)
         {
@@ -573,7 +576,7 @@ namespace Beryll
         return false;
     }
 
-    int Physics::getAnyObjectCollidingWith(const int ID)
+    int Physics::getAnyCollisionForID(const int ID)
     {
         for(const std::pair<const int, const int>& pair : m_collisionPairs)
         {
@@ -588,9 +591,25 @@ namespace Beryll
         return 0;
     }
 
-    std::vector<int> Physics::getCollisionsWithGroup(const int ID, const CollisionGroups group)
+    std::vector<const int> Physics::getAllCollisionsForID(const int ID)
     {
-        std::vector<int> ids;
+        std::vector<const int> ids;
+
+        for(const std::pair<const int, const int>& pair : m_collisionPairs)
+        {
+            if(ID == pair.first)
+                ids.push_back(pair.second);
+
+            if(ID == pair.second)
+                ids.push_back(pair.first);
+        }
+
+        return ids;
+    }
+
+    std::vector<const int> Physics::getAllCollisionsForIDWithGroup(const int ID, const CollisionGroups group)
+    {
+        std::vector<const int> ids;
         ids.reserve(5);
 
         for(int i = 0; i < m_dynamicsWorldMT->getNumCollisionObjects(); ++i)
@@ -604,15 +623,14 @@ namespace Beryll
             }
         }
 
-        return std::move(ids);
+        return ids;
     }
 
     std::vector<std::pair<glm::vec3, glm::vec3>> Physics::getAllCollisionPoints(const int ID1, const int ID2)
     {
+        if(ID1 == ID2) { return {}; }
+
         std::vector<std::pair<glm::vec3, glm::vec3>> pointsAndNormals;
-
-        if(ID1 == ID2) { return std::move(pointsAndNormals); }
-
         pointsAndNormals.reserve(5);
 
         int numManifolds = m_dynamicsWorldMT->getDispatcher()->getNumManifolds();
@@ -640,10 +658,10 @@ namespace Beryll
             }
         }
 
-        return std::move(pointsAndNormals);
+        return pointsAndNormals;
     }
 
-    std::vector<std::pair<glm::vec3, glm::vec3>> Physics::getAllCollisionPoints(const int ID1, const std::vector<int>& IDs)
+    std::vector<std::pair<glm::vec3, glm::vec3>> Physics::getAllCollisionPoints(const int ID1, const std::vector<const int>& IDs)
     {
         std::vector<std::pair<glm::vec3, glm::vec3>> pointsAndNormals;
         pointsAndNormals.reserve(5);
@@ -690,7 +708,7 @@ namespace Beryll
             }
         }
 
-        return std::move(pointsAndNormals);
+        return pointsAndNormals;
     }
 
     void Physics::setOrigin(const int ID, const glm::vec3& orig, bool resetVelocities)
