@@ -61,6 +61,8 @@ namespace Beryll
         CONSTRUCTION_19 = 1 << 23,
         CONSTRUCTION_20 = 1 << 24,
 
+        EXPLOSIVE_OBJECT = 1 << 25,
+
         YOU_CAN_COMBINE_GROUPS_WHEN_USE = STATIC_ENVIRONMENT | CAMERA,
 
         ALL_GROUPS = -1 // All bits = 1.

@@ -22,6 +22,8 @@ namespace Beryll
         BR_ASSERT(((collFlag == CollisionFlags::DYNAMIC && wantCollisionCallBack == true) ||
                    (collFlag != CollisionFlags::DYNAMIC)), "%s", "collFlag DYNAMIC must have wantCollisionCallBack = true to use character controller.");
 
+        BR_ASSERT((collMask != CollisionGroups::NONE), "%s", "Character has collMask = NONE.");
+
         // Colliding character described by collision mesh.
         m_fromOriginToTop = std::abs(m_mostTopVertex);
         m_fromOriginToBottom = std::abs(m_mostBottomVertex);
@@ -32,7 +34,7 @@ namespace Beryll
         BR_ASSERT((m_fromOriginToBottom > 0.0f && m_fromOriginToTop > 0.0f && m_XZRadius > 0.0f && m_characterHeight > 0.0f), "%s", "Characters XYZ dimensions are 0.");
 
         moveSpeed = (m_characterHeight / 1.8f) * 3.0f; // For human 1.8m height average speed is 3m|s.
-        maxStepHeight = m_characterHeight * 0.2f;
+        maxStepHeight = m_characterHeight * 0.4f;
         startJumpPower = collisionMassKg;
         startFallingPower = collisionMassKg * 0.5f;
 
@@ -55,60 +57,50 @@ namespace Beryll
         // Call base class method first.
         AnimatedCollidingObject::updateAfterPhysics();
 
-        if(m_collisionFlag != CollisionFlags::DYNAMIC) { return; }
+        if(m_collisionFlag != CollisionFlags::DYNAMIC || !getIsActive()) { return; }
 
-        //BR_INFO("origin X: %d Y: %d Z: %d", m_origin.x, m_origin.y, m_origin.z);
-        if(!getIsActive())
-        {
-            return;
-        }
+        // Object is dynamic and active. Handle that.
 
-        // Object is active. That means it should have collisions or moves(up or down) in the air.
-
-        m_characterCanStay = false;
-        m_characterMoving = false;
+        m_canStay = false;
+        m_moving = false;
         m_touchGroundAfterFall = false;
-
         m_bottomCollisionPoint = std::make_pair(glm::vec3(0.0f, std::numeric_limits<float>::max(), 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+        m_collidingObjects = Physics::getCollisionsWithGroup(m_ID, m_collisionMask);
 
-        if(m_collisionMask != CollisionGroups::NONE)
+        if(!m_collidingObjects.empty())
         {
-            m_collidingObjects = Physics::getCollisionsWithGroup(m_ID, m_collisionMask);
-            if(!m_collidingObjects.empty())
+            m_collidingPoints = Physics::getAllCollisionPoints(m_ID, m_collidingObjects);
+            for(const std::pair<glm::vec3, glm::vec3>& point : m_collidingPoints)
             {
-                m_collidingPoints = Physics::getAllCollisionPoints(m_ID, m_collidingObjects);
-                for(const std::pair<glm::vec3, glm::vec3>& point : m_collidingPoints)
+                if(point.first.y < m_bottomCollisionPoint.first.y)
                 {
-                    if(point.first.y < m_bottomCollisionPoint.first.y)
-                    {
-                        m_bottomCollisionPoint = point;
-                    }
+                    m_bottomCollisionPoint = point;
+                }
 
-                    // point.second is normal vector on collision point.
-                    float floorAngleRadians = BeryllUtils::Common::getAngleInRadians(BeryllConstants::worldUp, point.second);
-                    if(floorAngleRadians < walkableFloorAngleRadians)
-                    {
-                        // Character stay on allowed floor angle.
-                        //BR_INFO("%s", "characterCanStay = true 1");
-                        m_characterCanStay = true;
-                        m_lastTimeOnGround = TimeStep::getSecFromStart();
+                // point.second is normal vector on collision point.
+                float floorAngleRadians = BeryllUtils::Common::getAngleInRadians(BeryllConstants::worldUp, point.second);
+                if(floorAngleRadians < walkableFloorAngleRadians)
+                {
+                    // Character stay on allowed floor angle.
+                    //BR_INFO("%s", "characterCanStay = true 1");
+                    m_canStay = true;
+                    m_lastTimeOnGround = TimeStep::getSecFromStart();
 
-                        if(m_falling)
-                        {
-                            m_touchGroundAfterFall = true;
-                            m_fallDistance = glm::distance(m_startFallingHeight, m_origin.y - m_fromOriginToBottom);
-                        }
-                        // DONT break loop here !!! Continue collect m_bottomCollisionPoint.
+                    if(m_falling)
+                    {
+                        m_touchGroundAfterFall = true;
+                        m_fallDistance = glm::distance(m_startFallingHeight, m_origin.y - m_fromOriginToBottom);
                     }
+                    // DONT break loop here !!! Continue collect m_bottomCollisionPoint.
                 }
             }
-            else if(!m_jumped && m_lastTimeOnGround + canStayOrJumpExtendTime >= TimeStep::getSecFromStart())
-            {
-                m_characterCanStay = true;
-            }
+        }
+        else if(!m_jumped && m_lastTimeOnGround + canStayOrJumpExtendTime >= TimeStep::getSecFromStart())
+        {
+            m_canStay = true;
         }
 
-        if(m_characterCanStay)
+        if(m_canStay)
         {
             resetVelocities();
 
@@ -126,10 +118,15 @@ namespace Beryll
                 applyCentralImpulse(glm::vec3{0.0f, -1.0f, 0.f} * moveSpeed * startFallingPower);
             }
 
+            m_jumped = false;
             m_falling = true;
             m_fallDistance = glm::distance(m_startFallingHeight, m_origin.y - m_fromOriginToBottom);
         }
-        // else {} Character flying up. Probably after jump or maybe explosion happened under character.
+        else // Character flying up or stuck between two not allowed floor angles, or ...
+        {
+            m_falling = false;
+            m_startFalling = false;
+        }
 
         m_previousYPos = m_origin.y;
     }
@@ -253,13 +250,13 @@ namespace Beryll
             }
         }
 
-        if(m_jumped || !m_characterCanStay)
+        if(!m_canStay)
         {
             addToOrigin(moveVector * airControlFactor);
             return;
         }
 
-        // Here m_characterCanStay == true.
+        // Here m_canStay == true.
 
         bool allowedStairStepFound = false;
         bool somethingHitInFront = false;
@@ -359,7 +356,7 @@ namespace Beryll
         if(!allowedStairStepFound)
         {
             // Approximate next allowed collision points on Y axis(up and bottom) after character move based on walkableFloorAngle.
-            // m_characterCanStay == true, m_bottomCollisionPoint.first.y < std::numeric_limits<float>::max() both should be true.
+            // m_canStay == true, m_bottomCollisionPoint.first.y < std::numeric_limits<float>::max() both should be true.
             float walkableFloorMaxHeight = glm::tan(walkableFloorAngleRadians) * moveVectorLength;
 
             glm::vec3 walkableFloorMaxUp = m_bottomCollisionPoint.first + moveVector;
@@ -380,35 +377,30 @@ namespace Beryll
 
         addToOrigin(moveVector);
 
-        m_characterMoving = true;
+        m_moving = true;
         m_jumpDirection = moveVector; // Be careful. Y can be != 0.0f and length != 1.0f.
     }
 
     bool AnimatedCollidingCharacter::jump()
     {
-        if(m_collisionFlag != CollisionFlags::DYNAMIC || m_jumped) { return false; }
+        if(m_collisionFlag != CollisionFlags::DYNAMIC || m_jumped || m_falling) { return false; }
 
-        if(m_characterCanStay)
+        if(m_moving)
         {
-            if(m_characterMoving)
-            {
-                m_jumpDirection.y = 0.0f;
-                m_jumpDirection = glm::normalize(m_jumpDirection);
-                m_jumpDirection.y = glm::tan(startJumpAngleRadians);
-                applyCentralImpulse((glm::normalize(m_jumpDirection) * moveSpeed * startJumpPower) * 1.8f);
-            }
-            else
-            {
-                // Jump up if stay.
-                applyCentralImpulse(glm::vec3(0.0f, 1.0f, 0.0f) * moveSpeed * startJumpPower);
-            }
-
-            m_jumped = true;
-            m_previousYPos = m_origin.y; // Reset falling mechanism. m_falling calculated based on that.
-
-            return true;
+            m_jumpDirection.y = 0.0f;
+            m_jumpDirection = glm::normalize(m_jumpDirection);
+            m_jumpDirection.y = glm::tan(startJumpAngleRadians);
+            applyCentralImpulse((glm::normalize(m_jumpDirection) * moveSpeed * startJumpPower) * 1.8f);
+        }
+        else
+        {
+            // Jump up if stay.
+            applyCentralImpulse(glm::vec3(0.0f, 1.0f, 0.0f) * moveSpeed * startJumpPower);
         }
 
-        return false;
+        m_jumped = true;
+        m_previousYPos = m_origin.y; // Reset falling mechanism. m_falling calculated based on that.
+
+        return true;
     }
 }

@@ -36,8 +36,8 @@ namespace Beryll
         void moveToDirection(glm::vec3 direction, bool rotateWhenMove, bool ignoreYAxisWhenRotate, bool pushDynamicObjects);
         void moveToPosition(const glm::vec3& position, bool rotateWhenMove, bool ignoreYAxisWhenRotate, bool pushDynamicObjects);
         bool jump();
-        bool getIsCanStay() { return m_characterCanStay; }
-        bool getIsMoving() { return m_characterMoving; }
+        bool getIsCanStay() { return m_canStay; }
+        bool getIsMoving() { return m_moving; }
         bool getIsJumped() { return m_jumped; }
         bool getIsFalling() { return m_falling; }
         bool getIsTouchGroundAfterFall() { return m_touchGroundAfterFall; }
@@ -64,9 +64,9 @@ namespace Beryll
         float m_XZRadius = 0.0f; // Radius on X/Z axis. From collision mesh origin.
         float m_characterHeight = 0.0f;
 
-        bool m_characterCanStay = false; // Can stay on any colliding object from group m_collisionMask.
+        bool m_canStay = false; // Can stay on any colliding object from group m_collisionMask.
         float m_lastTimeOnGround = 0.0f;
-        bool m_characterMoving = false;
+        bool m_moving = false;
         bool m_touchGroundAfterFall = false;
 
         float m_previousYPos = 0.0f;
