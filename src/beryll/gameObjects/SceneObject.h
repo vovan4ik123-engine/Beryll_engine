@@ -41,8 +41,9 @@ namespace Beryll
         CONSTRUCTION_19,
         CONSTRUCTION_20,
 
-        EXPLOSIVE_OBJECT_POWER_500_RADIUS_50,
+        EXPLOSIVE_OBJECT_POWER_700_RADIUS_50,
         EXPLOSIVE_OBJECT_POWER_1500_RADIUS_50,
+        EXPLOSIVE_OBJECT_POWER_5000_RADIUS_100,
     };
 
     class SceneObject : public GameObject

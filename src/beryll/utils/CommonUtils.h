@@ -68,31 +68,43 @@ namespace BeryllUtils
             return glm::normalize(glm::cross(start, dest));
         }
 
-        // Return true if v2 is on right side from v1.
+        enum class VectorSide
+        {
+            ERROR,
+            ON_RIGHT_SIDE,
+            ON_LEFT_SIDE
+        };
+        // Return ON_RIGHT_SIDE if v2 is on right side from v1.
         //  v1  v2      v1
         //  ^  ^        ^
         //  | /         |
         //  |/      OR  |-----> v2
 
-        // Return false if on left side.
+        // Return ON_LEFT_SIDE if on left side.
         //          v1
         //          ^
         //          |
         // v2 <-----|
-        static bool getIsVectorOnRightSide(const glm::vec3& v1, const glm::vec3& v2)
+
+        // Return ERROR if can not find right vector.
+        static VectorSide getIsVectorOnRightSide(const glm::vec3& v1, const glm::vec3& v2)
         {
-            const glm::vec3 rightVector = getRightVector(v1);
+            float dotProduct = glm::dot(v1, BeryllConstants::worldUp);
+            if(dotProduct == 1.0f || dotProduct == -1.0f)
+                return VectorSide::ERROR; // v1 and BeryllConstants::worldUp are parallel, we can not find right vector.
+
+            glm::vec3 rightVector = glm::normalize(glm::cross(v1, BeryllConstants::worldUp));
 
             if(glm::acos(glm::dot(rightVector, v2)) < glm::half_pi<float>())
-                return true;
+                return VectorSide::ON_RIGHT_SIDE;
             else
-                return false;
+                return VectorSide::ON_LEFT_SIDE;
         }
 
         static glm::vec3 getRightVector(const glm::vec3& v1)
         {
             BR_ASSERT((glm::dot(v1, BeryllConstants::worldUp) != 1.0f &&
-                       glm::dot(v1, BeryllConstants::worldUp) != -1.0f), "%s", "Vectors are parallel. Can not find right vector.");
+                       glm::dot(v1, BeryllConstants::worldUp) != -1.0f), "%s", "Vectors are parallel. Use getIsVectorOnRightSide() to check.");
 
             return glm::normalize(glm::cross(v1, BeryllConstants::worldUp));
         }
@@ -100,7 +112,7 @@ namespace BeryllUtils
         static glm::vec3 getLeftVector(const glm::vec3& v1)
         {
             BR_ASSERT((glm::dot(v1, BeryllConstants::worldUp) != 1.0f &&
-                       glm::dot(v1, BeryllConstants::worldUp) != -1.0f), "%s", "Vectors are parallel. Can not find left vector.");
+                       glm::dot(v1, BeryllConstants::worldUp) != -1.0f), "%s", "Vectors are parallel. Use getIsVectorOnRightSide() to check.");
 
             return glm::normalize(glm::cross(BeryllConstants::worldUp, v1));
         }

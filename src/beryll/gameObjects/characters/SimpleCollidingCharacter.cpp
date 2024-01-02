@@ -243,10 +243,14 @@ namespace Beryll
             else
             {
                 //BR_INFO("%s", "Move along wall.");
-                if(BeryllUtils::Common::getIsVectorOnRightSide(headObstacleNormal, glm::normalize(moveVector)))
+                BeryllUtils::Common::VectorSide vectorSide = BeryllUtils::Common::getIsVectorOnRightSide(headObstacleNormal, glm::normalize(moveVector));
+
+                if(vectorSide == BeryllUtils::Common::VectorSide::ON_RIGHT_SIDE)
                     moveVector = BeryllUtils::Common::getRightVector(headObstacleNormal) * moveVectorLength;
-                else
+                else if(vectorSide == BeryllUtils::Common::VectorSide::ON_LEFT_SIDE)
                     moveVector = BeryllUtils::Common::getLeftVector(headObstacleNormal) * moveVectorLength;
+                else
+                    return;
             }
         }
 
