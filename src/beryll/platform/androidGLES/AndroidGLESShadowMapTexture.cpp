@@ -54,10 +54,12 @@ namespace Beryll
 
     AndroidGLESShadowMapTexture::~AndroidGLESShadowMapTexture()
     {
+        glActiveTexture(GL_TEXTURE6);
+        glBindTexture(GL_TEXTURE_2D, 0);
         GLESStateVariables::currentShadowMapTextureID6 = 0;
+        glDeleteTextures(1, &m_openGLID);
 
-        glDeleteTextures(GL_TEXTURE_2D, &m_openGLID);
-
+        glBindFramebuffer(GL_FRAMEBUFFER, m_defaultFBO);
         glDeleteFramebuffers(1, &m_depthMapFBO);
     }
 

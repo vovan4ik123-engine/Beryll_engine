@@ -75,11 +75,23 @@ namespace Beryll
             if(result != m_textures.end())
             {
                 if(m_type == TextureType::DIFFUSE_TEXTURE  && GLESStateVariables::currentDiffuseTextureID0 == *m_openGLID)
+                {
+                    glActiveTexture(GL_TEXTURE0);
+                    glBindTexture(GL_TEXTURE_2D, 0);
                     GLESStateVariables::currentDiffuseTextureID0 = 0;
+                }
                 else if(m_type == TextureType::SPECULAR_TEXTURE && GLESStateVariables::currentSpecularTextureID1 == *m_openGLID)
+                {
+                    glActiveTexture(GL_TEXTURE1);
+                    glBindTexture(GL_TEXTURE_2D, 0);
                     GLESStateVariables::currentSpecularTextureID1 = 0;
+                }
                 else if(m_type == TextureType::NORMAL_MAP_TEXTURE && GLESStateVariables::currentNormalMapTextureID2 == *m_openGLID)
+                {
+                    glActiveTexture(GL_TEXTURE2);
+                    glBindTexture(GL_TEXTURE_2D, 0);
                     GLESStateVariables::currentNormalMapTextureID2 = 0;
+                }
 
                 glDeleteTextures(1, m_openGLID.get());
                 m_textures.erase(result);

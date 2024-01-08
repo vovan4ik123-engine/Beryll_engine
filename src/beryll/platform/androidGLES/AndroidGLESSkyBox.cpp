@@ -136,12 +136,18 @@ namespace Beryll
         m_vertexArray = Renderer::createVertexArray();
         m_vertexArray->addVertexBuffer(m_vertexPosBuffer);
         m_vertexArray->setIndexBuffer(m_indexBuffer);
+
+        // Bind. Can be bound 1 time to reserved GL_TEXTURE5. No need call bind() in every frame.
+        glActiveTexture(GL_TEXTURE5);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, m_openGLID);
+        GLESStateVariables::currentSkyBoxTextureID5 = m_openGLID;
     }
 
     AndroidGLESSkyBox::~AndroidGLESSkyBox()
     {
+        glActiveTexture(GL_TEXTURE5);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
         GLESStateVariables::currentSkyBoxTextureID5 = 0;
-
         glDeleteTextures(1, &m_openGLID);
     }
 
@@ -154,13 +160,6 @@ namespace Beryll
         m_view = glm::mat4(glm::mat3(Camera::getView())); // Remove translation from matrix.
         m_perspView = m_persp * m_view;
         m_internalShader->setMatrix4x4Float("VPMatrix", m_perspView);
-
-        if(GLESStateVariables::currentSkyBoxTextureID5 != m_openGLID)
-        {
-            glActiveTexture(GL_TEXTURE5);
-            glBindTexture(GL_TEXTURE_CUBE_MAP, m_openGLID);
-            GLESStateVariables::currentSkyBoxTextureID5 = m_openGLID;
-        }
 
         m_vertexArray->bind();
         m_vertexArray->draw();
