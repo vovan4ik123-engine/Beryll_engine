@@ -108,7 +108,7 @@ namespace Beryll
             m_falling = false;
             m_startFalling = false;
         }
-        else if(m_previousYPos > m_origin.y) // Character falling.
+        else if((m_jumped && m_jumpTime + applyFallingPowerAfterJumpDelay <= TimeStep::getSecFromStart()) || m_previousYPos > m_origin.y) // Character falling.
         {
             if(!m_startFalling)
             {
@@ -403,6 +403,7 @@ namespace Beryll
         }
 
         m_jumped = true;
+        m_jumpTime = TimeStep::getSecFromStart();
         m_previousYPos = m_origin.y; // Reset falling mechanism. m_falling calculated based on that.
 
         return true;

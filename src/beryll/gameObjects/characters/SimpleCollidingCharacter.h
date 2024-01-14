@@ -54,7 +54,8 @@ namespace Beryll
         float maxStepHeight = 0.0f; // Calculated in constructor.
         float startJumpAngleRadians = glm::radians(30.0f);
         float startJumpPower = 1.0f;
-        float startFallingPower = 1.0f; // -Y axis impulse when stat falling.
+        float startFallingPower = 1.0f; // -Y axis impulse when start falling.
+        float applyFallingPowerAfterJumpDelay = 1.0f; // Sec.
         float airControlFactor = 0.1f; // Factor to multiply moveSpeed if character not on ground.
         float canStayOrJumpExtendTime = 0.0f; // In seconds. For eliminate cases when player is very close to ground but not touch ground.
 
@@ -77,6 +78,7 @@ namespace Beryll
         bool m_startFalling = false;
         float m_startFallingHeight = 0.0f;
         float m_fallDistance = 0.0f;
+        float m_jumpTime = 0.0f; // Sec.
 
         std::vector<const int> m_collidingObjects; // Prevent creation and deletion every frame.
         std::vector<std::pair<glm::vec3, glm::vec3>> m_collidingPoints; // Prevent creation and deletion every frame.
