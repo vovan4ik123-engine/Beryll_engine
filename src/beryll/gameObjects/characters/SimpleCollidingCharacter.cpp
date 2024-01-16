@@ -36,7 +36,6 @@ namespace Beryll
         moveSpeed = (m_characterHeight / 1.8f) * 3.0f; // For human 1.8m height average speed is 3m|s.
         maxStepHeight = m_characterHeight * 0.4f;
         startJumpPower = collisionMassKg;
-        startFallingPower = collisionMassKg * 0.5f;
 
         m_previousYPos = m_origin.y;
     }
@@ -59,10 +58,11 @@ namespace Beryll
 
         if(m_collisionFlag != CollisionFlags::DYNAMIC || !getIsActive()) { return; }
 
-        // Object is dynamic and active. Handle that.
+        // Object is dynamic and active.
 
         m_canStay = false;
         m_moving = false;
+        m_controllingInAir = false;
         m_touchGroundAfterFall = false;
         m_bottomCollisionPoint = std::make_pair(glm::vec3(0.0f, std::numeric_limits<float>::max(), 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
         m_collidingObjects = Physics::getAllCollisionsForIDWithGroup(m_ID, m_collisionMask);
@@ -81,9 +81,11 @@ namespace Beryll
                 float floorAngleRadians = BeryllUtils::Common::getAngleInRadians(BeryllConstants::worldUp, point.second);
                 if(floorAngleRadians < walkableFloorAngleRadians)
                 {
-                    // Character stay on allowed floor angle.
-                    //BR_INFO("%s", "characterCanStay = true 1");
+                    // Character touch allowed floor/object angle.
+                    //BR_INFO("%s", "m_canStay == true 1");
                     m_canStay = true;
+                    resetVelocities();
+
                     m_lastTimeOnGround = TimeStep::getSecFromStart();
 
                     if(m_falling)
@@ -95,37 +97,51 @@ namespace Beryll
                 }
             }
         }
-        else if(!m_jumped && m_lastTimeOnGround + canStayOrJumpExtendTime >= TimeStep::getSecFromStart())
+        else if(m_canJump && m_lastTimeOnGround + jumpExtendTime >= TimeStep::getSecFromStart())
         {
-            m_canStay = true;
+            m_canJump = true;
+        }
+        else
+        {
+            m_canJump = false;
         }
 
         if(m_canStay)
         {
-            resetVelocities();
-
+            m_canJump = true;
             m_jumped = false;
+            m_jumpedWhileMoving = false;
             m_falling = false;
             m_startFalling = false;
         }
-        else if((m_jumped && m_jumpTime + applyFallingPowerAfterJumpDelay <= TimeStep::getSecFromStart()) || m_previousYPos > m_origin.y) // Character falling.
+        else if(m_previousYPos > m_origin.y) // Character falling.
         {
             if(!m_startFalling)
             {
                 m_startFalling = true;
                 m_startFallingHeight = m_origin.y - m_fromOriginToBottom; // Bottom Y position.
+            }
 
-                applyCentralImpulse(glm::vec3{0.0f, -1.0f, 0.f} * moveSpeed * startFallingPower);
+            float fallingSpeed = (m_previousYPos - m_origin.y) / TimeStep::getTimeStepSec();
+            //BR_INFO("falling speed %f", fallingSpeed);
+            if(fallingSpeed < 0.025) // Very slow falling = character stuck between dynamic objects. Let him jump at least.
+            {
+                m_canJump = true;
             }
 
             m_jumped = false;
             m_falling = true;
             m_fallDistance = glm::distance(m_startFallingHeight, m_origin.y - m_fromOriginToBottom);
         }
-        else // Character flying up or stuck between two not allowed floor angles, or ...
+        else
         {
             m_falling = false;
             m_startFalling = false;
+        }
+
+        if(!m_canStay && m_previousYPos == m_origin.y) // Character stuck between static objects. Let him jump at least.
+        {
+            m_canJump = true;
         }
 
         m_previousYPos = m_origin.y;
@@ -139,6 +155,9 @@ namespace Beryll
 
     void SimpleCollidingCharacter::moveToPosition(const glm::vec3& position, bool rotateWhenMove, bool ignoreYAxisWhenRotate, bool pushDynamicObjects)
     {
+        if(m_jumpedWhileMoving)
+            return;
+
         const glm::vec3 needToMove = position - m_origin;
 
         if(rotateWhenMove)
@@ -154,6 +173,9 @@ namespace Beryll
 
     void SimpleCollidingCharacter::moveToDirection(glm::vec3 direction, bool rotateWhenMove, bool ignoreYAxisWhenRotate, bool pushDynamicObjects)
     {
+        if(m_jumpedWhileMoving)
+            return;
+
         direction = glm::normalize(direction);
 
         if(rotateWhenMove)
@@ -256,6 +278,7 @@ namespace Beryll
 
         if(!m_canStay)
         {
+            m_controllingInAir = true;
             addToOrigin(moveVector * airControlFactor);
             return;
         }
@@ -387,23 +410,27 @@ namespace Beryll
 
     bool SimpleCollidingCharacter::jump()
     {
-        if(m_collisionFlag != CollisionFlags::DYNAMIC || m_jumped || m_falling) { return false; }
+        if(m_collisionFlag != CollisionFlags::DYNAMIC || !m_canJump) { return false; }
 
-        if(m_moving)
+        resetVelocities();
+
+        if(m_moving || m_controllingInAir)
         {
             m_jumpDirection.y = 0.0f;
             m_jumpDirection = glm::normalize(m_jumpDirection);
             m_jumpDirection.y = glm::tan(startJumpAngleRadians);
-            applyCentralImpulse((glm::normalize(m_jumpDirection) * moveSpeed * startJumpPower) * 1.8f);
+            applyCentralImpulse(glm::normalize(m_jumpDirection) * (startJumpPower * 1.15f));
+            m_jumpedWhileMoving = true;
         }
         else
         {
             // Jump up if stay.
-            applyCentralImpulse(glm::vec3(0.0f, 1.0f, 0.0f) * moveSpeed * startJumpPower);
+            applyCentralImpulse(glm::vec3(0.0f, 1.0f, 0.0f) * startJumpPower);
+            m_jumpedWhileMoving = false;
         }
 
         m_jumped = true;
-        m_jumpTime = TimeStep::getSecFromStart();
+        m_canJump = false;
         m_previousYPos = m_origin.y; // Reset falling mechanism. m_falling calculated based on that.
 
         return true;

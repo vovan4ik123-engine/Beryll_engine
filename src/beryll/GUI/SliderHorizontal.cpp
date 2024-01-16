@@ -6,7 +6,7 @@ namespace Beryll
 {
     SliderHorizontal::SliderHorizontal(const std::string& text, const std::string& fontPath, float fontHeightInPercentOfScreen,
                    float left, float top, float width, float height, float min, float max, bool background)
-                   : m_text(text), m_min(min), m_max(max)
+                   : m_text(text), m_min(min), m_max(max), m_sliderValue(min)
     {
         BR_ASSERT((fontPath.empty() == false && fontHeightInPercentOfScreen > 0.0f), "%s", "fontPath can not be empty and fontHeight must be > 0.0.");
 

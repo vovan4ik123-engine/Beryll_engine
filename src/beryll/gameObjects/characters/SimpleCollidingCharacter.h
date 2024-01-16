@@ -50,14 +50,12 @@ namespace Beryll
 
         float moveSpeed = 0.0f; // Calculated in constructor. For average human = 13 km/h = 3m/s.
         float backwardMoveFactor = 0.6f; // Factor to multiply moveSpeed if character move backward.
-        float walkableFloorAngleRadians = glm::radians(45.0f);
+        float walkableFloorAngleRadians = glm::radians(50.0f);
         float maxStepHeight = 0.0f; // Calculated in constructor.
-        float startJumpAngleRadians = glm::radians(30.0f);
+        float startJumpAngleRadians = glm::radians(40.0f);
         float startJumpPower = 1.0f;
-        float startFallingPower = 1.0f; // -Y axis impulse when start falling.
-        float applyFallingPowerAfterJumpDelay = 1.0f; // Sec.
-        float airControlFactor = 0.1f; // Factor to multiply moveSpeed if character not on ground.
-        float canStayOrJumpExtendTime = 0.0f; // In seconds. For eliminate cases when player is very close to ground but not touch ground.
+        float airControlFactor = 0.3f; // Factor to multiply moveSpeed if jumped UP !!! or falling.
+        float jumpExtendTime = 0.3f; // In seconds. Time after leave ground but still can jump.
 
     private:
         float m_fromOriginToTop = 0.0f; // Distance between origin and character top.
@@ -68,17 +66,19 @@ namespace Beryll
         bool m_canStay = false; // Can stay on any colliding object from group m_collisionMask.
         float m_lastTimeOnGround = 0.0f;
         bool m_moving = false;
+        bool m_controllingInAir = false; // By user/player (joystick or keys).
         bool m_touchGroundAfterFall = false;
 
         float m_previousYPos = 0.0f;
 
         glm::vec3 m_jumpDirection{0.0f, 1.0f, 0.0f};
+        bool m_canJump = false;
         bool m_jumped = false;
+        bool m_jumpedWhileMoving = false;
         bool m_falling = false;
         bool m_startFalling = false;
         float m_startFallingHeight = 0.0f;
         float m_fallDistance = 0.0f;
-        float m_jumpTime = 0.0f; // Sec.
 
         std::vector<const int> m_collidingObjects; // Prevent creation and deletion every frame.
         std::vector<std::pair<glm::vec3, glm::vec3>> m_collidingPoints; // Prevent creation and deletion every frame.
