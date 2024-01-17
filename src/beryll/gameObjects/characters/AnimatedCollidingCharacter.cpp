@@ -66,6 +66,7 @@ namespace Beryll
         m_touchGroundAfterFall = false;
         m_bottomCollisionPoint = std::make_pair(glm::vec3(0.0f, std::numeric_limits<float>::max(), 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
         m_collidingObjects = Physics::getAllCollisionsForIDWithGroup(m_ID, m_collisionMask);
+        m_resetVelocities = false;
 
         if(!m_collidingObjects.empty())
         {
@@ -84,7 +85,10 @@ namespace Beryll
                     // Character touch allowed floor/object angle.
                     //BR_INFO("%s", "m_canStay == true 1");
                     m_canStay = true;
-                    resetVelocities();
+                    m_canJump = true;
+                    m_jumped = false;
+                    m_jumpedWhileMoving = false;
+                    m_resetVelocities = true;
 
                     m_lastTimeOnGround = TimeStep::getSecFromStart();
 
@@ -97,24 +101,20 @@ namespace Beryll
                 }
             }
         }
-        else if(m_canJump && m_lastTimeOnGround + jumpExtendTime >= TimeStep::getSecFromStart())
+        else if(m_lastTimeOnGround + 0.1f >= TimeStep::getSecFromStart()) // Avoid small gaps where character is very close to ground.
         {
-            m_canJump = true;
-        }
-        else
-        {
-            m_canJump = false;
+            m_canStay = true;
         }
 
-        if(m_canStay)
-        {
+        if(m_canJump && m_lastTimeOnGround + jumpExtendTime >= TimeStep::getSecFromStart())
             m_canJump = true;
-            m_jumped = false;
-            m_jumpedWhileMoving = false;
-            m_falling = false;
-            m_startFalling = false;
-        }
-        else if(m_previousYPos > m_origin.y) // Character falling.
+        else
+            m_canJump = false;
+
+        if(m_resetVelocities)
+            resetVelocities();
+
+        if(!m_canStay && m_previousYPos > m_origin.y) // Character falling.
         {
             if(!m_startFalling)
             {
@@ -124,9 +124,10 @@ namespace Beryll
 
             float fallingSpeed = (m_previousYPos - m_origin.y) / TimeStep::getTimeStepSec();
             //BR_INFO("falling speed %f", fallingSpeed);
-            if(fallingSpeed < 0.025) // Very slow falling = character stuck between dynamic objects. Let him jump at least.
+            if(fallingSpeed < 0.025f) // Very slow falling = character stuck between dynamic objects. Let him jump at least.
             {
                 m_canJump = true;
+                m_jumpedWhileMoving = false;
             }
 
             m_jumped = false;
@@ -142,6 +143,7 @@ namespace Beryll
         if(!m_canStay && m_previousYPos == m_origin.y) // Character stuck between static objects. Let him jump at least.
         {
             m_canJump = true;
+            m_jumpedWhileMoving = false;
         }
 
         m_previousYPos = m_origin.y;

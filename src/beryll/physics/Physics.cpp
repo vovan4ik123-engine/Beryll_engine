@@ -4,7 +4,6 @@
 
 namespace Beryll
 {
-    btVector3 Physics::m_gravity = btVector3(0.0f, -10.0f, 0.0f);
     Timer Physics::m_timer;
     float Physics::m_timeStep = 0.0f;
     float Physics::m_minAcceptableFPS = 5.0f;
@@ -50,7 +49,7 @@ namespace Beryll
                                                                         m_constraintSolverMT.get(),
                                                                         m_collisionConfiguration.get());
 
-        m_dynamicsWorldMT->setGravity(m_gravity);
+        m_dynamicsWorldMT->setGravity(btVector3(0.0f, -10.0f, 0.0f));
         //m_dynamicsWorldMT->getSolverInfo().m_numIterations = 10;
 
         // Set collisions call backs to bullet.
@@ -984,23 +983,24 @@ namespace Beryll
         }
     }
 
-    void Physics::disableGravityForObject(const int ID, bool resetVelocities)
+    glm::vec3 Physics::getGravityObject(const int ID)
     {
+        btVector3 grav{0.0f, 0.0f, 0.0f};
         auto iter = m_rigidBodiesMap.find(ID);
-        if(iter != m_rigidBodiesMap.end())
+        if(iter != m_rigidBodiesMap.end() && !iter->second->rb->isStaticOrKinematicObject())
         {
-            iter->second->rb->setGravity(btVector3(0.0f, 0.0f, 0.0f));
-
-            resetVelocitiesForObject(iter->second->rb, resetVelocities);
+            grav = iter->second->rb->getGravity();
         }
+
+        return glm::vec3{grav.getX(), grav.getY(), grav.getZ()};
     }
 
-    void Physics::enableDefaultGravityForObject(const int ID, bool resetVelocities)
+    void Physics::setDefaultGravityForObject(const int ID, bool resetVelocities)
     {
         auto iter = m_rigidBodiesMap.find(ID);
         if(iter != m_rigidBodiesMap.end())
         {
-            iter->second->rb->setGravity(m_gravity);
+            iter->second->rb->setGravity(m_dynamicsWorldMT->getGravity());
 
             resetVelocitiesForObject(iter->second->rb, resetVelocities);
         }

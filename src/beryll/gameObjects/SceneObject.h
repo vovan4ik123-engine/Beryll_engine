@@ -115,7 +115,7 @@ namespace Beryll
 
         void setAngularFactor(const glm::vec3& angFactor, bool resetVelocities = false)
         {
-            if(m_angularFactor != angFactor && m_hasCollisionObject && m_isEnabledInPhysicsSimulation && m_collisionFlag == CollisionFlags::DYNAMIC)
+            if(m_angularFactor != angFactor && m_hasCollisionObject && m_collisionFlag == CollisionFlags::DYNAMIC)
             {
                 Physics::setAngularFactor(m_ID, angFactor, resetVelocities);
                 m_angularFactor = angFactor;
@@ -131,7 +131,7 @@ namespace Beryll
 
         void setLinearFactor(const glm::vec3& linFactor, bool resetVelocities = false)
         {
-            if(m_linearFactor != linFactor && m_hasCollisionObject && m_isEnabledInPhysicsSimulation && m_collisionFlag == CollisionFlags::DYNAMIC)
+            if(m_linearFactor != linFactor && m_hasCollisionObject && m_collisionFlag == CollisionFlags::DYNAMIC)
             {
                 Physics::setLinearFactor(m_ID, linFactor, resetVelocities);
                 m_linearFactor = linFactor;
@@ -145,38 +145,27 @@ namespace Beryll
             return m_linearFactor;
         }
 
-        void disableGravity(bool resetVelocities = false)
+        void setDefaultGravity(bool resetVelocities = false)
         {
-            if(m_gravityEnabled && m_hasCollisionObject && m_isEnabledInPhysicsSimulation && m_collisionFlag == CollisionFlags::DYNAMIC)
+            if(m_hasCollisionObject && m_collisionFlag == CollisionFlags::DYNAMIC)
             {
-                Physics::disableGravityForObject(m_ID, resetVelocities);
-                m_gravityEnabled = false;
-            }
-        }
-
-        void enableDefaultGravity(bool resetVelocities = false)
-        {
-            if(!m_gravityEnabled && m_hasCollisionObject && m_isEnabledInPhysicsSimulation && m_collisionFlag == CollisionFlags::DYNAMIC)
-            {
-                Physics::enableDefaultGravityForObject(m_ID, resetVelocities);
-                m_gravityEnabled = true;
+                Physics::setDefaultGravityForObject(m_ID, resetVelocities);
             }
         }
 
         void setGravity(const glm::vec3& grav, bool resetVelocities = false)
         {
-            if(m_gravity != grav && m_hasCollisionObject && m_isEnabledInPhysicsSimulation && m_collisionFlag == CollisionFlags::DYNAMIC)
+            if(m_hasCollisionObject && m_collisionFlag == CollisionFlags::DYNAMIC)
             {
                 Physics::setGravityForObject(m_ID, grav, resetVelocities);
-                m_gravity = grav;
             }
         }
 
-        const glm::vec3& getGravity()
+        const glm::vec3 getGravity()
         {
             BR_ASSERT((m_hasCollisionObject == true &&
                        m_collisionFlag == CollisionFlags::DYNAMIC), "%s", "getGravity() should be called only for object with DYNAMIC collider.");
-            return m_gravity;
+            return Physics::getGravityObject(m_ID);
         }
 
         float getCollisionMass()
@@ -206,7 +195,7 @@ namespace Beryll
 
         void resetVelocities()
         {
-            if(m_hasCollisionObject && m_isEnabledInPhysicsSimulation)
+            if(m_hasCollisionObject)
             {
                 Physics::resetVelocitiesForObject(m_ID);
             }
@@ -378,8 +367,6 @@ namespace Beryll
 
     private:
         // Only for internal checks inside this file.
-        bool m_gravityEnabled = true;
-        glm::vec3 m_gravity = Physics::getDefaultGravity();
         glm::vec3 m_linearFactor{1.0f, 1.0f, 1.0f};
         glm::vec3 m_angularFactor{1.0f, 1.0f, 1.0f};
 

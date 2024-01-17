@@ -200,7 +200,11 @@ namespace Beryll
         static std::vector<std::pair<glm::vec3, glm::vec3>> getAllCollisionPoints(const int ID1, const int ID2); // Return point + his normal.
         static std::vector<std::pair<glm::vec3, glm::vec3>> getAllCollisionPoints(const int ID1, const std::vector<const int>& IDs); // Return point + his normal.
 
-        static glm::vec3 getDefaultGravity() { return glm::vec3(m_gravity.x(), m_gravity.y(), m_gravity.z()); }
+        static void setGravity(const glm::vec3& grav) { m_dynamicsWorldMT->setGravity(btVector3(grav.x, grav.y, grav.z)); }
+
+        static glm::vec3 getGravity() { return  glm::vec3{m_dynamicsWorldMT->getGravity().getX(),
+                                                          m_dynamicsWorldMT->getGravity().getY(),
+                                                          m_dynamicsWorldMT->getGravity().getZ()}; }
 
         // Cast ray. Only objects in physics world can be hit.
         static RayClosestHit castRayClosestHit(const glm::vec3& from, const glm::vec3& to, CollisionGroups collGroup, CollisionGroups collMask);
@@ -215,7 +219,6 @@ namespace Beryll
                                                             const btCollisionObjectWrapper* ob2, int ID2, int index2);
         static std::vector<std::pair<const int, const int>> m_collisionPairs;
 
-        static btVector3 m_gravity;
         static Timer m_timer;
 
         static std::mutex m_mutex;
@@ -260,9 +263,9 @@ namespace Beryll
         static void addToRotation(const int ID, const glm::quat& qua, bool resetVelocities = false);
         static void setAngularFactor(const int ID, const glm::vec3& angFactor, bool resetVelocities = false); // Affect objects rotation speed during collisions.
         static void setLinearFactor(const int ID, const glm::vec3& linFactor, bool resetVelocities = false); // Affect objects translation speed during collisions.
-        static void disableGravityForObject(const int ID, bool resetVelocities = false);
-        static void enableDefaultGravityForObject(const int ID, bool resetVelocities = false);
         static void setGravityForObject(const int ID, const glm::vec3& gravity, bool resetVelocities = false); // Change gravity for object.
+        static glm::vec3 getGravityObject(const int ID);
+        static void setDefaultGravityForObject(const int ID, bool resetVelocities = false);
         static void activateObject(const int ID); // Awake object in physics world.
         static bool getIsObjectActive(const int ID); // Check if object is active.
         static void resetVelocitiesForObject(const int ID);

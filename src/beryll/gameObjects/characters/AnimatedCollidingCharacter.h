@@ -68,6 +68,7 @@ namespace Beryll
         bool m_moving = false;
         bool m_controllingInAir = false; // By user/player (joystick or keys).
         bool m_touchGroundAfterFall = false;
+        bool m_resetVelocities = false;
 
         float m_previousYPos = 0.0f;
 
