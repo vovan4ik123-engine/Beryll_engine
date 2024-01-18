@@ -48,10 +48,10 @@ namespace Beryll
         float getXZRadius() { return m_XZRadius; }
         float getHeight() { return m_characterHeight; }
 
-        float moveSpeed = 0.0f; // Calculated in constructor. For average human = 13 km/h = 3m/s.
+        float moveSpeed = 5.0f; // Meters in sec.
         float backwardMoveFactor = 0.6f; // Factor to multiply moveSpeed if character move backward.
         float walkableFloorAngleRadians = glm::radians(50.0f);
-        float maxStepHeight = 0.0f; // Calculated in constructor.
+        float maxStepHeight = 1.0f;
         float startJumpAngleRadians = glm::radians(40.0f);
         float startJumpPower = 1.0f;
         float airControlFactor = 0.3f; // Factor to multiply moveSpeed if jumped UP !!! or falling.

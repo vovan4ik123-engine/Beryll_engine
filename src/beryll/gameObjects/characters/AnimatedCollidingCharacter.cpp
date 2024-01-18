@@ -33,10 +33,6 @@ namespace Beryll
 
         BR_ASSERT((m_fromOriginToBottom > 0.0f && m_fromOriginToTop > 0.0f && m_XZRadius > 0.0f && m_characterHeight > 0.0f), "%s", "Characters XYZ dimensions are 0.");
 
-        moveSpeed = (m_characterHeight / 1.8f) * 3.0f; // For human 1.8m height average speed is 3m|s.
-        maxStepHeight = m_characterHeight * 0.4f;
-        startJumpPower = collisionMassKg;
-
         m_previousYPos = m_origin.y;
     }
 
@@ -56,7 +52,16 @@ namespace Beryll
         // Call base class method first.
         AnimatedCollidingObject::updateAfterPhysics();
 
-        if(m_collisionFlag != CollisionFlags::DYNAMIC || !getIsActive()) { return; }
+        if(m_collisionFlag != CollisionFlags::DYNAMIC || !getIsActive())
+        {
+            m_canJump = true;
+            m_jumped = false;
+            m_jumpedWhileMoving = false;
+            m_falling = false;
+            m_startFalling = false;
+
+            return;
+        }
 
         // Object is dynamic and active.
 
@@ -124,7 +129,7 @@ namespace Beryll
 
             float fallingSpeed = (m_previousYPos - m_origin.y) / TimeStep::getTimeStepSec();
             //BR_INFO("falling speed %f", fallingSpeed);
-            if(fallingSpeed < 0.025f) // Very slow falling = character stuck between dynamic objects. Let him jump at least.
+            if(fallingSpeed < 0.05f) // Very slow falling = character stuck between dynamic objects. Let him jump at least.
             {
                 m_canJump = true;
                 m_jumpedWhileMoving = false;
