@@ -99,42 +99,47 @@ namespace Beryll
             glPolygonOffset(4.0f, 100.0f);
         }
 
-        m_shaderSimple->bind();
-
-        for(const std::shared_ptr<Beryll::BaseSimpleObject>& so: simpleObj)
+        if(!simpleObj.empty())
         {
-            if(so->getIsEnabledDraw())
+            m_shaderSimple->bind();
+            for(const std::shared_ptr<Beryll::BaseSimpleObject>& so: simpleObj)
             {
-                m_shaderSimple->setMatrix4x4Float("MVPMatrix", VPLightMatrix * so->getModelMatrix());
-                so->useInternalShader = false;
-                so->useInternalTextures = false;
-                so->draw();
-                so->useInternalShader = true;
-                so->useInternalTextures = true;
+                if(so->getIsEnabledDraw())
+                {
+                    m_shaderSimple->setMatrix4x4Float("MVPMatrix", VPLightMatrix * so->getModelMatrix());
+                    so->useInternalShader = false;
+                    so->useInternalTextures = false;
+                    so->draw();
+                    so->useInternalShader = true;
+                    so->useInternalTextures = true;
+                }
             }
         }
 
-        std::string boneMatrixNameInShader;
-        m_shaderAnimated->bind();
-        for(const std::shared_ptr<Beryll::BaseAnimatedObject>& ao: animatedObj)
+        if(!animatedObj.empty())
         {
-            if(ao->getIsEnabledDraw())
+            m_shaderAnimated->bind();
+            std::string boneMatrixNameInShader;
+            for(const std::shared_ptr<Beryll::BaseAnimatedObject>& ao: animatedObj)
             {
-                m_shaderAnimated->setMatrix4x4Float("MVPMatrix", VPLightMatrix * ao->getModelMatrix());
-
-                uint32_t boneCount = ao->getBoneCount();
-                for(int i = 0; i < boneCount; ++i)
+                if(ao->getIsEnabledDraw())
                 {
-                    boneMatrixNameInShader = "bonesMatrices[";
-                    boneMatrixNameInShader += std::to_string(i);
-                    boneMatrixNameInShader += "]";
-                    m_shaderAnimated->setMatrix4x4Float(boneMatrixNameInShader.c_str(), ao->getBoneMatrices()[i].finalWorldTransform);
+                    m_shaderAnimated->setMatrix4x4Float("MVPMatrix", VPLightMatrix * ao->getModelMatrix());
+
+                    uint32_t boneCount = ao->getBoneCount();
+                    for(int i = 0; i < boneCount; ++i)
+                    {
+                        boneMatrixNameInShader = "bonesMatrices[";
+                        boneMatrixNameInShader += std::to_string(i);
+                        boneMatrixNameInShader += "]";
+                        m_shaderAnimated->setMatrix4x4Float(boneMatrixNameInShader.c_str(), ao->getBoneMatrices()[i].finalWorldTransform);
+                    }
+                    ao->useInternalShader = false;
+                    ao->useInternalTextures = false;
+                    ao->draw();
+                    ao->useInternalShader = true;
+                    ao->useInternalTextures = true;
                 }
-                ao->useInternalShader = false;
-                ao->useInternalTextures = false;
-                ao->draw();
-                ao->useInternalShader = true;
-                ao->useInternalTextures = true;
             }
         }
 

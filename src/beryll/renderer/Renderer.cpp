@@ -164,7 +164,7 @@ namespace Beryll
 #endif
     }
 
-    void Renderer::drawObject(const std::shared_ptr<Beryll::BaseSimpleObject>& obj,
+    void Renderer::drawObject(const std::shared_ptr<Beryll::BaseSimpleObject>& simpleObj,
                               const glm::mat4& modelMatrix,
                               const std::shared_ptr<Shader>& shader)
     {
@@ -173,17 +173,17 @@ namespace Beryll
             shader->bind();
             shader->setMatrix4x4Float("MVPMatrix", Beryll::Camera::getViewProjection() * modelMatrix);
 
-            obj->useInternalShader = false;
-            obj->draw();
+            simpleObj->useInternalShader = false;
+            simpleObj->draw();
         }
         else
         {
-            obj->useInternalShader = true;
-            obj->draw();
+            simpleObj->useInternalShader = true;
+            simpleObj->draw();
         }
     }
 
-    void Renderer::drawObject(const std::shared_ptr<Beryll::BaseAnimatedObject>& obj,
+    void Renderer::drawObject(const std::shared_ptr<Beryll::BaseAnimatedObject>& animObj,
                               const glm::mat4& modelMatrix,
                               const std::shared_ptr<Shader>& shader)
     {
@@ -195,22 +195,22 @@ namespace Beryll
             shader->bind();
             shader->setMatrix4x4Float("MVPMatrix", Beryll::Camera::getViewProjection() * modelMatrix);
 
-            boneCount = obj->getBoneCount();
+            boneCount = animObj->getBoneCount();
             for(int i = 0; i < boneCount; ++i)
             {
                 boneMatrixNameInShader = "bonesMatrices[";
                 boneMatrixNameInShader += std::to_string(i);
                 boneMatrixNameInShader += "]";
-                shader->setMatrix4x4Float(boneMatrixNameInShader.c_str(), obj->getBoneMatrices()[i].finalWorldTransform);
+                shader->setMatrix4x4Float(boneMatrixNameInShader.c_str(), animObj->getBoneMatrices()[i].finalWorldTransform);
             }
 
-            obj->useInternalShader = false;
-            obj->draw();
+            animObj->useInternalShader = false;
+            animObj->draw();
         }
         else
         {
-            obj->useInternalShader = true;
-            obj->draw();
+            animObj->useInternalShader = true;
+            animObj->draw();
         }
     }
 
