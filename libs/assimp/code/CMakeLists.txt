@@ -1,6 +1,5 @@
 # Open Asset Import Library (assimp)
 # ----------------------------------------------------------------------
-#
 # Copyright (c) 2006-2022, assimp team
 #
 # All rights reserved.
@@ -94,6 +93,7 @@ SET( PUBLIC_HEADERS
   ${HEADER_PATH}/vector3.inl
   ${HEADER_PATH}/version.h
   ${HEADER_PATH}/cimport.h
+  ${HEADER_PATH}/AssertHandler.h
   ${HEADER_PATH}/importerdesc.h
   ${HEADER_PATH}/Importer.hpp
   ${HEADER_PATH}/DefaultLogger.hpp
@@ -167,6 +167,7 @@ SET( Logging_SRCS
 SOURCE_GROUP(Logging FILES ${Logging_SRCS})
 
 SET( Common_SRCS
+  Common/StbCommon.h
   Common/Compression.cpp
   Common/Compression.h
   Common/BaseImporter.cpp
@@ -193,6 +194,8 @@ SET( Common_SRCS
   Common/ScenePreprocessor.cpp
   Common/ScenePreprocessor.h
   Common/SkeletonMeshBuilder.cpp
+  Common/StackAllocator.h
+  Common/StackAllocator.inl
   Common/StandardShapes.cpp
   Common/TargetAnimation.cpp
   Common/TargetAnimation.h
@@ -216,6 +219,12 @@ SET( CApi_SRCS
   CApi/CInterfaceIOWrapper.h
 )
 SOURCE_GROUP(CApi FILES ${CApi_SRCS})
+
+SET(Geometry_SRCS
+  Geometry/GeometryUtils.h
+  Geometry/GeometryUtils.cpp
+)
+SOURCE_GROUP(Geometry FILES ${Geometry_SRCS})
 
 SET( STEPParser_SRCS
   AssetLib/STEPParser/STEPFileReader.h
@@ -269,8 +278,8 @@ if (NOT ASSIMP_NO_EXPORT)
   # ASSIMP_BUILD_XXX_EXPORTER to TRUE for each exporter
   OPTION(ASSIMP_BUILD_ALL_EXPORTERS_BY_DEFAULT "default value of all ASSIMP_BUILD_XXX_EXPORTER values" TRUE)
 
-  # macro to add the CMake Option ADD_ASSIMP_IMPORTER_<name> which enables compile of loader
-  # this way selective loaders can be compiled (reduces filesize + compile time)
+  # macro to add the CMake Option ADD_ASSIMP_EXPORTER_<name> which enables compilation of an exporter
+  # this way selective exporters can be compiled (reduces filesize + compile time)
   MACRO(ADD_ASSIMP_EXPORTER name)
     IF (ASSIMP_NO_EXPORT)
       set(ASSIMP_EXPORTER_ENABLED FALSE)
@@ -303,15 +312,6 @@ SET(ASSIMP_EXPORTER_SRCS "")
 SET(ASSIMP_EXPORTERS_ENABLED "") # list of enabled exporters
 SET(ASSIMP_EXPORTERS_DISABLED "") # disabled exporters list (used to print)
 
-ADD_ASSIMP_IMPORTER( COLLADA
-        AssetLib/Collada/ColladaHelper.cpp
-        AssetLib/Collada/ColladaHelper.h
-        AssetLib/Collada/ColladaLoader.cpp
-        AssetLib/Collada/ColladaLoader.h
-        AssetLib/Collada/ColladaParser.cpp
-        AssetLib/Collada/ColladaParser.h
-        )
-
 add_definitions(-DASSIMP_BUILD_NO_AMF_IMPORTER)
 add_definitions(-DASSIMP_BUILD_NO_3DS_IMPORTER)
 add_definitions(-DASSIMP_BUILD_NO_AC_IMPORTER)
@@ -336,6 +336,7 @@ add_definitions(-DASSIMP_BUILD_NO_MDL_IMPORTER)
 add_definitions(-DASSIMP_BUILD_NO_NFF_IMPORTER)
 add_definitions(-DASSIMP_BUILD_NO_NDO_IMPORTER)
 add_definitions(-DASSIMP_BUILD_NO_OFF_IMPORTER)
+add_definitions(-DASSIMP_BUILD_NO_OBJ_IMPORTER)
 add_definitions(-DASSIMP_BUILD_NO_OGRE_IMPORTER)
 add_definitions(-DASSIMP_BUILD_NO_OPENGEX_IMPORTER)
 add_definitions(-DASSIMP_BUILD_NO_PLY_IMPORTER)
@@ -343,7 +344,6 @@ add_definitions(-DASSIMP_BUILD_NO_MS3D_IMPORTER)
 add_definitions(-DASSIMP_BUILD_NO_COB_IMPORTER)
 add_definitions(-DASSIMP_BUILD_NO_BLEND_IMPORTER)
 add_definitions(-DASSIMP_BUILD_NO_IFC_IMPORTER)
-add_definitions(-DASSIMP_BUILD_NO_XGL_IMPORTER)
 add_definitions(-DASSIMP_BUILD_NO_Q3D_IMPORTER)
 add_definitions(-DASSIMP_BUILD_NO_Q3BSP_IMPORTER)
 add_definitions(-DASSIMP_BUILD_NO_RAW_IMPORTER)
@@ -357,23 +357,22 @@ add_definitions(-DASSIMP_BUILD_NO_X3D_IMPORTER)
 add_definitions(-DASSIMP_BUILD_NO_GLTF_IMPORTER)
 add_definitions(-DASSIMP_BUILD_NO_3MF_IMPORTER)
 add_definitions(-DASSIMP_BUILD_NO_MMD_IMPORTER)
+add_definitions(-DASSIMP_BUILD_NO_XGL_IMPORTER)
+
+ADD_ASSIMP_IMPORTER( COLLADA
+  AssetLib/Collada/ColladaHelper.cpp
+  AssetLib/Collada/ColladaHelper.h
+  AssetLib/Collada/ColladaLoader.cpp
+  AssetLib/Collada/ColladaLoader.h
+  AssetLib/Collada/ColladaParser.cpp
+  AssetLib/Collada/ColladaParser.h
+)
 
 SET( MaterialSystem_SRCS
   Material/MaterialSystem.cpp
   Material/MaterialSystem.h
 )
 SOURCE_GROUP( MaterialSystem FILES ${MaterialSystem_SRCS})
-
-ADD_ASSIMP_IMPORTER( OBJ
-  AssetLib/Obj/ObjFileData.h
-  AssetLib/Obj/ObjFileImporter.cpp
-  AssetLib/Obj/ObjFileImporter.h
-  AssetLib/Obj/ObjFileMtlImporter.cpp
-  AssetLib/Obj/ObjFileMtlImporter.h
-  AssetLib/Obj/ObjFileParser.cpp
-  AssetLib/Obj/ObjFileParser.h
-  AssetLib/Obj/ObjTools.h
-)
 
 if (ASSIMP_BUILD_IFC_IMPORTER)
   if (MSVC)
@@ -411,91 +410,6 @@ ADD_ASSIMP_IMPORTER( FBX
   AssetLib/FBX/FBXDocumentUtil.cpp
   AssetLib/FBX/FBXCommon.h
 )
-
-if (NOT ASSIMP_NO_EXPORT)
-
-  ADD_ASSIMP_EXPORTER( OBJ
-    AssetLib/Obj/ObjExporter.h
-    AssetLib/Obj/ObjExporter.cpp)
-
-  ADD_ASSIMP_EXPORTER( OPENGEX
-    AssetLib/OpenGEX/OpenGEXExporter.cpp
-    AssetLib/OpenGEX/OpenGEXExporter.h)
-
-  ADD_ASSIMP_EXPORTER( PLY
-    AssetLib/Ply/PlyExporter.cpp
-    AssetLib/Ply/PlyExporter.h)
-
-  ADD_ASSIMP_EXPORTER( 3DS
-    AssetLib/3DS/3DSExporter.h
-    AssetLib/3DS/3DSExporter.cpp)
-
-  ADD_ASSIMP_EXPORTER( ASSBIN
-    AssetLib/Assbin/AssbinExporter.h
-    AssetLib/Assbin/AssbinExporter.cpp
-    AssetLib/Assbin/AssbinFileWriter.h
-    AssetLib/Assbin/AssbinFileWriter.cpp)
-
-  ADD_ASSIMP_EXPORTER( ASSXML
-    AssetLib/Assxml/AssxmlExporter.h
-    AssetLib/Assxml/AssxmlExporter.cpp
-    AssetLib/Assxml/AssxmlFileWriter.h
-    AssetLib/Assxml/AssxmlFileWriter.cpp)
-
-  ADD_ASSIMP_EXPORTER(M3D
-    AssetLib/M3D/M3DExporter.h
-    AssetLib/M3D/M3DExporter.cpp)
-
-  ADD_ASSIMP_EXPORTER(COLLADA
-    AssetLib/Collada/ColladaExporter.h
-    AssetLib/Collada/ColladaExporter.cpp)
-
-  ADD_ASSIMP_EXPORTER( FBX
-    AssetLib/FBX/FBXExporter.h
-    AssetLib/FBX/FBXExporter.cpp
-    AssetLib/FBX/FBXExportNode.h
-    AssetLib/FBX/FBXExportNode.cpp
-    AssetLib/FBX/FBXExportProperty.h
-    AssetLib/FBX/FBXExportProperty.cpp)
-
-  ADD_ASSIMP_EXPORTER( STL
-    AssetLib/STL/STLExporter.h
-    AssetLib/STL/STLExporter.cpp)
-
-  ADD_ASSIMP_EXPORTER( X
-    AssetLib/X/XFileExporter.h
-    AssetLib/X/XFileExporter.cpp)
-
-  ADD_ASSIMP_EXPORTER( X3D
-    AssetLib/X3D/X3DExporter.cpp
-    AssetLib/X3D/X3DExporter.hpp)
-
-  ADD_ASSIMP_EXPORTER( GLTF
-    AssetLib/glTF/glTFExporter.h
-    AssetLib/glTF/glTFExporter.cpp
-    AssetLib/glTF2/glTF2Exporter.h
-    AssetLib/glTF2/glTF2Exporter.cpp)
-
-  ADD_ASSIMP_EXPORTER( 3MF
-    AssetLib/3MF/D3MFExporter.h
-    AssetLib/3MF/D3MFExporter.cpp)
-
-  ADD_ASSIMP_EXPORTER( PBRT
-    Pbrt/PbrtExporter.h
-    Pbrt/PbrtExporter.cpp)
-
-  ADD_ASSIMP_EXPORTER( ASSJSON
-    AssetLib/Assjson/cencode.c
-    AssetLib/Assjson/cencode.h
-    AssetLib/Assjson/json_exporter.cpp
-    AssetLib/Assjson/mesh_splitter.cpp
-    AssetLib/Assjson/mesh_splitter.h)
-
-  ADD_ASSIMP_EXPORTER( STEP
-    AssetLib/Step/StepExporter.h
-    AssetLib/Step/StepExporter.cpp)
-
-endif()
 
 SET( PostProcessing_SRCS
   PostProcessing/CalcTangentsProcess.cpp
@@ -611,22 +525,22 @@ ELSE()
 ENDIF()
 
 # polyclipping
-IF(ASSIMP_HUNTER_ENABLED)
-  hunter_add_package(polyclipping)
-  find_package(polyclipping CONFIG REQUIRED)
-ELSE()
+#IF(ASSIMP_HUNTER_ENABLED)
+#  hunter_add_package(polyclipping)
+#  find_package(polyclipping CONFIG REQUIRED)
+#ELSE()
   SET( Clipper_SRCS
     ../contrib/clipper/clipper.hpp
     ../contrib/clipper/clipper.cpp
   )
   SOURCE_GROUP( Contrib\\Clipper FILES ${Clipper_SRCS})
-ENDIF()
+#ENDIF()
 
 # poly2tri
-IF(ASSIMP_HUNTER_ENABLED)
-  hunter_add_package(poly2tri)
-  find_package(poly2tri CONFIG REQUIRED)
-ELSE()
+#IF(ASSIMP_HUNTER_ENABLED)
+#  hunter_add_package(poly2tri)
+#  find_package(poly2tri CONFIG REQUIRED)
+#ELSE()
   SET( Poly2Tri_SRCS
     ../contrib/poly2tri/poly2tri/common/shapes.cc
     ../contrib/poly2tri/poly2tri/common/shapes.h
@@ -641,7 +555,7 @@ ELSE()
     ../contrib/poly2tri/poly2tri/sweep/sweep_context.h
   )
   SOURCE_GROUP( Contrib\\Poly2Tri FILES ${Poly2Tri_SRCS})
-ENDIF()
+#ENDIF()
 
 # minizip/unzip
 IF(ASSIMP_HUNTER_ENABLED)
@@ -649,7 +563,6 @@ IF(ASSIMP_HUNTER_ENABLED)
   find_package(minizip CONFIG REQUIRED)
 ELSE()
   SET( unzip_SRCS
-    ../contrib/unzip/crypt.c
     ../contrib/unzip/crypt.h
     ../contrib/unzip/ioapi.c
     ../contrib/unzip/ioapi.h
@@ -792,8 +705,6 @@ if(MSVC10)
   endif()
 endif()
 
-ADD_DEFINITIONS( -DASSIMP_BUILD_DLL_EXPORT )
-
 IF( MSVC OR "${CMAKE_CXX_SIMULATE_ID}" MATCHES "MSVC") # clang with MSVC ABI
   ADD_DEFINITIONS( -D_SCL_SECURE_NO_WARNINGS )
   ADD_DEFINITIONS( -D_CRT_SECURE_NO_WARNINGS )
@@ -823,6 +734,7 @@ SET( assimp_src
   ${Core_SRCS}
   ${CApi_SRCS}
   ${Common_SRCS}
+  ${Geometry_SRCS}
   ${Logging_SRCS}
   ${Exporter_SRCS}
   ${PostProcessing_SRCS}
@@ -867,15 +779,75 @@ IF (ASSIMP_BUILD_DRACO)
   ADD_DEFINITIONS( -DASSIMP_ENABLE_DRACO )
 ENDIF()
 
-ADD_LIBRARY(assimp-static STATIC ${assimp_src})
+ADD_LIBRARY(assimp-static STATIC ${assimp_src} )
 ADD_LIBRARY(assimp::assimp ALIAS assimp-static)
+
+# Add or remove dllexport tags depending on the library type.
+IF (BUILD_SHARED_LIBS)
+  TARGET_COMPILE_DEFINITIONS(assimp-static PRIVATE ASSIMP_BUILD_DLL_EXPORT)
+ELSE ()
+  TARGET_COMPILE_DEFINITIONS(assimp-static PRIVATE OPENDDL_STATIC_LIBARY)
+ENDIF ()
 
 TARGET_USE_COMMON_OUTPUT_DIRECTORY(assimp-static)
 
 IF (ASSIMP_WARNINGS_AS_ERRORS)
   MESSAGE(STATUS "Treating all warnings as errors (for assimp-static library only)")
   IF (MSVC)
-    TARGET_COMPILE_OPTIONS(assimp-static PRIVATE /W4 /WX)
+
+    IF(CMAKE_CXX_COMPILER_ID MATCHES "Clang" ) # clang-cl
+      TARGET_COMPILE_OPTIONS(assimp-static PRIVATE -Wall -Werror
+        -Wno-microsoft-enum-value
+        -Wno-switch-enum
+        -Wno-covered-switch-default
+        -Wno-reserved-identifier
+        -Wno-c++98-compat-pedantic
+        -Wno-c++98-compat
+        -Wno-documentation
+        -Wno-documentation-unknown-command
+        -Wno-deprecated-dynamic-exception-spec
+        -Wno-undef
+        -Wno-suggest-destructor-override
+        -Wno-suggest-override
+        -Wno-zero-as-null-pointer-constant
+        -Wno-global-constructors
+        -Wno-exit-time-destructors
+        -Wno-extra-semi-stmt
+        -Wno-missing-prototypes
+        -Wno-old-style-cast
+        -Wno-cast-align
+        -Wno-cast-qual
+        -Wno-float-equal
+        -Wno-implicit-int-float-conversion
+        -Wno-sign-conversion
+        -Wno-implicit-float-conversion
+        -Wno-implicit-int-conversion
+        -Wno-float-conversion
+        -Wno-double-promotion
+        -Wno-unused-macros
+        -Wno-disabled-macro-expansion
+        -Wno-shadow-field
+        -Wno-shadow
+        -Wno-language-extension-token
+        -Wno-header-hygiene
+        -Wno-tautological-value-range-compare
+        -Wno-tautological-type-limit-compare
+        -Wno-missing-variable-declarations
+        -Wno-extra-semi
+        -Wno-nonportable-system-include-path
+        -Wno-undefined-reinterpret-cast
+        -Wno-shift-sign-overflow
+        -Wno-deprecated
+        -Wno-format-nonliteral
+        -Wno-comma
+        -Wno-implicit-fallthrough
+        -Wno-unused-template
+        -Wno-undefined-func-template
+        -Wno-declaration-after-statement
+      )
+    ELSE()
+      TARGET_COMPILE_OPTIONS(assimp-static PRIVATE /W4 /WX)
+    ENDIF()
   ELSE()
     TARGET_COMPILE_OPTIONS(assimp-static PRIVATE -Wall -Werror)
   ENDIF()
@@ -893,9 +865,9 @@ TARGET_INCLUDE_DIRECTORIES ( assimp-static PUBLIC
 IF(ASSIMP_HUNTER_ENABLED)
   TARGET_LINK_LIBRARIES(assimp-static
       PUBLIC
-      polyclipping::polyclipping
+      #polyclipping::polyclipping
       openddlparser::openddl_parser
-      poly2tri::poly2tri
+      #poly2tri::poly2tri
       minizip::minizip
       ZLIB::zlib
       RapidJSON::rapidjson
@@ -1014,7 +986,7 @@ ENDIF()
 
 # Add RT-extension library for glTF importer with Open3DGC-compression.
 IF (RT_FOUND AND ASSIMP_IMPORTER_GLTF_USE_OPEN3DGC)
-  TARGET_LINK_LIBRARIES(assimp-static ${RT_LIBRARY})
+  TARGET_LINK_LIBRARIES(assimp-static rt)
 ENDIF ()
 
 
@@ -1044,25 +1016,29 @@ if(MSVC AND ASSIMP_INSTALL_PDB)
       COMPILE_PDB_NAME assimp${LIBRARY_SUFFIX}
       COMPILE_PDB_NAME_DEBUG assimp${LIBRARY_SUFFIX}${CMAKE_DEBUG_POSTFIX}
     )
-  ENDIF()
 
-  IF(CMAKE_GENERATOR MATCHES "^Visual Studio")
-    install(FILES ${Assimp_BINARY_DIR}/code/Debug/assimp${LIBRARY_SUFFIX}${CMAKE_DEBUG_POSTFIX}.pdb
-      DESTINATION ${ASSIMP_LIB_INSTALL_DIR}
-      CONFIGURATIONS Debug
-    )
-    install(FILES ${Assimp_BINARY_DIR}/code/RelWithDebInfo/assimp${LIBRARY_SUFFIX}.pdb
-      DESTINATION ${ASSIMP_LIB_INSTALL_DIR}
-      CONFIGURATIONS RelWithDebInfo
-    )
+    IF(GENERATOR_IS_MULTI_CONFIG)
+      install(FILES ${Assimp_BINARY_DIR}/code/Debug/assimp${LIBRARY_SUFFIX}${CMAKE_DEBUG_POSTFIX}.pdb
+        DESTINATION ${ASSIMP_LIB_INSTALL_DIR}
+        CONFIGURATIONS Debug
+      )
+      install(FILES ${Assimp_BINARY_DIR}/code/RelWithDebInfo/assimp${LIBRARY_SUFFIX}.pdb
+        DESTINATION ${ASSIMP_LIB_INSTALL_DIR}
+        CONFIGURATIONS RelWithDebInfo
+      )
+    ELSE()
+      install(FILES ${Assimp_BINARY_DIR}/code/assimp${LIBRARY_SUFFIX}${CMAKE_DEBUG_POSTFIX}.pdb
+        DESTINATION ${ASSIMP_LIB_INSTALL_DIR}
+        CONFIGURATIONS Debug
+      )
+      install(FILES ${Assimp_BINARY_DIR}/code/assimp${LIBRARY_SUFFIX}.pdb
+        DESTINATION ${ASSIMP_LIB_INSTALL_DIR}
+        CONFIGURATIONS RelWithDebInfo
+      )
+    ENDIF()
   ELSE()
-    install(FILES ${Assimp_BINARY_DIR}/code/assimp${LIBRARY_SUFFIX}${CMAKE_DEBUG_POSTFIX}.pdb
+    install(FILES $<TARGET_PDB_FILE:assimp-static>
       DESTINATION ${ASSIMP_LIB_INSTALL_DIR}
-      CONFIGURATIONS Debug
-    )
-    install(FILES ${Assimp_BINARY_DIR}/code/assimp${LIBRARY_SUFFIX}.pdb
-      DESTINATION ${ASSIMP_LIB_INSTALL_DIR}
-      CONFIGURATIONS RelWithDebInfo
     )
   ENDIF()
 ENDIF ()

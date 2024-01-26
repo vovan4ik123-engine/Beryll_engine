@@ -80,13 +80,11 @@ static const aiImporterDesc desc = {
 };
 
 glTFImporter::glTFImporter() :
-        BaseImporter(), meshOffsets(), embeddedTexIdxs(), mScene(nullptr) {
+        mScene(nullptr) {
     // empty
 }
 
-glTFImporter::~glTFImporter() {
-    // empty
-}
+glTFImporter::~glTFImporter() = default;
 
 const aiImporterDesc *glTFImporter::GetInfo() const {
     return &desc;
@@ -95,9 +93,11 @@ const aiImporterDesc *glTFImporter::GetInfo() const {
 bool glTFImporter::CanRead(const std::string &pFile, IOSystem *pIOHandler, bool /* checkSig */) const {
     glTF::Asset asset(pIOHandler);
     try {
-        asset.Load(pFile, GetExtension(pFile) == "glb");
-        std::string version = asset.asset.version;
-        return !version.empty() && version[0] == '1';
+        asset.Load(pFile,
+                   CheckMagicToken(
+                       pIOHandler, pFile, AI_GLB_MAGIC_NUMBER, 1, 0,
+                       static_cast<unsigned int>(strlen(AI_GLB_MAGIC_NUMBER))));
+        return asset.asset;
     } catch (...) {
         return false;
     }
@@ -286,7 +286,7 @@ void glTFImporter::ImportMeshes(glTF::Asset &r) {
                 }
             }
 
-            aiFace *faces = 0;
+            aiFace *faces = nullptr;
             unsigned int nFaces = 0;
 
             if (prim.indices) {
@@ -700,7 +700,10 @@ void glTFImporter::InternReadFile(const std::string &pFile, aiScene *pScene, IOS
 
     // read the asset file
     glTF::Asset asset(pIOHandler);
-    asset.Load(pFile, GetExtension(pFile) == "glb");
+    asset.Load(pFile,
+               CheckMagicToken(
+                   pIOHandler, pFile, AI_GLB_MAGIC_NUMBER, 1, 0,
+                   static_cast<unsigned int>(strlen(AI_GLB_MAGIC_NUMBER))));
 
     //
     // Copy the data out

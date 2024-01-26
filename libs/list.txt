@@ -4,6 +4,6 @@ SDL2 image  2.6.1
 SDL2 net    2.0.1
 ImGUI       1.90
 glm         1.0.0
-assimp      5.2.4
+assimp      5.3.1
 bullet      3.2.5
 sqlite      3.45.0

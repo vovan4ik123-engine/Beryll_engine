@@ -3,7 +3,7 @@
 Open Asset Import Library (assimp)
 ---------------------------------------------------------------------------
 
-Copyright (c) 2006-2022, assimp team
+Copyright (c) 2006-2023, assimp team
 
 All rights reserved.
 
@@ -49,10 +49,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 // --------------------------------------------------------------------------------
 // Legal information string - don't remove this.
-static const char *LEGAL_INFORMATION =
+static constexpr char LEGAL_INFORMATION[] =
         "Open Asset Import Library (Assimp).\n"
         "A free C/C++ library to import various 3D file formats into applications\n\n"
-        "(c) 2006-2022, Assimp team\n"
+        "(c) 2006-2023, Assimp team\n"
         "License under the terms and conditions of the 3-clause BSD license\n"
         "https://www.assimp.org\n";
 
@@ -135,6 +135,9 @@ ASSIMP_API aiScene::aiScene() :
         mNumCameras(0),
         mCameras(nullptr),
         mMetaData(nullptr),
+        mName(),
+        mNumSkeletons(0),
+        mSkeletons(nullptr),
         mPrivate(new Assimp::ScenePrivateData()) {
     // empty
 }
@@ -147,9 +150,11 @@ ASSIMP_API aiScene::~aiScene() {
     // To make sure we won't crash if the data is invalid it's
     // much better to check whether both mNumXXX and mXXX are
     // valid instead of relying on just one of them.
-    if (mNumMeshes && mMeshes)
-        for (unsigned int a = 0; a < mNumMeshes; a++)
+    if (mNumMeshes && mMeshes) {
+        for (unsigned int a = 0; a < mNumMeshes; ++a) {
             delete mMeshes[a];
+        }
+    }
     delete[] mMeshes;
 
     if (mNumMaterials && mMaterials) {
@@ -159,28 +164,37 @@ ASSIMP_API aiScene::~aiScene() {
     }
     delete[] mMaterials;
 
-    if (mNumAnimations && mAnimations)
-        for (unsigned int a = 0; a < mNumAnimations; a++)
+    if (mNumAnimations && mAnimations) {
+        for (unsigned int a = 0; a < mNumAnimations; ++a) {
             delete mAnimations[a];
+        }
+    }
     delete[] mAnimations;
 
-    if (mNumTextures && mTextures)
-        for (unsigned int a = 0; a < mNumTextures; a++)
+    if (mNumTextures && mTextures) {
+        for (unsigned int a = 0; a < mNumTextures; ++a) {
             delete mTextures[a];
+        }
+    }
     delete[] mTextures;
 
-    if (mNumLights && mLights)
-        for (unsigned int a = 0; a < mNumLights; a++)
+    if (mNumLights && mLights) {
+        for (unsigned int a = 0; a < mNumLights; ++a) {
             delete mLights[a];
+        }
+    }
     delete[] mLights;
 
-    if (mNumCameras && mCameras)
-        for (unsigned int a = 0; a < mNumCameras; a++)
+    if (mNumCameras && mCameras) {
+        for (unsigned int a = 0; a < mNumCameras; ++a) {
             delete mCameras[a];
+        }
+    }
     delete[] mCameras;
 
     aiMetadata::Dealloc(mMetaData);
-    mMetaData = nullptr;
+
+    delete[] mSkeletons;
 
     delete static_cast<Assimp::ScenePrivateData *>(mPrivate);
 }

@@ -74,7 +74,7 @@ using namespace Assimp::ASE;
             return;                                \
         }                                          \
     }                                              \
-    else if ('\0' == *filePtr) {                   \
+    if ('\0' == *filePtr) {                        \
         return;                                    \
     }                                              \
     if (IsLineEnd(*filePtr) && !bLastWasEndLine) { \
@@ -264,7 +264,7 @@ void Parser::Parse() {
             if (TokenMatch(filePtr, "GEOMOBJECT", 10))
 
             {
-                m_vMeshes.push_back(Mesh("UNNAMED"));
+                m_vMeshes.emplace_back("UNNAMED");
                 ParseLV1ObjectBlock(m_vMeshes.back());
                 continue;
             }
@@ -272,7 +272,7 @@ void Parser::Parse() {
             if (TokenMatch(filePtr, "HELPEROBJECT", 12))
 
             {
-                m_vDummies.push_back(Dummy());
+                m_vDummies.emplace_back();
                 ParseLV1ObjectBlock(m_vDummies.back());
                 continue;
             }
@@ -280,13 +280,13 @@ void Parser::Parse() {
             if (TokenMatch(filePtr, "LIGHTOBJECT", 11))
 
             {
-                m_vLights.push_back(Light("UNNAMED"));
+                m_vLights.emplace_back("UNNAMED");
                 ParseLV1ObjectBlock(m_vLights.back());
                 continue;
             }
             // camera object
             if (TokenMatch(filePtr, "CAMERAOBJECT", 12)) {
-                m_vCameras.push_back(Camera("UNNAMED"));
+                m_vCameras.emplace_back("UNNAMED");
                 ParseLV1ObjectBlock(m_vCameras.back());
                 continue;
             }
@@ -304,7 +304,6 @@ void Parser::Parse() {
         }
         AI_ASE_HANDLE_TOP_LEVEL_SECTION();
     }
-    return;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -385,7 +384,7 @@ void Parser::ParseLV1SoftSkinBlock() {
                         unsigned int numWeights;
                         ParseLV4MeshLong(numWeights);
 
-                        curMesh->mBoneVertices.push_back(ASE::BoneVertex());
+                        curMesh->mBoneVertices.emplace_back();
                         ASE::BoneVertex &vert = curMesh->mBoneVertices.back();
 
                         // Reserve enough storage
@@ -409,7 +408,7 @@ void Parser::ParseLV1SoftSkinBlock() {
                             if (-1 == me.first) {
                                 // We don't have this bone yet, so add it to the list
                                 me.first = static_cast<int>(curMesh->mBones.size());
-                                curMesh->mBones.push_back(ASE::Bone(bone));
+                                curMesh->mBones.emplace_back(bone);
                             }
                             ParseLV4MeshFloat(me.second);
 
@@ -420,6 +419,8 @@ void Parser::ParseLV1SoftSkinBlock() {
                 }
             }
         }
+        if (*filePtr == '\0')
+            return;
         ++filePtr;
         SkipSpacesAndLineEnd(&filePtr);
     }
@@ -477,6 +478,11 @@ void Parser::ParseLV1MaterialListBlock() {
             ++filePtr;
             if (TokenMatch(filePtr, "MATERIAL_COUNT", 14)) {
                 ParseLV4MeshLong(iMaterialCount);
+
+                if (UINT_MAX - iOldMaterialCount < iMaterialCount) {
+                    LogWarning("Out of range: material index is too large");
+                    return;
+                }
 
                 // now allocate enough storage to hold all materials
                 m_vMaterials.resize(iOldMaterialCount + iMaterialCount, Material("INVALID"));
@@ -732,7 +738,6 @@ void Parser::ParseLV3MapBlock(Texture &map) {
         }
         AI_ASE_HANDLE_SECTION("3", "*MAP_XXXXXX");
     }
-    return;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -857,7 +862,6 @@ void Parser::ParseLV1ObjectBlock(ASE::BaseNode &node) {
         }
         AI_ASE_HANDLE_TOP_LEVEL_SECTION();
     }
-    return;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -881,7 +885,6 @@ void Parser::ParseLV2CameraSettingsBlock(ASE::Camera &camera) {
         }
         AI_ASE_HANDLE_SECTION("2", "CAMERA_SETTINGS");
     }
-    return;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -1009,7 +1012,7 @@ void Parser::ParseLV3ScaleAnimationBlock(ASE::Animation &anim) {
                 anim.mScalingType = ASE::Animation::TCB;
             }
             if (b) {
-                anim.akeyScaling.push_back(aiVectorKey());
+                anim.akeyScaling.emplace_back();
                 aiVectorKey &key = anim.akeyScaling.back();
                 ParseLV4MeshFloatTriple(&key.mValue.x, iIndex);
                 key.mTime = (double)iIndex;
@@ -1048,7 +1051,7 @@ void Parser::ParseLV3PosAnimationBlock(ASE::Animation &anim) {
                 anim.mPositionType = ASE::Animation::TCB;
             }
             if (b) {
-                anim.akeyPositions.push_back(aiVectorKey());
+                anim.akeyPositions.emplace_back();
                 aiVectorKey &key = anim.akeyPositions.back();
                 ParseLV4MeshFloatTriple(&key.mValue.x, iIndex);
                 key.mTime = (double)iIndex;
@@ -1087,7 +1090,7 @@ void Parser::ParseLV3RotAnimationBlock(ASE::Animation &anim) {
                 anim.mRotationType = ASE::Animation::TCB;
             }
             if (b) {
-                anim.akeyRotations.push_back(aiQuatKey());
+                anim.akeyRotations.emplace_back();
                 aiQuatKey &key = anim.akeyRotations.back();
                 aiVector3D v;
                 ai_real f;
@@ -1187,7 +1190,6 @@ void Parser::ParseLV2NodeTransformBlock(ASE::BaseNode &mesh) {
         }
         AI_ASE_HANDLE_SECTION("2", "*NODE_TM");
     }
-    return;
 }
 // ------------------------------------------------------------------------------------------------
 void Parser::ParseLV2MeshBlock(ASE::Mesh &mesh) {
@@ -1308,7 +1310,6 @@ void Parser::ParseLV2MeshBlock(ASE::Mesh &mesh) {
         }
         AI_ASE_HANDLE_SECTION("2", "*MESH");
     }
-    return;
 }
 // ------------------------------------------------------------------------------------------------
 void Parser::ParseLV3MeshWeightsBlock(ASE::Mesh &mesh) {
@@ -1342,7 +1343,6 @@ void Parser::ParseLV3MeshWeightsBlock(ASE::Mesh &mesh) {
         }
         AI_ASE_HANDLE_SECTION("3", "*MESH_WEIGHTS");
     }
-    return;
 }
 // ------------------------------------------------------------------------------------------------
 void Parser::ParseLV4MeshBones(unsigned int iNumBones, ASE::Mesh &mesh) {
@@ -1412,7 +1412,6 @@ void Parser::ParseLV4MeshBonesVertices(unsigned int iNumVertices, ASE::Mesh &mes
         }
         AI_ASE_HANDLE_SECTION("4", "*MESH_BONE_VERTEX");
     }
-    return;
 }
 // ------------------------------------------------------------------------------------------------
 void Parser::ParseLV3MeshVertexListBlock(
@@ -1441,7 +1440,6 @@ void Parser::ParseLV3MeshVertexListBlock(
         }
         AI_ASE_HANDLE_SECTION("3", "*MESH_VERTEX_LIST");
     }
-    return;
 }
 // ------------------------------------------------------------------------------------------------
 void Parser::ParseLV3MeshFaceListBlock(unsigned int iNumFaces, ASE::Mesh &mesh) {
@@ -1468,7 +1466,6 @@ void Parser::ParseLV3MeshFaceListBlock(unsigned int iNumFaces, ASE::Mesh &mesh) 
         }
         AI_ASE_HANDLE_SECTION("3", "*MESH_FACE_LIST");
     }
-    return;
 }
 // ------------------------------------------------------------------------------------------------
 void Parser::ParseLV3MeshTListBlock(unsigned int iNumVertices,
@@ -1501,7 +1498,6 @@ void Parser::ParseLV3MeshTListBlock(unsigned int iNumVertices,
         }
         AI_ASE_HANDLE_SECTION("3", "*MESH_TVERT_LIST");
     }
-    return;
 }
 // ------------------------------------------------------------------------------------------------
 void Parser::ParseLV3MeshTFaceListBlock(unsigned int iNumFaces,
@@ -1530,7 +1526,6 @@ void Parser::ParseLV3MeshTFaceListBlock(unsigned int iNumFaces,
         }
         AI_ASE_HANDLE_SECTION("3", "*MESH_TFACE_LIST");
     }
-    return;
 }
 // ------------------------------------------------------------------------------------------------
 void Parser::ParseLV3MappingChannel(unsigned int iChannel, ASE::Mesh &mesh) {
@@ -1565,7 +1560,6 @@ void Parser::ParseLV3MappingChannel(unsigned int iChannel, ASE::Mesh &mesh) {
         }
         AI_ASE_HANDLE_SECTION("3", "*MESH_MAPPING_CHANNEL");
     }
-    return;
 }
 // ------------------------------------------------------------------------------------------------
 void Parser::ParseLV3MeshCListBlock(unsigned int iNumVertices, ASE::Mesh &mesh) {
@@ -1593,7 +1587,6 @@ void Parser::ParseLV3MeshCListBlock(unsigned int iNumVertices, ASE::Mesh &mesh) 
         }
         AI_ASE_HANDLE_SECTION("3", "*MESH_CVERTEX_LIST");
     }
-    return;
 }
 // ------------------------------------------------------------------------------------------------
 void Parser::ParseLV3MeshCFaceListBlock(unsigned int iNumFaces, ASE::Mesh &mesh) {
@@ -1621,7 +1614,6 @@ void Parser::ParseLV3MeshCFaceListBlock(unsigned int iNumFaces, ASE::Mesh &mesh)
         }
         AI_ASE_HANDLE_SECTION("3", "*MESH_CFACE_LIST");
     }
-    return;
 }
 // ------------------------------------------------------------------------------------------------
 void Parser::ParseLV3MeshNormalListBlock(ASE::Mesh &sMesh) {
@@ -1679,7 +1671,6 @@ void Parser::ParseLV3MeshNormalListBlock(ASE::Mesh &sMesh) {
         }
         AI_ASE_HANDLE_SECTION("3", "*MESH_NORMALS");
     }
-    return;
 }
 // ------------------------------------------------------------------------------------------------
 void Parser::ParseLV4MeshFace(ASE::Face &out) {
@@ -1772,7 +1763,13 @@ void Parser::ParseLV4MeshFace(ASE::Face &out) {
         // FIX: There needn't always be a value, sad but true
         while (true) {
             if (*filePtr < '9' && *filePtr >= '0') {
-                out.iSmoothGroup |= (1 << strtoul10(filePtr, &filePtr));
+                uint32_t value = strtoul10(filePtr, &filePtr);
+                if (value < 32) {
+                    out.iSmoothGroup |= (1 << strtoul10(filePtr, &filePtr));
+                } else {
+                    const std::string message = std::string("Unable to set smooth group, value with ") + ai_to_string(value) + std::string(" out of range");
+                    LogWarning(message.c_str());
+                }
             }
             SkipSpaces(&filePtr);
             if (',' != *filePtr) {

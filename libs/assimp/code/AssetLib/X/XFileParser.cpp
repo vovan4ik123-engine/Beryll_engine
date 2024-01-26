@@ -183,7 +183,7 @@ XFileParser::XFileParser(const std::vector<char> &pBuffer) :
             P1 += ofs;
             est_out += MSZIP_BLOCK; // one decompressed block is 327861 in size
         }
-        
+
         // Allocate storage and terminating zero and do the actual uncompressing
         Compression compression;
         uncompressed.resize(est_out + 1);
@@ -454,7 +454,7 @@ void XFileParser::ParseDataObjectSkinWeights(Mesh *pMesh) {
     std::string transformNodeName;
     GetNextTokenAsString(transformNodeName);
 
-    pMesh->mBones.push_back(Bone());
+    pMesh->mBones.emplace_back();
     Bone &bone = pMesh->mBones.back();
     bone.mName = transformNodeName;
 
@@ -640,7 +640,7 @@ void XFileParser::ParseDataObjectMeshMaterialList(Mesh *pMesh) {
 
             CheckForClosingBrace(); // skip }
         } else if (objectName == "Material") {
-            pMesh->mMaterials.push_back(Material());
+            pMesh->mMaterials.emplace_back();
             ParseDataObjectMaterial(&pMesh->mMaterials.back());
         } else if (objectName == ";") {
             // ignore
@@ -678,12 +678,12 @@ void XFileParser::ParseDataObjectMaterial(Material *pMaterial) {
             // some exporters write "TextureFileName" instead.
             std::string texname;
             ParseDataObjectTextureFilename(texname);
-            pMaterial->mTextures.push_back(TexEntry(texname));
+            pMaterial->mTextures.emplace_back(texname);
         } else if (objectName == "NormalmapFilename" || objectName == "NormalmapFileName") {
             // one exporter writes out the normal map in a separate filename tag
             std::string texname;
             ParseDataObjectTextureFilename(texname);
-            pMaterial->mTextures.push_back(TexEntry(texname, true));
+            pMaterial->mTextures.emplace_back(texname, true);
         } else {
             ASSIMP_LOG_WARN("Unknown data object in material in x file");
             ParseUnknownDataObject();
@@ -839,7 +839,6 @@ void XFileParser::ParseDataObjectAnimationKey(AnimBone *pAnimBone) {
 
         default:
             ThrowException("Unknown key type ", keyType, " in animation.");
-            break;
         } // end switch
 
         // key separator

@@ -68,7 +68,7 @@ class ZipFile : public IOStream {
 
 public:
     std::string m_Filename;
-    virtual ~ZipFile();
+    virtual ~ZipFile() override;
 
     // IOStream interface
     size_t Read(void *pvBuffer, size_t pSize, size_t pCount) override;
@@ -121,7 +121,7 @@ voidpf IOSystem2Unzip::open(voidpf opaque, const char *filename, int mode) {
 
 voidpf IOSystem2Unzip::opendisk(voidpf opaque, voidpf stream, uint32_t number_disk, int mode) {
     ZipFile *io_stream = (ZipFile *)stream;
-    voidpf ret = NULL;
+    voidpf ret = nullptr;
     int i;
 
     char *disk_filename = (char*)malloc(io_stream->m_Filename.length() + 1);
@@ -196,7 +196,9 @@ zlib_filefunc_def IOSystem2Unzip::get(IOSystem *pIOHandler) {
     zlib_filefunc_def mapping;
 
     mapping.zopen_file = (open_file_func)open;
+#ifdef _UNZ_H
     mapping.zopendisk_file = (opendisk_file_func)opendisk;
+#endif
     mapping.zread_file = (read_file_func)read;
     mapping.zwrite_file = (write_file_func)write;
     mapping.ztell_file = (tell_file_func)tell;
@@ -277,8 +279,7 @@ ZipFile::ZipFile(std::string &filename, size_t size) :
     m_Buffer = std::unique_ptr<uint8_t[]>(new uint8_t[m_Size]);
 }
 
-ZipFile::~ZipFile() {
-}
+ZipFile::~ZipFile() = default;
 
 size_t ZipFile::Read(void *pvBuffer, size_t pSize, size_t pCount) {
     // Should be impossible

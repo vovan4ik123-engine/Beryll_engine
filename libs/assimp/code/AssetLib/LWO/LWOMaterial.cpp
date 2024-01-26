@@ -345,7 +345,7 @@ void LWOImporter::ConvertMaterial(const LWO::Surface &surf, aiMaterial *pcMat) {
 
     // (the diffuse value is just a scaling factor)
     // If a diffuse texture is set, we set this value to 1.0
-    clr = (b && false ? aiColor3D(1.0, 1.0, 1.0) : surf.mColor);
+    clr = (b ? aiColor3D(1.0, 1.0, 1.0) : surf.mColor);
     clr.r *= surf.mDiffuseValue;
     clr.g *= surf.mDiffuseValue;
     clr.b *= surf.mDiffuseValue;
@@ -707,12 +707,10 @@ void LWOImporter::LoadNodalBlocks(unsigned int size) {
         if (mFileBuffer + head.length > end) {
             throw DeadlyImportError("LWO3: cannot read length; LoadNodalBlocks");
         }
-        int node_idx = 0;
         uint8_t *const next = mFileBuffer + head.length;
         mFileBuffer += bufOffset;
         switch (head.type) {
         case AI_LWO_NNDS:
-            node_idx++;
             LoadNodes(head.length);
             break;
         }

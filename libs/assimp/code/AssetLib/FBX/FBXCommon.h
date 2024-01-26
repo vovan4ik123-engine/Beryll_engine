@@ -50,10 +50,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 namespace Assimp {
 namespace FBX {
 
-const std::string NULL_RECORD = { // 25 null bytes in 64-bit and 13 null bytes in 32-bit
+static constexpr size_t NumNullRecords = 25;
+const char NULL_RECORD[NumNullRecords] = { // 25 null bytes in 64-bit and 13 null bytes in 32-bit
     '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0',
     '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0'
 }; // who knows why, it looks like two integers 32/64 bit (compressed and uncompressed sizes?) + 1 byte (might be compression type?)
+static std::string NULL_RECORD_STRING(NumNullRecords, '\0');
 const std::string SEPARATOR = { '\x00', '\x01' }; // for use inside strings
 const std::string MAGIC_NODE_TAG = "_$AssimpFbx$"; // from import
 const int64_t SECOND = 46186158000; // FBX's kTime unit

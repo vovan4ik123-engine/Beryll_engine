@@ -85,7 +85,7 @@ static const aiImporterDesc desc = {
 struct SIBChunk {
     uint32_t Tag;
     uint32_t Size;
-} PACK_STRUCT;
+};
 
 enum {
     POS,
@@ -202,15 +202,11 @@ static aiString ReadString(StreamReaderLE *stream, uint32_t numWChars) {
 
 // ------------------------------------------------------------------------------------------------
 // Constructor to be privately used by Importer
-SIBImporter::SIBImporter() {
-    // empty
-}
+SIBImporter::SIBImporter() = default;
 
 // ------------------------------------------------------------------------------------------------
 // Destructor, private as well
-SIBImporter::~SIBImporter() {
-    // empty
-}
+SIBImporter::~SIBImporter() = default;
 
 // ------------------------------------------------------------------------------------------------
 // Returns whether the class can handle the format of the given file.

@@ -72,15 +72,11 @@ static const aiImporterDesc desc = {
 
 // ------------------------------------------------------------------------------------------------
 // Constructor to be privately used by Importer
-HMPImporter::HMPImporter() {
-    // nothing to do here
-}
+HMPImporter::HMPImporter() = default;
 
 // ------------------------------------------------------------------------------------------------
 // Destructor, private as well
-HMPImporter::~HMPImporter() {
-    // nothing to do here
-}
+HMPImporter::~HMPImporter() = default;
 
 // ------------------------------------------------------------------------------------------------
 // Returns whether the class can handle the format of the given file.
@@ -108,7 +104,7 @@ void HMPImporter::InternReadFile(const std::string &pFile,
     std::unique_ptr<IOStream> file(mIOHandler->Open(pFile));
 
     // Check whether we can read from the file
-    if (file.get() == nullptr) {
+    if (file == nullptr) {
         throw DeadlyImportError("Failed to open HMP file ", pFile, ".");
     }
 
@@ -119,7 +115,9 @@ void HMPImporter::InternReadFile(const std::string &pFile,
         throw DeadlyImportError("HMP File is too small.");
 
     // Allocate storage and copy the contents of the file to a memory buffer
-    mBuffer = new uint8_t[fileSize];
+    auto deleter=[this](uint8_t* ptr){ delete[] ptr; mBuffer = nullptr; };
+    std::unique_ptr<uint8_t[], decltype(deleter)> buffer(new uint8_t[fileSize], deleter);
+    mBuffer = buffer.get();
     file->Read((void *)mBuffer, 1, fileSize);
     iFileSize = (unsigned int)fileSize;
 
@@ -147,9 +145,6 @@ void HMPImporter::InternReadFile(const std::string &pFile,
         // Print the magic word to the logger
         std::string szBuffer = ai_str_toprintable((const char *)&iMagic, sizeof(iMagic));
 
-        delete[] mBuffer;
-        mBuffer = nullptr;
-
         // We're definitely unable to load this file
         throw DeadlyImportError("Unknown HMP subformat ", pFile,
                                 ". Magic word (", szBuffer, ") is not known");
@@ -157,9 +152,6 @@ void HMPImporter::InternReadFile(const std::string &pFile,
 
     // Set the AI_SCENE_FLAGS_TERRAIN bit
     pScene->mFlags |= AI_SCENE_FLAGS_TERRAIN;
-
-    delete[] mBuffer;
-    mBuffer = nullptr;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -331,7 +323,7 @@ void HMPImporter::CreateMaterial(const unsigned char *szCurrent,
         ReadFirstSkin(pcHeader->numskins, szCurrent, &szCurrent);
         *szCurrentOut = szCurrent;
         return;
-    } 
+    }
 
     // generate a default material
     const int iMode = (int)aiShadingMode_Gouraud;
@@ -449,11 +441,11 @@ void HMPImporter::ReadFirstSkin(unsigned int iNumSkins, const unsigned char *szC
     szCursor += sizeof(uint32_t);
 
     // allocate an output material
-    aiMaterial *pcMat = new aiMaterial();
+    std::unique_ptr<aiMaterial> pcMat(new aiMaterial());
 
     // read the skin, this works exactly as for MDL7
     ParseSkinLump_3DGS_MDL7(szCursor, &szCursor,
-            pcMat, iType, iWidth, iHeight);
+            pcMat.get(), iType, iWidth, iHeight);
 
     // now we need to skip any other skins ...
     for (unsigned int i = 1; i < iNumSkins; ++i) {
@@ -472,7 +464,7 @@ void HMPImporter::ReadFirstSkin(unsigned int iNumSkins, const unsigned char *szC
     // setup the material ...
     pScene->mNumMaterials = 1;
     pScene->mMaterials = new aiMaterial *[1];
-    pScene->mMaterials[0] = pcMat;
+    pScene->mMaterials[0] = pcMat.release();
 
     *szCursorOut = szCursor;
 }
@@ -488,11 +480,11 @@ void HMPImporter::GenerateTextureCoords(const unsigned int width, const unsigned
     if (uv == nullptr) {
         return;
     }
-    
+
     if (height == 0.0f || width == 0.0) {
         return;
     }
-    
+
     const float fY = (1.0f / height) + (1.0f / height) / height;
     const float fX = (1.0f / width) + (1.0f / width) / width;
 

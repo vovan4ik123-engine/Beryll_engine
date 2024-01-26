@@ -44,7 +44,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #ifndef ASSIMP_BUILD_NO_ASE_IMPORTER
-
 #ifndef ASSIMP_BUILD_NO_3DS_IMPORTER
 
 // internal headers
@@ -88,12 +87,6 @@ ASEImporter::ASEImporter() :
 }
 
 // ------------------------------------------------------------------------------------------------
-// Destructor, private as well
-ASEImporter::~ASEImporter() {
-    // empty
-}
-
-// ------------------------------------------------------------------------------------------------
 // Returns whether the class can handle the format of the given file.
 bool ASEImporter::CanRead(const std::string &pFile, IOSystem *pIOHandler, bool /*checkSig*/) const {
     static const char *tokens[] = { "*3dsmax_asciiexport" };
@@ -124,7 +117,7 @@ void ASEImporter::InternReadFile(const std::string &pFile,
     std::unique_ptr<IOStream> file(pIOHandler->Open(pFile, "rb"));
 
     // Check whether we can read from the file
-    if (file.get() == nullptr) {
+    if (file == nullptr) {
         throw DeadlyImportError("Failed to open ASE file ", pFile, ".");
     }
 
@@ -265,7 +258,7 @@ void ASEImporter::GenerateDefaultMaterial() {
     }
     if (bHas || mParser->m_vMaterials.empty()) {
         // add a simple material without submaterials to the parser's list
-        mParser->m_vMaterials.push_back(ASE::Material(AI_DEFAULT_MATERIAL_NAME));
+        mParser->m_vMaterials.emplace_back(AI_DEFAULT_MATERIAL_NAME);
         ASE::Material &mat = mParser->m_vMaterials.back();
 
         mat.mDiffuse = aiColor3D(0.6f, 0.6f, 0.6f);
@@ -327,21 +320,6 @@ void ASEImporter::BuildAnimations(const std::vector<BaseNode *> &nodes) {
                 // <baseName>.Target.
                 aiNodeAnim *nd = pcAnim->mChannels[iNum++] = new aiNodeAnim();
                 nd->mNodeName.Set(me->mName + ".Target");
-
-                // If there is no input position channel we will need
-                // to supply the default position from the node's
-                // local transformation matrix.
-                /*TargetAnimationHelper helper;
-                if (me->mAnim.akeyPositions.empty())
-                {
-                    aiMatrix4x4& mat = (*i)->mTransform;
-                    helper.SetFixedMainAnimationChannel(aiVector3D(
-                        mat.a4, mat.b4, mat.c4));
-                }
-                else helper.SetMainAnimationChannel (&me->mAnim.akeyPositions);
-                helper.SetTargetAnimationChannel (&me->mTargetAnim.akeyPositions);
-
-                helper.Process(&me->mTargetAnim.akeyPositions);*/
 
                 // Allocate the key array and fill it
                 nd->mNumPositionKeys = (unsigned int)me->mTargetAnim.akeyPositions.size();
@@ -870,6 +848,7 @@ void ASEImporter::ConvertMaterial(ASE::Material &mat) {
         unsigned int iWire = 1;
         mat.pcInstance->AddProperty<int>((int *)&iWire, 1, AI_MATKEY_ENABLE_WIREFRAME);
     }
+    // fallthrough
     case D3DS::Discreet3DS::Gouraud:
         eShading = aiShadingMode_Gouraud;
         break;
@@ -1004,8 +983,8 @@ void ASEImporter::ConvertMeshes(ASE::Mesh &mesh, std::vector<aiMesh *> &avOutMes
                                             blubb != mesh.mBoneVertices[iIndex2].mBoneWeights.end(); ++blubb) {
 
                                         // NOTE: illegal cases have already been filtered out
-                                        avOutputBones[(*blubb).first].push_back(std::pair<unsigned int, float>(
-                                                iBase, (*blubb).second));
+                                        avOutputBones[(*blubb).first].emplace_back(
+                                                iBase, (*blubb).second);
                                     }
                                 }
                             }
