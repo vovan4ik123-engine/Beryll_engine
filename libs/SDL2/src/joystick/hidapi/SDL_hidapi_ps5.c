@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2023 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -102,7 +102,7 @@ typedef struct
     Uint8 rgucAccelX[2];          /* 21 */
     Uint8 rgucAccelY[2];          /* 23 */
     Uint8 rgucAccelZ[2];          /* 25 */
-    Uint8 rgucSensorTimestamp[4]; /* 27 - 32 bit little endian */
+    Uint8 rgucSensorTimestamp[4]; /* 27 - 16/32 bit little endian */
 
 } PS5StatePacketCommon_t;
 
@@ -154,7 +154,9 @@ typedef struct
     Uint8 rgucAccelX[2];          /* 21 */
     Uint8 rgucAccelY[2];          /* 23 */
     Uint8 rgucAccelZ[2];          /* 25 */
-    Uint8 rgucSensorTimestamp[4]; /* 27 - 32 bit little endian */
+    Uint8 rgucSensorTimestamp[2]; /* 27 - 16 bit little endian */
+    Uint8 ucBatteryLevel;         /* 29 */
+    Uint8 ucUnknown;              /* 30 */
     Uint8 ucTouchpadCounter1;     /* 31 - high bit clear + counter */
     Uint8 rgucTouchpadData1[3];   /* 32 - X/Y, 12 bits per axis */
     Uint8 ucTouchpadCounter2;     /* 35 - high bit clear + counter */
@@ -215,6 +217,7 @@ typedef struct
 {
     SDL_HIDAPI_Device *device;
     SDL_Joystick *joystick;
+    SDL_bool is_nacon_dongle;
     SDL_bool use_alternate_report;
     SDL_bool sensors_supported;
     SDL_bool lightbar_supported;
@@ -244,6 +247,7 @@ typedef struct
     {
         PS5SimpleStatePacket_t simple;
         PS5StatePacketCommon_t state;
+        PS5StatePacketAlt_t alt_state;
         PS5StatePacket_t full_state;
         Uint8 data[64];
     } last_state;
@@ -331,7 +335,8 @@ static void SetLightsForPlayerIndex(DS5EffectsState_t *effects, int player_index
         0x04,
         0x0A,
         0x15,
-        0x1B
+        0x1B,
+        0x1F
     };
 
     if (player_index >= 0) {
@@ -352,7 +357,7 @@ static SDL_bool HIDAPI_DriverPS5_InitDevice(SDL_HIDAPI_Device *device)
     SDL_JoystickType joystick_type = SDL_JOYSTICK_TYPE_GAMECONTROLLER;
 
     ctx = (SDL_DriverPS5_Context *)SDL_calloc(1, sizeof(*ctx));
-    if (ctx == NULL) {
+    if (!ctx) {
         SDL_OutOfMemory();
         return SDL_FALSE;
     }
@@ -421,7 +426,6 @@ static SDL_bool HIDAPI_DriverPS5_InitDevice(SDL_HIDAPI_Device *device)
         }
     }
 
-    size = ReadFeatureReport(device->dev, k_EPS5FeatureReportIdCapabilities, data, sizeof(data));
     /* Get the device capabilities */
     if (device->vendor_id == USB_VENDOR_SONY) {
         ctx->sensors_supported = SDL_TRUE;
@@ -429,63 +433,80 @@ static SDL_bool HIDAPI_DriverPS5_InitDevice(SDL_HIDAPI_Device *device)
         ctx->vibration_supported = SDL_TRUE;
         ctx->playerled_supported = SDL_TRUE;
         ctx->touchpad_supported = SDL_TRUE;
-    } else if (size == 48 && data[2] == 0x28) {
-        Uint8 capabilities = data[4];
-        Uint8 capabilities2 = data[20];
-        Uint8 device_type = data[5];
+    } else {
+        /* Third party controller capability request */
+        size = ReadFeatureReport(device->dev, k_EPS5FeatureReportIdCapabilities, data, sizeof(data));
+        if (size == 48 && data[2] == 0x28) {
+            Uint8 capabilities = data[4];
+            Uint8 capabilities2 = data[20];
+            Uint8 device_type = data[5];
 
 #ifdef DEBUG_PS5_PROTOCOL
-        HIDAPI_DumpPacket("PS5 capabilities: size = %d", data, size);
+            HIDAPI_DumpPacket("PS5 capabilities: size = %d", data, size);
 #endif
-        if (capabilities & 0x02) {
+            if (capabilities & 0x02) {
+                ctx->sensors_supported = SDL_TRUE;
+            }
+            if (capabilities & 0x04) {
+                ctx->lightbar_supported = SDL_TRUE;
+            }
+            if (capabilities & 0x08) {
+                ctx->vibration_supported = SDL_TRUE;
+            }
+            if (capabilities & 0x40) {
+                ctx->touchpad_supported = SDL_TRUE;
+            }
+            if (capabilities2 & 0x80) {
+                ctx->playerled_supported = SDL_TRUE;
+            }
+
+            switch (device_type) {
+            case 0x00:
+                joystick_type = SDL_JOYSTICK_TYPE_GAMECONTROLLER;
+                break;
+            case 0x01:
+                joystick_type = SDL_JOYSTICK_TYPE_GUITAR;
+                break;
+            case 0x02:
+                joystick_type = SDL_JOYSTICK_TYPE_DRUM_KIT;
+                break;
+            case 0x06:
+                joystick_type = SDL_JOYSTICK_TYPE_WHEEL;
+                break;
+            case 0x07:
+                joystick_type = SDL_JOYSTICK_TYPE_ARCADE_STICK;
+                break;
+            case 0x08:
+                joystick_type = SDL_JOYSTICK_TYPE_FLIGHT_STICK;
+                break;
+            default:
+                joystick_type = SDL_JOYSTICK_TYPE_UNKNOWN;
+                break;
+            }
+
+            ctx->use_alternate_report = SDL_TRUE;
+
+            if (device->vendor_id == USB_VENDOR_NACON_ALT &&
+                (device->product_id == USB_PRODUCT_NACON_REVOLUTION_5_PRO_PS5_WIRED ||
+                 device->product_id == USB_PRODUCT_NACON_REVOLUTION_5_PRO_PS5_WIRELESS)) {
+                /* This doesn't report vibration capability, but it can do rumble */
+                ctx->vibration_supported = SDL_TRUE;
+            }
+        } else if (device->vendor_id == USB_VENDOR_RAZER &&
+                   (device->product_id == USB_PRODUCT_RAZER_WOLVERINE_V2_PRO_PS5_WIRED ||
+                    device->product_id == USB_PRODUCT_RAZER_WOLVERINE_V2_PRO_PS5_WIRELESS)) {
+            /* The Razer Wolverine V2 Pro doesn't respond to the detection protocol, but has a touchpad and sensors and no vibration */
             ctx->sensors_supported = SDL_TRUE;
-        }
-        if (capabilities & 0x04) {
-            ctx->lightbar_supported = SDL_TRUE;
-        }
-        if (capabilities & 0x08) {
-            ctx->vibration_supported = SDL_TRUE;
-        }
-        if (capabilities & 0x40) {
             ctx->touchpad_supported = SDL_TRUE;
+            ctx->use_alternate_report = SDL_TRUE;
         }
-        if (capabilities2 & 0x80) {
-            ctx->playerled_supported = SDL_TRUE;
-        }
-
-        switch (device_type) {
-        case 0x00:
-            joystick_type = SDL_JOYSTICK_TYPE_GAMECONTROLLER;
-            break;
-        case 0x01:
-            joystick_type = SDL_JOYSTICK_TYPE_GUITAR;
-            break;
-        case 0x02:
-            joystick_type = SDL_JOYSTICK_TYPE_DRUM_KIT;
-            break;
-        case 0x06:
-            joystick_type = SDL_JOYSTICK_TYPE_WHEEL;
-            break;
-        case 0x07:
-            joystick_type = SDL_JOYSTICK_TYPE_ARCADE_STICK;
-            break;
-        case 0x08:
-            joystick_type = SDL_JOYSTICK_TYPE_FLIGHT_STICK;
-            break;
-        default:
-            joystick_type = SDL_JOYSTICK_TYPE_UNKNOWN;
-            break;
-        }
-
-        ctx->use_alternate_report = SDL_TRUE;
-    } else if (device->vendor_id == USB_VENDOR_RAZER &&
-               (device->product_id == USB_PRODUCT_RAZER_WOLVERINE_V2_PRO_PS5_WIRED ||
-                device->product_id == USB_PRODUCT_RAZER_WOLVERINE_V2_PRO_PS5_WIRELESS)) {
-        /* The Razer Wolverine V2 Pro doesn't respond to the detection protocol, but has a touchpad and sensors, but no vibration */
-        ctx->sensors_supported = SDL_TRUE;
-        ctx->touchpad_supported = SDL_TRUE;
     }
     ctx->effects_supported = (ctx->lightbar_supported || ctx->vibration_supported || ctx->playerled_supported);
+
+    if (device->vendor_id == USB_VENDOR_NACON_ALT &&
+        device->product_id == USB_PRODUCT_NACON_REVOLUTION_5_PRO_PS5_WIRELESS) {
+        ctx->is_nacon_dongle = SDL_TRUE;
+    }
 
     device->joystick_type = joystick_type;
     device->type = SDL_CONTROLLER_TYPE_PS5;
@@ -497,6 +518,11 @@ static SDL_bool HIDAPI_DriverPS5_InitDevice(SDL_HIDAPI_Device *device)
         }
     }
     HIDAPI_SetDeviceSerial(device, serial);
+
+    if (ctx->is_nacon_dongle) {
+        /* We don't know if this is connected yet, wait for reports */
+        return SDL_TRUE;
+    }
 
     /* Prefer the USB device over the Bluetooth device */
     if (device->is_bluetooth) {
@@ -717,7 +743,7 @@ static void HIDAPI_DriverPS5_CheckPendingLEDReset(SDL_HIDAPI_Device *device)
     SDL_DriverPS5_Context *ctx = (SDL_DriverPS5_Context *)device->context;
     SDL_bool led_reset_complete = SDL_FALSE;
 
-    if (ctx->sensors_supported) {
+    if (ctx->enhanced_mode && ctx->sensors_supported && !ctx->use_alternate_report) {
         const PS5StatePacketCommon_t *packet = &ctx->last_state.state;
 
         /* Check the timer to make sure the Bluetooth connection LED animation is complete */
@@ -726,7 +752,7 @@ static void HIDAPI_DriverPS5_CheckPendingLEDReset(SDL_HIDAPI_Device *device)
                                   packet->rgucSensorTimestamp[1],
                                   packet->rgucSensorTimestamp[2],
                                   packet->rgucSensorTimestamp[3]);
-        if (SDL_TICKS_PASSED(timestamp, connection_complete)) {
+        if (timestamp >= connection_complete) {
             led_reset_complete = SDL_TRUE;
         }
     } else {
@@ -745,16 +771,25 @@ static void HIDAPI_DriverPS5_CheckPendingLEDReset(SDL_HIDAPI_Device *device)
 
 static void HIDAPI_DriverPS5_TickleBluetooth(SDL_HIDAPI_Device *device)
 {
-    /* This is just a dummy packet that should have no effect, since we don't set the CRC */
-    Uint8 data[78];
+    SDL_DriverPS5_Context *ctx = (SDL_DriverPS5_Context *)device->context;
 
-    SDL_zeroa(data);
+    if (ctx->enhanced_mode) {
+        /* This is just a dummy packet that should have no effect, since we don't set the CRC */
+        Uint8 data[78];
 
-    data[0] = k_EPS5ReportIdBluetoothEffects;
-    data[1] = 0x02; /* Magic value */
+        SDL_zeroa(data);
 
-    if (SDL_HIDAPI_LockRumble() == 0) {
-        SDL_HIDAPI_SendRumbleAndUnlock(device, data, sizeof(data));
+        data[0] = k_EPS5ReportIdBluetoothEffects;
+        data[1] = 0x02; /* Magic value */
+
+        if (SDL_HIDAPI_LockRumble() == 0) {
+            SDL_HIDAPI_SendRumbleAndUnlock(device, data, sizeof(data));
+        }
+    } else {
+        /* We can't even send an invalid effects packet, or it will put the controller in enhanced mode */
+        if (device->num_joysticks > 0) {
+            HIDAPI_JoystickDisconnected(device, device->joysticks[0]);
+        }
     }
 }
 
@@ -1216,30 +1251,56 @@ static void HIDAPI_DriverPS5_HandleStatePacketCommon(SDL_Joystick *joystick, SDL
     SDL_PrivateJoystickAxis(joystick, SDL_CONTROLLER_AXIS_RIGHTY, axis);
 
     if (ctx->report_sensors) {
-        Uint32 timestamp;
-        Uint64 timestamp_us;
         float data[3];
+        Uint64 timestamp_us;
 
-        timestamp = LOAD32(packet->rgucSensorTimestamp[0],
-                           packet->rgucSensorTimestamp[1],
-                           packet->rgucSensorTimestamp[2],
-                           packet->rgucSensorTimestamp[3]);
-        if (ctx->timestamp) {
-            Uint32 delta;
+        if (ctx->use_alternate_report) {
+            /* 16-bit timestamp */
+            Uint16 timestamp;
 
-            if (ctx->last_timestamp > timestamp) {
-                delta = (SDL_MAX_UINT32 - ctx->last_timestamp + timestamp + 1);
+            timestamp = LOAD16(packet->rgucSensorTimestamp[0],
+                               packet->rgucSensorTimestamp[1]);
+            if (ctx->timestamp) {
+                Uint16 delta;
+
+                if (ctx->last_timestamp > timestamp) {
+                    delta = (SDL_MAX_UINT16 - ctx->last_timestamp + timestamp + 1);
+                } else {
+                    delta = (timestamp - ctx->last_timestamp);
+                }
+                ctx->timestamp += delta;
             } else {
-                delta = (timestamp - ctx->last_timestamp);
+                ctx->timestamp = timestamp;
             }
-            ctx->timestamp += delta;
-        } else {
-            ctx->timestamp = timestamp;
-        }
-        ctx->last_timestamp = timestamp;
+            ctx->last_timestamp = timestamp;
 
-        /* Sensor timestamp is in 0.33us units */
-        timestamp_us = ctx->timestamp / 3;
+            /* Sensor timestamp is in 1us units */
+            timestamp_us = ctx->timestamp;
+        } else {
+            /* 32-bit timestamp */
+            Uint32 timestamp;
+
+            timestamp = LOAD32(packet->rgucSensorTimestamp[0],
+                               packet->rgucSensorTimestamp[1],
+                               packet->rgucSensorTimestamp[2],
+                               packet->rgucSensorTimestamp[3]);
+            if (ctx->timestamp) {
+                Uint32 delta;
+
+                if (ctx->last_timestamp > timestamp) {
+                    delta = (SDL_MAX_UINT32 - ctx->last_timestamp + timestamp + 1);
+                } else {
+                    delta = (timestamp - ctx->last_timestamp);
+                }
+                ctx->timestamp += delta;
+            } else {
+                ctx->timestamp = timestamp;
+            }
+            ctx->last_timestamp = timestamp;
+
+            /* Sensor timestamp is in 0.33us units */
+            timestamp_us = ctx->timestamp / 3;
+        }
 
         data[0] = HIDAPI_DriverPS5_ApplyCalibrationData(ctx, 0, LOAD16(packet->rgucGyroX[0], packet->rgucGyroX[1]));
         data[1] = HIDAPI_DriverPS5_ApplyCalibrationData(ctx, 1, LOAD16(packet->rgucGyroY[0], packet->rgucGyroY[1]));
@@ -1336,6 +1397,20 @@ static SDL_bool HIDAPI_DriverPS5_IsPacketValid(SDL_DriverPS5_Context *ctx, Uint8
 {
     switch (data[0]) {
     case k_EPS5ReportIdState:
+        if (ctx->is_nacon_dongle && size >= (1 + sizeof(PS5StatePacketAlt_t))) {
+            /* The report timestamp doesn't change when the controller isn't connected */
+            PS5StatePacketAlt_t *packet = (PS5StatePacketAlt_t *)&data[1];
+            if (SDL_memcmp(packet->rgucPacketSequence, ctx->last_state.state.rgucPacketSequence, sizeof(packet->rgucPacketSequence)) == 0) {
+                return SDL_FALSE;
+            }
+            if (ctx->last_state.alt_state.rgucAccelX[0] == 0 && ctx->last_state.alt_state.rgucAccelX[1] == 0 &&
+                ctx->last_state.alt_state.rgucAccelY[0] == 0 && ctx->last_state.alt_state.rgucAccelY[1] == 0 &&
+                ctx->last_state.alt_state.rgucAccelZ[0] == 0 && ctx->last_state.alt_state.rgucAccelZ[1] == 0) {
+                /* We don't have any state to compare yet, go ahead and copy it */
+                SDL_memcpy(&ctx->last_state, &data[1], sizeof(PS5StatePacketAlt_t));
+                return SDL_FALSE;
+            }
+        }
         return SDL_TRUE;
 
     case k_EPS5ReportIdBluetoothState:
@@ -1373,7 +1448,7 @@ static SDL_bool HIDAPI_DriverPS5_UpdateDevice(SDL_HIDAPI_Device *device)
         ++packet_count;
         ctx->last_packet = now;
 
-        if (joystick == NULL) {
+        if (!joystick) {
             continue;
         }
 
@@ -1395,14 +1470,14 @@ static SDL_bool HIDAPI_DriverPS5_UpdateDevice(SDL_HIDAPI_Device *device)
                 /* This is the extended report, we can enable effects now */
                 HIDAPI_DriverPS5_SetEnhancedMode(device, joystick);
             }
-            if (ctx->led_reset_state == k_EDS5LEDResetStatePending) {
-                HIDAPI_DriverPS5_CheckPendingLEDReset(device);
-            }
             HIDAPI_DriverPS5_HandleStatePacketCommon(joystick, device->dev, ctx, (PS5StatePacketCommon_t *)&data[2]);
             if (ctx->use_alternate_report) {
                 HIDAPI_DriverPS5_HandleStatePacketAlt(joystick, device->dev, ctx, (PS5StatePacketAlt_t *)&data[2]);
             } else {
                 HIDAPI_DriverPS5_HandleStatePacket(joystick, device->dev, ctx, (PS5StatePacket_t *)&data[2]);
+            }
+            if (ctx->led_reset_state == k_EDS5LEDResetStatePending) {
+                HIDAPI_DriverPS5_CheckPendingLEDReset(device);
             }
             break;
         default:
@@ -1429,7 +1504,22 @@ static SDL_bool HIDAPI_DriverPS5_UpdateDevice(SDL_HIDAPI_Device *device)
         }
     }
 
-    if (size < 0 && device->num_joysticks > 0) {
+    if (ctx->is_nacon_dongle) {
+        if (packet_count == 0) {
+            if (device->num_joysticks > 0) {
+                /* Check to see if it looks like the device disconnected */
+                if (SDL_TICKS_PASSED(now, ctx->last_packet + BLUETOOTH_DISCONNECT_TIMEOUT_MS)) {
+                    HIDAPI_JoystickDisconnected(device, device->joysticks[0]);
+                }
+            }
+        } else {
+            if (device->num_joysticks == 0) {
+                HIDAPI_JoystickConnected(device, NULL);
+            }
+        }
+    }
+
+    if (packet_count == 0 && size < 0 && device->num_joysticks > 0) {
         /* Read error, device is disconnected */
         HIDAPI_JoystickDisconnected(device, device->joysticks[0]);
     }

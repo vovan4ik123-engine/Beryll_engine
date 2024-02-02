@@ -1,6 +1,6 @@
  /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2023 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -20,7 +20,7 @@
 */
 #include "../../SDL_internal.h"
 
-#if SDL_VIDEO_DRIVER_UIKIT
+#ifdef SDL_VIDEO_DRIVER_UIKIT
 
 #include "SDL_uikitview.h"
 
@@ -38,7 +38,7 @@
 #define MAX_MOUSE_BUTTONS    5
 
 /* This is defined in SDL_sysjoystick.m */
-#if !SDL_JOYSTICK_DISABLED
+#ifndef SDL_JOYSTICK_DISABLED
 extern int SDL_AppleTVRemoteOpenedAsJoystick;
 #endif
 
@@ -374,7 +374,7 @@ extern int SDL_AppleTVRemoteOpenedAsJoystick;
     }
 #endif
 
-#if !SDL_JOYSTICK_DISABLED
+#ifndef SDL_JOYSTICK_DISABLED
     /* Presses from Apple TV remote */
     if (!SDL_AppleTVRemoteOpenedAsJoystick) {
         switch (press.type) {
@@ -412,6 +412,9 @@ extern int SDL_AppleTVRemoteOpenedAsJoystick;
             SDL_SendKeyboardKey(SDL_PRESSED, scancode);
         }
     }
+    if (SDL_IsTextInputActive()) {
+        [super pressesBegan:presses withEvent:event];
+    }
 }
 
 - (void)pressesEnded:(NSSet<UIPress *> *)presses withEvent:(UIPressesEvent *)event
@@ -421,6 +424,9 @@ extern int SDL_AppleTVRemoteOpenedAsJoystick;
             SDL_Scancode scancode = [self scancodeFromPress:press];
             SDL_SendKeyboardKey(SDL_RELEASED, scancode);
         }
+    }
+    if (SDL_IsTextInputActive()) {
+        [super pressesEnded:presses withEvent:event];
     }
 }
 
@@ -432,11 +438,17 @@ extern int SDL_AppleTVRemoteOpenedAsJoystick;
             SDL_SendKeyboardKey(SDL_RELEASED, scancode);
         }
     }
+    if (SDL_IsTextInputActive()) {
+        [super pressesCancelled:presses withEvent:event];
+    }
 }
 
 - (void)pressesChanged:(NSSet<UIPress *> *)presses withEvent:(UIPressesEvent *)event
 {
     /* This is only called when the force of a press changes. */
+    if (SDL_IsTextInputActive()) {
+        [super pressesChanged:presses withEvent:event];
+    }
 }
 
 #endif /* TARGET_OS_TV || defined(__IPHONE_9_1) */
@@ -446,7 +458,7 @@ extern int SDL_AppleTVRemoteOpenedAsJoystick;
 {
     /* Swipe gestures don't trigger begin states. */
     if (gesture.state == UIGestureRecognizerStateEnded) {
-#if !SDL_JOYSTICK_DISABLED
+#ifndef SDL_JOYSTICK_DISABLED
         if (!SDL_AppleTVRemoteOpenedAsJoystick) {
             /* Send arrow key presses for now, as we don't have an external API
              * which better maps to swipe gestures. */

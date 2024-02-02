@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2023 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -20,10 +20,11 @@
 */
 #include "../../SDL_internal.h"
 
-#if SDL_VIDEO_DRIVER_WINDOWS && !defined(__XBOXONE__) && !defined(__XBOXSERIES__)
+#if defined(SDL_VIDEO_DRIVER_WINDOWS) && !defined(__XBOXONE__) && !defined(__XBOXSERIES__)
 
 #include "SDL_windowsvideo.h"
 #include "SDL_windowswindow.h"
+#include "SDL_timer.h"
 #include "../../events/SDL_clipboardevents_c.h"
 
 #ifdef UNICODE
@@ -102,25 +103,33 @@ int WIN_SetClipboardText(_THIS, const char *text)
 
 char *WIN_GetClipboardText(_THIS)
 {
-    char *text;
+    char *text = NULL;
 
-    text = NULL;
-    if (IsClipboardFormatAvailable(TEXT_FORMAT) &&
-        OpenClipboard(GetWindowHandle(_this))) {
-        HANDLE hMem;
-        LPTSTR tstr;
+    if (IsClipboardFormatAvailable(TEXT_FORMAT)) {
+        /* Retry to open the clipboard in case another application has it open */
+        const int MAX_ATTEMPTS = 3;
+        int attempt;
 
-        hMem = GetClipboardData(TEXT_FORMAT);
-        if (hMem) {
-            tstr = (LPTSTR)GlobalLock(hMem);
-            text = WIN_StringToUTF8(tstr);
-            GlobalUnlock(hMem);
-        } else {
-            WIN_SetError("Couldn't get clipboard data");
+        for (attempt = 0; attempt < MAX_ATTEMPTS; ++attempt) {
+            if (OpenClipboard(GetWindowHandle(_this))) {
+                HANDLE hMem;
+                LPTSTR tstr;
+
+                hMem = GetClipboardData(TEXT_FORMAT);
+                if (hMem) {
+                    tstr = (LPTSTR)GlobalLock(hMem);
+                    text = WIN_StringToUTF8(tstr);
+                    GlobalUnlock(hMem);
+                } else {
+                    WIN_SetError("Couldn't get clipboard data");
+                }
+                CloseClipboard();
+                break;
+            }
+            SDL_Delay(10);
         }
-        CloseClipboard();
     }
-    if (text == NULL) {
+    if (!text) {
         text = SDL_strdup("");
     }
     return text;

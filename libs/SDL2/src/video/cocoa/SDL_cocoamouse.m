@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2023 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -20,7 +20,7 @@
 */
 #include "../../SDL_internal.h"
 
-#if SDL_VIDEO_DRIVER_COCOA
+#ifdef SDL_VIDEO_DRIVER_COCOA
 
 #include "SDL_events.h"
 #include "SDL_cocoamouse.h"
@@ -293,8 +293,11 @@ static int Cocoa_SetRelativeMouseMode(SDL_bool enabled)
     if (enabled) {
         if (window) {
             /* make sure the mouse isn't at the corner of the window, as this can confuse things if macOS thinks a window resize is happening on the first click. */
+            SDL_MouseData *mousedriverdata = (SDL_MouseData*)SDL_GetMouse()->driverdata;
             const CGPoint point = CGPointMake((float)(window->x + (window->w / 2)), (float)(window->y + (window->h / 2)));
-            Cocoa_HandleMouseWarp(point.x, point.y);
+            if (mousedriverdata) {
+                mousedriverdata->justEnabledRelative = SDL_TRUE;
+            }
             CGWarpMouseCursorPosition(point);
         }
         DLog("Turning on.");
@@ -464,6 +467,11 @@ void Cocoa_HandleMouseEvent(_THIS, NSEvent *event)
     mouseID = mouse ? mouse->mouseID : 0;
     seenWarp = driverdata->seenWarp;
     driverdata->seenWarp = NO;
+
+    if (driverdata->justEnabledRelative) {
+        driverdata->justEnabledRelative = SDL_FALSE;
+        return;  // dump the first event back.
+    }
 
     location =  [NSEvent mouseLocation];
     lastMoveX = driverdata->lastMoveX;

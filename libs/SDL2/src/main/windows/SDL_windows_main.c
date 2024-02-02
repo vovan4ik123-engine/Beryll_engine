@@ -43,7 +43,7 @@ static int main_getcmdline(void)
     int i, argc, result;
 
     argvw = CommandLineToArgvW(GetCommandLineW(), &argc);
-    if (argvw == NULL) {
+    if (!argvw) {
         return OutOfMemory();
     }
 
@@ -54,13 +54,13 @@ static int main_getcmdline(void)
 
     /* Parse it into argv and argc */
     argv = (char **)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, (argc + 1) * sizeof(*argv));
-    if (argv == NULL) {
+    if (!argv) {
         return OutOfMemory();
     }
     for (i = 0; i < argc; ++i) {
         DWORD len;
         char *arg = WIN_StringToUTF8W(argvw[i]);
-        if (arg == NULL) {
+        if (!arg) {
             return OutOfMemory();
         }
         len = (DWORD)SDL_strlen(arg);
@@ -103,7 +103,7 @@ int console_wmain(int argc, wchar_t *wargv[], wchar_t *wenvp)
 #endif
 
 /* This is where execution begins [windowed apps] */
-int WINAPI
+int WINAPI MINGW32_FORCEALIGN
 WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR szCmdLine, int sw) /* NOLINT(readability-inconsistent-declaration-parameter-name) */
 {
     return main_getcmdline();

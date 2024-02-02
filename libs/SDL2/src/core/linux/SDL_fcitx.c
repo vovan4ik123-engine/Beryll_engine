@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2023 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -28,7 +28,7 @@
 #include "../../events/SDL_keyboard_c.h"
 #include "SDL_dbus.h"
 #include "SDL_syswm.h"
-#if SDL_VIDEO_DRIVER_X11
+#ifdef SDL_VIDEO_DRIVER_X11
 #  include "../../video/x11/SDL_x11video.h"
 #endif
 #include "SDL_hints.h"
@@ -401,7 +401,6 @@ void SDL_Fcitx_SetFocus(SDL_bool focused)
 void SDL_Fcitx_Reset(void)
 {
     FcitxClientICCallMethod(&fcitx_client, "Reset");
-    FcitxClientICCallMethod(&fcitx_client, "CloseIC");
 }
 
 SDL_bool SDL_Fcitx_ProcessKeyEvent(Uint32 keysym, Uint32 keycode, Uint8 state)
@@ -439,7 +438,7 @@ void SDL_Fcitx_UpdateTextRect(const SDL_Rect *rect)
     }
 
     focused_win = SDL_GetKeyboardFocus();
-    if (focused_win == NULL) {
+    if (!focused_win) {
         return;
     }
 
@@ -450,7 +449,7 @@ void SDL_Fcitx_UpdateTextRect(const SDL_Rect *rect)
 
     SDL_GetWindowPosition(focused_win, &x, &y);
 
-#if SDL_VIDEO_DRIVER_X11
+#ifdef SDL_VIDEO_DRIVER_X11
     if (info.subsystem == SDL_SYSWM_X11) {
         SDL_DisplayData *displaydata = (SDL_DisplayData *) SDL_GetDisplayForWindow(focused_win)->driverdata;
 
