@@ -49,7 +49,7 @@ namespace Beryll
         m_internalShader = Renderer::createShader(BeryllConstants::loadingScreenVertexPath.data(),
                                                   BeryllConstants::loadingScreenFragmentPath.data());
         m_internalShader->bind();
-        m_internalShader->activateDiffuseTexture();
+        m_internalShader->activateDiffuseTextureMat1();
 
         m_created = true;
     }
@@ -62,7 +62,7 @@ namespace Beryll
 
         for(const std::string& path : textures)
         {
-            m_diffuseTextures.emplace_back(Renderer::createTexture(path.c_str(), TextureType::DIFFUSE_TEXTURE));
+            m_diffuseTextures.emplace_back(Renderer::createTexture(path.c_str(), TextureType::DIFFUSE_TEXTURE_MAT_1));
         }
 
         selectRandomTexture();

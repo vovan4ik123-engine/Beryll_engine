@@ -13,7 +13,7 @@ namespace Beryll
         virtual void bind() = 0;
         virtual void unBind() = 0;
 
-        // for uniform variables in shader
+        // For uniform variables in shader.
         virtual void set1Float(const char* name, const float x) = 0;
         virtual void set2Float(const char* name, const glm::vec2& vec) = 0;
         virtual void set3Float(const char* name, const glm::vec3& vec) = 0;
@@ -28,10 +28,17 @@ namespace Beryll
         virtual void setMatrix4x4Float(const char* name, const aiMatrix4x4& value) = 0; // for assimp matrix
         virtual void setMatrix3x3Float(const char* name, const glm::mat3& value) = 0;
 
-        // for texture
-        virtual void activateDiffuseTexture() = 0;
-        virtual void activateSpecularTexture() = 0;
-        virtual void activateNormalMapTexture() = 0;
+        // Material 1.
+        virtual void activateDiffuseTextureMat1() = 0;
+        virtual void activateSpecularTextureMat1() = 0;
+        virtual void activateNormalMapTextureMat1() = 0;
+
+        // Material 2.
+        virtual void activateDiffuseTextureMat2() = 0;
+        virtual void activateSpecularTextureMat2() = 0;
+        virtual void activateNormalMapTextureMat2() = 0;
+        virtual void activateBlendTextureMat2() = 0;
+
         virtual void activateSkyBoxTexture() = 0;
         virtual void activateShadowMapTexture() = 0;
 

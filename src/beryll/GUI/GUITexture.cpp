@@ -13,7 +13,7 @@ namespace Beryll
         m_width = width / 100.0f;
         m_height = height / 100.0f;
 
-        m_texture = Renderer::createTexture(texturePath.c_str(), TextureType::DIFFUSE_TEXTURE);
+        m_texture = Renderer::createTexture(texturePath.c_str(), TextureType::DIFFUSE_TEXTURE_MAT_1);
     }
 
     GUITexture::~GUITexture()

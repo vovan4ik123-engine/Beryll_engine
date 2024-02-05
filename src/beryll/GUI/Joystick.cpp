@@ -16,10 +16,10 @@ namespace Beryll
         m_width = width / 100.0f;
         m_height = height / 100.0f;
 
-        m_defaultTexture = Renderer::createTexture(defaultTexturePath.c_str(), TextureType::DIFFUSE_TEXTURE);
+        m_defaultTexture = Renderer::createTexture(defaultTexturePath.c_str(), TextureType::DIFFUSE_TEXTURE_MAT_1);
 
         if( !touchedTexturePath.empty())
-            m_touchedTexture = Renderer::createTexture(touchedTexturePath.c_str(), TextureType::DIFFUSE_TEXTURE);
+            m_touchedTexture = Renderer::createTexture(touchedTexturePath.c_str(), TextureType::DIFFUSE_TEXTURE_MAT_1);
 
         float leftPosPixels = m_leftPos * MainImGUI::getInstance()->getGUIWidth();
         float rightPosPixels = leftPosPixels + (MainImGUI::getInstance()->getGUIWidth() * m_width);

@@ -22,10 +22,10 @@ namespace Beryll
 
         m_actRepeat = actRepeat;
 
-        m_defaultTexture = Renderer::createTexture(defaultTexturePath.c_str(), TextureType::DIFFUSE_TEXTURE);
+        m_defaultTexture = Renderer::createTexture(defaultTexturePath.c_str(), TextureType::DIFFUSE_TEXTURE_MAT_1);
 
         if( !touchedTexturePath.empty())
-            m_touchedTexture = Renderer::createTexture(touchedTexturePath.c_str(), TextureType::DIFFUSE_TEXTURE);
+            m_touchedTexture = Renderer::createTexture(touchedTexturePath.c_str(), TextureType::DIFFUSE_TEXTURE_MAT_1);
     }
 
     ButtonWithTexture::~ButtonWithTexture()

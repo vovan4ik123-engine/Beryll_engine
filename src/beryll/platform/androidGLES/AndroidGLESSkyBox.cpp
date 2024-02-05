@@ -137,17 +137,17 @@ namespace Beryll
         m_vertexArray->addVertexBuffer(m_vertexPosBuffer);
         m_vertexArray->setIndexBuffer(m_indexBuffer);
 
-        // Bind. Can be bound 1 time to reserved GL_TEXTURE5. No need call bind() in every frame.
-        glActiveTexture(GL_TEXTURE5);
+        // Bind. Can be bound 1 time to reserved GL_TEXTURE7. No need call bind() in every frame.
+        glActiveTexture(GL_TEXTURE7);
         glBindTexture(GL_TEXTURE_CUBE_MAP, m_openGLID);
-        GLESStateVariables::currentSkyBoxTextureID5 = m_openGLID;
+        GLESStateVariables::currentSkyBoxTextureID7 = m_openGLID;
     }
 
     AndroidGLESSkyBox::~AndroidGLESSkyBox()
     {
-        glActiveTexture(GL_TEXTURE5);
+        glActiveTexture(GL_TEXTURE7);
         glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-        GLESStateVariables::currentSkyBoxTextureID5 = 0;
+        GLESStateVariables::currentSkyBoxTextureID7 = 0;
         glDeleteTextures(1, &m_openGLID);
     }
 

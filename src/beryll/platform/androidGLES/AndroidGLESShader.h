@@ -27,9 +27,17 @@ namespace Beryll
         void setMatrix4x4Float(const char* name, const aiMatrix4x4& value) override;
         void setMatrix3x3Float(const char* name, const glm::mat3& value) override;
 
-        void activateDiffuseTexture() override;
-        void activateSpecularTexture() override;
-        void activateNormalMapTexture() override;
+        // Material 1.
+        void activateDiffuseTextureMat1() override;
+        void activateSpecularTextureMat1() override;
+        void activateNormalMapTextureMat1() override;
+
+        // Material 2.
+        void activateDiffuseTextureMat2() override;
+        void activateSpecularTextureMat2() override;
+        void activateNormalMapTextureMat2() override;
+        void activateBlendTextureMat2() override;
+
         void activateSkyBoxTexture() override;
         void activateShadowMapTexture() override;
 

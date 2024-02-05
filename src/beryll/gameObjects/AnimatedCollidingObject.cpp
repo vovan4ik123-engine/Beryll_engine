@@ -295,8 +295,8 @@ namespace Beryll
                     texturePath += textName2;
                     BR_INFO("Diffuse texture here: %s", texturePath.c_str());
 
-                    m_diffTexture = Renderer::createTexture(texturePath.c_str(), TextureType::DIFFUSE_TEXTURE);
-                    m_internalShader->activateDiffuseTexture();
+                    m_diffTexture = Renderer::createTexture(texturePath.c_str(), TextureType::DIFFUSE_TEXTURE_MAT_1);
+                    m_internalShader->activateDiffuseTextureMat1();
                 }
 
                 if(material->GetTextureCount(aiTextureType_SPECULAR) > 0)
@@ -318,8 +318,8 @@ namespace Beryll
                     texturePath += textName2;
                     BR_INFO("Specular texture here: %s", texturePath.c_str());
 
-                    m_specTexture = Renderer::createTexture(texturePath.c_str(), TextureType::SPECULAR_TEXTURE);
-                    m_internalShader->activateSpecularTexture();
+                    m_specTexture = Renderer::createTexture(texturePath.c_str(), TextureType::SPECULAR_TEXTURE_MAT_1);
+                    m_internalShader->activateSpecularTextureMat1();
                 }
 
                 if(material->GetTextureCount(aiTextureType_NORMALS) > 0)
@@ -341,8 +341,8 @@ namespace Beryll
                     texturePath += textName2;
                     BR_INFO("Normal map texture here: %s", texturePath.c_str());
 
-                    m_normalMapTexture = Renderer::createTexture(texturePath.c_str(), TextureType::NORMAL_MAP_TEXTURE);
-                    m_internalShader->activateNormalMapTexture();
+                    m_normalMapTexture = Renderer::createTexture(texturePath.c_str(), TextureType::NORMAL_MAP_TEXTURE_MAT_1);
+                    m_internalShader->activateNormalMapTextureMat1();
 
                     BR_INFO("%s", "Create tangents buffer because model has normal map");
                     m_vertexTangentsBuffer = Renderer::createStaticVertexBuffer(tangents);

@@ -9,9 +9,19 @@ namespace Beryll
     enum class TextureType
     {
         UNKNOWN, // Default value.
-        DIFFUSE_TEXTURE, // Base color texture with RGB(A) colors of surface.
-        SPECULAR_TEXTURE, // Specific texture with areas on object surface which should reflect light.
-        NORMAL_MAP_TEXTURE, // Texture with normals per fragment.
+        // Material 1.
+        DIFFUSE_TEXTURE_MAT_1, // Base color texture with RGB(A) colors of surface.
+        SPECULAR_TEXTURE_MAT_1, // Specific texture with areas on object surface which should reflect light.
+        NORMAL_MAP_TEXTURE_MAT_1, // Texture with normals per fragment.
+
+        // Material 2.
+        DIFFUSE_TEXTURE_MAT_2,
+        SPECULAR_TEXTURE_MAT_2,
+        NORMAL_MAP_TEXTURE_MAT_2,
+        BLEND_TEXTURE_MAT_2, // If material 2 exist it should has blend texture for blend textures from material 1 and 2.
+                             // White color on blend texture = texture from mat 1, black color = texture from mat 2. Gray color = 50/50.
+
+        // Other
         SHADOW_MAP_TEXTURE // Generated every frame from Z buffer of scene for shadows.
     };
 

@@ -50,7 +50,7 @@ namespace Beryll
         ImGui_ImplOpenGL3_CreateFontsTexture();
         ImGui::GetIO().FontDefault = fontDefault;
 
-        ImGui::GetCurrentContext()->Style.FramePadding = ImVec2{1.0f, 1.0f};
+        ImGui::GetCurrentContext()->Style.FramePadding = ImVec2{0.0f, 0.0f};
 
         BR_INFO("AndroidGLESImGUI created and initialized. width: %f, height: %f", ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y);
     }

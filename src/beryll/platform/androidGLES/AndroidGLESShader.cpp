@@ -300,28 +300,48 @@ namespace Beryll
         m_uniformsNameID.emplace_back(UniformsLocations{name, id});
     }
 
-    void AndroidGLESShader::activateDiffuseTexture()
+    void AndroidGLESShader::activateDiffuseTextureMat1()
     {
         glUniform1i(glGetUniformLocation(*m_shaderProgramID, "diffuseTexture"), 0);
     }
 
-    void AndroidGLESShader::activateSpecularTexture()
+    void AndroidGLESShader::activateSpecularTextureMat1()
     {
         glUniform1i(glGetUniformLocation(*m_shaderProgramID, "specularTexture"), 1);
     }
 
-    void AndroidGLESShader::activateNormalMapTexture()
+    void AndroidGLESShader::activateNormalMapTextureMat1()
     {
         glUniform1i(glGetUniformLocation(*m_shaderProgramID, "normalMapTexture"), 2);
     }
 
+    void AndroidGLESShader::activateDiffuseTextureMat2()
+    {
+        glUniform1i(glGetUniformLocation(*m_shaderProgramID, "diffuseTextureMat2"), 3);
+    }
+
+    void AndroidGLESShader::activateSpecularTextureMat2()
+    {
+        glUniform1i(glGetUniformLocation(*m_shaderProgramID, "specularTextureMat2"), 4);
+    }
+
+    void AndroidGLESShader::activateNormalMapTextureMat2()
+    {
+        glUniform1i(glGetUniformLocation(*m_shaderProgramID, "normalMapTextureMat2"), 5);
+    }
+
+    void AndroidGLESShader::activateBlendTextureMat2()
+    {
+        glUniform1i(glGetUniformLocation(*m_shaderProgramID, "blendTextureMat2"), 6);
+    }
+
     void AndroidGLESShader::activateSkyBoxTexture()
     {
-        glUniform1i(glGetUniformLocation(*m_shaderProgramID, "skyBoxTexture"), 5);
+        glUniform1i(glGetUniformLocation(*m_shaderProgramID, "skyBoxTexture"), 7);
     }
 
     void AndroidGLESShader::activateShadowMapTexture()
     {
-        glUniform1i(glGetUniformLocation(*m_shaderProgramID, "shadowMapTexture"), 6);
+        glUniform1i(glGetUniformLocation(*m_shaderProgramID, "shadowMapTexture"), 8);
     }
 }

@@ -70,9 +70,9 @@ namespace Beryll
         if(vertBuff->getAttribType() == VertexAttribType::FLOAT &&
            vertBuff->getAttribSize() == VertexAttribSize::MATRIX4x4)
         {
-            // Be carefully. Vertex shader can not accept mat4 into one layout(location = ...)
-            // Max data structure accepted in one layout(location = ...) is vec4
-            // So, mat4 will occupy 4 * layout(location = ...) with vec4 for every matrix column
+            // Be carefully. Vertex shader can not accept mat4 into one layout(location = ...).
+            // Max data structure accepted in one layout(location = ...) is vec4.
+            // So, mat4 will occupy 4 * layout(location = ...) with vec4 for every matrix column.
 
             glEnableVertexAttribArray(m_indexNumber);
             glVertexAttribPointer(m_indexNumber, 4, type, GL_FALSE, stride, (void*)0);

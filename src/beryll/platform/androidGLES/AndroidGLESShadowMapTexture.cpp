@@ -38,7 +38,7 @@ namespace Beryll
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_openGLID, 0);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D ,m_openGLID);
-        GLESStateVariables::currentDiffuseTextureID0 = m_openGLID;
+        GLESStateVariables::currentDiffuseTextureMat1ID0 = m_openGLID;
         glBindFramebuffer(GL_FRAMEBUFFER, m_defaultFBO);
 
         m_shaderSimple = Beryll::Renderer::createShader(BeryllConstants::simpleObjShadowMapVertexPath.data(),
@@ -46,17 +46,17 @@ namespace Beryll
         m_shaderAnimated = Beryll::Renderer::createShader(BeryllConstants::animatedObjShadowMapVertexPath.data(),
                                                           BeryllConstants::animatedObjShadowMapFragmentPath.data());
 
-        // Bind. Can be bound 1 time to reserved GL_TEXTURE6. No need call bind() in every frame.
-        glActiveTexture(GL_TEXTURE6);
+        // Bind. Can be bound 1 time to reserved GL_TEXTURE8. No need call bind() in every frame.
+        glActiveTexture(GL_TEXTURE8);
         glBindTexture(GL_TEXTURE_2D, m_openGLID);
-        GLESStateVariables::currentShadowMapTextureID6 = m_openGLID;
+        GLESStateVariables::currentShadowMapTextureID8 = m_openGLID;
     }
 
     AndroidGLESShadowMapTexture::~AndroidGLESShadowMapTexture()
     {
-        glActiveTexture(GL_TEXTURE6);
+        glActiveTexture(GL_TEXTURE8);
         glBindTexture(GL_TEXTURE_2D, 0);
-        GLESStateVariables::currentShadowMapTextureID6 = 0;
+        GLESStateVariables::currentShadowMapTextureID8 = 0;
         glDeleteTextures(1, &m_openGLID);
 
         glBindFramebuffer(GL_FRAMEBUFFER, m_defaultFBO);
@@ -65,22 +65,22 @@ namespace Beryll
 
     void AndroidGLESShadowMapTexture::bind()
     {
-        if(GLESStateVariables::currentShadowMapTextureID6 != m_openGLID)
+        if(GLESStateVariables::currentShadowMapTextureID8 != m_openGLID)
         {
-            glActiveTexture(GL_TEXTURE6);
+            glActiveTexture(GL_TEXTURE8);
             glBindTexture(GL_TEXTURE_2D, m_openGLID);
-            GLESStateVariables::currentShadowMapTextureID6 = m_openGLID;
+            GLESStateVariables::currentShadowMapTextureID8 = m_openGLID;
         }
     }
 
     void AndroidGLESShadowMapTexture::unBind()
     {
         // This object can unbind only his own texture.
-        if(GLESStateVariables::currentShadowMapTextureID6 == m_openGLID)
+        if(GLESStateVariables::currentShadowMapTextureID8 == m_openGLID)
         {
-            glActiveTexture(GL_TEXTURE6);
+            glActiveTexture(GL_TEXTURE8);
             glBindTexture(GL_TEXTURE_2D, 0);
-            GLESStateVariables::currentShadowMapTextureID6 = 0;
+            GLESStateVariables::currentShadowMapTextureID8 = 0;
         }
     }
 
