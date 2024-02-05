@@ -7,7 +7,7 @@
 
 namespace Beryll
 {
-    // This texture is loaded from file .png or .jpg
+    // This texture is loaded from file .png or .jpg.
     class AndroidGLESTexture : public Texture
     {
     public:
@@ -19,13 +19,6 @@ namespace Beryll
         uint32_t getID() override { return *m_openGLID; }
         int getWidth() override { return m_width; }
         int getHeight() override { return m_height; }
-
-        void drawIntoShadowMap(const std::vector<std::shared_ptr<Beryll::BaseSimpleObject>>& simpleObj,
-                               const std::vector<std::shared_ptr<Beryll::BaseAnimatedObject>>& animatedObj,
-                               const glm::mat4& VPLightMatrix) override
-        {
-            BR_ASSERT(false, "%s", "drawIntoShadowMap() can be called only from shadow map texture.");
-        }
 
     private:
         friend class Renderer;

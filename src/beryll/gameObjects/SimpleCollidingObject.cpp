@@ -199,78 +199,16 @@ namespace Beryll
         // Load Material 1. At lest diffuse texture of material 1 must exist.
         if(graphicsMesh->mMaterialIndex >= 0)
         {
-            aiMaterial* material = scene->mMaterials[graphicsMesh->mMaterialIndex];
+            m_material1 = BeryllUtils::Common::loadMaterial1(scene->mMaterials[graphicsMesh->mMaterialIndex], filePath);
 
-            BR_ASSERT((filePath.find_last_of('/') != std::string::npos), "Texture + model must be in folder: %s", filePath.c_str());
-
-            std::string texturePath;
-
-            if(material->GetTextureCount(aiTextureType_DIFFUSE) > 0)
-            {
-                aiString textName;
-                material->GetTexture(aiTextureType_DIFFUSE, 0, &textName);
-
-                std::string textName2 = textName.C_Str();
-                for(int g = static_cast<int>(textName2.size()) - 1; g >= 0; --g)
-                {
-                    if(textName2[g] == '/' || textName2[g] == '\\')
-                    {
-                        textName2 = textName2.substr(g + 1);
-                        break;
-                    }
-                }
-                texturePath = filePath.substr(0, filePath.find_last_of('/'));
-                texturePath += '/';
-                texturePath += textName2;
-                BR_INFO("Diffuse texture here: %s", texturePath.c_str());
-
-                m_material1.diffTexture = Renderer::createTexture(texturePath.c_str(), TextureType::DIFFUSE_TEXTURE_MAT_1);
+            if(m_material1.diffTexture)
                 m_internalShader->activateDiffuseTextureMat1();
-            }
 
-            if(material->GetTextureCount(aiTextureType_SPECULAR) > 0)
-            {
-                aiString textName;
-                material->GetTexture(aiTextureType_SPECULAR, 0, &textName);
-
-                std::string textName2 = textName.C_Str();
-                for(int g = static_cast<int>(textName2.size()) - 1; g >= 0; --g)
-                {
-                    if(textName2[g] == '/' || textName2[g] == '\\')
-                    {
-                        textName2 = textName2.substr(g + 1);
-                        break;
-                    }
-                }
-                texturePath = filePath.substr(0, filePath.find_last_of('/'));
-                texturePath += '/';
-                texturePath += textName2;
-                BR_INFO("Specular texture here: %s", texturePath.c_str());
-
-                m_material1.specTexture = Renderer::createTexture(texturePath.c_str(), TextureType::SPECULAR_TEXTURE_MAT_1);
+            if(m_material1.specTexture)
                 m_internalShader->activateSpecularTextureMat1();
-            }
 
-            if(material->GetTextureCount(aiTextureType_NORMALS) > 0)
+            if(m_material1.normalMapTexture)
             {
-                aiString textName;
-                material->GetTexture(aiTextureType_NORMALS, 0, &textName);
-
-                std::string textName2 = textName.C_Str();
-                for(int g = static_cast<int>(textName2.size()) - 1; g >= 0; --g)
-                {
-                    if(textName2[g] == '/' || textName2[g] == '\\')
-                    {
-                        textName2 = textName2.substr(g + 1);
-                        break;
-                    }
-                }
-                texturePath = filePath.substr(0, filePath.find_last_of('/'));
-                texturePath += '/';
-                texturePath += textName2;
-                BR_INFO("Normal map texture here: %s", texturePath.c_str());
-
-                m_material1.normalMapTexture = Renderer::createTexture(texturePath.c_str(), TextureType::NORMAL_MAP_TEXTURE_MAT_1);
                 m_internalShader->activateNormalMapTextureMat1();
 
                 BR_INFO("%s", "Create tangents buffer because model has normal map.");

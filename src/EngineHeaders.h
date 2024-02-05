@@ -18,7 +18,6 @@
 #include "beryll/renderer/Camera.h"
 #include "beryll/renderer/SkyBox.h"
 #include "beryll/renderer/Renderer.h"
-#include "beryll/renderer/Material.h"
 
 #include "beryll/gameObjects/BaseSimpleObject.h"
 #include "beryll/gameObjects/BaseAnimatedObject.h"

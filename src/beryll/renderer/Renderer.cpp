@@ -140,10 +140,10 @@ namespace Beryll
 #endif
     }
 
-    std::unique_ptr<Texture> Renderer::createShadowMapTexture(int width, int height)
+    std::unique_ptr<ShadowMap> Renderer::createShadowMap(int width, int height)
     {
 #if defined(ANDROID)
-        return std::unique_ptr<Texture>(new AndroidGLESShadowMapTexture(width, height));
+        return std::unique_ptr<ShadowMap>(new AndroidGLESShadowMapTexture(width, height));
 #elif defined(APPLE)
 
 #else

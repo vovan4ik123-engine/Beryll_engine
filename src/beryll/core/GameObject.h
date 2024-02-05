@@ -3,7 +3,6 @@
 #include "LibsHeaders.h"
 #include "CppHeaders.h"
 
-#include "beryll/physics/Physics.h"
 #include "beryll/utils/CommonUtils.h"
 #include "beryll/core/Log.h"
 

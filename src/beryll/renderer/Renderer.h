@@ -7,6 +7,7 @@
 #include "VertexArray.h"
 #include "Shader.h"
 #include "Texture.h"
+#include "ShadowMap.h"
 #include "SkyBox.h"
 #include "beryll/gameObjects/BaseSimpleObject.h"
 #include "beryll/gameObjects/BaseAnimatedObject.h"
@@ -30,19 +31,18 @@ namespace Beryll
 
         static std::shared_ptr<IndexBuffer> createStaticIndexBuffer(const std::vector<uint32_t>& indices);
         // If you wand dynamic index buffer: create static index buffer with max possible indices
-        //                                   and change count by setCount(uint32_t count) every frame
+        //                                   and change count by setCount(uint32_t count) every frame.
 
         static std::unique_ptr<VertexArray> createVertexArray();
 
         static std::shared_ptr<Shader> createShader(const char* vertexPath, const char* fragmentPath);
-
         static std::unique_ptr<Texture> createTexture(const char* path, TextureType type);
-        static std::unique_ptr<Texture> createShadowMapTexture(int width, int height);
+        static std::unique_ptr<ShadowMap> createShadowMap(int width, int height);
 
         static std::unique_ptr<SkyBox> createSkyBox(const char* folderPath);
 
         // These 2 methods will set BaseSimpleObject and BaseAnimatedObject specific uniform variables
-        // which shader must have for draw them.
+        // which shader must have to draw them.
         // If shader has some extra uniform variables they should be set before this methods call.
         static void drawObject(const std::shared_ptr<Beryll::BaseSimpleObject>& obj,
                                const glm::mat4& modelMatrix,

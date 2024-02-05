@@ -8,6 +8,7 @@
 #include "beryll/renderer/VertexArray.h"
 #include "beryll/renderer/Texture.h"
 #include "beryll/core/RandomGenerator.h"
+#include "beryll/core/Log.h"
 
 namespace Beryll
 {

@@ -5,6 +5,7 @@
 
 #include "beryll/core/BeryllConstants.h"
 #include "beryll/core/Log.h"
+#include "beryll/renderer/Material.h"
 
 namespace BeryllUtils
 {
@@ -132,6 +133,8 @@ namespace BeryllUtils
         // return glm::quat that need to make dest from start
         // static glm::quat getRotationBetweenVectors(const glm::vec3& start, const glm::vec3& dest)
         // use glm::rotation
+
+        static Beryll::Material1 loadMaterial1(aiMaterial* material, const std::string& filePath);
 
     private:
         static int m_id;
