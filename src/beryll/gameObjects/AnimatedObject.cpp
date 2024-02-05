@@ -210,17 +210,17 @@ namespace Beryll
         m_vertexArray->addVertexBuffer(m_textureCoordsBuffer);
         m_vertexArray->addVertexBuffer(m_boneIDsBuffer);
         m_vertexArray->addVertexBuffer(m_boneWeightsBuffer);
-        // tangents buffer will added if model has normal map
+        // Tangents buffer will added if model has normal map.
         m_vertexArray->setIndexBuffer(m_indexBuffer);
 
         m_internalShader = Renderer::createShader(BeryllConstants::animatedObjDefaultVertexPath.data(),
                                                   BeryllConstants::animatedObjDefaultFragmentPath.data());
         m_internalShader->bind();
 
-        // material
+        // Load Material 1. At lest diffuse texture of material 1 must exist.
         if(m_scene->mMeshes[0]->mMaterialIndex >= 0)
         {
-            aiMaterial *material = m_scene->mMaterials[m_scene->mMeshes[0]->mMaterialIndex];
+            aiMaterial* material = m_scene->mMaterials[m_scene->mMeshes[0]->mMaterialIndex];
 
             BR_ASSERT((m_modelPath.find_last_of('/') != std::string::npos), "Texture + model must be in folder: %s", m_modelPath.c_str());
 
@@ -245,7 +245,7 @@ namespace Beryll
                 texturePath += textName2;
                 BR_INFO("Diffuse texture here: %s", texturePath.c_str());
 
-                m_diffTexture = Renderer::createTexture(texturePath.c_str(), TextureType::DIFFUSE_TEXTURE_MAT_1);
+                m_material1.diffTexture = Renderer::createTexture(texturePath.c_str(), TextureType::DIFFUSE_TEXTURE_MAT_1);
                 m_internalShader->activateDiffuseTextureMat1();
             }
 
@@ -268,7 +268,7 @@ namespace Beryll
                 texturePath += textName2;
                 BR_INFO("Specular texture here: %s", texturePath.c_str());
 
-                m_specTexture = Renderer::createTexture(texturePath.c_str(), TextureType::SPECULAR_TEXTURE_MAT_1);
+                m_material1.specTexture = Renderer::createTexture(texturePath.c_str(), TextureType::SPECULAR_TEXTURE_MAT_1);
                 m_internalShader->activateSpecularTextureMat1();
             }
 
@@ -291,17 +291,19 @@ namespace Beryll
                 texturePath += textName2;
                 BR_INFO("Normal map texture here: %s", texturePath.c_str());
 
-                m_normalMapTexture = Renderer::createTexture(texturePath.c_str(), TextureType::NORMAL_MAP_TEXTURE_MAT_1);
+                m_material1.normalMapTexture = Renderer::createTexture(texturePath.c_str(), TextureType::NORMAL_MAP_TEXTURE_MAT_1);
                 m_internalShader->activateNormalMapTextureMat1();
 
-                BR_INFO("%s", "Create tangents buffer because model has normal map");
+                BR_INFO("%s", "Create tangents buffer because model has normal map.");
                 m_vertexTangentsBuffer = Renderer::createStaticVertexBuffer(tangents);
 
                 m_vertexArray->addVertexBuffer(m_vertexTangentsBuffer);
             }
         }
 
-        // animations
+        BR_ASSERT((m_material1.diffTexture != nullptr), "%s", "Object must have at least one diffuse texture.");
+
+        // Animations.
         for(int i = 0; i < m_scene->mNumAnimations; ++i)
         {
             std::string animName = m_scene->mAnimations[i]->mName.C_Str();
@@ -364,9 +366,13 @@ namespace Beryll
             }
         }
 
-        if(m_diffTexture && useInternalTextures) { m_diffTexture->bind(); }
-        if(m_specTexture && useInternalTextures) { m_specTexture->bind(); }
-        if(m_normalMapTexture && useInternalTextures) { m_normalMapTexture->bind(); }
+        if(useInternalMaterials)
+        {
+            m_material1.bind();
+
+            if(m_material2)
+                m_material2->bind();
+        }
 
         m_vertexArray->bind();
         m_vertexArray->draw();

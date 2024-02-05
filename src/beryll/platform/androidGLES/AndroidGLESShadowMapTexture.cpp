@@ -108,10 +108,10 @@ namespace Beryll
                 {
                     m_shaderSimple->setMatrix4x4Float("MVPMatrix", VPLightMatrix * so->getModelMatrix());
                     so->useInternalShader = false;
-                    so->useInternalTextures = false;
+                    so->useInternalMaterials = false;
                     so->draw();
                     so->useInternalShader = true;
-                    so->useInternalTextures = true;
+                    so->useInternalMaterials = true;
                 }
             }
         }
@@ -135,10 +135,10 @@ namespace Beryll
                         m_shaderAnimated->setMatrix4x4Float(boneMatrixNameInShader.c_str(), ao->getBoneMatrices()[i].finalWorldTransform);
                     }
                     ao->useInternalShader = false;
-                    ao->useInternalTextures = false;
+                    ao->useInternalMaterials = false;
                     ao->draw();
                     ao->useInternalShader = true;
-                    ao->useInternalTextures = true;
+                    ao->useInternalMaterials = true;
                 }
             }
         }

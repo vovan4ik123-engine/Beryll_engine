@@ -92,9 +92,13 @@ namespace Beryll
             m_internalShader->setMatrix4x4Float("MVPMatrix", Camera::getViewProjection() * getModelMatrix());
         }
 
-        if(m_diffTexture && useInternalTextures) { m_diffTexture->bind(); }
-        if(m_specTexture && useInternalTextures) { m_specTexture->bind(); }
-        if(m_normalMapTexture && useInternalTextures) { m_normalMapTexture->bind(); }
+        if(useInternalMaterials)
+        {
+            m_material1.bind();
+
+            if(m_material2)
+                m_material2->bind();
+        }
 
         m_vertexArray->bind();
         m_vertexArray->draw();
@@ -192,7 +196,7 @@ namespace Beryll
                                                   BeryllConstants::simpleObjDefaultFragmentPath.data());
         m_internalShader->bind();
 
-        // Material.
+        // Load Material 1. At lest diffuse texture of material 1 must exist.
         if(graphicsMesh->mMaterialIndex >= 0)
         {
             aiMaterial* material = scene->mMaterials[graphicsMesh->mMaterialIndex];
@@ -220,7 +224,7 @@ namespace Beryll
                 texturePath += textName2;
                 BR_INFO("Diffuse texture here: %s", texturePath.c_str());
 
-                m_diffTexture = Renderer::createTexture(texturePath.c_str(), TextureType::DIFFUSE_TEXTURE_MAT_1);
+                m_material1.diffTexture = Renderer::createTexture(texturePath.c_str(), TextureType::DIFFUSE_TEXTURE_MAT_1);
                 m_internalShader->activateDiffuseTextureMat1();
             }
 
@@ -243,7 +247,7 @@ namespace Beryll
                 texturePath += textName2;
                 BR_INFO("Specular texture here: %s", texturePath.c_str());
 
-                m_specTexture = Renderer::createTexture(texturePath.c_str(), TextureType::SPECULAR_TEXTURE_MAT_1);
+                m_material1.specTexture = Renderer::createTexture(texturePath.c_str(), TextureType::SPECULAR_TEXTURE_MAT_1);
                 m_internalShader->activateSpecularTextureMat1();
             }
 
@@ -266,7 +270,7 @@ namespace Beryll
                 texturePath += textName2;
                 BR_INFO("Normal map texture here: %s", texturePath.c_str());
 
-                m_normalMapTexture = Renderer::createTexture(texturePath.c_str(), TextureType::NORMAL_MAP_TEXTURE_MAT_1);
+                m_material1.normalMapTexture = Renderer::createTexture(texturePath.c_str(), TextureType::NORMAL_MAP_TEXTURE_MAT_1);
                 m_internalShader->activateNormalMapTextureMat1();
 
                 BR_INFO("%s", "Create tangents buffer because model has normal map.");
@@ -275,6 +279,8 @@ namespace Beryll
                 m_vertexArray->addVertexBuffer(m_vertexTangentsBuffer);
             }
         }
+
+        BR_ASSERT((m_material1.diffTexture != nullptr), "%s", "Object must have at least one diffuse texture.");
 
         const aiNode* node = BeryllUtils::Common::findAinodeForAimesh(scene, scene->mRootNode, graphicsMesh->mName);
         if(node)

@@ -336,7 +336,7 @@ namespace Beryll
          */
 
         bool useInternalShader = true;
-        bool useInternalTextures = true;
+        bool useInternalMaterials = true;
 
     protected:
         //float m_scale = 1.0f; // Unused for now.
