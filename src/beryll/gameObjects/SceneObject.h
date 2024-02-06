@@ -3,6 +3,7 @@
 #include "beryll/core/GameObject.h"
 #include "beryll/utils/Matrix.h"
 #include "beryll/physics/Physics.h"
+#include "beryll/renderer/Shader.h"
 
 namespace Beryll
 {
@@ -338,6 +339,9 @@ namespace Beryll
                                   const std::string& normalMapPath,
                                   const std::string& blendTexturePath) = 0;
 
+        float getAddToUVCoords() { return m_addToUVCoords; }
+        float getUVCoordsMultiplier() { return m_UVCoordsMultiplier; }
+
         bool useInternalShader = true;
         bool useInternalMaterials = true;
 
@@ -367,6 +371,15 @@ namespace Beryll
         float m_collisionMass = 0.0f;
 
         SceneObjectGroups m_sceneObjectGroup = SceneObjectGroups::NONE; // Any scene object can belong to specific group.
+
+        // Graphics data.
+        std::shared_ptr<Shader> m_internalShader; // Default, simple shader.
+        Material1 m_material1;
+        std::optional<Material2> m_material2;
+        // Can be used in shader to return UV coords in range 0...1 if was scaled. Useful if we have m_material2 with blend texture.
+        // Shader code example: vec2 blendTextureUV = (inUV + m_addToUVCoords) * m_UVCoordsMultiplier;
+        float m_addToUVCoords = 0.0f;
+        float m_UVCoordsMultiplier = 0.0f;
 
     private:
         // Only for internal checks inside this file.
