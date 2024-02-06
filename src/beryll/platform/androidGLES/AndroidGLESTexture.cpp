@@ -74,24 +74,7 @@ namespace Beryll
             auto result =  m_textures.find(m_ID);
             if(result != m_textures.end())
             {
-                if(m_type == TextureType::DIFFUSE_TEXTURE_MAT_1  && GLESStateVariables::currentDiffuseTextureMat1ID0 == *m_openGLID)
-                {
-                    glActiveTexture(GL_TEXTURE0);
-                    glBindTexture(GL_TEXTURE_2D, 0);
-                    GLESStateVariables::currentDiffuseTextureMat1ID0 = 0;
-                }
-                else if(m_type == TextureType::SPECULAR_TEXTURE_MAT_1 && GLESStateVariables::currentSpecularTextureMat1ID1 == *m_openGLID)
-                {
-                    glActiveTexture(GL_TEXTURE1);
-                    glBindTexture(GL_TEXTURE_2D, 0);
-                    GLESStateVariables::currentSpecularTextureMat1ID1 = 0;
-                }
-                else if(m_type == TextureType::NORMAL_MAP_TEXTURE_MAT_1 && GLESStateVariables::currentNormalMapTextureMat1ID2 == *m_openGLID)
-                {
-                    glActiveTexture(GL_TEXTURE2);
-                    glBindTexture(GL_TEXTURE_2D, 0);
-                    GLESStateVariables::currentNormalMapTextureMat1ID2 = 0;
-                }
+                unBindNotVirtual();
 
                 glDeleteTextures(1, m_openGLID.get());
                 m_textures.erase(result);
@@ -102,49 +85,148 @@ namespace Beryll
     void AndroidGLESTexture::bind()
     {
         // Dont bind if m_openGLID already bound.
-        if(m_type == TextureType::DIFFUSE_TEXTURE_MAT_1 && GLESStateVariables::currentDiffuseTextureMat1ID0 != *m_openGLID)
-        {
-            //BR_INFO("%s", "bind diffuse texture");
-            glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, *m_openGLID);
-            GLESStateVariables::currentDiffuseTextureMat1ID0 = *m_openGLID;
+        if(m_type == TextureType::DIFFUSE_TEXTURE_MAT_1) // DONT combine two if() here. Most objects will have one diffuse texture
+        {                                                // and if/else chain should stop checks in first if().
+            if(GLESStateVariables::currentDiffuseTextureMat1ID0 != *m_openGLID)
+            {
+                //BR_INFO("%s", "DIFFUSE_TEXTURE_MAT_1");
+                glActiveTexture(GL_TEXTURE0);
+                glBindTexture(GL_TEXTURE_2D, *m_openGLID);
+                GLESStateVariables::currentDiffuseTextureMat1ID0 = *m_openGLID;
+            }
         }
-        else if(m_type == TextureType::SPECULAR_TEXTURE_MAT_1 && GLESStateVariables::currentSpecularTextureMat1ID1 != *m_openGLID)
+        else if(m_type == TextureType::SPECULAR_TEXTURE_MAT_1)
         {
-            //BR_INFO("%s", "bind specular texture");
-            glActiveTexture(GL_TEXTURE1);
-            glBindTexture(GL_TEXTURE_2D, *m_openGLID);
-            GLESStateVariables::currentSpecularTextureMat1ID1 = *m_openGLID;
+            if(GLESStateVariables::currentSpecularTextureMat1ID1 != *m_openGLID)
+            {
+                //BR_INFO("%s", "SPECULAR_TEXTURE_MAT_1");
+                glActiveTexture(GL_TEXTURE1);
+                glBindTexture(GL_TEXTURE_2D, *m_openGLID);
+                GLESStateVariables::currentSpecularTextureMat1ID1 = *m_openGLID;
+            }
         }
-        else if(m_type == TextureType::NORMAL_MAP_TEXTURE_MAT_1 && GLESStateVariables::currentNormalMapTextureMat1ID2 != *m_openGLID)
+        else if(m_type == TextureType::NORMAL_MAP_TEXTURE_MAT_1)
         {
-            //BR_INFO("%s", "bind normal map texture");
-            glActiveTexture(GL_TEXTURE2);
-            glBindTexture(GL_TEXTURE_2D, *m_openGLID);
-            GLESStateVariables::currentNormalMapTextureMat1ID2 = *m_openGLID;
+            if(GLESStateVariables::currentNormalMapTextureMat1ID2 != *m_openGLID)
+            {
+                //BR_INFO("%s", "NORMAL_MAP_TEXTURE_MAT_1");
+                glActiveTexture(GL_TEXTURE2);
+                glBindTexture(GL_TEXTURE_2D, *m_openGLID);
+                GLESStateVariables::currentNormalMapTextureMat1ID2 = *m_openGLID;
+            }
+        }
+        else if(m_type == TextureType::DIFFUSE_TEXTURE_MAT_2)
+        {
+            if(GLESStateVariables::currentDiffuseTextureMat2ID3 != *m_openGLID)
+            {
+                //BR_INFO("%s", "bind DIFFUSE_TEXTURE_MAT_2");
+                glActiveTexture(GL_TEXTURE3);
+                glBindTexture(GL_TEXTURE_2D, *m_openGLID);
+                GLESStateVariables::currentDiffuseTextureMat2ID3 = *m_openGLID;
+            }
+        }
+        else if(m_type == TextureType::SPECULAR_TEXTURE_MAT_2)
+        {
+            if(GLESStateVariables::currentSpecularTextureMat2ID4 != *m_openGLID)
+            {
+                //BR_INFO("%s", "bind SPECULAR_TEXTURE_MAT_2");
+                glActiveTexture(GL_TEXTURE4);
+                glBindTexture(GL_TEXTURE_2D, *m_openGLID);
+                GLESStateVariables::currentSpecularTextureMat2ID4 = *m_openGLID;
+            }
+        }
+        else if(m_type == TextureType::NORMAL_MAP_TEXTURE_MAT_2)
+        {
+            if(GLESStateVariables::currentNormalMapTextureMat2ID5 != *m_openGLID)
+            {
+                //BR_INFO("%s", "bind NORMAL_MAP_TEXTURE_MAT_2");
+                glActiveTexture(GL_TEXTURE5);
+                glBindTexture(GL_TEXTURE_2D, *m_openGLID);
+                GLESStateVariables::currentNormalMapTextureMat2ID5 = *m_openGLID;
+            }
+        }
+        else if(m_type == TextureType::BLEND_TEXTURE_MAT_2)
+        {
+            if(GLESStateVariables::currentBlendTextureMat2ID6 != *m_openGLID)
+            {
+                //BR_INFO("%s", "bind BLEND_TEXTURE_MAT_2");
+                glActiveTexture(GL_TEXTURE6);
+                glBindTexture(GL_TEXTURE_2D, *m_openGLID);
+                GLESStateVariables::currentBlendTextureMat2ID6 = *m_openGLID;
+            }
         }
     }
 
     void AndroidGLESTexture::unBind()
     {
+        unBindNotVirtual();
+    }
+
+    void AndroidGLESTexture::unBindNotVirtual()
+    {
         // This object can unbind only his own texture.
-        if(m_type == TextureType::DIFFUSE_TEXTURE_MAT_1  && GLESStateVariables::currentDiffuseTextureMat1ID0 == *m_openGLID)
+        if(m_type == TextureType::DIFFUSE_TEXTURE_MAT_1)
         {
-            glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, 0);
-            GLESStateVariables::currentDiffuseTextureMat1ID0 = 0;
+            if(GLESStateVariables::currentDiffuseTextureMat1ID0 == *m_openGLID)
+            {
+                glActiveTexture(GL_TEXTURE0);
+                glBindTexture(GL_TEXTURE_2D, 0);
+                GLESStateVariables::currentDiffuseTextureMat1ID0 = 0;
+            }
         }
-        else if(m_type == TextureType::SPECULAR_TEXTURE_MAT_1 && GLESStateVariables::currentSpecularTextureMat1ID1 == *m_openGLID)
+        else if(m_type == TextureType::SPECULAR_TEXTURE_MAT_1)
         {
-            glActiveTexture(GL_TEXTURE1);
-            glBindTexture(GL_TEXTURE_2D, 0);
-            GLESStateVariables::currentSpecularTextureMat1ID1 = 0;
+            if(GLESStateVariables::currentSpecularTextureMat1ID1 == *m_openGLID)
+            {
+                glActiveTexture(GL_TEXTURE1);
+                glBindTexture(GL_TEXTURE_2D, 0);
+                GLESStateVariables::currentSpecularTextureMat1ID1 = 0;
+            }
         }
-        else if(m_type == TextureType::NORMAL_MAP_TEXTURE_MAT_1 && GLESStateVariables::currentNormalMapTextureMat1ID2 == *m_openGLID)
+        else if(m_type == TextureType::NORMAL_MAP_TEXTURE_MAT_1)
         {
-            glActiveTexture(GL_TEXTURE2);
-            glBindTexture(GL_TEXTURE_2D, 0);
-            GLESStateVariables::currentNormalMapTextureMat1ID2 = 0;
+            if(GLESStateVariables::currentNormalMapTextureMat1ID2 == *m_openGLID)
+            {
+                glActiveTexture(GL_TEXTURE2);
+                glBindTexture(GL_TEXTURE_2D, 0);
+                GLESStateVariables::currentNormalMapTextureMat1ID2 = 0;
+            }
+        }
+        else if(m_type == TextureType::DIFFUSE_TEXTURE_MAT_2)
+        {
+            if(GLESStateVariables::currentDiffuseTextureMat2ID3 == *m_openGLID)
+            {
+                glActiveTexture(GL_TEXTURE3);
+                glBindTexture(GL_TEXTURE_2D, 0);
+                GLESStateVariables::currentDiffuseTextureMat2ID3 = 0;
+            }
+        }
+        else if(m_type == TextureType::SPECULAR_TEXTURE_MAT_2)
+        {
+            if(GLESStateVariables::currentSpecularTextureMat2ID4 == *m_openGLID)
+            {
+                glActiveTexture(GL_TEXTURE4);
+                glBindTexture(GL_TEXTURE_2D, 0);
+                GLESStateVariables::currentSpecularTextureMat2ID4 = 0;
+            }
+        }
+        else if(m_type == TextureType::NORMAL_MAP_TEXTURE_MAT_2)
+        {
+            if(GLESStateVariables::currentNormalMapTextureMat2ID5 == *m_openGLID)
+            {
+                glActiveTexture(GL_TEXTURE5);
+                glBindTexture(GL_TEXTURE_2D, 0);
+                GLESStateVariables::currentNormalMapTextureMat2ID5 = 0;
+            }
+        }
+        else if(m_type == TextureType::BLEND_TEXTURE_MAT_2)
+        {
+            if(GLESStateVariables::currentBlendTextureMat2ID6 == *m_openGLID)
+            {
+                glActiveTexture(GL_TEXTURE6);
+                glBindTexture(GL_TEXTURE_2D, 0);
+                GLESStateVariables::currentBlendTextureMat2ID6 = 0;
+            }
         }
     }
 }

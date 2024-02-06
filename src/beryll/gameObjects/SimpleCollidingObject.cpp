@@ -90,6 +90,12 @@ namespace Beryll
         {
             m_internalShader->bind();
             m_internalShader->setMatrix4x4Float("MVPMatrix", Camera::getViewProjection() * getModelMatrix());
+
+            if(m_material2) // If material 2 exist we need that to return UV into 0...1 range for blend texture.
+            {
+                m_internalShader->set1Float("addToUVCoords", m_addToUVCoords);
+                m_internalShader->set1Float("UVCoordsMultiplier", m_UVCoordsMultiplier);
+            }
         }
 
         if(useInternalMaterials)
@@ -119,6 +125,11 @@ namespace Beryll
         tangents.reserve(graphicsMesh->mNumVertices);
         textureCoords.reserve(graphicsMesh->mNumVertices);
         indices.reserve(graphicsMesh->mNumFaces * 3);
+
+        float UVSmallestX = std::numeric_limits<float>::max();
+        float UVBiggestX = std::numeric_limits<float>::min();
+        float UVSmallestY = std::numeric_limits<float>::max();
+        float UVBiggestY = std::numeric_limits<float>::min();
 
         // Vertices.
         for(int g = 0; g < graphicsMesh->mNumVertices; ++g)
@@ -159,10 +170,15 @@ namespace Beryll
                 textureCoords.emplace_back(graphicsMesh->mTextureCoords[0][g].x,
                                            graphicsMesh->mTextureCoords[0][g].y);
 
-                if(std::string(graphicsMesh->mName.C_Str()) == "Grid")
-                {
-                    BR_INFO("textureCoords: %f %f", graphicsMesh->mTextureCoords[0][g].x, graphicsMesh->mTextureCoords[0][g].y);
-                }
+                if(graphicsMesh->mTextureCoords[0][g].x < UVSmallestX)
+                    UVSmallestX = graphicsMesh->mTextureCoords[0][g].x;
+                if(graphicsMesh->mTextureCoords[0][g].x > UVBiggestX)
+                    UVBiggestX = graphicsMesh->mTextureCoords[0][g].x;
+
+                if(graphicsMesh->mTextureCoords[0][g].y < UVSmallestY)
+                    UVSmallestY = graphicsMesh->mTextureCoords[0][g].y;
+                if(graphicsMesh->mTextureCoords[0][g].y > UVBiggestY)
+                    UVBiggestY = graphicsMesh->mTextureCoords[0][g].y;
             }
             else
             {
@@ -174,6 +190,19 @@ namespace Beryll
         m_vertexNormalsBuffer = Renderer::createStaticVertexBuffer(normals);
         m_textureCoordsBuffer = Renderer::createStaticVertexBuffer(textureCoords);
         // Tangents buffer will created if model has normal map.
+
+        float UVXRange = glm::distance(UVSmallestX, UVBiggestX);
+        float UVYRange = glm::distance(UVSmallestY, UVBiggestY);
+        if(UVXRange < UVYRange)
+        {
+            m_addToUVCoords = std::abs(UVSmallestY);
+            m_UVCoordsMultiplier = 1.0f / UVYRange;
+        }
+        else
+        {
+            m_addToUVCoords = std::abs(UVSmallestX);
+            m_UVCoordsMultiplier = 1.0f / UVXRange;
+        }
 
         // Indices.
         for(int g = 0; g < graphicsMesh->mNumFaces; ++g) // Every face MUST be a triangle !!!!
@@ -196,13 +225,12 @@ namespace Beryll
                                                   BeryllConstants::simpleObjDefaultFragmentPath.data());
         m_internalShader->bind();
 
-        // Load Material 1. At lest diffuse texture of material 1 must exist.
+        // Load Material 1. At least diffuse texture of material 1 must exist.
         if(graphicsMesh->mMaterialIndex >= 0)
         {
             m_material1 = BeryllUtils::Common::loadMaterial1(scene->mMaterials[graphicsMesh->mMaterialIndex], filePath);
 
-            if(m_material1.diffTexture)
-                m_internalShader->activateDiffuseTextureMat1();
+            m_internalShader->activateDiffuseTextureMat1();
 
             if(m_material1.specTexture)
                 m_internalShader->activateSpecularTextureMat1();
@@ -217,8 +245,6 @@ namespace Beryll
                 m_vertexArray->addVertexBuffer(m_vertexTangentsBuffer);
             }
         }
-
-        BR_ASSERT((m_material1.diffTexture != nullptr), "%s", "Object must have at least one diffuse texture.");
 
         const aiNode* node = BeryllUtils::Common::findAinodeForAimesh(scene, scene->mRootNode, graphicsMesh->mName);
         if(node)
@@ -378,5 +404,50 @@ namespace Beryll
         }
 
         return objects;
+    }
+
+    void SimpleCollidingObject::addMaterial2(const std::string& diffusePath,
+                                             const std::string& specularPath,
+                                             const std::string& normalMapPath,
+                                             const std::string& blendTexturePath)
+    {
+        m_material2 = BeryllUtils::Common::loadMaterial2(diffusePath, specularPath, normalMapPath, blendTexturePath);
+
+        BR_ASSERT(((m_material1.diffTexture != nullptr && m_material2->diffTexture != nullptr)),
+                  "%s", "m_material1 and m_material2 both must have diffTexture.");
+
+        BR_ASSERT(((m_material1.specTexture != nullptr && m_material2->specTexture != nullptr) ||
+                   (m_material1.specTexture == nullptr && m_material2->specTexture == nullptr)),
+                  "%s", "m_material1 and m_material2 both must have specTexture or both dont.");
+
+        BR_ASSERT(((m_material1.normalMapTexture != nullptr && m_material2->normalMapTexture != nullptr) ||
+                   (m_material1.normalMapTexture == nullptr && m_material2->normalMapTexture == nullptr)),
+                  "%s", "m_material1 and m_material2 both must have normalMapTexture or both dont.");
+
+        BR_ASSERT(((m_material2->blendTexture != nullptr)), "%s", "m_material2 must have blendTexture.");
+
+        // Create different shader for two materials.
+        m_internalShader = Renderer::createShader(BeryllConstants::simpleObjTwoMaterialsDefaultVertexPath.data(),
+                                                  BeryllConstants::simpleObjTwoMaterialsDefaultFragmentPath.data());
+        m_internalShader->bind();
+        m_internalShader->activateDiffuseTextureMat1();
+
+        if(m_material1.specTexture)
+            m_internalShader->activateSpecularTextureMat1();
+
+        if(m_material1.normalMapTexture)
+            m_internalShader->activateNormalMapTextureMat1();
+
+        m_internalShader->activateDiffuseTextureMat2();
+
+        if(m_material2->specTexture)
+            m_internalShader->activateSpecularTextureMat2();
+
+        if(m_material2->normalMapTexture)
+            m_internalShader->activateNormalMapTextureMat2();
+
+        m_internalShader->activateBlendTextureMat2();
+
+        BR_INFO("%s", "Loaded material 2 and created new shader.");
     }
 }

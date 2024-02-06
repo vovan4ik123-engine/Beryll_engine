@@ -37,6 +37,11 @@ namespace Beryll
         void updateAfterPhysics() override;
         void draw() override;
 
+        void addMaterial2(const std::string& diffusePath,
+                          const std::string& specularPath,
+                          const std::string& normalMapPath,
+                          const std::string& blendTexturePath) override;
+
         void setCurrentAnimationByName(const char* name, bool playOneTime, bool startEvenIfSameAnimPlaying) override;
         void setCurrentAnimationByIndex(int index, bool playOneTime, bool startEvenIfSameAnimPlaying) override;
         void setDefaultAnimationByName(const char* name) override;
@@ -58,46 +63,6 @@ namespace Beryll
         static void clearCachedModels() { m_importersScenes.clear(); };
 
     protected:
-        // Animation data.
-        static constexpr uint32_t NUM_BONES_PER_VERTEX = 4; // one vertex can be affected maximum by 4 bones
-        uint32_t m_boneCount = 0;
-        std::vector<std::pair<std::string, uint32_t>> m_boneNameIndex;
-        std::vector<BoneMatrix> m_bonesMatrices;
-        std::string m_boneMatrixNameInShader;
-        std::vector<std::pair<std::string, int>> m_animationNameIndex;
-        int m_currentAnimIndex = 0;
-        int m_defaultAnimIndex = 0;
-        std::string m_currentAnimName;
-        float m_animStartTimeInSec = 0.0f;
-        float m_animTimeInSec = 0.0f;
-        bool m_playAnimOneTime = false;
-
-        void calculateTransforms();
-        void readNodeHierarchy(const float animationTime, const aiNode* node, const aiMatrix4x4& parentTransform);
-        const aiNodeAnim* findNodeAnim(const aiAnimation* animation, const aiString& nodeName);
-        aiMatrix4x4 interpolatePosition(const aiNodeAnim* nodeAnim, const uint32_t currentFrameIndex, const uint32_t nextFrameIndex, const float factor);
-        aiMatrix4x4 interpolateRotation(const aiNodeAnim* nodeAnim, const uint32_t currentFrameIndex, const uint32_t nextFrameIndex, const float factor);
-        aiMatrix4x4 interpolateScaling(const aiNodeAnim* nodeAnim, const uint32_t currentFrameIndex, const uint32_t nextFrameIndex, const float factor);
-
-        aiMatrix4x4 m_globalInverseMatrix;
-        // Animation data end.
-
-        // Model data.
-        std::shared_ptr<VertexBuffer> m_vertexPosBuffer;
-        std::shared_ptr<VertexBuffer> m_vertexNormalsBuffer;
-        std::shared_ptr<VertexBuffer> m_vertexTangentsBuffer;
-        std::shared_ptr<VertexBuffer> m_textureCoordsBuffer;
-        std::shared_ptr<VertexBuffer> m_boneIDsBuffer;
-        std::shared_ptr<VertexBuffer> m_boneWeightsBuffer;
-        std::shared_ptr<IndexBuffer> m_indexBuffer;
-        std::unique_ptr<VertexArray> m_vertexArray;
-        std::shared_ptr<Shader> m_internalShader; // Default, simple shader.
-        Material1 m_material1;
-        std::optional<Material2> m_material2 = std::nullopt;
-        // Model data end.
-
-        const aiScene* m_scene = nullptr;
-
         // Collision mesh dimensions.
         float m_smallestX = std::numeric_limits<float>::max();
         float m_biggestX = std::numeric_limits<float>::min();
@@ -122,6 +87,48 @@ namespace Beryll
         // id = file path.
         static std::map<const std::string, std::pair<std::shared_ptr<Assimp::Importer>, const aiScene*>> m_importersScenes;
 
-        const std::string m_modelPath; // object ID in m_importersScenes map
+        const std::string m_modelPath; // Object ID in m_importersScenes map.
+
+        // Animation data.
+        static constexpr uint32_t NUM_BONES_PER_VERTEX = 4; // One vertex can be affected maximum by 4 bones.
+        uint32_t m_boneCount = 0;
+        std::vector<std::pair<std::string, uint32_t>> m_boneNameIndex;
+        std::vector<BoneMatrix> m_bonesMatrices;
+        std::string m_boneMatrixNameInShader;
+        std::vector<std::pair<std::string, int>> m_animationNameIndex;
+        int m_currentAnimIndex = 0;
+        int m_defaultAnimIndex = 0;
+        std::string m_currentAnimName;
+        float m_animStartTimeInSec = 0.0f;
+        float m_animTimeInSec = 0.0f;
+        bool m_playAnimOneTime = false;
+
+        void calculateTransforms();
+        void readNodeHierarchy(const float animationTime, const aiNode* node, const aiMatrix4x4& parentTransform);
+        const aiNodeAnim* findNodeAnim(const aiAnimation* animation, const aiString& nodeName);
+        aiMatrix4x4 interpolatePosition(const aiNodeAnim* nodeAnim, const uint32_t currentFrameIndex, const uint32_t nextFrameIndex, const float factor);
+        aiMatrix4x4 interpolateRotation(const aiNodeAnim* nodeAnim, const uint32_t currentFrameIndex, const uint32_t nextFrameIndex, const float factor);
+        aiMatrix4x4 interpolateScaling(const aiNodeAnim* nodeAnim, const uint32_t currentFrameIndex, const uint32_t nextFrameIndex, const float factor);
+
+        aiMatrix4x4 m_globalInverseMatrix;
+        // Animation data end.
+
+        const aiScene* m_scene = nullptr;
+
+        std::shared_ptr<VertexBuffer> m_vertexPosBuffer;
+        std::shared_ptr<VertexBuffer> m_vertexNormalsBuffer;
+        std::shared_ptr<VertexBuffer> m_vertexTangentsBuffer;
+        std::shared_ptr<VertexBuffer> m_textureCoordsBuffer;
+        std::shared_ptr<VertexBuffer> m_boneIDsBuffer;
+        std::shared_ptr<VertexBuffer> m_boneWeightsBuffer;
+        std::shared_ptr<IndexBuffer> m_indexBuffer;
+        std::unique_ptr<VertexArray> m_vertexArray;
+        std::shared_ptr<Shader> m_internalShader; // Default, simple shader.
+        Material1 m_material1;
+        std::optional<Material2> m_material2;
+        // Can be used in shader to return UV coords in range 0...1 if was scaled. Useful if we have m_material2 with blend texture.
+        // Shader code example: vec2 blendTextureUV = (inUV + m_addToUVCoords) * m_UVCoordsMultiplier;
+        float m_addToUVCoords = 0.0f;
+        float m_UVCoordsMultiplier = 0.0f;
     };
 }

@@ -48,6 +48,11 @@ namespace Beryll
         void updateAfterPhysics() override;
         void draw() override;
 
+        void addMaterial2(const std::string& diffusePath,
+                          const std::string& specularPath,
+                          const std::string& normalMapPath,
+                          const std::string& blendTexturePath) override;
+
         // All loaded objects will have same parameters(mass, flags, groups, ...).
         static std::vector<std::shared_ptr<SimpleCollidingObject>> loadManyModelsFromOneFile(const char* filePath,
                                                                                              float collisionMassKg,
@@ -58,17 +63,7 @@ namespace Beryll
                                                                                              SceneObjectGroups sceneGroup);
 
     protected:
-        std::shared_ptr<VertexBuffer> m_vertexPosBuffer;
-        std::shared_ptr<VertexBuffer> m_vertexNormalsBuffer;
-        std::shared_ptr<VertexBuffer> m_vertexTangentsBuffer;
-        std::shared_ptr<VertexBuffer> m_textureCoordsBuffer;
-        std::shared_ptr<IndexBuffer> m_indexBuffer;
-        std::unique_ptr<VertexArray> m_vertexArray;
-        std::shared_ptr<Shader> m_internalShader; // Default, simple shader.
-        Material1 m_material1;
-        std::optional<Material2> m_material2 = std::nullopt;
-
-        // collision mesh dimensions
+        // Collision mesh dimensions.
         float m_smallestX = std::numeric_limits<float>::max();
         float m_biggestX = std::numeric_limits<float>::min();
         float m_smallestZ = std::numeric_limits<float>::max();
@@ -87,5 +82,19 @@ namespace Beryll
                                CollisionFlags collFlag,
                                CollisionGroups collGroup,
                                CollisionGroups collMask);
+
+        std::shared_ptr<VertexBuffer> m_vertexPosBuffer;
+        std::shared_ptr<VertexBuffer> m_vertexNormalsBuffer;
+        std::shared_ptr<VertexBuffer> m_vertexTangentsBuffer;
+        std::shared_ptr<VertexBuffer> m_textureCoordsBuffer;
+        std::shared_ptr<IndexBuffer> m_indexBuffer;
+        std::unique_ptr<VertexArray> m_vertexArray;
+        std::shared_ptr<Shader> m_internalShader; // Default, simple shader.
+        Material1 m_material1;
+        std::optional<Material2> m_material2;
+        // Can be used in shader to return UV coords in range 0...1 if was scaled. Useful if we have m_material2 with blend texture.
+        // Shader code example: vec2 blendTextureUV = (inUV + m_addToUVCoords) * m_UVCoordsMultiplier;
+        float m_addToUVCoords = 0.0f;
+        float m_UVCoordsMultiplier = 0.0f;
     };
 }

@@ -34,6 +34,10 @@ namespace BeryllUtils
 
             mat1.diffTexture = Beryll::Renderer::createTexture(texturePath.c_str(), Beryll::TextureType::DIFFUSE_TEXTURE_MAT_1);
         }
+        else
+        {
+            BR_ASSERT(false, "%s", "Material1 must have at least one diffuse texture.");
+        }
 
         if(material->GetTextureCount(aiTextureType_SPECULAR) > 0)
         {
@@ -80,5 +84,23 @@ namespace BeryllUtils
         }
 
         return mat1;
+    }
+
+    std::optional<Beryll::Material2> Common::loadMaterial2(const std::string& diffusePath, const std::string& specularPath,
+                                                           const std::string& normalMapPath, const std::string& blendTexturePath)
+    {
+        BR_ASSERT((!diffusePath.empty() && !blendTexturePath.empty()), "%s", "Material2 must have diffuse texture and blend texture.");
+
+        Beryll::Material2 mat2;
+        mat2.diffTexture = Beryll::Renderer::createTexture(diffusePath.c_str(), Beryll::TextureType::DIFFUSE_TEXTURE_MAT_2);
+        mat2.blendTexture = Beryll::Renderer::createTexture(blendTexturePath.c_str(), Beryll::TextureType::BLEND_TEXTURE_MAT_2);
+
+        if(!specularPath.empty())
+            mat2.specTexture = Beryll::Renderer::createTexture(specularPath.c_str(), Beryll::TextureType::SPECULAR_TEXTURE_MAT_2);
+
+        if(!normalMapPath.empty())
+            mat2.normalMapTexture = Beryll::Renderer::createTexture(normalMapPath.c_str(), Beryll::TextureType::NORMAL_MAP_TEXTURE_MAT_2);
+
+        return mat2;
     }
 }

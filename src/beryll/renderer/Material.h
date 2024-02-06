@@ -10,7 +10,7 @@ namespace Beryll
     {
         void bind()
         {
-            if(diffTexture) { diffTexture->bind(); }
+            diffTexture->bind(); // Must be.
             if(specTexture) { specTexture->bind(); }
             if(normalMapTexture) { normalMapTexture->bind(); }
         }
@@ -29,10 +29,10 @@ namespace Beryll
     {
         void bind()
         {
-            if(diffTexture) { diffTexture->bind(); }
+            diffTexture->bind(); // Must be.
             if(specTexture) { specTexture->bind(); }
             if(normalMapTexture) { normalMapTexture->bind(); }
-            if(blendTexture) { blendTexture->bind(); }
+            blendTexture->bind(); // Must be.
         }
 
         std::unique_ptr<Texture> diffTexture;

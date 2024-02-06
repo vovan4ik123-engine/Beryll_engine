@@ -40,5 +40,6 @@ namespace Beryll
                                               // will copied across all objects with same m_ID
         int m_width = 0;
         int m_height = 0;
+        void unBindNotVirtual(); // Can be called in destructor.
     };
 }

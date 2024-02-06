@@ -122,7 +122,12 @@ namespace Beryll
             boneWeights.resize(m_scene->mMeshes[i]->mNumVertices,glm::vec4{-1.0f, -1.0f, -1.0f, -1.0f}); // NUM_BONES_PER_VERTEX
             indices.reserve(m_scene->mMeshes[i]->mNumFaces * 3);
 
-            // vertices
+            float UVSmallestX = std::numeric_limits<float>::max();
+            float UVBiggestX = std::numeric_limits<float>::min();
+            float UVSmallestY = std::numeric_limits<float>::max();
+            float UVBiggestY = std::numeric_limits<float>::min();
+
+            // Vertices.
             for(int g = 0; g < m_scene->mMeshes[i]->mNumVertices; ++g)
             {
                 vertices.emplace_back(m_scene->mMeshes[i]->mVertices[g].x,
@@ -155,11 +160,21 @@ namespace Beryll
                     tangents.emplace_back(0.0f, 0.0f, 0.0f);
                 }
 
-                // use only first set of texture coordinates
+                // Use only first set of texture coordinates.
                 if(m_scene->mMeshes[i]->mTextureCoords[0])
                 {
                     textureCoords.emplace_back(m_scene->mMeshes[i]->mTextureCoords[0][g].x,
                                                m_scene->mMeshes[i]->mTextureCoords[0][g].y);
+
+                    if(m_scene->mMeshes[i]->mTextureCoords[0][g].x < UVSmallestX)
+                        UVSmallestX = m_scene->mMeshes[i]->mTextureCoords[0][g].x;
+                    if(m_scene->mMeshes[i]->mTextureCoords[0][g].x > UVBiggestX)
+                        UVBiggestX = m_scene->mMeshes[i]->mTextureCoords[0][g].x;
+
+                    if(m_scene->mMeshes[i]->mTextureCoords[0][g].y < UVSmallestY)
+                        UVSmallestY = m_scene->mMeshes[i]->mTextureCoords[0][g].y;
+                    if(m_scene->mMeshes[i]->mTextureCoords[0][g].y > UVBiggestY)
+                        UVBiggestY = m_scene->mMeshes[i]->mTextureCoords[0][g].y;
                 }
                 else
                 {
@@ -170,9 +185,22 @@ namespace Beryll
             m_vertexPosBuffer = Renderer::createStaticVertexBuffer(vertices);
             m_vertexNormalsBuffer = Renderer::createStaticVertexBuffer(normals);
             m_textureCoordsBuffer = Renderer::createStaticVertexBuffer(textureCoords);
-            // tangents buffer will created if model has normal map
+            // Tangents buffer will created if model has normal map.
 
-            // bones
+            float UVXRange = glm::distance(UVSmallestX, UVBiggestX);
+            float UVYRange = glm::distance(UVSmallestY, UVBiggestY);
+            if(UVXRange < UVYRange)
+            {
+                m_addToUVCoords = std::abs(UVSmallestY);
+                m_UVCoordsMultiplier = 1.0f / UVYRange;
+            }
+            else
+            {
+                m_addToUVCoords = std::abs(UVSmallestX);
+                m_UVCoordsMultiplier = 1.0f / UVXRange;
+            }
+
+            // Bones.
             m_boneCount = m_scene->mMeshes[i]->mNumBones;
             m_bonesMatrices.reserve(m_boneCount);
             m_boneNameIndex.reserve(m_boneCount);
@@ -267,13 +295,12 @@ namespace Beryll
                                                       BeryllConstants::animatedObjDefaultFragmentPath.data());
             m_internalShader->bind();
 
-            // Load Material 1. At lest diffuse texture of material 1 must exist.
+            // Load Material 1. At least diffuse texture of material 1 must exist.
             if(m_scene->mMeshes[i]->mMaterialIndex >= 0)
             {
                 m_material1 = BeryllUtils::Common::loadMaterial1(m_scene->mMaterials[m_scene->mMeshes[i]->mMaterialIndex], filePath);
 
-                if(m_material1.diffTexture)
-                    m_internalShader->activateDiffuseTextureMat1();
+                m_internalShader->activateDiffuseTextureMat1();
 
                 if(m_material1.specTexture)
                     m_internalShader->activateSpecularTextureMat1();
@@ -288,8 +315,6 @@ namespace Beryll
                     m_vertexArray->addVertexBuffer(m_vertexTangentsBuffer);
                 }
             }
-
-            BR_ASSERT((m_material1.diffTexture != nullptr), "%s", "Object must have at least one diffuse texture.");
 
             // Animations.
             for(int g = 0; g < m_scene->mNumAnimations; ++g)
@@ -359,6 +384,12 @@ namespace Beryll
                 m_boneMatrixNameInShader += std::to_string(i);
                 m_boneMatrixNameInShader += "]";
                 m_internalShader->setMatrix4x4Float(m_boneMatrixNameInShader.c_str(), m_bonesMatrices[i].finalWorldTransform);
+            }
+
+            if(m_material2) // If material 2 exist we need that to return UV into 0...1 range for blend texture.
+            {
+                m_internalShader->set1Float("addToUVCoords", m_addToUVCoords);
+                m_internalShader->set1Float("UVCoordsMultiplier", m_UVCoordsMultiplier);
             }
         }
 
@@ -657,5 +688,50 @@ namespace Beryll
         }
 
         Physics::addObject(vertices, indices, collisionTransforms, meshName, m_ID, mass, wantCallBack, collFlag, collGroup, collMask);
+    }
+
+    void AnimatedCollidingObject::addMaterial2(const std::string& diffusePath,
+                                               const std::string& specularPath,
+                                               const std::string& normalMapPath,
+                                               const std::string& blendTexturePath)
+    {
+        m_material2 = BeryllUtils::Common::loadMaterial2(diffusePath, specularPath, normalMapPath, blendTexturePath);
+
+        BR_ASSERT(((m_material1.diffTexture != nullptr && m_material2->diffTexture != nullptr)),
+                  "%s", "m_material1 and m_material2 both must have diffTexture.");
+
+        BR_ASSERT(((m_material1.specTexture != nullptr && m_material2->specTexture != nullptr) ||
+                   (m_material1.specTexture == nullptr && m_material2->specTexture == nullptr)),
+                  "%s", "m_material1 and m_material2 both must have specTexture or both dont.");
+
+        BR_ASSERT(((m_material1.normalMapTexture != nullptr && m_material2->normalMapTexture != nullptr) ||
+                   (m_material1.normalMapTexture == nullptr && m_material2->normalMapTexture == nullptr)),
+                  "%s", "m_material1 and m_material2 both must have normalMapTexture or both dont.");
+
+        BR_ASSERT(((m_material2->blendTexture != nullptr)), "%s", "m_material2 must have blendTexture.");
+
+        // Create different shader for two materials.
+        m_internalShader = Renderer::createShader(BeryllConstants::animatedObjTwoMaterialsDefaultVertexPath.data(),
+                                                  BeryllConstants::animatedObjTwoMaterialsDefaultFragmentPath.data());
+        m_internalShader->bind();
+        m_internalShader->activateDiffuseTextureMat1();
+
+        if(m_material1.specTexture)
+            m_internalShader->activateSpecularTextureMat1();
+
+        if(m_material1.normalMapTexture)
+            m_internalShader->activateNormalMapTextureMat1();
+
+        m_internalShader->activateDiffuseTextureMat2();
+
+        if(m_material2->specTexture)
+            m_internalShader->activateSpecularTextureMat2();
+
+        if(m_material2->normalMapTexture)
+            m_internalShader->activateNormalMapTextureMat2();
+
+        m_internalShader->activateBlendTextureMat2();
+
+        BR_INFO("%s", "Loaded material 2 and created new shader.");
     }
 }

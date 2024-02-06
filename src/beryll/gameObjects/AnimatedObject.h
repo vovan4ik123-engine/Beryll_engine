@@ -25,6 +25,11 @@ namespace Beryll
         void updateAfterPhysics() override;
         void draw() override;
 
+        void addMaterial2(const std::string& diffusePath,
+                          const std::string& specularPath,
+                          const std::string& normalMapPath,
+                          const std::string& blendTexturePath) override;
+
         void setCurrentAnimationByName(const char* name, bool playOneTime, bool startEvenIfSameAnimPlaying) override;
         void setCurrentAnimationByIndex(int index, bool playOneTime, bool startEvenIfSameAnimPlaying) override;
         void setDefaultAnimationByName(const char* name) override;
@@ -45,7 +50,16 @@ namespace Beryll
         // Or dont call if you will load same models again. They will be taken from cache for faster loading.
         static void clearCachedModels() { m_importersScenes.clear(); };
 
-    protected:
+    private:
+        // aiScene + Assimp::Importer lifetime for animated object should be same as animated object.
+        // aiScene + Assimp::Importer has big size in memory.
+        // This map will cache animated objects and reuse them if you load again from same file.
+        // If many of AnimatedCollidingObject load model from same file(id = file path) it will get pointer to aiScene from this map after first loading.
+        // id = file path.
+        static std::map<const std::string, std::pair<std::shared_ptr<Assimp::Importer>, const aiScene*>> m_importersScenes;
+
+        const std::string m_modelPath; // Object ID in m_importersScenes map.
+
         // Animation data.
         static constexpr uint32_t NUM_BONES_PER_VERTEX = 4; // one vertex can be affected maximum by 4 bones
         uint32_t m_boneCount = 0;
@@ -70,7 +84,8 @@ namespace Beryll
         aiMatrix4x4 m_globalInverseMatrix;
         // Animation data end.
 
-        // Model data.
+        const aiScene* m_scene = nullptr;
+
         std::shared_ptr<VertexBuffer> m_vertexPosBuffer;
         std::shared_ptr<VertexBuffer> m_vertexNormalsBuffer;
         std::shared_ptr<VertexBuffer> m_vertexTangentsBuffer;
@@ -81,19 +96,10 @@ namespace Beryll
         std::unique_ptr<VertexArray> m_vertexArray;
         std::shared_ptr<Shader> m_internalShader; // Default, simple shader.
         Material1 m_material1;
-        std::optional<Material2> m_material2 = std::nullopt;
-        // Model data end.
-
-        const aiScene* m_scene = nullptr;
-
-    private:
-        // aiScene + Assimp::Importer lifetime for animated object should be same as animated object.
-        // aiScene + Assimp::Importer has big size in memory.
-        // This map will cache animated objects and reuse them if you load again from same file.
-        // If many of AnimatedCollidingObject load model from same file(id = file path) it will get pointer to aiScene from this map after first loading.
-        // id = file path.
-        static std::map<const std::string, std::pair<std::shared_ptr<Assimp::Importer>, const aiScene*>> m_importersScenes;
-
-        const std::string m_modelPath; // object ID in m_importersScenes map
+        std::optional<Material2> m_material2;
+        // Can be used in shader to return UV coords in range 0...1 if was scaled. Useful if we have m_material2 with blend texture.
+        // Shader code example: vec2 blendTextureUV = (inUV + m_addToUVCoords) * m_UVCoordsMultiplier;
+        float m_addToUVCoords = 0.0f;
+        float m_UVCoordsMultiplier = 0.0f;
     };
 }

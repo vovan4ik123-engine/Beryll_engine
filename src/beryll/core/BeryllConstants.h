@@ -11,9 +11,13 @@ namespace BeryllConstants
 #if defined(ANDROID)
     const std::string_view simpleObjDefaultVertexPath = "shaders/GLES/default/SimpleObject.vert";
     const std::string_view simpleObjDefaultFragmentPath = "shaders/GLES/default/SimpleObject.frag";
+    const std::string_view simpleObjTwoMaterialsDefaultVertexPath = "shaders/GLES/default/SimpleObjectTwoMaterials.vert";
+    const std::string_view simpleObjTwoMaterialsDefaultFragmentPath = "shaders/GLES/default/SimpleObjectTwoMaterials.frag";
 
     const std::string_view animatedObjDefaultVertexPath = "shaders/GLES/default/AnimatedObject.vert";
     const std::string_view animatedObjDefaultFragmentPath = "shaders/GLES/default/AnimatedObject.frag";
+    const std::string_view animatedObjTwoMaterialsDefaultVertexPath = "shaders/GLES/default/AnimatedObjectTwoMaterials.vert";
+    const std::string_view animatedObjTwoMaterialsDefaultFragmentPath = "shaders/GLES/default/AnimatedObjectTwoMaterials.frag";
 
     const std::string_view simpleObjShadowMapVertexPath = "shaders/GLES/shadowMap/SimpleObject.vert";
     const std::string_view simpleObjShadowMapFragmentPath = "shaders/GLES/shadowMap/SimpleObject.frag";

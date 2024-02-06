@@ -331,8 +331,12 @@ namespace Beryll
         }
 
         /*
-         * Inherited pure virtual methods are here.
+         * Inherited and new pure virtual methods are here.
          */
+        virtual void addMaterial2(const std::string& diffusePath,
+                                  const std::string& specularPath,
+                                  const std::string& normalMapPath,
+                                  const std::string& blendTexturePath) = 0;
 
         bool useInternalShader = true;
         bool useInternalMaterials = true;

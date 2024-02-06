@@ -135,6 +135,8 @@ namespace BeryllUtils
         // use glm::rotation
 
         static Beryll::Material1 loadMaterial1(aiMaterial* material, const std::string& filePath);
+        static std::optional<Beryll::Material2> loadMaterial2(const std::string& diffusePath, const std::string& specularPath,
+                                                              const std::string& normalMapPath, const std::string& blendTexturePath);
 
     private:
         static int m_id;
