@@ -1,6 +1,5 @@
 #include "EventHandler.h"
 #include "beryll/core/TimeStep.h"
-#include "beryll/core/Log.h"
 #include "beryll/core/Window.h"
 #include "beryll/GUI/MainImGUI.h"
 

@@ -1,8 +1,6 @@
 #pragma once
 
 #include "BaseAnimatedObject.h"
-#include "beryll/renderer/Buffer.h"
-#include "beryll/renderer/VertexArray.h"
 
 namespace Beryll
 {
@@ -34,11 +32,6 @@ namespace Beryll
         void updateBeforePhysics() override;
         void updateAfterPhysics() override;
         void draw() override;
-
-        void addMaterial2(const std::string& diffusePath,
-                          const std::string& specularPath,
-                          const std::string& normalMapPath,
-                          const std::string& blendTexturePath) override;
 
         void setCurrentAnimationByName(const char* name, bool playOneTime, bool startEvenIfSameAnimPlaying) override;
         void setCurrentAnimationByIndex(int index, bool playOneTime, bool startEvenIfSameAnimPlaying) override;
@@ -112,14 +105,5 @@ namespace Beryll
         // Animation data end.
 
         const aiScene* m_scene = nullptr;
-
-        std::shared_ptr<VertexBuffer> m_vertexPosBuffer;
-        std::shared_ptr<VertexBuffer> m_vertexNormalsBuffer;
-        std::shared_ptr<VertexBuffer> m_vertexTangentsBuffer;
-        std::shared_ptr<VertexBuffer> m_textureCoordsBuffer;
-        std::shared_ptr<VertexBuffer> m_boneIDsBuffer;
-        std::shared_ptr<VertexBuffer> m_boneWeightsBuffer;
-        std::shared_ptr<IndexBuffer> m_indexBuffer;
-        std::unique_ptr<VertexArray> m_vertexArray;
     };
 }

@@ -1,5 +1,4 @@
 #include "GameLoop.h"
-#include "beryll/core/Log.h"
 #include "beryll/core/TimeStep.h"
 #include "beryll/core/GameStateMachine.h"
 #include "beryll/core/EventHandler.h"

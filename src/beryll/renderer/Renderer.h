@@ -9,11 +9,13 @@
 #include "Texture.h"
 #include "ShadowMap.h"
 #include "SkyBox.h"
-#include "beryll/gameObjects/BaseSimpleObject.h"
-#include "beryll/gameObjects/BaseAnimatedObject.h"
 
 namespace Beryll
 {
+    // Forward declaration.
+    class BaseSimpleObject;
+    class BaseAnimatedObject;
+
     // Static methods for create things required for rendering objects.
     class Renderer final
     {

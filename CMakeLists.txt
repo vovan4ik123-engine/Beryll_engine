@@ -61,6 +61,7 @@ set(Common_SRC
 
         src/beryll/utils/CommonUtils.cpp
 
+        src/beryll/gameObjects/SceneObject.cpp
         src/beryll/gameObjects/SimpleObject.cpp
         src/beryll/gameObjects/AnimatedObject.cpp
         src/beryll/gameObjects/SimpleCollidingObject.cpp

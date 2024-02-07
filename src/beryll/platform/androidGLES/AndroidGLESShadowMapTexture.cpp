@@ -1,8 +1,10 @@
 #include "AndroidGLESShadowMapTexture.h"
-#include "beryll/core/Log.h"
 #include "beryll/core/Window.h"
+#include "beryll/core/BeryllConstants.h"
 #include "beryll/platform/androidGLES/AndroidGLESGlobal.h"
 #include "beryll/renderer/Renderer.h"
+#include "beryll/gameObjects/BaseSimpleObject.h"
+#include "beryll/gameObjects/BaseAnimatedObject.h"
 
 #include <GLES3/gl32.h>
 #include <GLES3/gl3ext.h>

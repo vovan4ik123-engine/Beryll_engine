@@ -4,6 +4,8 @@
 #include "beryll/utils/Matrix.h"
 #include "beryll/physics/Physics.h"
 #include "beryll/renderer/Shader.h"
+#include "beryll/renderer/Buffer.h"
+#include "beryll/renderer/VertexArray.h"
 
 namespace Beryll
 {
@@ -261,6 +263,7 @@ namespace Beryll
         CollisionGroups getCollisionGroup() { return m_collisionGroup; }
         CollisionFlags getCollisionFlag() { return m_collisionFlag; }
         SceneObjectGroups getSceneObjectGroup() { return m_sceneObjectGroup; }
+        bool getIsAnimatedObject() { return m_isAnimatedObject; }
         glm::vec3 getFaceDirXYZ()
         {
             return glm::normalize(glm::vec3(m_totalRotation * m_sceneObjectFaceDir));
@@ -334,10 +337,8 @@ namespace Beryll
         /*
          * Inherited and new pure virtual methods are here.
          */
-        virtual void addMaterial2(const std::string& diffusePath,
-                                  const std::string& specularPath,
-                                  const std::string& normalMapPath,
-                                  const std::string& blendTexturePath) = 0;
+        void addMaterial2(const std::string& diffusePath, const std::string& specularPath,
+                          const std::string& normalMapPath, const std::string& blendTexturePath);
 
         float getAddToUVCoords() { return m_addToUVCoords; }
         float getUVCoordsMultiplier() { return m_UVCoordsMultiplier; }
@@ -361,18 +362,28 @@ namespace Beryll
         //std::atomic<float> m_originY = 0.0f;
         //std::atomic<float> m_originZ = 0.0f;
 
+        SceneObjectGroups m_sceneObjectGroup = SceneObjectGroups::NONE; // Any scene object can belong to specific group.
+        bool m_isAnimatedObject = false;
+        
+        // Physics data.
         PhysicsTransforms m_physicsTransforms;
-
         bool m_hasCollisionObject = false; // Set true for all collision objects.
         CollisionGroups m_collisionGroup = CollisionGroups::NONE; // Set inside colliding objects.
         CollisionGroups m_collisionMask = CollisionGroups::NONE; // Set inside colliding objects.
         CollisionFlags m_collisionFlag = CollisionFlags::NONE; // Set inside colliding objects.
         bool m_isEnabledInPhysicsSimulation = false; // Set inside colliding objects.
         float m_collisionMass = 0.0f;
-
-        SceneObjectGroups m_sceneObjectGroup = SceneObjectGroups::NONE; // Any scene object can belong to specific group.
+        // Physics data end.
 
         // Graphics data.
+        std::shared_ptr<VertexBuffer> m_vertexPosBuffer;
+        std::shared_ptr<VertexBuffer> m_vertexNormalsBuffer;
+        std::shared_ptr<VertexBuffer> m_vertexTangentsBuffer;
+        std::shared_ptr<VertexBuffer> m_textureCoordsBuffer;
+        std::shared_ptr<VertexBuffer> m_boneIDsBuffer;     // Only for animated objects.
+        std::shared_ptr<VertexBuffer> m_boneWeightsBuffer; // Only for animated objects.
+        std::shared_ptr<IndexBuffer> m_indexBuffer;
+        std::unique_ptr<VertexArray> m_vertexArray;
         std::shared_ptr<Shader> m_internalShader; // Default, simple shader.
         Material1 m_material1;
         std::optional<Material2> m_material2;
@@ -380,6 +391,7 @@ namespace Beryll
         // Shader code example: vec2 blendTextureUV = (inUV + m_addToUVCoords) * m_UVCoordsMultiplier;
         float m_addToUVCoords = 0.0f;
         float m_UVCoordsMultiplier = 0.0f;
+        // Graphics data end.
 
     private:
         // Only for internal checks inside this file.

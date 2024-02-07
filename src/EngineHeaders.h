@@ -9,18 +9,14 @@
 #include "beryll/core/Layer.h"
 #include "beryll/core/GameState.h"
 #include "beryll/core/GameStateMachine.h"
-#include "beryll/core/Log.h"
 #include "beryll/core/EventHandler.h"
 #include "beryll/core/SoundsManager.h"
 #include "beryll/core/RandomGenerator.h"
 #include "beryll/core/TimeStep.h"
 
 #include "beryll/renderer/Camera.h"
-#include "beryll/renderer/SkyBox.h"
 #include "beryll/renderer/Renderer.h"
 
-#include "beryll/gameObjects/BaseSimpleObject.h"
-#include "beryll/gameObjects/BaseAnimatedObject.h"
 #include "beryll/gameObjects/SimpleObject.h"
 #include "beryll/gameObjects/SimpleCollidingObject.h"
 #include "beryll/gameObjects/AnimatedObject.h"

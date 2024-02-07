@@ -1,6 +1,8 @@
 #include "Renderer.h"
 #include "beryll/core/Log.h"
 #include "beryll/renderer/Camera.h"
+#include "beryll/gameObjects/BaseSimpleObject.h"
+#include "beryll/gameObjects/BaseAnimatedObject.h"
 
 #if defined(ANDROID)
     #include <GLES3/gl32.h>

@@ -4,6 +4,7 @@
 
 namespace Beryll
 {
+    // Forward declaration.
     class BaseSimpleObject;
     class BaseAnimatedObject;
 
