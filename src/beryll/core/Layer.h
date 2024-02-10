@@ -6,12 +6,12 @@ namespace Beryll
 {
     enum class LayerID
     {
-        UNKNOWN,
+        UNKNOWN = 0,
         START_SCREEN_GUI,
         PLAY_GUI, PLAY_SCENE,
         PAUSE_GUI,
         SETTINGS_GUI,
-        SELECT_MAP_GUI, SELECT_LEVEL_GUI, SELECT_STONES_GUI
+        SELECT_LEVEL_GUI
     };
 
     class Layer

@@ -74,14 +74,17 @@ namespace Beryll
                 // In method bool ImGui::SliderBehaviorT() in file imgui_widgets.cpp delete if (set_new_value) {...}
                 // Now we calculate slider value. Not ImGUI.
                 float fingerXPos = f.normalizedPos.x;
-                if(fingerXPos < m_leftPos)
+                if(fingerXPos <= m_leftPos)
                     fingerXPos = m_leftPos;
-                if(fingerXPos > m_leftPos + m_width)
+                if(fingerXPos >= m_leftPos + m_width)
                     fingerXPos = m_leftPos + m_width;
 
                 float normalizedSliderProgress = (fingerXPos - m_leftPos) / m_width;
-                BR_ASSERT((normalizedSliderProgress >= 0.0f &&
-                           normalizedSliderProgress <= 1.0f), "%s", "normalizedSliderProgress is out of 0...1 range.");
+                if(normalizedSliderProgress < 0.0f)
+                    normalizedSliderProgress = 0.0f;
+                if(normalizedSliderProgress > 1.0f)
+                    normalizedSliderProgress = 1.0f;
+
                 float valueRange = m_max - m_min;
                 m_sliderValue = m_min + (valueRange * normalizedSliderProgress);
                 m_valueChanging = true;
