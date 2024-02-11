@@ -23,10 +23,9 @@ namespace Beryll
             throw DataBaseException(errorMessage);
         }
 
-        BR_INFO("Internal storage:%s", internalStoragePath.c_str());
-
         internalStoragePath += "/";
         internalStoragePath += name;
+        BR_INFO("DataBase path: %s", internalStoragePath.c_str());
 
         // The database is opened for reading and writing and is created if it does not already exist.
         // To drop a database, delete the file on drive.
