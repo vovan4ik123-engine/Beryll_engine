@@ -14,6 +14,8 @@ namespace Beryll
         m_height = height / 100.0f;
 
         m_texture = Renderer::createTexture(texturePath.c_str(), TextureType::DIFFUSE_TEXTURE_MAT_1);
+
+        m_noBackgroundNoFrame = m_noBackgroundNoFrame | ImGuiWindowFlags_NoBringToFrontOnFocus;
     }
 
     GUITexture::~GUITexture()
@@ -34,6 +36,8 @@ namespace Beryll
     void GUITexture::draw()
     {
         ImGui::SetNextWindowPos(ImVec2(m_leftPos * MainImGUI::getInstance()->getGUIWidth(), m_topPos * MainImGUI::getInstance()->getGUIHeight()));
+        ImGui::SetNextWindowSize(ImVec2(m_width * MainImGUI::getInstance()->getGUIWidth(), m_height * MainImGUI::getInstance()->getGUIHeight()));
+
         ImGui::Begin(m_IDAsString.c_str(), nullptr, m_noBackgroundNoFrame);
 
         ImGui::Image(reinterpret_cast<ImTextureID>(m_texture->getID()),

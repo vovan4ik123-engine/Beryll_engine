@@ -27,9 +27,11 @@ namespace Beryll
     protected:
         // Properties only for GUI objects.
         int32_t m_noBackgroundNoFrame = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize |
-                                         ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBackground;
+                                        ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBackground |
+                                        ImGuiWindowFlags_NoScrollbar;
 
-        int32_t m_backgroundNoFrame = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+        int32_t m_noFrame = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize |
+                            ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar;
 
         const std::string m_IDAsString = std::to_string(m_ID); // Only for GUI elements.
 

@@ -16,7 +16,7 @@ namespace Beryll
         m_height = height / 100.0f;
 
         if(background)
-            m_flags = m_backgroundNoFrame;
+            m_flags = m_noFrame;
         else
             m_flags = m_noBackgroundNoFrame;
 

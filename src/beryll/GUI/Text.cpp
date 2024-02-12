@@ -13,7 +13,7 @@ namespace Beryll
         m_topPos = top / 100.0f;
 
         if(background)
-            m_flags = m_backgroundNoFrame;
+            m_flags = m_noFrame;
         else
             m_flags = m_noBackgroundNoFrame;
 
