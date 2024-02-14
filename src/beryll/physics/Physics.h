@@ -280,6 +280,7 @@ namespace Beryll
         // Bullet physics does not store scale in transforms.
         friend class SimpleCollidingObject;
         friend class AnimatedCollidingObject;
+        friend class BaseAnimatedObject;
         static PhysicsTransforms getTransforms(const int ID);
 
         static void addObject(const std::vector<glm::vec3>& vertices,
