@@ -40,10 +40,6 @@ namespace Beryll
                               SceneObjectGroups sceneGroup);
         ~SimpleCollidingObject() override;
 
-        void updateBeforePhysics() override;
-        void updateAfterPhysics() override;
-        void draw() override;
-
         // All loaded objects will have same parameters(mass, flags, groups, ...).
         static std::vector<std::shared_ptr<SimpleCollidingObject>> loadManyModelsFromOneFile(const char* filePath,
                                                                                              float collisionMassKg,
@@ -63,8 +59,6 @@ namespace Beryll
         float m_mostTopVertex = std::numeric_limits<float>::min();
 
     private:
-        void loadGraphicsMesh(const std::string& filePath, const aiScene* scene, const aiMesh* graphicsMesh);
-
         void loadCollisionMesh(const aiScene* scene,
                                const aiMesh* collisionMesh,
                                const std::string& meshName,

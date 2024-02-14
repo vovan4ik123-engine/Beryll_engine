@@ -11,6 +11,8 @@ namespace Beryll
                                                      SceneObjectGroups sceneGroup)
                                                      : BaseAnimatedObject(filePath, sceneGroup)
     {
+        BR_INFO("Loading animated colliding object: %s", filePath);
+
         BR_ASSERT((m_scene->mNumMeshes == 2),
                   "Colliding animated object: %s MUST contain 2 meshes. For draw and physics simulation", filePath);
 

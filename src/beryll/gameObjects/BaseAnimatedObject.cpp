@@ -16,15 +16,13 @@ namespace Beryll
         if(search != m_importersScenes.end())
         {
             // Scene from same file already was loaded. use it.
-            BR_INFO("Use loaded before colliding animated object: %s", filePath);
+            BR_INFO("Use loaded before animated object: %s", filePath);
             m_scene = search->second.second;
         }
         else
         {
             std::shared_ptr<Assimp::Importer> importer = std::make_shared<Assimp::Importer>();
             const aiScene* scene = nullptr;
-
-            BR_INFO("Loading colliding animated object: %s", filePath);
 
             uint32_t bufferSize = 0;
             char *buffer = BeryllUtils::File::readToBuffer(filePath, &bufferSize);

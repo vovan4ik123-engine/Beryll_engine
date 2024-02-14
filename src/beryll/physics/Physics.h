@@ -278,9 +278,10 @@ namespace Beryll
         // addObject() should be called only from SimpleCollidingObject/AnimatedCollidingObject and only from one thread.
         // getTransforms() should be called only from SimpleCollidingObject/AnimatedCollidingObject and can be called from many threads.
         // Bullet physics does not store scale in transforms.
+        friend class BaseSimpleObject;
         friend class SimpleCollidingObject;
-        friend class AnimatedCollidingObject;
         friend class BaseAnimatedObject;
+        friend class AnimatedCollidingObject;
         static PhysicsTransforms getTransforms(const int ID);
 
         static void addObject(const std::vector<glm::vec3>& vertices,

@@ -193,7 +193,7 @@ namespace Beryll
 
     void AnimatedCollidingCharacter::move(glm::vec3 moveVector, bool pushDynamicObjects)
     {
-//BR_INFO("origin X: %f Y: %f Z: %f", m_origin.x, m_origin.y, m_origin.z);
+        //BR_INFO("origin X: %f Y: %f Z: %f", m_origin.x, m_origin.y, m_origin.z);
         if(m_collisionFlag != CollisionFlags::DYNAMIC)
         {
             addToOrigin(moveVector);

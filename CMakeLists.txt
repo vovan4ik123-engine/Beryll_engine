@@ -62,6 +62,7 @@ set(Common_SRC
         src/beryll/utils/CommonUtils.cpp
 
         src/beryll/gameObjects/SceneObject.cpp
+        src/beryll/gameObjects/BaseSimpleObject.cpp
         src/beryll/gameObjects/SimpleObject.cpp
         src/beryll/gameObjects/BaseAnimatedObject.cpp
         src/beryll/gameObjects/AnimatedObject.cpp

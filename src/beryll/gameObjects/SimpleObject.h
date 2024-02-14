@@ -21,14 +21,7 @@ namespace Beryll
                      SceneObjectGroups sceneGroup);
         ~SimpleObject() override;
 
-        void updateBeforePhysics() override;
-        void updateAfterPhysics() override;
-        void draw() override;
-
         // All loaded objects will have same sceneGroup.
         static std::vector<std::shared_ptr<SimpleObject>> loadManyModelsFromOneFile(const char* filePath, SceneObjectGroups sceneGroup);
-
-    private:
-        void loadGraphicsMesh(const std::string& filePath, const aiScene* scene, const aiMesh* graphicsMesh);
     };
 }
