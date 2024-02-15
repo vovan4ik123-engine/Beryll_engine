@@ -19,7 +19,7 @@ namespace Beryll
         virtual void updateAfterPhysics() = 0; // Update positions after simulation, resolve collisions, Physics::getTransforms() here.
         virtual void draw() = 0; // Subclass graphics.
 
-        int getID() { return m_ID; }
+        const int getID() const { return m_ID; }
 
     protected:
         const int m_ID = BeryllUtils::Common::generateID(); // Unique.

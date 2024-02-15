@@ -124,7 +124,7 @@ namespace Beryll
             }
         }
 
-        const glm::vec3& getAngularFactor()
+        const glm::vec3& getAngularFactor() const
         {
             BR_ASSERT((m_hasCollisionObject == true &&
                        m_collisionFlag == CollisionFlags::DYNAMIC), "%s", "getAngularFactor() should be called only for object with DYNAMIC collider.");
@@ -140,14 +140,14 @@ namespace Beryll
             }
         }
 
-        const glm::vec3& getLinearFactor()
+        const glm::vec3& getLinearFactor() const
         {
             BR_ASSERT((m_hasCollisionObject == true &&
                        m_collisionFlag == CollisionFlags::DYNAMIC), "%s", "getLinearFactor() should be called only for object with DYNAMIC collider.");
             return m_linearFactor;
         }
 
-        void setDefaultGravity(bool resetVelocities = false)
+        void setDefaultGravity(bool resetVelocities = false) const
         {
             if(m_hasCollisionObject && m_collisionFlag == CollisionFlags::DYNAMIC)
             {
@@ -155,7 +155,7 @@ namespace Beryll
             }
         }
 
-        void setGravity(const glm::vec3& grav, bool resetVelocities = false)
+        void setGravity(const glm::vec3& grav, bool resetVelocities = false) const
         {
             if(m_hasCollisionObject && m_collisionFlag == CollisionFlags::DYNAMIC)
             {
@@ -163,21 +163,21 @@ namespace Beryll
             }
         }
 
-        const glm::vec3 getGravity()
+        const glm::vec3 getGravity() const
         {
             BR_ASSERT((m_hasCollisionObject == true &&
                        m_collisionFlag == CollisionFlags::DYNAMIC), "%s", "getGravity() should be called only for object with DYNAMIC collider.");
             return Physics::getGravityObject(m_ID);
         }
 
-        float getCollisionMass()
+        const float getCollisionMass() const
         {
             BR_ASSERT((m_hasCollisionObject == true &&
                        m_collisionFlag == CollisionFlags::DYNAMIC), "%s", "getCollisionMass() should be called only for object with DYNAMIC collider.");
             return m_collisionMass;
         }
 
-        void activate()
+        void activate() const
         {
             if(m_hasCollisionObject && m_isEnabledInPhysicsSimulation)
             {
@@ -185,7 +185,7 @@ namespace Beryll
             }
         }
 
-        bool getIsActive()
+        const bool getIsActive() const
         {
             if(m_hasCollisionObject && m_isEnabledInPhysicsSimulation)
             {
@@ -195,7 +195,7 @@ namespace Beryll
             return false;
         }
 
-        void resetVelocities()
+        void resetVelocities() const
         {
             if(m_hasCollisionObject)
             {
@@ -203,7 +203,7 @@ namespace Beryll
             }
         }
 
-        void applyCentralImpulse(const glm::vec3& impulse)
+        void applyCentralImpulse(const glm::vec3& impulse) const
         {
             if(m_hasCollisionObject && m_isEnabledInPhysicsSimulation)
             {
@@ -211,7 +211,7 @@ namespace Beryll
             }
         }
 
-        void applyTorqueImpulse(const glm::vec3& impulse)
+        void applyTorqueImpulse(const glm::vec3& impulse) const
         {
             if(m_hasCollisionObject && m_isEnabledInPhysicsSimulation)
             {
@@ -219,7 +219,7 @@ namespace Beryll
             }
         }
 
-        glm::mat4 getModelMatrix(bool includeTotalRotation = true)
+        const glm::mat4 getModelMatrix(bool includeTotalRotation = true) const
         {
             // modelMatrix = translate * rotate * scale.
             if(includeTotalRotation)
@@ -241,7 +241,7 @@ namespace Beryll
         }
 
         // Only for one thread.
-        const glm::vec3& getOrigin()
+        const glm::vec3& getOrigin() const
         {
             return m_origin;
         }
@@ -255,34 +255,35 @@ namespace Beryll
 //
 //            return glm::vec3{x, y, z};
 //        }
-        bool getIsDisabledForEver() { return m_isDisabledForEver; } // Use it for avoid object updating and drawing.
-        bool getIsEnabledDraw() { return m_isEnabledDraw; } // Use it for avoid object from drawing.
-        bool getIsEnabledUpdate() { return m_isEnabledUpdate; } // Use it for avoid object from updating.
-        bool getHasCollisionMesh() { return m_hasCollisionObject; }
-        bool getIsEnabledCollisionMesh() { return m_isEnabledInPhysicsSimulation; }
-        CollisionGroups getCollisionGroup() { return m_collisionGroup; }
-        CollisionFlags getCollisionFlag() { return m_collisionFlag; }
-        SceneObjectGroups getSceneObjectGroup() { return m_sceneObjectGroup; }
-        bool getIsAnimatedObject() { return m_isAnimatedObject; }
-        glm::vec3 getFaceDirXYZ()
+        const bool getIsDisabledForEver() const { return m_isDisabledForEver; } // Use it for avoid object updating and drawing.
+        const bool getIsEnabledDraw() const { return m_isEnabledDraw; } // Use it for avoid object from drawing.
+        const bool getIsEnabledUpdate() const { return m_isEnabledUpdate; } // Use it for avoid object from updating.
+        const bool getHasCollisionMesh() const { return m_hasCollisionObject; }
+        const bool getIsEnabledCollisionMesh() const { return m_isEnabledInPhysicsSimulation; }
+        const CollisionGroups getCollisionGroup() const { return m_collisionGroup; }
+        const CollisionGroups getCollisionMask() const { return m_collisionMask; }
+        const CollisionFlags getCollisionFlag() const { return m_collisionFlag; }
+        const SceneObjectGroups getSceneObjectGroup() const { return m_sceneObjectGroup; }
+        const bool getIsAnimatedObject() const { return m_isAnimatedObject; }
+        const glm::vec3 getFaceDirXYZ() const
         {
             return glm::normalize(glm::vec3(m_totalRotation * m_sceneObjectFaceDir));
         }
-        glm::vec3 getFaceDirXZ()
+        const glm::vec3 getFaceDirXZ() const
         {
-            glm::vec3 dirXYZ = getFaceDirXYZ();
+            const glm::vec3 dirXYZ = getFaceDirXYZ();
             return glm::normalize(glm::vec3{dirXYZ.x, 0.0f, dirXYZ.z});
         }
-        glm::vec3 getRightDirXYZ()
+        const glm::vec3 getRightDirXYZ() const
         {
             return glm::normalize(glm::vec3(m_totalRotation * m_sceneObjectRightDir));
         }
-        glm::vec3 getRightDirXZ()
+        const glm::vec3 getRightDirXZ() const
         {
-            glm::vec3 dirXYZ = getRightDirXYZ();
+            const glm::vec3 dirXYZ = getRightDirXYZ();
             return glm::normalize(glm::vec3{dirXYZ.x, 0.0f, dirXYZ.z});
         }
-        glm::vec3 getUpDirXYZ()
+        const glm::vec3 getUpDirXYZ() const
         {
             return glm::normalize(glm::vec3(m_totalRotation * m_sceneObjectUpDir));
         }
@@ -340,8 +341,8 @@ namespace Beryll
         void addMaterial2(const std::string& diffusePath, const std::string& specularPath,
                           const std::string& normalMapPath, const std::string& blendTexturePath);
 
-        float getAddToUVCoords() { return m_addToUVCoords; }
-        float getUVCoordsMultiplier() { return m_UVCoordsMultiplier; }
+        const float getAddToUVCoords() const { return m_addToUVCoords; }
+        const float getUVCoordsMultiplier() const { return m_UVCoordsMultiplier; }
 
         bool useInternalShader = true;
         bool useInternalMaterials = true;
