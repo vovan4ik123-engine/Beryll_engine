@@ -21,7 +21,7 @@ namespace Beryll
         BULLET = 4,
         STATIC_ENVIRONMENT = 5,
         DYNAMIC_ENVIRONMENT = 6,
-        STONE = 7,
+        BALL = 7,
         CONSTRUCTION_1,
         CONSTRUCTION_2,
         CONSTRUCTION_3,

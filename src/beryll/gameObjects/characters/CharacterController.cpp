@@ -16,7 +16,6 @@ namespace Beryll
 
     void CharacterController::update()
     {
-        BR_INFO("%s", "CharacterController::update()");
         if(m_sceneObject->getCollisionFlag() != CollisionFlags::DYNAMIC || !m_sceneObject->getIsActive())
         {
             m_canJump = true;
@@ -152,7 +151,6 @@ namespace Beryll
 
     void CharacterController::move(glm::vec3 moveVector, bool pushDynamicObjects)
     {
-        BR_INFO("%s", "CharacterController::move()");
         //BR_INFO("origin X: %f Y: %f Z: %f", m_sceneObject->getOrigin().x, m_sceneObject->getOrigin().y, m_sceneObject->getOrigin().z);
         if(m_sceneObject->getCollisionFlag() != CollisionFlags::DYNAMIC)
         {
@@ -377,7 +375,6 @@ namespace Beryll
 
     bool CharacterController::jump()
     {
-        BR_INFO("%s", "CharacterController::jump()");
         if(m_sceneObject->getCollisionFlag() != CollisionFlags::DYNAMIC || !m_canJump) { return false; }
 
         m_sceneObject->resetVelocities();

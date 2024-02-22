@@ -39,7 +39,7 @@ namespace Beryll
         STATIC_ENVIRONMENT = 1 << 1,
         DYNAMIC_ENVIRONMENT = 1 << 2,
         PLAYER = 1 << 3,
-        STONE = 1 << 4,
+        BALL = 1 << 4,
         CONSTRUCTION_1 = 1 << 5,
         CONSTRUCTION_2 = 1 << 6,
         CONSTRUCTION_3 = 1 << 7,
