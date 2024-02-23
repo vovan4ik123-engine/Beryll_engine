@@ -147,6 +147,44 @@ namespace Beryll
             return m_linearFactor;
         }
 
+        void setAngularVelocity(const glm::vec3& angVelocity)
+        {
+            if(m_hasCollisionObject && m_collisionFlag == CollisionFlags::DYNAMIC && m_isEnabledInPhysicsSimulation)
+            {
+                Physics::setAngularVelocity(m_ID, angVelocity);
+            }
+        }
+
+        glm::vec3 getAngularVelocity() const
+        {
+            glm::vec3 veloc{0.0f};
+            if(m_hasCollisionObject && m_collisionFlag == CollisionFlags::DYNAMIC && m_isEnabledInPhysicsSimulation)
+            {
+                veloc = Physics::getAngularVelocity(m_ID);
+            }
+
+            return veloc;
+        }
+
+        void setLinearVelocity(const glm::vec3& linVelocity)
+        {
+            if(m_hasCollisionObject && m_collisionFlag == CollisionFlags::DYNAMIC && m_isEnabledInPhysicsSimulation)
+            {
+                Physics::setLinearVelocity(m_ID, linVelocity);
+            }
+        }
+
+        glm::vec3 getLinearVelocity() const
+        {
+            glm::vec3 veloc{0.0f};
+            if(m_hasCollisionObject && m_collisionFlag == CollisionFlags::DYNAMIC && m_isEnabledInPhysicsSimulation)
+            {
+                veloc = Physics::getLinearVelocity(m_ID);
+            }
+
+            return veloc;
+        }
+
         void setDefaultGravity(bool resetVelocities = false) const
         {
             if(m_hasCollisionObject && m_collisionFlag == CollisionFlags::DYNAMIC)
@@ -177,11 +215,19 @@ namespace Beryll
             return m_collisionMass;
         }
 
-        void activate() const
+        void activate(bool resetVelocities = false) const
         {
             if(m_hasCollisionObject && m_isEnabledInPhysicsSimulation)
             {
-                Physics::activateObject(m_ID);
+                Physics::activateObject(m_ID, resetVelocities);
+            }
+        }
+
+        void deActivate(bool resetVelocities = false) const
+        {
+            if(m_hasCollisionObject && m_isEnabledInPhysicsSimulation)
+            {
+                Physics::deActivateObject(m_ID, resetVelocities);
             }
         }
 

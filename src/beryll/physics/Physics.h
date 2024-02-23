@@ -186,9 +186,6 @@ namespace Beryll
             return (static_cast<int>(gr1) & static_cast<int>(gr2)) > 0;
         }
 
-        static void setAngularVelocity(const int ID, const glm::vec3& angVelocity, bool resetVelocities = false); // Set rotation velocity.
-        static void setLinearVelocity(const int ID, const glm::vec3& linVelocity, bool resetVelocities = false); // Set translation velocity.
-
         static bool getIsCollision(const int ID1, const int ID2);
         static bool getIsCollisionWithGroup(const int ID, const CollisionGroups group);
 
@@ -258,19 +255,24 @@ namespace Beryll
         static void resetVelocitiesForObject(const std::shared_ptr<btRigidBody>& b, bool reset);
 
         friend class SceneObject;
-        static void setOrigin(const int ID, const glm::vec3& orig, bool resetVelocities = false);
-        static void addToOrigin(const int ID, const glm::vec3& dist, bool resetVelocities = false);
-        static void addToRotation(const int ID, const glm::quat& qua, bool resetVelocities = false);
-        static void setAngularFactor(const int ID, const glm::vec3& angFactor, bool resetVelocities = false); // Affect objects rotation speed during collisions.
-        static void setLinearFactor(const int ID, const glm::vec3& linFactor, bool resetVelocities = false); // Affect objects translation speed during collisions.
-        static void setGravityForObject(const int ID, const glm::vec3& gravity, bool resetVelocities = false); // Change gravity for object.
+        static void setOrigin(const int ID, const glm::vec3& orig, bool resetVelocities);
+        static void addToOrigin(const int ID, const glm::vec3& dist, bool resetVelocities);
+        static void addToRotation(const int ID, const glm::quat& qua, bool resetVelocities);
+        static void setAngularFactor(const int ID, const glm::vec3& angFactor, bool resetVelocities); // Affect objects rotation speed during collisions.
+        static void setLinearFactor(const int ID, const glm::vec3& linFactor, bool resetVelocities); // Affect objects translation speed during collisions.
+        static void setAngularVelocity(const int ID, const glm::vec3& angVelocity); // Set rotation velocity.
+        static glm::vec3 getAngularVelocity(const int ID);
+        static void setLinearVelocity(const int ID, const glm::vec3& linVelocity); // Set translation velocity.
+        static glm::vec3 getLinearVelocity(const int ID);
+        static void setGravityForObject(const int ID, const glm::vec3& gravity, bool resetVelocities); // Change gravity for object.
         static glm::vec3 getGravityObject(const int ID);
-        static void setDefaultGravityForObject(const int ID, bool resetVelocities = false);
-        static void activateObject(const int ID); // Awake object in physics world.
+        static void setDefaultGravityForObject(const int ID, bool resetVelocities);
+        static void activateObject(const int ID, bool resetVelocities); // Awake object in physics world.
+        static void deActivateObject(const int ID, bool resetVelocities); // Put sleep object in physics world.
         static bool getIsObjectActive(const int ID); // Check if object is active.
         static void resetVelocitiesForObject(const int ID);
         static void softRemoveObject(const int ID); // Remove from simulation but keep in m_rigidBodiesMap.
-        static void restoreObject(const int ID, bool resetVelocities = false); // Restore from m_rigidBodiesMap to simulation.
+        static void restoreObject(const int ID, bool resetVelocities); // Restore from m_rigidBodiesMap to simulation.
         // Impulses
         static void applyCentralImpulseForObject(const int ID, const glm::vec3& impulse);
         static void applyTorqueImpulseForObject(const int ID, const glm::vec3& impulse);

@@ -893,13 +893,27 @@ namespace Beryll
         BR_INFO("m_rigidBodiesMap count after hard delete: %d", m_rigidBodiesMap.size());
     }
 
-    void Physics::activateObject(const int ID)
+    void Physics::activateObject(const int ID, bool resetVelocities)
     {
         auto iter = m_rigidBodiesMap.find(ID);
 
         if(iter != m_rigidBodiesMap.end() && iter->second->existInDynamicWorld) // Found object by ID and it exist in world.
         {
-            iter->second->rb->activate(true);
+            resetVelocitiesForObject(iter->second->rb, resetVelocities);
+
+            iter->second->rb->activate();
+        }
+    }
+
+    void Physics::deActivateObject(const int ID, bool resetVelocities)
+    {
+        auto iter = m_rigidBodiesMap.find(ID);
+
+        if(iter != m_rigidBodiesMap.end() && iter->second->existInDynamicWorld) // Found object by ID and it exist in world.
+        {
+            resetVelocitiesForObject(iter->second->rb, resetVelocities);
+
+            iter->second->rb->setActivationState(ISLAND_SLEEPING);
         }
     }
 
@@ -950,26 +964,46 @@ namespace Beryll
         }
     }
 
-    void Physics::setAngularVelocity(const int ID, const glm::vec3& angVelocity, bool resetVelocities)
+    void Physics::setAngularVelocity(const int ID, const glm::vec3& angVelocity)
     {
         auto iter = m_rigidBodiesMap.find(ID);
         if(iter != m_rigidBodiesMap.end())
         {
             iter->second->rb->setAngularVelocity(btVector3(angVelocity.x, angVelocity.y, angVelocity.z));
-
-            resetVelocitiesForObject(iter->second->rb, resetVelocities);
         }
     }
 
-    void Physics::setLinearVelocity(const int ID, const glm::vec3& linVelocity, bool resetVelocities)
+    glm::vec3 Physics::getAngularVelocity(const int ID)
+    {
+        btVector3 veloc{0.0f, 0.0f, 0.0f};
+        auto iter = m_rigidBodiesMap.find(ID);
+        if(iter != m_rigidBodiesMap.end() && !iter->second->rb->isStaticOrKinematicObject())
+        {
+            veloc = iter->second->rb->getAngularVelocity();
+        }
+
+        return glm::vec3{veloc.getX(), veloc.getY(), veloc.getZ()};
+    }
+
+    void Physics::setLinearVelocity(const int ID, const glm::vec3& linVelocity)
     {
         auto iter = m_rigidBodiesMap.find(ID);
         if(iter != m_rigidBodiesMap.end())
         {
             iter->second->rb->setLinearVelocity(btVector3(linVelocity.x, linVelocity.y, linVelocity.z));
-
-            resetVelocitiesForObject(iter->second->rb, resetVelocities);
         }
+    }
+
+    glm::vec3 Physics::getLinearVelocity(const int ID)
+    {
+        btVector3 veloc{0.0f, 0.0f, 0.0f};
+        auto iter = m_rigidBodiesMap.find(ID);
+        if(iter != m_rigidBodiesMap.end() && !iter->second->rb->isStaticOrKinematicObject())
+        {
+            veloc = iter->second->rb->getLinearVelocity();
+        }
+
+        return glm::vec3{veloc.getX(), veloc.getY(), veloc.getZ()};
     }
 
     void Physics::setGravityForObject(const int ID, const glm::vec3& gravity, bool resetVelocities)
