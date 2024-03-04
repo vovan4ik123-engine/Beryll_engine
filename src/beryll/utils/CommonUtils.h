@@ -130,6 +130,25 @@ namespace BeryllUtils
             return glm::degrees(glm::acos(glm::dot(v1, v2)));
         }
 
+        static bool getIsVectorsParallel(const glm::vec3& v1, const glm::vec3& v2)
+        {
+            const float dotPr = glm::dot(v1, v2);
+            return ((dotPr > 0.9999f && dotPr < 1.0001f) ||
+                    (dotPr < -0.9999f && dotPr > -1.0001f));
+        }
+
+        static bool getIsVectorsParallelInSameDir(const glm::vec3& v1, const glm::vec3& v2)
+        {
+            const float dotPr = glm::dot(v1, v2);
+            return ((dotPr > 0.9999f && dotPr < 1.0001f));
+        }
+
+        static bool getIsVectorsParallelInOppositeDir(const glm::vec3& v1, const glm::vec3& v2)
+        {
+            const float dotPr = glm::dot(v1, v2);
+            return ((dotPr < -0.9999f && dotPr > -1.0001f));
+        }
+
         // return glm::quat that need to make dest from start
         // static glm::quat getRotationBetweenVectors(const glm::vec3& start, const glm::vec3& dest)
         // use glm::rotation
