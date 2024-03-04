@@ -265,6 +265,22 @@ namespace Beryll
             }
         }
 
+        void setFriction(const float friction) const
+        {
+            if(m_hasCollisionObject)
+            {
+                Physics::setFriction(m_ID, friction);
+            }
+        }
+
+        void setDamping(const float linDamping, const float angDamping)
+        {
+            if(m_hasCollisionObject)
+            {
+                Physics::setDamping(m_ID, linDamping, angDamping);
+            }
+        }
+
         const glm::mat4 getModelMatrix(bool includeTotalRotation = true) const
         {
             // modelMatrix = translate * rotate * scale.

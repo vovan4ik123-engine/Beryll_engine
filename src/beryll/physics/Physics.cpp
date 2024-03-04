@@ -1168,4 +1168,22 @@ namespace Beryll
             iter->second->rb->applyTorqueImpulse(btVector3(impulse.x, impulse.y, impulse.z));
         }
     }
+
+    void Physics::setFriction(const int ID, const float friction)
+    {
+        auto iter = m_rigidBodiesMap.find(ID);
+        if(iter != m_rigidBodiesMap.end())
+        {
+            iter->second->rb->setFriction(friction);
+        }
+    }
+
+    void Physics::setDamping(const int ID, const float linDamping, const float angDamping)
+    {
+        auto iter = m_rigidBodiesMap.find(ID);
+        if(iter != m_rigidBodiesMap.end())
+        {
+            iter->second->rb->setDamping(linDamping, angDamping);
+        }
+    }
 }

@@ -41,7 +41,7 @@ namespace Beryll
         std::string m_text;
         float m_min = 0.0f;
         float m_max = 1.0f;
-        float m_sliderValue = 0.0f; // In range 0.0f...1.0f.
+        float m_sliderValue = 0.0f;
         bool m_valueChanging = false;
         long m_fingerIDDownEvent = -1;
 

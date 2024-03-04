@@ -277,6 +277,9 @@ namespace Beryll
         static void applyCentralImpulseForObject(const int ID, const glm::vec3& impulse);
         static void applyTorqueImpulseForObject(const int ID, const glm::vec3& impulse);
 
+        static void setFriction(const int ID, const float friction);
+        static void setDamping(const int ID, const float linDamping, const float angDamping);
+
         // addObject() should be called only from SimpleCollidingObject/AnimatedCollidingObject and only from one thread.
         // getTransforms() should be called only from SimpleCollidingObject/AnimatedCollidingObject and can be called from many threads.
         // Bullet physics does not store scale in transforms.
