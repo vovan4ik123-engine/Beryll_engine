@@ -264,7 +264,7 @@ namespace Beryll
         static glm::vec3 getAngularVelocity(const int ID);
         static void setLinearVelocity(const int ID, const glm::vec3& linVelocity); // Set translation velocity.
         static glm::vec3 getLinearVelocity(const int ID);
-        static void setGravityForObject(const int ID, const glm::vec3& gravity, bool resetVelocities); // Change gravity for object.
+        static void setGravityForObject(const int ID, const glm::vec3& gravity, bool resetVelocities, bool activate); // Change gravity for object.
         static glm::vec3 getGravityObject(const int ID);
         static void setDefaultGravityForObject(const int ID, bool resetVelocities);
         static void activateObject(const int ID, bool resetVelocities); // Awake object in physics world.

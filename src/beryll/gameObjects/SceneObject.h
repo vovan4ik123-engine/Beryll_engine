@@ -193,11 +193,11 @@ namespace Beryll
             }
         }
 
-        void setGravity(const glm::vec3& grav, bool resetVelocities = false) const
+        void setGravity(const glm::vec3& grav, bool resetVelocities = false, bool activate = true) const
         {
             if(m_hasCollisionObject && m_collisionFlag == CollisionFlags::DYNAMIC)
             {
-                Physics::setGravityForObject(m_ID, grav, resetVelocities);
+                Physics::setGravityForObject(m_ID, grav, resetVelocities, activate);
             }
         }
 

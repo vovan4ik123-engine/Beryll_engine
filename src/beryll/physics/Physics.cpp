@@ -1006,11 +1006,14 @@ namespace Beryll
         return glm::vec3{veloc.getX(), veloc.getY(), veloc.getZ()};
     }
 
-    void Physics::setGravityForObject(const int ID, const glm::vec3& gravity, bool resetVelocities)
+    void Physics::setGravityForObject(const int ID, const glm::vec3& gravity, bool resetVelocities, bool activate)
     {
         auto iter = m_rigidBodiesMap.find(ID);
         if(iter != m_rigidBodiesMap.end() && !iter->second->rb->isStaticOrKinematicObject())
         {
+            if(activate)
+                iter->second->rb->activate(true);
+
             iter->second->rb->setGravity(btVector3(gravity.x, gravity.y, gravity.z));
 
             resetVelocitiesForObject(iter->second->rb, resetVelocities);
