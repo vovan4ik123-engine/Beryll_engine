@@ -46,6 +46,8 @@ namespace Beryll
         EXPLOSIVE_OBJECT_POWER_700_RADIUS_50,
         EXPLOSIVE_OBJECT_POWER_1500_RADIUS_50,
         EXPLOSIVE_OBJECT_POWER_5000_RADIUS_100,
+
+        BUILDING
     };
 
     class SceneObject : public GameObject
@@ -193,11 +195,13 @@ namespace Beryll
             }
         }
 
-        void setGravity(const glm::vec3& grav, bool resetVelocities = false, bool activate = true) const
+        void setGravity(const glm::vec3& grav, bool resetVelocities = false, bool activate = true)
         {
-            if(m_hasCollisionObject && m_collisionFlag == CollisionFlags::DYNAMIC)
+            if(m_gravity != grav && m_hasCollisionObject && m_collisionFlag == CollisionFlags::DYNAMIC)
             {
                 Physics::setGravityForObject(m_ID, grav, resetVelocities, activate);
+
+                m_gravity = grav;
             }
         }
 
@@ -460,6 +464,7 @@ namespace Beryll
         // Only for internal checks inside this file.
         glm::vec3 m_linearFactor{1.0f, 1.0f, 1.0f};
         glm::vec3 m_angularFactor{1.0f, 1.0f, 1.0f};
+        glm::vec3 m_gravity{std::numeric_limits<float>::max()};
 
         bool m_isDisabledForEver = false;
         bool m_isEnabledDraw = true; // For method draw().

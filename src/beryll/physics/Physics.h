@@ -63,6 +63,9 @@ namespace Beryll
 
         EXPLOSIVE_OBJECT = 1 << 25,
 
+        GROUND = 1 << 26,
+        BUILDING = 1 << 27,
+
         YOU_CAN_COMBINE_GROUPS_WHEN_USE = STATIC_ENVIRONMENT | CAMERA,
 
         ALL_GROUPS = -1 // All bits = 1.
