@@ -322,7 +322,11 @@ namespace Beryll
             m_origin = m_physicsTransforms.origin;
         }
 
-        calculateTransforms();
+        // Should be here. Can be called in multi threading way. draw() will be called in single thread.
+        if(getIsEnabledDraw())
+        {
+            calculateTransforms();
+        }
     }
 
     void BaseAnimatedObject::draw()
