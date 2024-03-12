@@ -157,6 +157,8 @@ namespace BeryllUtils
         static std::optional<Beryll::Material2> loadMaterial2(const std::string& diffusePath, const std::string& specularPath,
                                                               const std::string& normalMapPath, const std::string& blendTexturePath);
 
+        static std::vector<glm::vec3> loadMeshVerticesToVector(const char* filePath);
+
     private:
         static int m_id;
     };

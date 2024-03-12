@@ -1,6 +1,7 @@
 #include "CommonUtils.h"
-
 #include "beryll/renderer/Renderer.h"
+#include "beryll/utils/File.h"
+#include "beryll/utils/Matrix.h"
 
 namespace BeryllUtils
 {
@@ -102,5 +103,55 @@ namespace BeryllUtils
             mat2.normalMapTexture = Beryll::Renderer::createTexture(normalMapPath.c_str(), Beryll::TextureType::NORMAL_MAP_TEXTURE_MAT_2);
 
         return mat2;
+    }
+
+    std::vector<glm::vec3> Common::loadMeshVerticesToVector(const char* filePath)
+    {
+        BR_ASSERT((std::string(filePath).substr(std::string(filePath).find_last_of('.')) == ".fbx"),
+                  "Mesh must be in .fbx file: %s", filePath);
+
+        BR_INFO("Loading vertices to vector from file: %s", filePath);
+
+        uint32_t bufferSize = 0;
+        char* buffer = BeryllUtils::File::readToBuffer(filePath, &bufferSize);
+
+        Assimp::Importer importer;
+        const aiScene* scene = importer.ReadFileFromMemory(buffer, bufferSize, 0);
+        delete[] buffer;
+        if(!scene || !scene->mRootNode || scene->mFlags == AI_SCENE_FLAGS_INCOMPLETE)
+        {
+            BR_ASSERT(false, "Scene loading error for file: %s", filePath);
+        }
+
+        BR_ASSERT((scene->mNumMeshes == 1), "Mesh with vertices: %s MUST contain only 1 mesh.", filePath);
+
+        const aiMesh* mesh = scene->mMeshes[0];
+        glm::mat4 modelMatrix{1.0f};
+        const aiNode* node = BeryllUtils::Common::findAinodeForAimesh(scene, scene->mRootNode, mesh->mName);
+        if(node)
+            modelMatrix = BeryllUtils::Matrix::aiToGlm(node->mTransformation);
+
+
+        std::vector<glm::vec3> vertices;
+        vertices.reserve(mesh->mNumVertices);
+
+        glm::vec4 vertex4{0.0f};
+        for(int i = 0; i < mesh->mNumVertices; ++i)
+        {
+            vertex4.x = mesh->mVertices[i].x;
+            vertex4.y = mesh->mVertices[i].y;
+            vertex4.z = mesh->mVertices[i].z;
+            vertex4.w = 1.0f;
+
+            vertex4 = modelMatrix * vertex4;
+
+            glm::vec3 vertex3{vertex4};
+            if(std::find(vertices.begin(), vertices.end(), vertex3) == vertices.end())
+            {
+                vertices.push_back(vertex3);
+            }
+        }
+
+        return vertices;
     }
 }

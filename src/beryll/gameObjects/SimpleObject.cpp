@@ -17,7 +17,7 @@ namespace Beryll
                                                            aiProcess_FlipUVs |
                                                            aiProcess_CalcTangentSpace);
         delete[] buffer;
-        if( !scene || !scene->mRootNode || scene->mFlags == AI_SCENE_FLAGS_INCOMPLETE)
+        if(!scene || !scene->mRootNode || scene->mFlags == AI_SCENE_FLAGS_INCOMPLETE)
         {
             BR_ASSERT(false, "Scene loading error for file: %s", filePath);
         }
@@ -60,7 +60,7 @@ namespace Beryll
                                                            aiProcess_FlipUVs |
                                                            aiProcess_CalcTangentSpace);
         delete[] buffer;
-        if( !scene || !scene->mRootNode || scene->mFlags == AI_SCENE_FLAGS_INCOMPLETE)
+        if(!scene || !scene->mRootNode || scene->mFlags == AI_SCENE_FLAGS_INCOMPLETE)
         {
             BR_ASSERT(false, "Scene loading error for file: %s", filePath);
         }
