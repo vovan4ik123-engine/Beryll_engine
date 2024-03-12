@@ -13,9 +13,8 @@ namespace Beryll
 
         Assimp::Importer importer;
         const aiScene* scene = importer.ReadFileFromMemory(buffer, bufferSize,
-                                                           aiProcess_Triangulate |
-                                                           aiProcess_FlipUVs |
-                                                           aiProcess_CalcTangentSpace);
+                                                           aiProcess_Triangulate | aiProcess_FlipUVs |
+                                                           aiProcess_JoinIdenticalVertices | aiProcess_CalcTangentSpace);
         delete[] buffer;
         if(!scene || !scene->mRootNode || scene->mFlags == AI_SCENE_FLAGS_INCOMPLETE)
         {
@@ -56,9 +55,8 @@ namespace Beryll
 
         Assimp::Importer importer;
         const aiScene* scene = importer.ReadFileFromMemory(buffer, bufferSize,
-                                                           aiProcess_Triangulate |
-                                                           aiProcess_FlipUVs |
-                                                           aiProcess_CalcTangentSpace);
+                                                           aiProcess_Triangulate | aiProcess_FlipUVs |
+                                                           aiProcess_JoinIdenticalVertices | aiProcess_CalcTangentSpace);
         delete[] buffer;
         if(!scene || !scene->mRootNode || scene->mFlags == AI_SCENE_FLAGS_INCOMPLETE)
         {

@@ -116,7 +116,7 @@ namespace BeryllUtils
         char* buffer = BeryllUtils::File::readToBuffer(filePath, &bufferSize);
 
         Assimp::Importer importer;
-        const aiScene* scene = importer.ReadFileFromMemory(buffer, bufferSize, 0);
+        const aiScene* scene = importer.ReadFileFromMemory(buffer, bufferSize, aiProcess_JoinIdenticalVertices);
         delete[] buffer;
         if(!scene || !scene->mRootNode || scene->mFlags == AI_SCENE_FLAGS_INCOMPLETE)
         {
