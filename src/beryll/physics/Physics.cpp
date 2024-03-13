@@ -50,7 +50,6 @@ namespace Beryll
                                                                         m_collisionConfiguration.get());
 
         m_dynamicsWorldMT->setGravity(btVector3(0.0f, -10.0f, 0.0f));
-        //m_dynamicsWorldMT->getSolverInfo().m_numIterations = 10;
 
         // Set collisions call backs to bullet.
         gContactAddedCallback = collisionsCallBack;

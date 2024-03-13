@@ -159,6 +159,12 @@ namespace Beryll
             m_maxAcceptableFrameTimeSec = 1.0f / m_minAcceptableFPS;
         }
 
+        static void setContactSolverIterations(int count)
+        {
+            if(count > 0 && count <= 20)
+                m_dynamicsWorldMT->getSolverInfo().m_numIterations = count;
+        }
+
         static void disableSimulation()
         {
             m_simulationEnabled = false;
