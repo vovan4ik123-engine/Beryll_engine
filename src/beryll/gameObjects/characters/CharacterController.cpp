@@ -18,6 +18,7 @@ namespace Beryll
     {
         if(m_sceneObject->getCollisionFlag() != CollisionFlags::DYNAMIC || !m_sceneObject->getIsActive())
         {
+            m_moving = false;
             m_canJump = true;
             m_jumped = false;
             m_jumpedWhileMoving = false;
@@ -125,6 +126,9 @@ namespace Beryll
 
         const glm::vec3 needToMove = position - m_sceneObject->getOrigin();
 
+        if(glm::any(glm::isnan(needToMove)) || glm::length(needToMove) == 0.0f)
+            return;
+
         if(rotateWhenMove)
             m_sceneObject->rotateToDirection(needToMove, ignoreYAxisWhenRotate);
 
@@ -138,7 +142,7 @@ namespace Beryll
 
     void CharacterController::moveToDirection(glm::vec3 direction, bool rotateWhenMove, bool ignoreYAxisWhenRotate, bool pushDynamicObjects)
     {
-        if(m_jumpedWhileMoving)
+        if(m_jumpedWhileMoving || glm::any(glm::isnan(direction)) || glm::length(direction) == 0.0f)
             return;
 
         direction = glm::normalize(direction);
@@ -155,6 +159,7 @@ namespace Beryll
         if(m_sceneObject->getCollisionFlag() != CollisionFlags::DYNAMIC)
         {
             m_sceneObject->addToOrigin(moveVector);
+            m_moving = true;
             return;
         }
 
@@ -368,7 +373,6 @@ namespace Beryll
         }
 
         m_sceneObject->addToOrigin(moveVector);
-
         m_moving = true;
         m_jumpDirection = moveVector; // Be careful. Y can be != 0.0f and length != 1.0f.
     }
