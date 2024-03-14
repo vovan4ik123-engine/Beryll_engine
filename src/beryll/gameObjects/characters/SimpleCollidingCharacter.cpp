@@ -21,8 +21,6 @@ namespace Beryll
         BR_ASSERT(((collFlag == CollisionFlags::DYNAMIC && wantCollisionCallBack == true) ||
                    (collFlag != CollisionFlags::DYNAMIC)), "%s", "collFlag DYNAMIC must have wantCollisionCallBack = true to use character controller.");
 
-        BR_ASSERT((collMask != CollisionGroups::NONE), "%s", "Character has collMask = NONE.");
-
         // Colliding character described by collision mesh.
         m_controller.m_fromOriginToTop = std::abs(m_mostTopVertex);
         m_controller.m_fromOriginToBottom = std::abs(m_mostBottomVertex);
