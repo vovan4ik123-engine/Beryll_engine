@@ -45,6 +45,8 @@ namespace Beryll
         BUILDING = 1 << 6,
         MOVING_ENEMY = 1 << 7,
         RAY_FOR_BUILDING_CHECK = 1 << 8,
+        GARBAGE = 1 << 9,
+        ENEMY_ATTACK = 1 << 10,
 
         YOU_CAN_COMBINE_GROUPS_WHEN_USE = STATIC_ENVIRONMENT | CAMERA,
 
@@ -69,10 +71,10 @@ namespace Beryll
                       const std::shared_ptr<btRigidBody>& b,
                       const bool exist,
                       CollisionGroups collGr,
-                      CollisionGroups collMs,
+                      CollisionGroups collMsk,
                       CollisionFlags collFl,
                       float ms)
-        : bodyID(id), rb(b), existInDynamicWorld(exist), collGroup(collGr), collMask(collMs), collFlag(collFl), mass(ms)  {}
+        : bodyID(id), rb(b), existInDynamicWorld(exist), collGroup(collGr), collMask(collMsk), collFlag(collFl), mass(ms)  {}
 
         const int bodyID;
         const std::shared_ptr<btRigidBody> rb;
@@ -94,8 +96,9 @@ namespace Beryll
     struct RayClosestHit
     {
         const bool isHit = false;
-        const int objectID = -1; // If something was hitted.
-        const CollisionFlags collFlag = CollisionFlags::NONE;
+        const int hittedObjectID = -1; // If something was hitted.
+        const CollisionFlags hittedCollFlag = CollisionFlags::NONE;
+        CollisionGroups hittedCollGroup = CollisionGroups::NONE;
         const float hittedObjectMass = -1.0f;
         const glm::vec3 hitPoint{0.0f};
         const glm::vec3 hitNormal{0.0f};
@@ -107,8 +110,9 @@ namespace Beryll
     struct RayAllHits
     {
         bool isHit = false;
-        std::vector<const int> objectsID; // All hitted.
-        std::vector<CollisionFlags> objectsCollFlags;
+        std::vector<const int> hittedObjectsID; // All hitted.
+        std::vector<CollisionFlags> hittedObjectsCollFlags;
+        std::vector<CollisionGroups> hittedObjectsCollGroups;
         std::vector<float> hittedObjectsMass;
         std::vector<glm::vec3> hitPoints;
         std::vector<glm::vec3> hitNormals;

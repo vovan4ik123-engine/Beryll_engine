@@ -175,7 +175,7 @@ namespace Beryll
         glm::vec3 characterHeadFront = characterHeadUp + ((m_XZRadius * 2.3f) / moveVectorLength) * moveVector;
         RayClosestHit headFrontHit = Physics::castRayClosestHit(characterHeadUp, characterHeadFront, m_sceneObject->getCollisionGroup(), m_sceneObject->getCollisionMask());
         if(headFrontHit &&
-           (headFrontHit.collFlag != CollisionFlags::DYNAMIC || (headFrontHit.collFlag == CollisionFlags::DYNAMIC && !pushDynamicObjects)))
+           (headFrontHit.hittedCollFlag != CollisionFlags::DYNAMIC || (headFrontHit.hittedCollFlag == CollisionFlags::DYNAMIC && !pushDynamicObjects)))
         {
             //BR_INFO("%s", "headFrontHit");
             headFrontObstacle = true;
@@ -187,7 +187,7 @@ namespace Beryll
         glm::vec3 characterHeadLeft = characterHeadUp + ((m_XZRadius * 2.0f) / moveVectorLength) * moveVectorLeftSide;
         RayClosestHit headLeftHit = Physics::castRayClosestHit(characterHeadUp, characterHeadLeft, m_sceneObject->getCollisionGroup(), m_sceneObject->getCollisionMask());
         if(headLeftHit &&
-           (headLeftHit.collFlag != CollisionFlags::DYNAMIC || (headLeftHit.collFlag == CollisionFlags::DYNAMIC && !pushDynamicObjects)))
+           (headLeftHit.hittedCollFlag != CollisionFlags::DYNAMIC || (headLeftHit.hittedCollFlag == CollisionFlags::DYNAMIC && !pushDynamicObjects)))
         {
             //BR_INFO("%s", "headLeftHit");
             headLeftObstacle = true;
@@ -204,7 +204,7 @@ namespace Beryll
         glm::vec3 characterHeadRight = characterHeadUp + ((m_XZRadius * 2.0f) / moveVectorLength) * moveVectorRightSide;
         RayClosestHit headRightHit = Physics::castRayClosestHit(characterHeadUp, characterHeadRight, m_sceneObject->getCollisionGroup(), m_sceneObject->getCollisionMask());
         if(headRightHit &&
-           (headRightHit.collFlag != CollisionFlags::DYNAMIC || (headRightHit.collFlag == CollisionFlags::DYNAMIC && !pushDynamicObjects)))
+           (headRightHit.hittedCollFlag != CollisionFlags::DYNAMIC || (headRightHit.hittedCollFlag == CollisionFlags::DYNAMIC && !pushDynamicObjects)))
         {
             //BR_INFO("%s", "headRightHit");
             headRightObstacle = true;
@@ -276,7 +276,7 @@ namespace Beryll
             somethingHitInFront = true;
             somethingHitPoint = somethingHitOnFront.hitPoint;
             somethingHitNormal = somethingHitOnFront.hitNormal;
-            somethingHitCollFlag = somethingHitOnFront.collFlag;
+            somethingHitCollFlag = somethingHitOnFront.hittedCollFlag;
             directionScaledByRadiusLength = glm::length(frontDirectionScaledByRadius);
         }
         else // Check left side.
@@ -294,7 +294,7 @@ namespace Beryll
                 somethingHitInFront = true;
                 somethingHitPoint = somethingHitOnLeft.hitPoint;
                 somethingHitNormal = somethingHitOnLeft.hitNormal;
-                somethingHitCollFlag = somethingHitOnLeft.collFlag;
+                somethingHitCollFlag = somethingHitOnLeft.hittedCollFlag;
                 directionScaledByRadiusLength = glm::length(leftDirectionScaledByRadius);
             }
             else // Check right side.
@@ -312,7 +312,7 @@ namespace Beryll
                     somethingHitInFront = true;
                     somethingHitPoint = somethingHitOnRight.hitPoint;
                     somethingHitNormal = somethingHitOnRight.hitNormal;
-                    somethingHitCollFlag = somethingHitOnRight.collFlag;
+                    somethingHitCollFlag = somethingHitOnRight.hittedCollFlag;
                     directionScaledByRadiusLength = glm::length(rightDirectionScaledByRadius);
                 }
             }

@@ -1070,6 +1070,7 @@ namespace Beryll
             return RayClosestHit{true,
                                  static_cast<RigidBodyData*>(closestResults.m_collisionObject->getUserPointer())->bodyID,
                                  static_cast<RigidBodyData*>(closestResults.m_collisionObject->getUserPointer())->collFlag,
+                                 static_cast<RigidBodyData*>(closestResults.m_collisionObject->getUserPointer())->collGroup,
                                  static_cast<RigidBodyData*>(closestResults.m_collisionObject->getUserPointer())->mass,
                                  glm::vec3(closestResults.m_hitPointWorld.x(), closestResults.m_hitPointWorld.y(), closestResults.m_hitPointWorld.z()),
                                  glm::vec3(closestResults.m_hitNormalWorld.x(), closestResults.m_hitNormalWorld.y(), closestResults.m_hitNormalWorld.z()),
@@ -1100,10 +1101,13 @@ namespace Beryll
         {
             RayAllHits res;
             res.isHit = true;
+            res.hittedObjectsID.reserve(allResults.m_hitPointWorld.size());
+            res.hittedObjectsCollFlags.reserve(allResults.m_hitPointWorld.size());
+            res.hittedObjectsCollGroups.reserve(allResults.m_hitPointWorld.size());
+            res.hittedObjectsMass.reserve(allResults.m_hitPointWorld.size());
             res.hitPoints.reserve(allResults.m_hitPointWorld.size());
             res.hitNormals.reserve(allResults.m_hitPointWorld.size());
             res.hitFractions.reserve(allResults.m_hitPointWorld.size());
-            res.objectsID.reserve(allResults.m_hitPointWorld.size());
             res.hittedObjectsOrigins.reserve(allResults.m_hitPointWorld.size());
 
             for(int i = 0; i < allResults.m_hitPointWorld.size(); i++)
@@ -1116,12 +1120,13 @@ namespace Beryll
                 else
                     transforms = allResults.m_collisionObjects[i]->getWorldTransform();
 
+                res.hittedObjectsID.emplace_back(static_cast<RigidBodyData*>(allResults.m_collisionObjects[i]->getUserPointer())->bodyID);
+                res.hittedObjectsCollFlags.emplace_back(static_cast<RigidBodyData*>(allResults.m_collisionObjects[i]->getUserPointer())->collFlag);
+                res.hittedObjectsCollGroups.emplace_back(static_cast<RigidBodyData*>(allResults.m_collisionObjects[i]->getUserPointer())->collGroup);
+                res.hittedObjectsMass.emplace_back(static_cast<RigidBodyData*>(allResults.m_collisionObjects[i]->getUserPointer())->mass);
                 res.hitPoints.emplace_back(allResults.m_hitPointWorld[i].x(), allResults.m_hitPointWorld[i].y(), allResults.m_hitPointWorld[i].z());
                 res.hitNormals.emplace_back(allResults.m_hitNormalWorld[i].x(), allResults.m_hitNormalWorld[i].y(), allResults.m_hitNormalWorld[i].z());
                 res.hitFractions.emplace_back(allResults.m_hitFractions[i]);
-                res.objectsID.emplace_back(static_cast<RigidBodyData*>(allResults.m_collisionObjects[i]->getUserPointer())->bodyID);
-                res.objectsCollFlags.emplace_back(static_cast<RigidBodyData*>(allResults.m_collisionObjects[i]->getUserPointer())->collFlag);
-                res.hittedObjectsMass.emplace_back(static_cast<RigidBodyData*>(allResults.m_collisionObjects[i]->getUserPointer())->mass);
                 res.hittedObjectsOrigins.emplace_back(transforms.getOrigin().getX(), transforms.getOrigin().getY(), transforms.getOrigin().getZ());
             }
 

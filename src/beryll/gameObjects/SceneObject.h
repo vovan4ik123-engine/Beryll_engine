@@ -22,7 +22,8 @@ namespace Beryll
         STATIC_ENVIRONMENT = 5,
         DYNAMIC_ENVIRONMENT = 6,
         BALL = 7,
-        BUILDING = 8
+        BUILDING = 8,
+        GARBAGE
     };
 
     class SceneObject : public GameObject
