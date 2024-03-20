@@ -48,14 +48,19 @@ namespace Beryll
                        m_biggestZ = m_scene->mMeshes[i]->mVertices[g].y;
                 }
 
-                m_hasCollisionObject = true;
-                m_isEnabledInPhysicsSimulation = true;
                 m_collisionFlag = collFlag;
                 m_collisionGroup = collGroup;
                 m_collisionMask = collMask;
                 m_collisionMass = collisionMassKg;
 
-                loadCollisionMesh(m_scene->mMeshes[i], meshName, collisionMassKg, wantCollisionCallBack, collFlag, collGroup, collMask);
+                // Dont add collider to simulation if collGroup == NONE. It have no sense.
+                if(collGroup != CollisionGroups::NONE)
+                {
+                    m_hasCollisionObject = true;
+                    m_isEnabledInPhysicsSimulation = true;
+
+                    loadCollisionMesh(m_scene->mMeshes[i], meshName, collisionMassKg, wantCollisionCallBack, collFlag, collGroup, collMask);
+                }
             }
         }
     }

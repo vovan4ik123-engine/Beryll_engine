@@ -98,12 +98,17 @@ namespace Beryll
                 m_biggestZ = collisionMesh->mVertices[g].y;
         }
 
-        m_hasCollisionObject = true;
-        m_isEnabledInPhysicsSimulation = true;
         m_collisionFlag = collFlag;
         m_collisionGroup = collGroup;
         m_collisionMask = collMask;
         m_collisionMass = mass;
+
+        // Dont add collider to simulation if collGroup == NONE. It have no sense.
+        if(collGroup == CollisionGroups::NONE)
+            return;
+
+        m_hasCollisionObject = true;
+        m_isEnabledInPhysicsSimulation = true;
 
         glm::mat4 collisionTransforms{1.0f};
 
