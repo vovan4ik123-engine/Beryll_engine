@@ -104,16 +104,14 @@ namespace BeryllUtils
 
         static glm::vec3 getRightVector(const glm::vec3& v1)
         {
-            BR_ASSERT((glm::dot(v1, BeryllConstants::worldUp) != 1.0f &&
-                       glm::dot(v1, BeryllConstants::worldUp) != -1.0f), "%s", "Vectors are parallel. Use getIsVectorOnRightSide() to check.");
+            BR_ASSERT((Common::getIsVectorsParallel(v1, BeryllConstants::worldUp) == false), "%s", "Vectors are parallel. Use getIsVectorOnRightSide() to check.");
 
             return glm::normalize(glm::cross(v1, BeryllConstants::worldUp));
         }
 
         static glm::vec3 getLeftVector(const glm::vec3& v1)
         {
-            BR_ASSERT((glm::dot(v1, BeryllConstants::worldUp) != 1.0f &&
-                       glm::dot(v1, BeryllConstants::worldUp) != -1.0f), "%s", "Vectors are parallel. Use getIsVectorOnRightSide() to check.");
+            BR_ASSERT((Common::getIsVectorsParallel(v1, BeryllConstants::worldUp) == false), "%s", "Vectors are parallel. Use getIsVectorOnRightSide() to check.");
 
             return glm::normalize(glm::cross(BeryllConstants::worldUp, v1));
         }
@@ -133,20 +131,20 @@ namespace BeryllUtils
         static bool getIsVectorsParallel(const glm::vec3& v1, const glm::vec3& v2)
         {
             const float dotPr = glm::dot(v1, v2);
-            return ((dotPr > 0.9999f && dotPr < 1.0001f) ||
-                    (dotPr < -0.9999f && dotPr > -1.0001f));
+            return ((dotPr > 0.999f && dotPr < 1.001f) ||
+                    (dotPr < -0.999f && dotPr > -1.001f));
         }
 
         static bool getIsVectorsParallelInSameDir(const glm::vec3& v1, const glm::vec3& v2)
         {
             const float dotPr = glm::dot(v1, v2);
-            return ((dotPr > 0.9999f && dotPr < 1.0001f));
+            return ((dotPr > 0.999f && dotPr < 1.001f));
         }
 
         static bool getIsVectorsParallelInOppositeDir(const glm::vec3& v1, const glm::vec3& v2)
         {
             const float dotPr = glm::dot(v1, v2);
-            return ((dotPr < -0.9999f && dotPr > -1.0001f));
+            return ((dotPr < -0.999f && dotPr > -1.001f));
         }
 
         // return glm::quat that need to make dest from start
