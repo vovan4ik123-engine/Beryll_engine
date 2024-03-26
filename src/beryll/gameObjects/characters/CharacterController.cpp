@@ -16,9 +16,13 @@ namespace Beryll
 
     void CharacterController::update()
     {
-        if(m_sceneObject->getCollisionFlag() != CollisionFlags::DYNAMIC || !m_sceneObject->getIsActive())
+        if(m_sceneObject->getCollisionFlag() != CollisionFlags::DYNAMIC)
+            return;
+
+        m_moving = false;
+
+        if(!m_sceneObject->getIsActive())
         {
-            m_moving = false;
             m_canJump = true;
             m_jumped = false;
             m_jumpedWhileMoving = false;
@@ -31,7 +35,6 @@ namespace Beryll
         // Object is dynamic and active.
 
         m_canStay = false;
-        m_moving = false;
         m_controllingInAir = false;
         m_touchGroundAfterFall = false;
         m_bottomCollisionPoint = std::make_pair(glm::vec3(0.0f, std::numeric_limits<float>::max(), 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
@@ -127,7 +130,10 @@ namespace Beryll
         const glm::vec3 needToMove = position - m_sceneObject->getOrigin();
 
         if(glm::any(glm::isnan(needToMove)) || glm::length(needToMove) == 0.0f)
+        {
+            m_moving = false;
             return;
+        }
 
         if(rotateWhenMove)
             m_sceneObject->rotateToDirection(needToMove, ignoreYAxisWhenRotate);
@@ -379,7 +385,8 @@ namespace Beryll
 
     bool CharacterController::jump()
     {
-        if(m_sceneObject->getCollisionFlag() != CollisionFlags::DYNAMIC || !m_canJump) { return false; }
+        if(m_sceneObject->getCollisionFlag() != CollisionFlags::DYNAMIC || !m_canJump)
+            return false;
 
         m_sceneObject->resetVelocities();
 
