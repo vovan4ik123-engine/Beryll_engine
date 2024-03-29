@@ -22,7 +22,7 @@ namespace Beryll
         SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8); // Minimum number of bits for the green channel.
         SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8); // Minimum number of bits for the blue channel.
         SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
-        SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16); // Minimum number of bits in depth buffer; default 16.
+        SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24); // Minimum number of bits in depth buffer; default 16.
 
         // SDL antialiasing for real device. Dont work on emulator !!
         SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1); // Enable antialiasing sdl.
