@@ -21,6 +21,7 @@ namespace Beryll
         }
         else
         {
+            BR_INFO("Load animated object: %s", filePath);
             std::shared_ptr<Assimp::Importer> importer = std::make_shared<Assimp::Importer>();
             const aiScene* scene = nullptr;
 

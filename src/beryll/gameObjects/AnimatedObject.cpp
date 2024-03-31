@@ -6,7 +6,7 @@ namespace Beryll
                                    SceneObjectGroups sceneGroup)
                                    : BaseAnimatedObject(filePath, sceneGroup)
     {
-        BR_INFO("Loading animated object: %s", filePath);
+        BR_INFO("Process animated object: %s", filePath);
 
         BR_ASSERT((m_scene->mNumMeshes == 1), "Animated object: %s MUST contain only 1 mesh.", filePath);
         BR_ASSERT((m_scene->HasAnimations() && m_scene->mMeshes[0]->mNumBones > 0), "%s", "Animated object must have animation + bone.");
