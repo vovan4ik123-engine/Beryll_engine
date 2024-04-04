@@ -37,6 +37,7 @@
 #include "beryll/GUI/Text.h"
 #include "beryll/GUI/SliderHorizontal.h"
 #include "beryll/GUI/SliderVertical.h"
+#include "beryll/GUI/ProgressBar.h"
 
 #include "beryll/physics/Physics.h"
 
