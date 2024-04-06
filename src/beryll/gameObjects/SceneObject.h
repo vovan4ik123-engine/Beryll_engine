@@ -377,6 +377,12 @@ namespace Beryll
             disableCollisionMesh();
         }
 
+        // Returns 0 for objects without collider.
+        float getFromOriginToTop() { return m_fromOriginToTop; }
+        float getFromOriginToBottom() { return m_fromOriginToBottom; }
+        float getXZRadius() { return m_XZRadius; }
+        float getObjectHeight() { return m_objectHeight; }
+
         /*
          * Inherited and new pure virtual methods are here.
          */
@@ -407,16 +413,6 @@ namespace Beryll
 
         SceneObjectGroups m_sceneObjectGroup = SceneObjectGroups::NONE; // Any scene object can belong to specific group.
         bool m_isAnimatedObject = false;
-        
-        // Physics data.
-        PhysicsTransforms m_physicsTransforms;
-        bool m_hasCollisionObject = false; // Set true for all collision objects.
-        CollisionGroups m_collisionGroup = CollisionGroups::NONE; // Set inside colliding objects.
-        CollisionGroups m_collisionMask = CollisionGroups::NONE; // Set inside colliding objects.
-        CollisionFlags m_collisionFlag = CollisionFlags::NONE; // Set inside colliding objects.
-        bool m_isEnabledInPhysicsSimulation = false; // Set inside colliding objects.
-        float m_collisionMass = 0.0f;
-        // Physics data end.
 
         // Graphics data.
         std::shared_ptr<VertexBuffer> m_vertexPosBuffer;
@@ -435,6 +431,30 @@ namespace Beryll
         float m_addToUVCoords = 0.0f;
         float m_UVCoordsMultiplier = 0.0f;
         // Graphics data end.
+
+        // Collider data.
+        float m_smallestX = std::numeric_limits<float>::max();
+        float m_biggestX = std::numeric_limits<float>::min();
+        float m_smallestZ = std::numeric_limits<float>::max();
+        float m_biggestZ = std::numeric_limits<float>::min();
+        float m_mostBottomVertex = std::numeric_limits<float>::max();
+        float m_mostTopVertex = std::numeric_limits<float>::min();
+
+        float m_fromOriginToTop = 0.0f; // Distance between origin and character top. Before rotation (if has).
+        float m_fromOriginToBottom = 0.0f; // Distance between origin and character bottom. Before rotation (if has).
+        float m_XZRadius = 0.0f; // Radius on X/Z axis. From collision mesh origin. Before rotation (if has).
+        float m_objectHeight = 0.0f;
+        // Collider data end.
+
+        // Physics data.
+        PhysicsTransforms m_physicsTransforms;
+        bool m_hasCollisionObject = false; // Set true for all collision objects.
+        CollisionGroups m_collisionGroup = CollisionGroups::NONE; // Set inside colliding objects.
+        CollisionGroups m_collisionMask = CollisionGroups::NONE; // Set inside colliding objects.
+        CollisionFlags m_collisionFlag = CollisionFlags::NONE; // Set inside colliding objects.
+        bool m_isEnabledInPhysicsSimulation = false; // Set inside colliding objects.
+        float m_collisionMass = 0.0f;
+        // Physics data end.
 
     private:
         // Only for internal checks inside this file.

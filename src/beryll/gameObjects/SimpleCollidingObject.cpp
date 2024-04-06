@@ -98,6 +98,17 @@ namespace Beryll
                 m_biggestZ = collisionMesh->mVertices[g].y;
         }
 
+        // Colliding object described by collision mesh.
+        m_fromOriginToTop = std::abs(m_mostTopVertex);
+        m_fromOriginToBottom = std::abs(m_mostBottomVertex);
+        m_objectHeight = m_fromOriginToTop + m_fromOriginToBottom;
+        m_XZRadius = (std::abs(m_biggestX) + std::abs(m_smallestX)) * 0.5f;
+        BR_INFO("m_fromOriginToTop: %f, m_fromOriginToBottom: %f, m_XZRadius: %f, m_characterHeight: %f",
+                m_fromOriginToTop, m_fromOriginToBottom, m_XZRadius, m_objectHeight);
+
+        BR_ASSERT((m_fromOriginToBottom > 0.0f && m_fromOriginToTop > 0.0f && m_XZRadius > 0.0f && m_objectHeight > 0.0f),
+                  "%s", "Characters XYZ dimensions are 0.");
+
         m_collisionFlag = collFlag;
         m_collisionGroup = collGroup;
         m_collisionMask = collMask;

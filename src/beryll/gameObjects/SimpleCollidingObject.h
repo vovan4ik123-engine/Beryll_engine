@@ -49,14 +49,6 @@ namespace Beryll
                                                                                              CollisionGroups collMask,
                                                                                              SceneObjectGroups sceneGroup);
 
-    protected:
-        // Collision mesh dimensions.
-        float m_smallestX = std::numeric_limits<float>::max();
-        float m_biggestX = std::numeric_limits<float>::min();
-        float m_smallestZ = std::numeric_limits<float>::max();
-        float m_biggestZ = std::numeric_limits<float>::min();
-        float m_mostBottomVertex = std::numeric_limits<float>::max();
-        float m_mostTopVertex = std::numeric_limits<float>::min();
 
     private:
         void loadCollisionMesh(const aiScene* scene,

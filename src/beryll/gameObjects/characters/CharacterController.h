@@ -29,11 +29,6 @@ namespace Beryll
         bool getIsTouchGroundAfterFall() { return m_touchGroundAfterFall; }
         float getFallDistance() { return m_fallDistance; }
 
-        float getFromOriginToTop() { return m_fromOriginToTop; }
-        float getFromOriginToBottom() { return m_fromOriginToBottom; }
-        float getXZRadius() { return m_XZRadius; }
-        float getHeight() { return m_characterHeight; }
-
         float moveSpeed = 5.0f; // Meters in sec.
         float backwardMoveFactor = 0.6f; // Factor to multiply moveSpeed if character move backward.
         float walkableFloorAngleRadians = glm::radians(50.0f);
@@ -50,11 +45,6 @@ namespace Beryll
         friend class AnimatedCollidingCharacter;
         CharacterController(SceneObject* objUnderControl); // Can be created only in SimpleCollidingCharacter/AnimatedCollidingCharacter classes.
         void update();
-
-        float m_fromOriginToTop = 0.0f; // Distance between origin and character top.
-        float m_fromOriginToBottom = 0.0f; // Distance between origin and character bottom.
-        float m_XZRadius = 0.0f; // Radius on X/Z axis. From collision mesh origin.
-        float m_characterHeight = 0.0f;
 
         bool m_canStay = false; // Can stay on any colliding object from group m_collisionMask.
         float m_lastTimeOnGround = 0.0f;

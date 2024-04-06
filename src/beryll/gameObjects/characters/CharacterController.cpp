@@ -68,7 +68,7 @@ namespace Beryll
                     if(m_falling)
                     {
                         m_touchGroundAfterFall = true;
-                        m_fallDistance = glm::distance(m_startFallingHeight, m_sceneObject->getOrigin().y - m_fromOriginToBottom);
+                        m_fallDistance = glm::distance(m_startFallingHeight, m_sceneObject->getOrigin().y - m_sceneObject->getFromOriginToBottom());
                     }
                     // DONT break loop here !!! Continue collect m_bottomCollisionPoint.
                 }
@@ -92,7 +92,7 @@ namespace Beryll
             if(!m_startFalling)
             {
                 m_startFalling = true;
-                m_startFallingHeight = m_sceneObject->getOrigin().y - m_fromOriginToBottom; // Bottom Y position.
+                m_startFallingHeight = m_sceneObject->getOrigin().y - m_sceneObject->getFromOriginToBottom(); // Bottom Y position.
             }
 
             float fallingSpeed = (m_previousYPos - m_sceneObject->getOrigin().y) / TimeStep::getTimeStepSec();
@@ -105,7 +105,7 @@ namespace Beryll
 
             m_jumped = false;
             m_falling = true;
-            m_fallDistance = glm::distance(m_startFallingHeight, m_sceneObject->getOrigin().y - m_fromOriginToBottom);
+            m_fallDistance = glm::distance(m_startFallingHeight, m_sceneObject->getOrigin().y - m_sceneObject->getFromOriginToBottom());
         }
         else
         {
@@ -177,8 +177,8 @@ namespace Beryll
         const float moveVectorLength = glm::length(moveVector);
 
         glm::vec3 characterHeadUp = m_sceneObject->getOrigin();
-        characterHeadUp.y += m_fromOriginToTop;
-        glm::vec3 characterHeadFront = characterHeadUp + ((m_XZRadius * 2.3f) / moveVectorLength) * moveVector;
+        characterHeadUp.y += m_sceneObject->getFromOriginToTop();
+        glm::vec3 characterHeadFront = characterHeadUp + ((m_sceneObject->getXZRadius() * 2.3f) / moveVectorLength) * moveVector;
         RayClosestHit headFrontHit = Physics::castRayClosestHit(characterHeadUp, characterHeadFront, m_sceneObject->getCollisionGroup(), m_sceneObject->getCollisionMask());
         if(headFrontHit &&
            (headFrontHit.hittedCollFlag != CollisionFlags::DYNAMIC || (headFrontHit.hittedCollFlag == CollisionFlags::DYNAMIC && !pushDynamicObjects)))
@@ -190,7 +190,7 @@ namespace Beryll
         }
 
         glm::vec3 moveVectorLeftSide = glm::rotate(glm::normalize(moveVector), glm::quarter_pi<float>(), BeryllConstants::worldUp) * moveVectorLength;
-        glm::vec3 characterHeadLeft = characterHeadUp + ((m_XZRadius * 2.0f) / moveVectorLength) * moveVectorLeftSide;
+        glm::vec3 characterHeadLeft = characterHeadUp + ((m_sceneObject->getXZRadius() * 2.0f) / moveVectorLength) * moveVectorLeftSide;
         RayClosestHit headLeftHit = Physics::castRayClosestHit(characterHeadUp, characterHeadLeft, m_sceneObject->getCollisionGroup(), m_sceneObject->getCollisionMask());
         if(headLeftHit &&
            (headLeftHit.hittedCollFlag != CollisionFlags::DYNAMIC || (headLeftHit.hittedCollFlag == CollisionFlags::DYNAMIC && !pushDynamicObjects)))
@@ -207,7 +207,7 @@ namespace Beryll
 
         glm::vec3 moveVectorRightSide =
                 glm::rotate(glm::normalize(moveVector), -glm::quarter_pi<float>(), BeryllConstants::worldUp) * moveVectorLength;
-        glm::vec3 characterHeadRight = characterHeadUp + ((m_XZRadius * 2.0f) / moveVectorLength) * moveVectorRightSide;
+        glm::vec3 characterHeadRight = characterHeadUp + ((m_sceneObject->getXZRadius() * 2.0f) / moveVectorLength) * moveVectorRightSide;
         RayClosestHit headRightHit = Physics::castRayClosestHit(characterHeadUp, characterHeadRight, m_sceneObject->getCollisionGroup(), m_sceneObject->getCollisionMask());
         if(headRightHit &&
            (headRightHit.hittedCollFlag != CollisionFlags::DYNAMIC || (headRightHit.hittedCollFlag == CollisionFlags::DYNAMIC && !pushDynamicObjects)))
@@ -267,10 +267,10 @@ namespace Beryll
         glm::vec3 somethingHitNormal{0.0f};
         CollisionFlags somethingHitCollFlag = CollisionFlags::NONE;
         float directionScaledByRadiusLength = 0.0f;
-        float characterTopY = m_sceneObject->getOrigin().y + m_fromOriginToTop;
-        float characterBottomY = m_sceneObject->getOrigin().y - m_fromOriginToBottom;
+        float characterTopY = m_sceneObject->getOrigin().y + m_sceneObject->getFromOriginToTop();
+        float characterBottomY = m_sceneObject->getOrigin().y - m_sceneObject->getFromOriginToBottom();
 
-        glm::vec3 frontDirectionScaledByRadius = ((m_XZRadius * 1.5f) / moveVectorLength) * moveVector;
+        glm::vec3 frontDirectionScaledByRadius = ((m_sceneObject->getXZRadius() * 1.5f) / moveVectorLength) * moveVector;
         glm::vec3 characterBodyMoveFront = m_sceneObject->getOrigin() + frontDirectionScaledByRadius;
         glm::vec3 stepCheckUp = glm::vec3(characterBodyMoveFront.x, characterTopY, characterBodyMoveFront.z);
         glm::vec3 stepCheckBottom = glm::vec3(characterBodyMoveFront.x, characterBottomY, characterBodyMoveFront.z);
@@ -288,7 +288,7 @@ namespace Beryll
         else // Check left side.
         {
             moveVectorLeftSide = glm::rotate(glm::normalize(moveVector), glm::quarter_pi<float>(), BeryllConstants::worldUp) * moveVectorLength;
-            glm::vec3 leftDirectionScaledByRadius = ((m_XZRadius * 1.5f) / moveVectorLength) * moveVectorLeftSide;
+            glm::vec3 leftDirectionScaledByRadius = ((m_sceneObject->getXZRadius() * 1.5f) / moveVectorLength) * moveVectorLeftSide;
             glm::vec3 characterBodyMoveLeft = m_sceneObject->getOrigin() + leftDirectionScaledByRadius;
             stepCheckUp = glm::vec3(characterBodyMoveLeft.x, characterTopY, characterBodyMoveLeft.z);
             stepCheckBottom = glm::vec3(characterBodyMoveLeft.x, characterBottomY, characterBodyMoveLeft.z);
@@ -306,7 +306,7 @@ namespace Beryll
             else // Check right side.
             {
                 moveVectorRightSide = glm::rotate(glm::normalize(moveVector), -glm::quarter_pi<float>(), BeryllConstants::worldUp) * moveVectorLength;
-                glm::vec3 rightDirectionScaledByRadius = ((m_XZRadius * 1.5f) / moveVectorLength) * moveVectorRightSide;
+                glm::vec3 rightDirectionScaledByRadius = ((m_sceneObject->getXZRadius() * 1.5f) / moveVectorLength) * moveVectorRightSide;
                 glm::vec3 characterBodyMoveRight = m_sceneObject->getOrigin() + rightDirectionScaledByRadius;
                 stepCheckUp = glm::vec3(characterBodyMoveRight.x, characterTopY, characterBodyMoveRight.z);
                 stepCheckBottom = glm::vec3(characterBodyMoveRight.x, characterBottomY, characterBodyMoveRight.z);
