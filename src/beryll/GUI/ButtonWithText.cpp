@@ -94,6 +94,8 @@ namespace Beryll
         ImGui::PushStyleColor(ImGuiCol_Text, m_fontColor);
 
         ImGui::SetNextWindowPos(ImVec2(m_leftPos * MainImGUI::getInstance()->getGUIWidth(), m_topPos * MainImGUI::getInstance()->getGUIHeight()));
+        ImGui::SetNextWindowSize(ImVec2(m_width * MainImGUI::getInstance()->getGUIWidth(), m_height * MainImGUI::getInstance()->getGUIHeight()));
+
         ImGui::Begin(m_IDAsString.c_str(), nullptr, m_noBackgroundNoFrame);
 
         if(m_font)

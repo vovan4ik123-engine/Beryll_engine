@@ -136,11 +136,6 @@ namespace Beryll
         m_vertexArray = Renderer::createVertexArray();
         m_vertexArray->addVertexBuffer(m_vertexPosBuffer);
         m_vertexArray->setIndexBuffer(m_indexBuffer);
-
-        // Bind. Can be bound 1 time to reserved GL_TEXTURE7. No need call bind() in every frame.
-        glActiveTexture(GL_TEXTURE7);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, m_openGLID);
-        GLESStateVariables::currentSkyBoxTextureID7 = m_openGLID;
     }
 
     AndroidGLESSkyBox::~AndroidGLESSkyBox()
@@ -153,6 +148,13 @@ namespace Beryll
 
     void AndroidGLESSkyBox::draw()
     {
+        if(GLESStateVariables::currentSkyBoxTextureID7 != m_openGLID)
+        {
+            glActiveTexture(GL_TEXTURE7);
+            glBindTexture(GL_TEXTURE_CUBE_MAP, m_openGLID);
+            GLESStateVariables::currentSkyBoxTextureID7 = m_openGLID;
+        }
+
         glDepthFunc(GL_LEQUAL);  // Change depth function so depth test passes when values are equal to depth buffer's content.
 
         m_internalShader->bind();

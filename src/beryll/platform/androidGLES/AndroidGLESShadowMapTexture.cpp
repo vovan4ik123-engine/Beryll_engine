@@ -46,10 +46,9 @@ namespace Beryll
         m_shaderAnimated = Beryll::Renderer::createShader(BeryllConstants::animatedObjShadowMapVertexPath.data(),
                                                           BeryllConstants::animatedObjShadowMapFragmentPath.data());
 
-        // Bind. Can be bound 1 time to reserved GL_TEXTURE8. No need call bind() in every frame.
-        glActiveTexture(GL_TEXTURE8);
-        glBindTexture(GL_TEXTURE_2D, m_openGLID);
-        GLESStateVariables::currentShadowMapTextureID8 = m_openGLID;
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, 0);
+        GLESStateVariables::currentDiffuseTextureMat1ID0 = 0;
     }
 
     AndroidGLESShadowMapTexture::~AndroidGLESShadowMapTexture()
@@ -88,6 +87,8 @@ namespace Beryll
                                                         const std::vector<std::shared_ptr<Beryll::BaseAnimatedObject>>& animatedObj,
                                                         const glm::mat4& VPLightMatrix)
     {
+        bind();
+
         glViewport(0, 0, m_mapWidth, m_mapHeight); // For texture resolution.
         glBindFramebuffer(GL_FRAMEBUFFER, m_depthMapFBO);
         glClear(GL_DEPTH_BUFFER_BIT);
