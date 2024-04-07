@@ -5,15 +5,15 @@
 namespace Beryll
 {
     SliderVertical::SliderVertical(const std::string& text, const std::string& fontPath, float fontHeightInPercentOfScreen,
-                                   float left, float top, float width, float height, float min, float max, bool background)
+                                   float l, float t, float w, float h, float min, float max, bool background)
                                    : m_text(text), m_min(min), m_max(max), m_sliderValue(min)
     {
         BR_ASSERT((fontPath.empty() == false && fontHeightInPercentOfScreen > 0.0f), "%s", "fontPath can not be empty and fontHeight must be > 0.0.");
 
-        m_leftPos = left / 100.0f;
-        m_topPos = top / 100.0f;
-        m_width = width / 100.0f;
-        m_height = height / 100.0f;
+        leftPos = l / 100.0f;
+        topPos = t / 100.0f;
+        width = w / 100.0f;
+        height = h / 100.0f;
 
         if(background)
             m_flags = m_noFrame;
@@ -55,8 +55,8 @@ namespace Beryll
 
         for(Finger& f : fingers)
         {
-            if(f.normalizedPos.x > m_leftPos && f.normalizedPos.x < m_leftPos + m_width &&
-               f.normalizedPos.y > m_topPos && f.normalizedPos.y < m_topPos + m_height)
+            if(f.normalizedPos.x > leftPos && f.normalizedPos.x < leftPos + width &&
+               f.normalizedPos.y > topPos && f.normalizedPos.y < topPos + height)
             {
                 // If any finger in slider area.
                 if(f.downEvent && !f.handled)
@@ -74,12 +74,12 @@ namespace Beryll
                 // In method bool ImGui::SliderBehaviorT() in file imgui_widgets.cpp delete if (set_new_value) {...}
                 // Now we calculate slider value. Not ImGUI.
                 float fingerYPos = f.normalizedPos.y;
-                if(fingerYPos <= m_topPos)
-                    fingerYPos = m_topPos;
-                if(fingerYPos >= m_topPos + m_height)
-                    fingerYPos = m_topPos + m_height;
+                if(fingerYPos <= topPos)
+                    fingerYPos = topPos;
+                if(fingerYPos >= topPos + height)
+                    fingerYPos = topPos + height;
 
-                float normalizedSliderProgress = (fingerYPos - m_topPos) / m_height;
+                float normalizedSliderProgress = (fingerYPos - topPos) / height;
                 if(normalizedSliderProgress < 0.0f)
                     normalizedSliderProgress = 0.0f;
                 if(normalizedSliderProgress > 1.0f)
@@ -114,7 +114,7 @@ namespace Beryll
         ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, m_dragAreaColor);
         ImGui::PushStyleColor(ImGuiCol_FrameBgActive, m_dragAreaColor);
 
-        ImGui::SetNextWindowPos(ImVec2(m_leftPos * MainImGUI::getInstance()->getGUIWidth(), m_topPos * MainImGUI::getInstance()->getGUIHeight()));
+        ImGui::SetNextWindowPos(ImVec2(leftPos * MainImGUI::getInstance()->getGUIWidth(), topPos * MainImGUI::getInstance()->getGUIHeight()));
 
         ImGui::Begin(m_IDAsString.c_str(), nullptr, m_flags);
 
@@ -122,7 +122,7 @@ namespace Beryll
             ImGui::PushFont(m_font);
 
         ImGui::VSliderFloat(m_text.c_str(),
-                            ImVec2(m_width * MainImGUI::getInstance()->getGUIWidth(), m_height * MainImGUI::getInstance()->getGUIHeight()),
+                            ImVec2(width * MainImGUI::getInstance()->getGUIWidth(), height * MainImGUI::getInstance()->getGUIHeight()),
                             &m_sliderValue,
                             m_min,
                             m_max);

@@ -24,6 +24,11 @@ namespace Beryll
             m_touched = false;
         }
 
+        float leftPos; // In range 0 = 0%...1 = 100% of screen size.
+        float topPos;
+        float width;
+        float height;
+
     protected:
         // Properties only for GUI objects.
         int32_t m_noBackgroundNoFrame = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize |
@@ -38,10 +43,5 @@ namespace Beryll
         bool m_isEnabled = true;
         bool m_pressed = false;
         bool m_touched = false;
-
-        float m_leftPos; // In range 0 = 0%...1 = 100% of screen size.
-        float m_topPos;
-        float m_width;
-        float m_height;
     };
 }

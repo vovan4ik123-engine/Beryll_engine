@@ -7,26 +7,26 @@ namespace Beryll
 {
     Joystick::Joystick(const std::string& defaultTexturePath,
                        const std::string& touchedTexturePath,
-                       float left, float top, float width, float height)
+                       float l, float t, float w, float h)
     {
         BR_ASSERT((defaultTexturePath.empty() == false), "%s", "Path to default texture can not be empty.");
 
-        m_leftPos = left / 100.0f;
-        m_topPos = top / 100.0f;
-        m_width = width / 100.0f;
-        m_height = height / 100.0f;
+        leftPos = l / 100.0f;
+        topPos = t / 100.0f;
+        width = w / 100.0f;
+        height = h / 100.0f;
 
         m_defaultTexture = Renderer::createTexture(defaultTexturePath.c_str(), TextureType::DIFFUSE_TEXTURE_MAT_1);
 
         if( !touchedTexturePath.empty())
             m_touchedTexture = Renderer::createTexture(touchedTexturePath.c_str(), TextureType::DIFFUSE_TEXTURE_MAT_1);
 
-        float leftPosPixels = m_leftPos * MainImGUI::getInstance()->getGUIWidth();
-        float rightPosPixels = leftPosPixels + (MainImGUI::getInstance()->getGUIWidth() * m_width);
+        float leftPosPixels = leftPos * MainImGUI::getInstance()->getGUIWidth();
+        float rightPosPixels = leftPosPixels + (MainImGUI::getInstance()->getGUIWidth() * width);
         m_joystickOriginInPixels.x = leftPosPixels + ((rightPosPixels - leftPosPixels) * 0.5f);
 
-        float topPosPixels = m_topPos * MainImGUI::getInstance()->getGUIHeight();
-        float bottomPosPixels = topPosPixels + (m_height * MainImGUI::getInstance()->getGUIHeight());
+        float topPosPixels = topPos * MainImGUI::getInstance()->getGUIHeight();
+        float bottomPosPixels = topPosPixels + (height * MainImGUI::getInstance()->getGUIHeight());
         m_joystickOriginInPixels.y = topPosPixels + ((bottomPosPixels - topPosPixels) * 0.5f);
     }
 
@@ -44,8 +44,8 @@ namespace Beryll
         std::vector<Finger>& fingers = EventHandler::getFingers();
         for(Finger& f : fingers)
         {
-            if(f.normalizedPos.x > m_leftPos && f.normalizedPos.x < m_leftPos + m_width &&
-               f.normalizedPos.y > m_topPos && f.normalizedPos.y < m_topPos + m_height)
+            if(f.normalizedPos.x > leftPos && f.normalizedPos.x < leftPos + width &&
+               f.normalizedPos.y > topPos && f.normalizedPos.y < topPos + height)
             {
                 // If any finger in joystick area.
                 if(!f.handled)
@@ -74,8 +74,8 @@ namespace Beryll
         ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
         ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
 
-        ImGui::SetNextWindowPos(ImVec2(m_leftPos * MainImGUI::getInstance()->getGUIWidth(), m_topPos * MainImGUI::getInstance()->getGUIHeight()));
-        ImGui::SetNextWindowSize(ImVec2(m_width * MainImGUI::getInstance()->getGUIWidth(), m_height * MainImGUI::getInstance()->getGUIHeight()));
+        ImGui::SetNextWindowPos(ImVec2(leftPos * MainImGUI::getInstance()->getGUIWidth(), topPos * MainImGUI::getInstance()->getGUIHeight()));
+        ImGui::SetNextWindowSize(ImVec2(width * MainImGUI::getInstance()->getGUIWidth(), height * MainImGUI::getInstance()->getGUIHeight()));
 
         ImGui::Begin(m_IDAsString.c_str(), nullptr, m_noBackgroundNoFrame);
 
@@ -83,13 +83,13 @@ namespace Beryll
         {
             ImGui::ImageButton(m_IDAsString.c_str(),
                                reinterpret_cast<ImTextureID>(m_touchedTexture->getID()),
-                               ImVec2(m_width * MainImGUI::getInstance()->getGUIWidth(), m_height * MainImGUI::getInstance()->getGUIHeight()));
+                               ImVec2(width * MainImGUI::getInstance()->getGUIWidth(), height * MainImGUI::getInstance()->getGUIHeight()));
         }
         else
         {
             ImGui::ImageButton(m_IDAsString.c_str(),
                                reinterpret_cast<ImTextureID>(m_defaultTexture->getID()),
-                               ImVec2(m_width * MainImGUI::getInstance()->getGUIWidth(), m_height * MainImGUI::getInstance()->getGUIHeight()));
+                               ImVec2(width * MainImGUI::getInstance()->getGUIWidth(), height * MainImGUI::getInstance()->getGUIHeight()));
         }
 
         ImGui::End();
@@ -107,7 +107,7 @@ namespace Beryll
         m_joystickOriginInPixels.x = origInRange0to1.x * MainImGUI::getInstance()->getGUIWidth();
         m_joystickOriginInPixels.y = origInRange0to1.y * MainImGUI::getInstance()->getGUIHeight();
 
-        m_leftPos = origInRange0to1.x - (m_width * 0.5f);
-        m_topPos = origInRange0to1.y - (m_height * 0.5f);
+        leftPos = origInRange0to1.x - (width * 0.5f);
+        topPos = origInRange0to1.y - (height * 0.5f);
     }
 }

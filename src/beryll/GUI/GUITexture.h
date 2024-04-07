@@ -10,7 +10,7 @@ namespace Beryll
     public:
         GUITexture() = delete;
         // Position and size in percent 0...100% of screen.
-        GUITexture(const std::string& texturePath, float left, float top, float width, float height);
+        GUITexture(const std::string& texturePath, float l, float t, float w, float h);
         ~GUITexture() override;
 
         void updateBeforePhysics() override;

@@ -7,18 +7,14 @@ namespace Beryll
 {
     ButtonWithTexture::ButtonWithTexture(const std::string& defaultTexturePath,
                                          const std::string& touchedTexturePath,
-                                         float left,
-                                         float top,
-                                         float width,
-                                         float height,
-                                         bool actRepeat)
+                                         float l, float t, float w, float h, bool actRepeat)
     {
         BR_ASSERT((defaultTexturePath.empty() == false), "%s", "Path to default texture can not be empty.");
 
-        m_leftPos = left / 100.0f;
-        m_topPos = top / 100.0f;
-        m_width = width / 100.0f;
-        m_height = height / 100.0f;
+        leftPos = l / 100.0f;
+        topPos = t / 100.0f;
+        width = w / 100.0f;
+        height = h / 100.0f;
 
         m_actRepeat = actRepeat;
 
@@ -49,8 +45,8 @@ namespace Beryll
                 m_pressed = false;
                 for(Finger& f : fingers)
                 {
-                    if(f.normalizedPos.x > m_leftPos && f.normalizedPos.x < m_leftPos + m_width &&
-                       f.normalizedPos.y > m_topPos && f.normalizedPos.y < m_topPos + m_height)
+                    if(f.normalizedPos.x > leftPos && f.normalizedPos.x < leftPos + width &&
+                       f.normalizedPos.y > topPos && f.normalizedPos.y < topPos + height)
                     {
                         // if any finger in button area
                         m_pressed = true;
@@ -65,8 +61,8 @@ namespace Beryll
             m_touched = false;
             for(Finger& f : fingers)
             {
-                if(f.normalizedPos.x > m_leftPos && f.normalizedPos.x < m_leftPos + m_width &&
-                   f.normalizedPos.y > m_topPos && f.normalizedPos.y < m_topPos + m_height)
+                if(f.normalizedPos.x > leftPos && f.normalizedPos.x < leftPos + width &&
+                   f.normalizedPos.y > topPos && f.normalizedPos.y < topPos + height)
                 {
                     // If any finger in button area.
                     m_touched = true;
@@ -98,8 +94,8 @@ namespace Beryll
         ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
         ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
 
-        ImGui::SetNextWindowPos(ImVec2(m_leftPos * MainImGUI::getInstance()->getGUIWidth(), m_topPos * MainImGUI::getInstance()->getGUIHeight()));
-        ImGui::SetNextWindowSize(ImVec2(m_width * MainImGUI::getInstance()->getGUIWidth(), m_height * MainImGUI::getInstance()->getGUIHeight()));
+        ImGui::SetNextWindowPos(ImVec2(leftPos * MainImGUI::getInstance()->getGUIWidth(), topPos * MainImGUI::getInstance()->getGUIHeight()));
+        ImGui::SetNextWindowSize(ImVec2(width * MainImGUI::getInstance()->getGUIWidth(), height * MainImGUI::getInstance()->getGUIHeight()));
 
         ImGui::Begin(m_IDAsString.c_str(), nullptr, m_noBackgroundNoFrame);
 
@@ -107,13 +103,13 @@ namespace Beryll
         {
             ImGui::ImageButton(m_IDAsString.c_str(),
                                reinterpret_cast<ImTextureID>(m_touchedTexture->getID()),
-                               ImVec2(m_width * MainImGUI::getInstance()->getGUIWidth(), m_height * MainImGUI::getInstance()->getGUIHeight()));
+                               ImVec2(width * MainImGUI::getInstance()->getGUIWidth(), height * MainImGUI::getInstance()->getGUIHeight()));
         }
         else
         {
             ImGui::ImageButton(m_IDAsString.c_str(),
                                reinterpret_cast<ImTextureID>(m_defaultTexture->getID()),
-                               ImVec2(m_width * MainImGUI::getInstance()->getGUIWidth(), m_height * MainImGUI::getInstance()->getGUIHeight()));
+                               ImVec2(width * MainImGUI::getInstance()->getGUIWidth(), height * MainImGUI::getInstance()->getGUIHeight()));
         }
 
         ImGui::End();

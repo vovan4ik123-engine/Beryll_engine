@@ -12,8 +12,8 @@ namespace Beryll
     public:
         Text() = delete;
         // left, top in percent 0...100% of screen.
-        Text(const std::string& t, const std::string& fontPath, float fontHeightInPercentOfScreen,
-             float left, float top, bool background = false);
+        Text(const std::string& pText, const std::string& fontPath, float fontHeightInPercentOfScreen,
+             float l, float t, bool background = false);
         ~Text() override;
 
         void updateBeforePhysics() override;

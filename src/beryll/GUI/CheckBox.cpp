@@ -5,15 +5,15 @@
 namespace Beryll
 {
     CheckBox::CheckBox(const std::string& pText, const std::string& fontPath, float fontHeightInPercentOfScreen,
-                       float left, float top, bool disableCheckLogic)
+                       float l, float t, bool disableCheckLogic)
                        : text(pText), m_disableCheckLogic(disableCheckLogic)
     {
         BR_ASSERT((fontPath.empty() == false && fontHeightInPercentOfScreen > 0.0f), "%s", "fontPath can not be empty and fontHeight must be > 0.0.");
 
-        m_leftPos = left / 100.0f;
-        m_topPos = top / 100.0f;
-        m_width = fontHeightInPercentOfScreen / 100.0f;
-        m_height = fontHeightInPercentOfScreen / 100.0f;
+        leftPos = l / 100.0f;
+        topPos = t / 100.0f;
+        width = fontHeightInPercentOfScreen / 100.0f;
+        height = fontHeightInPercentOfScreen / 100.0f;
 
         if(text.empty())
             text = "##ImGUILibrarySpecificID" + m_IDAsString;
@@ -31,8 +31,8 @@ namespace Beryll
         std::vector<Finger>& fingers = EventHandler::getFingers();
         for(Finger& f : fingers)
         {
-            if(f.normalizedPos.x > m_leftPos && f.normalizedPos.x < m_leftPos + m_width &&
-               f.normalizedPos.y > m_topPos && f.normalizedPos.y < m_topPos + m_height)
+            if(f.normalizedPos.x > leftPos && f.normalizedPos.x < leftPos + width &&
+               f.normalizedPos.y > topPos && f.normalizedPos.y < topPos + height)
             {
                 // If any finger in checkbox area.
                 if(f.downEvent && !f.handled)
@@ -63,7 +63,7 @@ namespace Beryll
         ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, m_checkSquareColor);
         ImGui::PushStyleColor(ImGuiCol_FrameBgActive, m_checkSquareColor);
 
-        ImGui::SetNextWindowPos(ImVec2(m_leftPos * MainImGUI::getInstance()->getGUIWidth(), m_topPos * MainImGUI::getInstance()->getGUIHeight()));
+        ImGui::SetNextWindowPos(ImVec2(leftPos * MainImGUI::getInstance()->getGUIWidth(), topPos * MainImGUI::getInstance()->getGUIHeight()));
 
         ImGui::Begin(m_IDAsString.c_str(), nullptr, m_noBackgroundNoFrame);
 

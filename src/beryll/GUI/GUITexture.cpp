@@ -4,14 +4,14 @@
 
 namespace Beryll
 {
-    GUITexture::GUITexture(const std::string& texturePath, float left, float top, float width, float height)
+    GUITexture::GUITexture(const std::string& texturePath, float l, float t, float w, float h)
     {
         BR_ASSERT((texturePath.empty() == false), "%s", "Path to texture can not be empty.");
 
-        m_leftPos = left / 100.0f;
-        m_topPos = top / 100.0f;
-        m_width = width / 100.0f;
-        m_height = height / 100.0f;
+        leftPos = l / 100.0f;
+        topPos = t / 100.0f;
+        width = w / 100.0f;
+        height = h / 100.0f;
 
         m_texture = Renderer::createTexture(texturePath.c_str(), TextureType::DIFFUSE_TEXTURE_MAT_1);
 
@@ -35,13 +35,13 @@ namespace Beryll
 
     void GUITexture::draw()
     {
-        ImGui::SetNextWindowPos(ImVec2(m_leftPos * MainImGUI::getInstance()->getGUIWidth(), m_topPos * MainImGUI::getInstance()->getGUIHeight()));
-        ImGui::SetNextWindowSize(ImVec2(m_width * MainImGUI::getInstance()->getGUIWidth(), m_height * MainImGUI::getInstance()->getGUIHeight()));
+        ImGui::SetNextWindowPos(ImVec2(leftPos * MainImGUI::getInstance()->getGUIWidth(), topPos * MainImGUI::getInstance()->getGUIHeight()));
+        ImGui::SetNextWindowSize(ImVec2(width * MainImGUI::getInstance()->getGUIWidth(), height * MainImGUI::getInstance()->getGUIHeight()));
 
         ImGui::Begin(m_IDAsString.c_str(), nullptr, m_noBackgroundNoFrame);
 
         ImGui::Image(reinterpret_cast<ImTextureID>(m_texture->getID()),
-                     ImVec2(m_width * MainImGUI::getInstance()->getGUIWidth(), m_height * MainImGUI::getInstance()->getGUIHeight()));
+                     ImVec2(width * MainImGUI::getInstance()->getGUIWidth(), height * MainImGUI::getInstance()->getGUIHeight()));
 
         ImGui::End();
     }

@@ -3,12 +3,12 @@
 
 namespace Beryll
 {
-    ProgressBar::ProgressBar(float left, float top, float width, float height)
+    ProgressBar::ProgressBar(float l, float t, float w, float h)
     {
-        m_leftPos = left / 100.0f;
-        m_topPos = top / 100.0f;
-        m_width = width / 100.0f;
-        m_height = height / 100.0f;
+        leftPos = l / 100.0f;
+        topPos = t / 100.0f;
+        width = w / 100.0f;
+        height = h / 100.0f;
     }
 
     ProgressBar::~ProgressBar()
@@ -32,8 +32,8 @@ namespace Beryll
         ImGui::PushStyleColor(ImGuiCol_PlotHistogram, m_progressColor);
         ImGui::PushStyleColor(ImGuiCol_FrameBg, m_backgroundColor);
 
-        ImGui::SetNextWindowPos(ImVec2(m_leftPos * MainImGUI::getInstance()->getGUIWidth(), m_topPos * MainImGUI::getInstance()->getGUIHeight()));
-        ImGui::SetNextWindowSize(ImVec2(m_width * MainImGUI::getInstance()->getGUIWidth(), m_height * MainImGUI::getInstance()->getGUIHeight()));
+        ImGui::SetNextWindowPos(ImVec2(leftPos * MainImGUI::getInstance()->getGUIWidth(), topPos * MainImGUI::getInstance()->getGUIHeight()));
+        ImGui::SetNextWindowSize(ImVec2(width * MainImGUI::getInstance()->getGUIWidth(), height * MainImGUI::getInstance()->getGUIHeight()));
 
         ImGui::Begin(m_IDAsString.c_str(), nullptr, m_noBackgroundNoFrame);
 

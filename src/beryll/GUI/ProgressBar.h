@@ -9,7 +9,7 @@ namespace Beryll
     public:
         ProgressBar() = delete;
         // Position and size in percent 0...100% of screen.
-        ProgressBar(float left, float top, float width, float height);
+        ProgressBar(float l, float t, float w, float h);
         ~ProgressBar() override;
 
         void updateBeforePhysics() override;

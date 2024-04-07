@@ -17,7 +17,7 @@ namespace Beryll
         // Position and size in percent 0...100% of screen.
         Joystick(const std::string& defaultTexturePath,
                  const std::string& touchedTexturePath,
-                 float left, float top, float width, float height);
+                 float l, float t, float w, float h);
         ~Joystick() override;
 
         void updateBeforePhysics() override;
