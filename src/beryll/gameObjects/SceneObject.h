@@ -97,15 +97,15 @@ namespace Beryll
         {
             if(m_angularFactor != angFactor && m_hasCollisionObject && m_collisionFlag == CollisionFlags::DYNAMIC)
             {
-                Physics::setAngularFactor(m_ID, angFactor, resetVelocities);
                 m_angularFactor = angFactor;
+                Physics::setAngularFactor(m_ID, angFactor, resetVelocities);
             }
         }
 
         const glm::vec3& getAngularFactor() const
         {
-            BR_ASSERT((m_hasCollisionObject == true &&
-                       m_collisionFlag == CollisionFlags::DYNAMIC), "%s", "getAngularFactor() should be called only for object with DYNAMIC collider.");
+            BR_ASSERT((m_hasCollisionObject == true && m_collisionFlag == CollisionFlags::DYNAMIC),
+                      "%s", "getAngularFactor() should be called only for object with DYNAMIC collider.");
             return m_angularFactor;
         }
 
@@ -113,15 +113,15 @@ namespace Beryll
         {
             if(m_linearFactor != linFactor && m_hasCollisionObject && m_collisionFlag == CollisionFlags::DYNAMIC)
             {
-                Physics::setLinearFactor(m_ID, linFactor, resetVelocities);
                 m_linearFactor = linFactor;
+                Physics::setLinearFactor(m_ID, linFactor, resetVelocities);
             }
         }
 
         const glm::vec3& getLinearFactor() const
         {
-            BR_ASSERT((m_hasCollisionObject == true &&
-                       m_collisionFlag == CollisionFlags::DYNAMIC), "%s", "getLinearFactor() should be called only for object with DYNAMIC collider.");
+            BR_ASSERT((m_hasCollisionObject == true && m_collisionFlag == CollisionFlags::DYNAMIC),
+                      "%s", "getLinearFactor() should be called only for object with DYNAMIC collider.");
             return m_linearFactor;
         }
 
@@ -175,23 +175,22 @@ namespace Beryll
         {
             if(m_gravity != grav && m_hasCollisionObject && m_collisionFlag == CollisionFlags::DYNAMIC)
             {
-                Physics::setGravityForObject(m_ID, grav, resetVelocities, activate);
-
                 m_gravity = grav;
+                Physics::setGravityForObject(m_ID, grav, resetVelocities, activate);
             }
         }
 
         const glm::vec3 getGravity() const
         {
-            BR_ASSERT((m_hasCollisionObject == true &&
-                       m_collisionFlag == CollisionFlags::DYNAMIC), "%s", "getGravity() should be called only for object with DYNAMIC collider.");
+            BR_ASSERT((m_hasCollisionObject == true && m_collisionFlag == CollisionFlags::DYNAMIC),
+                      "%s", "getGravity() should be called only for object with DYNAMIC collider.");
             return Physics::getGravityObject(m_ID);
         }
 
         const float getCollisionMass() const
         {
-            BR_ASSERT((m_hasCollisionObject == true &&
-                       m_collisionFlag == CollisionFlags::DYNAMIC), "%s", "getCollisionMass() should be called only for object with DYNAMIC collider.");
+            BR_ASSERT((m_hasCollisionObject == true && m_collisionFlag == CollisionFlags::DYNAMIC),
+                      "%s", "getCollisionMass() should be called only for object with DYNAMIC collider.");
             return m_collisionMass;
         }
 
@@ -255,8 +254,11 @@ namespace Beryll
 
         void setDamping(const float linDamping, const float angDamping)
         {
-            if(m_hasCollisionObject)
+            if((m_linearDamping != linDamping || m_angularDamping != angDamping) &&
+                m_hasCollisionObject && m_collisionFlag == CollisionFlags::DYNAMIC)
             {
+                m_linearDamping = linDamping;
+                m_angularDamping = angDamping;
                 Physics::setDamping(m_ID, linDamping, angDamping);
             }
         }
@@ -461,6 +463,8 @@ namespace Beryll
         glm::vec3 m_linearFactor{1.0f, 1.0f, 1.0f};
         glm::vec3 m_angularFactor{1.0f, 1.0f, 1.0f};
         glm::vec3 m_gravity{std::numeric_limits<float>::max()};
+        float m_linearDamping = -1.0f;
+        float m_angularDamping = -1.0f;
 
         bool m_isDisabledForEver = false;
         bool m_isEnabledDraw = true; // For method draw().
