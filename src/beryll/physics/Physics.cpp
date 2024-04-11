@@ -61,12 +61,9 @@ namespace Beryll
     {
         BR_ASSERT((m_dynamicsWorldMT != nullptr), "%s", "Create physics before simulate");
 
-        // Dont simulate if disabled or no objects
-        // or time after m_timer.reset() is very short (for example we return from state (pause, ...) where simulation was disabled).
-        if(!m_simulationEnabled || m_timer.getElapsedSec() < 0.003f || m_dynamicsWorldMT->getNumCollisionObjects() == 0)
-        {
+        // Dont simulate if disabled or no objects.
+        if(!m_simulationEnabled || m_dynamicsWorldMT->getNumCollisionObjects() == 0)
             return;
-        }
 
         m_collisionPairs.clear();
 
@@ -76,12 +73,12 @@ namespace Beryll
         // maxSubSteps: timeStep < maxSubSteps * fixedTimeStep
         // fixedTimeStep: simulation resolution increases as this value decreases.
         //                If your balls penetrates your walls instead of colliding with them decrease it
-        m_timeStep = std::min(m_timer.getElapsedSec(), m_maxAcceptableFrameTimeSec); // Protection from lag (FPS dropped down and is < m_minAcceptableFPS).
+        m_timeStep = std::min(std::max(m_timer.getElapsedSec(), 0.001f), m_maxAcceptableFrameTimeSec); // Protection from lag (FPS dropped down and is < m_minAcceptableFPS).
         m_timer.reset();
 
         m_dynamicsWorldMT->stepSimulation(m_timeStep,
-                                     m_resolutionFactor + 1,
-                                     m_timeStep / static_cast<float>(m_resolutionFactor));
+                                          m_resolutionFactor + 1,
+                                          m_timeStep / static_cast<float>(m_resolutionFactor));
 
         m_simulationTime = m_timer.getElapsedMilliSec();
         //BR_INFO("m_dynamicsWorldMT objects count: %d", m_dynamicsWorldMT->getNumCollisionObjects());
