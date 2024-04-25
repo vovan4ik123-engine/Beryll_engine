@@ -47,6 +47,7 @@ namespace Beryll
         RAY_FOR_BUILDING_CHECK = 1 << 8,
         GARBAGE = 1 << 9,
         ENEMY_ATTACK = 1 << 10,
+        JUMPPAD = 1 << 11,
 
         YOU_CAN_COMBINE_GROUPS_WHEN_USE = STATIC_ENVIRONMENT | CAMERA,
 

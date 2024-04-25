@@ -42,7 +42,7 @@ namespace Beryll
                                { return st->ID == state->ID; });
         if(it == m_gameStates.end())
         {
-            BR_INFO("Push state: %s states count: %d", gameStateAsString[static_cast<int>(state->ID)].c_str(), m_gameStates.size() + 1);
+            BR_INFO("Push state: %s. States count: %d", gameStateAsString[static_cast<int>(state->ID)].c_str(), m_gameStates.size() + 1);
             m_gameStates.push_back(state);
         }
         else
@@ -61,7 +61,7 @@ namespace Beryll
     {
         if(!m_gameStates.empty())
         {
-            BR_INFO("Pop state: %s states count: %d", gameStateAsString[static_cast<int>(m_gameStates.back()->ID)].c_str(), m_gameStates.size() - 1);
+            BR_INFO("Pop state: %s. States count: %d", gameStateAsString[static_cast<int>(m_gameStates.back()->ID)].c_str(), m_gameStates.size() - 1);
             m_gameStates.pop_back();
         }
     }

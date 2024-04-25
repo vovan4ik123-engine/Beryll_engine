@@ -63,7 +63,7 @@ namespace Beryll
             BR_ASSERT(false, "Scene loading error for file: %s", filePath);
         }
 
-        BR_INFO("Total mesh count in file: %d", scene->mNumMeshes);
+        BR_INFO("Total objects count in file: %d", scene->mNumMeshes);
 
         for(int i = 0; i < scene->mNumMeshes; ++i)
         {

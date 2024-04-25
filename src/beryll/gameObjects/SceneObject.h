@@ -23,7 +23,8 @@ namespace Beryll
         DYNAMIC_ENVIRONMENT = 6,
         BALL = 7,
         BUILDING = 8,
-        GARBAGE
+        GARBAGE,
+        JUMPPAD
     };
 
     class SceneObject : public GameObject
@@ -33,6 +34,8 @@ namespace Beryll
 
         void setOrigin(const glm::vec3& orig, bool resetVelocities = false)
         {
+            BR_ASSERT((!glm::any(glm::isnan(orig))), "%s", "You want set orig but it is NAN.");
+
             if(m_origin == orig) { return; }
 
             m_origin = orig;
@@ -43,6 +46,8 @@ namespace Beryll
 
         void addToOrigin(const glm::vec3& distance, bool resetVelocities = false)
         {
+            BR_ASSERT((!glm::any(glm::isnan(distance))), "%s", "You want add distance but it is NAN.");
+
             m_origin += distance;
 
             if(m_hasCollisionObject && m_isEnabledInPhysicsSimulation)
@@ -55,6 +60,8 @@ namespace Beryll
 
             glm::quat normQuat = glm::normalize(glm::angleAxis(angleRad, glm::normalize(axis)));
 
+            BR_ASSERT((!glm::any(glm::isnan(normQuat))), "%s", "You want add normQuat but it is NAN.");
+
             m_totalRotation = glm::normalize(normQuat * m_totalRotation);
             m_engineAddedRotation = glm::normalize(normQuat * m_engineAddedRotation);
 
@@ -65,6 +72,8 @@ namespace Beryll
         void addToRotation(const glm::quat& qua, bool resetVelocities = false)
         {
             glm::quat normQuat = glm::normalize(qua);
+
+            BR_ASSERT((!glm::any(glm::isnan(normQuat))), "%s", "You want add normQuat but it is NAN.");
 
             if(glm::angle(normQuat) < 0.0017f) { return; } // Less than 0.1 degree.
 
@@ -95,6 +104,8 @@ namespace Beryll
 
         void setAngularFactor(const glm::vec3& angFactor, bool resetVelocities = false)
         {
+            BR_ASSERT((!glm::any(glm::isnan(angFactor))), "%s", "You want set angFactor but it is NAN.");
+
             if(m_angularFactor != angFactor && m_hasCollisionObject && m_collisionFlag == CollisionFlags::DYNAMIC)
             {
                 m_angularFactor = angFactor;
@@ -111,6 +122,8 @@ namespace Beryll
 
         void setLinearFactor(const glm::vec3& linFactor, bool resetVelocities = false)
         {
+            BR_ASSERT((!glm::any(glm::isnan(linFactor))), "%s", "You want set linFactor but it is NAN.");
+
             if(m_linearFactor != linFactor && m_hasCollisionObject && m_collisionFlag == CollisionFlags::DYNAMIC)
             {
                 m_linearFactor = linFactor;
@@ -127,6 +140,8 @@ namespace Beryll
 
         void setAngularVelocity(const glm::vec3& angVelocity)
         {
+            BR_ASSERT((!glm::any(glm::isnan(angVelocity))), "%s", "You want set angVelocity but it is NAN.");
+
             if(m_hasCollisionObject && m_collisionFlag == CollisionFlags::DYNAMIC && m_isEnabledInPhysicsSimulation)
             {
                 Physics::setAngularVelocity(m_ID, angVelocity);
@@ -146,6 +161,8 @@ namespace Beryll
 
         void setLinearVelocity(const glm::vec3& linVelocity)
         {
+            BR_ASSERT((!glm::any(glm::isnan(linVelocity))), "%s", "You want set linVelocity but it is NAN.");
+
             if(m_hasCollisionObject && m_collisionFlag == CollisionFlags::DYNAMIC && m_isEnabledInPhysicsSimulation)
             {
                 Physics::setLinearVelocity(m_ID, linVelocity);
@@ -173,6 +190,8 @@ namespace Beryll
 
         void setGravity(const glm::vec3& grav, bool resetVelocities = false, bool activate = true)
         {
+            BR_ASSERT((!glm::any(glm::isnan(grav))), "%s", "You want set grav but it is NAN.");
+
             if(m_gravity != grav && m_hasCollisionObject && m_collisionFlag == CollisionFlags::DYNAMIC)
             {
                 m_gravity = grav;
@@ -230,6 +249,8 @@ namespace Beryll
 
         void applyCentralImpulse(const glm::vec3& impulse) const
         {
+            BR_ASSERT((!glm::any(glm::isnan(impulse))), "%s", "You want set impulse but it is NAN.");
+
             if(m_hasCollisionObject && m_isEnabledInPhysicsSimulation)
             {
                 Physics::applyCentralImpulseForObject(m_ID, impulse);
@@ -238,6 +259,8 @@ namespace Beryll
 
         void applyTorqueImpulse(const glm::vec3& impulse) const
         {
+            BR_ASSERT((!glm::any(glm::isnan(impulse))), "%s", "You want set impulse but it is NAN.");
+
             if(m_hasCollisionObject && m_isEnabledInPhysicsSimulation)
             {
                 Physics::applyTorqueImpulseForObject(m_ID, impulse);

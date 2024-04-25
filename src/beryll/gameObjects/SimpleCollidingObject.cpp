@@ -174,7 +174,8 @@ namespace Beryll
             BR_ASSERT(false, "Scene loading error for file: %s", filePath);
         }
 
-        BR_INFO("Total mesh count in file: %d", scene->mNumMeshes);
+        BR_ASSERT((scene->mNumMeshes % 2 == 0), "Not all meshes have collider in file: %s", filePath);
+        BR_INFO("Total objects count in file: %d", scene->mNumMeshes / 2);
 
         std::string graphicsMeshName;
         std::string collisionMeshName;

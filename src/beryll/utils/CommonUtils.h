@@ -53,12 +53,14 @@ namespace BeryllUtils
         // Return angle in range between 0 and PI.
         static float getAngleInRadians(const glm::vec3& v1, const glm::vec3& v2)
         {
+            BR_ASSERT((glm::length(v1) > 0.0f && (glm::length(v2) > 0.0f)), "%s", "Vector length = 0.");
             return glm::acos(glm::dot(v1, v2));
         }
 
         // Return angle in range between 0 and 180.
         static float getAngleInDegrees(const glm::vec3& v1, const glm::vec3& v2)
         {
+            BR_ASSERT((glm::length(v1) > 0.0f && (glm::length(v2) > 0.0f)), "%s", "Vector length = 0.");
             return glm::degrees(glm::acos(glm::dot(v1, v2)));
         }
 
@@ -66,6 +68,7 @@ namespace BeryllUtils
         // in right-handed coordinate system.
         static glm::vec3 getRotationAxis(const glm::vec3& start, const glm::vec3& dest)
         {
+            BR_ASSERT((glm::length(start) > 0.0f && (glm::length(dest) > 0.0f)), "%s", "Vector length = 0.");
             return glm::normalize(glm::cross(start, dest));
         }
 
