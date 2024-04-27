@@ -4,13 +4,15 @@
 namespace Beryll
 {
     Text::Text(const std::string& pText, const std::string& fontPath, float fontHeightInPercentOfScreen,
-               float l, float t, bool background)
+               float l, float t, float w, float h, bool background)
                : text(pText)
     {
         BR_ASSERT((fontPath.empty() == false && fontHeightInPercentOfScreen > 0.0f), "%s", "fontPath can not be empty and fontHeight must be > 0.0.");
 
         leftPos = l / 100.0f;
         topPos = t / 100.0f;
+        width = w / 100.0f;
+        height = h / 100.0f;
 
         if(background)
             m_flags = m_noFrame;
@@ -41,6 +43,7 @@ namespace Beryll
         ImGui::PushStyleColor(ImGuiCol_WindowBg, m_backgroundColor);
 
         ImGui::SetNextWindowPos(ImVec2(leftPos * MainImGUI::getInstance()->getGUIWidth(), topPos * MainImGUI::getInstance()->getGUIHeight()));
+        ImGui::SetNextWindowSize(ImVec2(width * MainImGUI::getInstance()->getGUIWidth(), height * MainImGUI::getInstance()->getGUIHeight()));
 
         ImGui::Begin(m_IDAsString.c_str(), nullptr, m_flags);
 
