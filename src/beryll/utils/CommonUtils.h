@@ -19,7 +19,7 @@ namespace BeryllUtils
         static int generateID()
         {
             ++m_id;
-            BR_ASSERT((m_id < std::numeric_limits<decltype(m_id)>::max()), "%s", "Reached limit of objects IDs");
+            BR_ASSERT((m_id < std::numeric_limits<decltype(m_id)>::max()), "%s", "Reached limit of objects ID.");
             return m_id;
         }
 
@@ -53,14 +53,18 @@ namespace BeryllUtils
         // Return angle in range between 0 and PI.
         static float getAngleInRadians(const glm::vec3& v1, const glm::vec3& v2)
         {
-            BR_ASSERT((glm::length(v1) > 0.0f && (glm::length(v2) > 0.0f)), "%s", "Vector length = 0.");
+            BR_ASSERT((glm::length(v1) > 0.999f && glm::length(v1) < 1.001f &&
+                       glm::length(v2) > 0.999f && glm::length(v2) < 1.001f), "%s", "Vectors not normalized.");
+
             return glm::acos(glm::dot(v1, v2));
         }
 
         // Return angle in range between 0 and 180.
         static float getAngleInDegrees(const glm::vec3& v1, const glm::vec3& v2)
         {
-            BR_ASSERT((glm::length(v1) > 0.0f && (glm::length(v2) > 0.0f)), "%s", "Vector length = 0.");
+            BR_ASSERT((glm::length(v1) > 0.999f && glm::length(v1) < 1.001f &&
+                       glm::length(v2) > 0.999f && glm::length(v2) < 1.001f), "%s", "Vectors not normalized.");
+
             return glm::degrees(glm::acos(glm::dot(v1, v2)));
         }
 
@@ -68,7 +72,9 @@ namespace BeryllUtils
         // in right-handed coordinate system.
         static glm::vec3 getRotationAxis(const glm::vec3& start, const glm::vec3& dest)
         {
-            BR_ASSERT((glm::length(start) > 0.0f && (glm::length(dest) > 0.0f)), "%s", "Vector length = 0.");
+            BR_ASSERT((glm::length(start) > 0.999f && glm::length(start) < 1.001f &&
+                       glm::length(dest) > 0.999f && glm::length(dest) < 1.001f), "%s", "Vectors not normalized.");
+
             return glm::normalize(glm::cross(start, dest));
         }
 
@@ -93,6 +99,9 @@ namespace BeryllUtils
         // Return ERROR if can not find right vector.
         static VectorSide getIsVectorOnRightSide(const glm::vec3& v1, const glm::vec3& v2)
         {
+            BR_ASSERT((glm::length(v1) > 0.999f && glm::length(v1) < 1.001f &&
+                       glm::length(v2) > 0.999f && glm::length(v2) < 1.001f), "%s", "Vectors not normalized.");
+
             float dotProduct = glm::dot(v1, BeryllConstants::worldUp);
             if(dotProduct == 1.0f || dotProduct == -1.0f)
                 return VectorSide::ERROR; // v1 and BeryllConstants::worldUp are parallel, we can not find right vector.
@@ -122,17 +131,26 @@ namespace BeryllUtils
         // Return angle in range between 0 and PI.
         static float getAngleInRadians(const glm::vec2& v1, const glm::vec2& v2)
         {
+            BR_ASSERT((glm::length(v1) > 0.999f && glm::length(v1) < 1.001f &&
+                       glm::length(v2) > 0.999f && glm::length(v2) < 1.001f), "%s", "Vectors not normalized.");
+
             return glm::acos(glm::dot(v1, v2));
         }
 
         // Return angle in range between 0 and 180.
         static float getAngleInDegrees(const glm::vec2& v1, const glm::vec2& v2)
         {
+            BR_ASSERT((glm::length(v1) > 0.999f && glm::length(v1) < 1.001f &&
+                       glm::length(v2) > 0.999f && glm::length(v2) < 1.001f), "%s", "Vectors not normalized.");
+
             return glm::degrees(glm::acos(glm::dot(v1, v2)));
         }
 
         static bool getIsVectorsParallel(const glm::vec3& v1, const glm::vec3& v2)
         {
+            BR_ASSERT((glm::length(v1) > 0.999f && glm::length(v1) < 1.001f &&
+                       glm::length(v2) > 0.999f && glm::length(v2) < 1.001f), "%s", "Vectors not normalized.");
+
             const float dotPr = glm::dot(v1, v2);
             return ((dotPr > 0.999f && dotPr < 1.001f) ||
                     (dotPr < -0.999f && dotPr > -1.001f));
@@ -140,12 +158,18 @@ namespace BeryllUtils
 
         static bool getIsVectorsParallelInSameDir(const glm::vec3& v1, const glm::vec3& v2)
         {
+            BR_ASSERT((glm::length(v1) > 0.999f && glm::length(v1) < 1.001f &&
+                       glm::length(v2) > 0.999f && glm::length(v2) < 1.001f), "%s", "Vectors not normalized.");
+
             const float dotPr = glm::dot(v1, v2);
             return ((dotPr > 0.999f && dotPr < 1.001f));
         }
 
         static bool getIsVectorsParallelInOppositeDir(const glm::vec3& v1, const glm::vec3& v2)
         {
+            BR_ASSERT((glm::length(v1) > 0.999f && glm::length(v1) < 1.001f &&
+                       glm::length(v2) > 0.999f && glm::length(v2) < 1.001f), "%s", "Vectors not normalized.");
+
             const float dotPr = glm::dot(v1, v2);
             return ((dotPr < -0.999f && dotPr > -1.001f));
         }
