@@ -194,6 +194,7 @@ namespace Beryll
 
             if(m_gravity != grav && m_hasCollisionObject && m_collisionFlag == CollisionFlags::DYNAMIC)
             {
+                //BR_INFO("Set gravity: %f", grav.y);
                 m_gravity = grav;
                 Physics::setGravityForObject(m_ID, grav, resetVelocities, activate);
             }

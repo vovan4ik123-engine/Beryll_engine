@@ -17,7 +17,7 @@ namespace Beryll
         ~ParticleSystem() = delete;
 
         static void draw();
-        static void disableAll(); // Call when change game state/level.
+        static void disableAll(); // Call it before you exit game state/level. Not at new state start !!!
 
         static void EmitQuadsFromCenter(int particlesCount,
                                         float lifeTimeSec,
