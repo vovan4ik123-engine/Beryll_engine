@@ -80,7 +80,17 @@ namespace Beryll
 
         m_internalShader->bind();
         m_internalShader->setMatrix4x4Float("VPMatrix", Camera::getLoadingScreenCamera());
-        m_internalShader->set1Float("loadingProgressInScreenSpace", Window::getInstance()->getScreenWidth() * m_loadingProgress);
+        SDL_DisplayOrientation display = Window::getInstance()->currentOrientation;
+        if(display == SDL_ORIENTATION_PORTRAIT || display == SDL_ORIENTATION_PORTRAIT_FLIPPED)
+        {
+            m_internalShader->set1Float("loadingProgressInScreenSpace", Window::getInstance()->getScreenHeight() * m_loadingProgress);
+            m_internalShader->set1Int("displayPortraitOrientation", 1);
+        }
+        else
+        {
+            m_internalShader->set1Float("loadingProgressInScreenSpace", Window::getInstance()->getScreenWidth() * m_loadingProgress);
+            m_internalShader->set1Int("displayPortraitOrientation", 0);
+        }
 
         m_diffuseTextures[m_textureIndex]->bind();
 
