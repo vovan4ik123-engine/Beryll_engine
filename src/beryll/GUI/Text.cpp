@@ -4,7 +4,7 @@
 namespace Beryll
 {
     Text::Text(const std::string& pText, const std::string& fontPath, float fontHeightInPercentOfScreen,
-               float l, float t, float w, float h, bool background)
+               float l, float t, float w, float h, bool background, bool bringToFrontOnFocus)
                : text(pText)
     {
         BR_ASSERT((fontPath.empty() == false && fontHeightInPercentOfScreen > 0.0f), "%s", "fontPath can not be empty and fontHeight must be > 0.0.");
@@ -13,6 +13,12 @@ namespace Beryll
         topPos = t / 100.0f;
         width = w / 100.0f;
         height = h / 100.0f;
+
+        if(!bringToFrontOnFocus)
+        {
+            m_noBackgroundNoFrame = m_noBackgroundNoFrame | ImGuiWindowFlags_NoBringToFrontOnFocus;
+            m_noFrame = m_noFrame | ImGuiWindowFlags_NoBringToFrontOnFocus;
+        }
 
         if(background)
             m_flags = m_noFrame;

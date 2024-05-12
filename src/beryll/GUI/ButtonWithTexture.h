@@ -17,7 +17,7 @@ namespace Beryll
         // Position and size in percent 0...100% of screen.
         ButtonWithTexture(const std::string& defaultTexturePath,
                           const std::string& touchedTexturePath,
-                          float l, float t, float w, float h, bool actRepeat = false);
+                          float l, float t, float w, float h, bool actRepeat = false, bool bringToFrontOnFocus = false);
         ~ButtonWithTexture() override;
 
         void updateBeforePhysics() override;

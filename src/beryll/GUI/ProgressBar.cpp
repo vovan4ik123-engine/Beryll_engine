@@ -3,12 +3,18 @@
 
 namespace Beryll
 {
-    ProgressBar::ProgressBar(float l, float t, float w, float h)
+    ProgressBar::ProgressBar(float l, float t, float w, float h, bool bringToFrontOnFocus)
     {
         leftPos = l / 100.0f;
         topPos = t / 100.0f;
         width = w / 100.0f;
         height = h / 100.0f;
+
+        if(!bringToFrontOnFocus)
+        {
+            m_noBackgroundNoFrame = m_noBackgroundNoFrame | ImGuiWindowFlags_NoBringToFrontOnFocus;
+            m_noFrame = m_noFrame | ImGuiWindowFlags_NoBringToFrontOnFocus;
+        }
     }
 
     ProgressBar::~ProgressBar()

@@ -5,7 +5,7 @@
 namespace Beryll
 {
     ButtonWithText::ButtonWithText(const std::string& text, const std::string& fontPath, float fontHeightInPercentOfScreen,
-                                   float l, float t, float w, float h, bool actRepeat)
+                                   float l, float t, float w, float h, bool actRepeat, bool bringToFrontOnFocus)
                                    : m_text(text)
     {
         BR_ASSERT((fontPath.empty() == false && fontHeightInPercentOfScreen > 0.0f), "%s", "fontPath can not be empty and fontHeight must be > 0.0.");
@@ -16,6 +16,12 @@ namespace Beryll
         height = h / 100.0f;
 
         m_actRepeat = actRepeat;
+
+        if(!bringToFrontOnFocus)
+        {
+            m_noBackgroundNoFrame = m_noBackgroundNoFrame | ImGuiWindowFlags_NoBringToFrontOnFocus;
+            m_noFrame = m_noFrame | ImGuiWindowFlags_NoBringToFrontOnFocus;
+        }
 
         if(m_text.empty())
             m_text = "##ImGUILibrarySpecificID" + m_IDAsString;

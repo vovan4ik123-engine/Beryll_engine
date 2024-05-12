@@ -24,7 +24,8 @@ namespace Beryll
         BALL = 7,
         BUILDING = 8,
         GARBAGE,
-        JUMPPAD
+        JUMPPAD,
+        BOSS
     };
 
     class SceneObject : public GameObject

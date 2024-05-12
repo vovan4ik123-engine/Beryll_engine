@@ -7,7 +7,7 @@ namespace Beryll
 {
     ButtonWithTexture::ButtonWithTexture(const std::string& defaultTexturePath,
                                          const std::string& touchedTexturePath,
-                                         float l, float t, float w, float h, bool actRepeat)
+                                         float l, float t, float w, float h, bool actRepeat, bool bringToFrontOnFocus)
     {
         BR_ASSERT((defaultTexturePath.empty() == false), "%s", "Path to default texture can not be empty.");
 
@@ -17,6 +17,12 @@ namespace Beryll
         height = h / 100.0f;
 
         m_actRepeat = actRepeat;
+
+        if(!bringToFrontOnFocus)
+        {
+            m_noBackgroundNoFrame = m_noBackgroundNoFrame | ImGuiWindowFlags_NoBringToFrontOnFocus;
+            m_noFrame = m_noFrame | ImGuiWindowFlags_NoBringToFrontOnFocus;
+        }
 
         m_defaultTexture = Renderer::createTexture(defaultTexturePath.c_str(), TextureType::DIFFUSE_TEXTURE_MAT_1);
 

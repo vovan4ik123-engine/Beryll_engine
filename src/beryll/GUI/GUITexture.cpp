@@ -4,7 +4,7 @@
 
 namespace Beryll
 {
-    GUITexture::GUITexture(const std::string& texturePath, float l, float t, float w, float h)
+    GUITexture::GUITexture(const std::string& texturePath, float l, float t, float w, float h, bool bringToFrontOnFocus)
     {
         BR_ASSERT((texturePath.empty() == false), "%s", "Path to texture can not be empty.");
 
@@ -13,9 +13,13 @@ namespace Beryll
         width = w / 100.0f;
         height = h / 100.0f;
 
-        m_texture = Renderer::createTexture(texturePath.c_str(), TextureType::DIFFUSE_TEXTURE_MAT_1);
+        if(!bringToFrontOnFocus)
+        {
+            m_noBackgroundNoFrame = m_noBackgroundNoFrame | ImGuiWindowFlags_NoBringToFrontOnFocus;
+            m_noFrame = m_noFrame | ImGuiWindowFlags_NoBringToFrontOnFocus;
+        }
 
-        m_noBackgroundNoFrame = m_noBackgroundNoFrame | ImGuiWindowFlags_NoBringToFrontOnFocus;
+        m_texture = Renderer::createTexture(texturePath.c_str(), TextureType::DIFFUSE_TEXTURE_MAT_1);
     }
 
     GUITexture::~GUITexture()

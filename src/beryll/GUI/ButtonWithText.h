@@ -10,7 +10,7 @@ namespace Beryll
         ButtonWithText() = delete;
         // Position and size in percent 0...100% of screen.
         ButtonWithText(const std::string& text, const std::string& fontPath, float fontHeightInPercentOfScreen,
-                       float l, float t, float w, float h, bool actRepeat = false);
+                       float l, float t, float w, float h, bool actRepeat = false, bool bringToFrontOnFocus = false);
         ~ButtonWithText() override;
 
         void updateBeforePhysics() override;

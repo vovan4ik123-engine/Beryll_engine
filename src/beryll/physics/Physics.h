@@ -48,6 +48,7 @@ namespace Beryll
         GARBAGE = 1 << 9,
         ENEMY_ATTACK = 1 << 10,
         JUMPPAD = 1 << 11,
+        BOSS = 1 << 12,
 
         YOU_CAN_COMBINE_GROUPS_WHEN_USE = STATIC_ENVIRONMENT | CAMERA,
 

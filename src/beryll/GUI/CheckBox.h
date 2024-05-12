@@ -10,7 +10,7 @@ namespace Beryll
         CheckBox() = delete;
         // Position in percent 0...100% of screen.
         CheckBox(const std::string& pText, const std::string& fontPath, float fontHeightInPercentOfScreen,
-                 float l, float t, bool disableCheckLogic = false);
+                 float l, float t, bool disableCheckLogic = false, bool bringToFrontOnFocus = false);
         ~CheckBox() override;
 
         void updateBeforePhysics() override;

@@ -5,7 +5,7 @@
 namespace Beryll
 {
     CheckBox::CheckBox(const std::string& pText, const std::string& fontPath, float fontHeightInPercentOfScreen,
-                       float l, float t, bool disableCheckLogic)
+                       float l, float t, bool disableCheckLogic, bool bringToFrontOnFocus)
                        : text(pText), m_disableCheckLogic(disableCheckLogic)
     {
         BR_ASSERT((fontPath.empty() == false && fontHeightInPercentOfScreen > 0.0f), "%s", "fontPath can not be empty and fontHeight must be > 0.0.");
@@ -14,6 +14,12 @@ namespace Beryll
         topPos = t / 100.0f;
         width = fontHeightInPercentOfScreen / 100.0f;
         height = fontHeightInPercentOfScreen / 100.0f;
+
+        if(!bringToFrontOnFocus)
+        {
+            m_noBackgroundNoFrame = m_noBackgroundNoFrame | ImGuiWindowFlags_NoBringToFrontOnFocus;
+            m_noFrame = m_noFrame | ImGuiWindowFlags_NoBringToFrontOnFocus;
+        }
 
         if(text.empty())
             text = "##ImGUILibrarySpecificID" + m_IDAsString;

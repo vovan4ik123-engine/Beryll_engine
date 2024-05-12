@@ -10,7 +10,8 @@ namespace Beryll
         SliderVertical() = delete;
         // Position in percent 0...100% of screen.
         SliderVertical(const std::string& text, const std::string& fontPath, float fontHeightInPercentOfScreen,
-                         float l, float t, float w, float h, float min = 0.0f, float max = 1.0f, bool background = false);
+                       float l, float t, float w, float h, float min = 0.0f, float max = 1.0f,
+                       bool background = false, bool bringToFrontOnFocus = false);
         ~SliderVertical() override;
 
         void updateBeforePhysics() override;
