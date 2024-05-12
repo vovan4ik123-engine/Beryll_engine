@@ -14,13 +14,15 @@ namespace Beryll
         static void create();
 
         // Short WAV sound effect. Can be playing 8 effects at same time.
-        static void loadWAV(const std::string& path);
+        static void loadWAV(const std::string& path, int volume); // volume = 0...128.
         static void playWAV(const std::string& path, int timesRepeat = 0);
 
+        static int getNumberOfWAVCurrentlyPlaying();
+
         // Long MP3 music. Can be played only 1 music at time.
-        static void loadBackgroundMP3(const std::string& path);
+        static void loadBackgroundMP3(const std::string& path, int volume); // volume = 0...128.
         static void startBackgroundMP3(const std::string& path, bool repeat = false);
-        static void setBackgroundVolume(int volume); // 0 - 128.
+        static void setBackgroundVolume(int volume); // volume = 0...128.
         static void pauseBackgroundMP3();
         static void resumeBackgroundMP3();
         static void stopBackgroundMP3();

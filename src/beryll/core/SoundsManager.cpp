@@ -22,7 +22,7 @@ namespace Beryll
         m_created = true;
     }
 
-    void SoundsManager::loadWAV(const std::string& path)
+    void SoundsManager::loadWAV(const std::string& path, int volume)
     {
         BR_ASSERT((path.find_last_of('.') != std::string::npos), "Sound does not have extension: %s", path.c_str());
         BR_ASSERT((path.substr(path.find_last_of('.')) == ".wav"), "%s", "loadWAV() loads only .wav sounds.");
@@ -33,7 +33,7 @@ namespace Beryll
         Mix_Chunk* wavSound = Mix_LoadWAV(path.c_str());
         BR_ASSERT((wavSound != nullptr), "Mix_LoadWAV() failed: %s", path.c_str());
 
-        Mix_VolumeChunk(wavSound, MIX_MAX_VOLUME / 2);
+        Mix_VolumeChunk(wavSound, volume);
 
         m_WAVs.insert(std::make_pair(path, std::unique_ptr<Mix_Chunk, decltype(&Mix_FreeChunk)>(wavSound, Mix_FreeChunk)));
     }
@@ -47,7 +47,12 @@ namespace Beryll
         }
     }
 
-    void SoundsManager::loadBackgroundMP3(const std::string& path)
+    int SoundsManager::getNumberOfWAVCurrentlyPlaying()
+    {
+        return Mix_Playing(-1);
+    }
+
+    void SoundsManager::loadBackgroundMP3(const std::string& path, int volume)
     {
         BR_ASSERT((path.find_last_of('.') != std::string::npos), "Sound does not have extension: %s", path.c_str());
         BR_ASSERT((path.substr(path.find_last_of('.')) == ".mp3"), "%s", "loadBackgroundMP3() loads only .mp3 sounds.");
@@ -58,7 +63,7 @@ namespace Beryll
         Mix_Music* music = Mix_LoadMUS(path.c_str());
         BR_ASSERT((music != nullptr), "Mix_LoadMUS() failed: %s", path.c_str());
 
-        Mix_VolumeMusic(MIX_MAX_VOLUME / 2);
+        Mix_VolumeMusic(volume);
 
         m_MP3s.insert(std::make_pair(path, std::unique_ptr<Mix_Music, decltype(&Mix_FreeMusic)>(music, Mix_FreeMusic)));
     }
