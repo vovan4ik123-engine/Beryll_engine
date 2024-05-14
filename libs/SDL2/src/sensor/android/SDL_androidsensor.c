@@ -53,7 +53,7 @@ static int SDL_ANDROID_SensorInit(void)
     int i, sensors_count;
     ASensorList sensors;
 
-    SDL_sensor_manager = ASensorManager_getInstance();
+    SDL_sensor_manager = ASensorManager_getInstanceForPackage("com.magneticBall3D.app");
     if (!SDL_sensor_manager) {
         return SDL_SetError("Couldn't create sensor manager");
     }
@@ -161,7 +161,7 @@ static void SDL_ANDROID_SensorUpdate(SDL_Sensor *sensor)
     ASensorEvent event;
     struct android_poll_source *source;
 
-    if (ALooper_pollAll(0, NULL, &events, (void **)&source) == LOOPER_ID_USER) {
+    if (ALooper_pollOnce(0, NULL, &events, (void **)&source) == LOOPER_ID_USER) {
         SDL_zero(event);
         while (ASensorEventQueue_getEvents(sensor->hwdata->eventqueue, &event, 1) > 0) {
             SDL_PrivateSensorUpdate(sensor, 0, event.data, SDL_arraysize(event.data));
