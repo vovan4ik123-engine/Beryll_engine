@@ -11,7 +11,7 @@ add_compile_options(-fexceptions -frtti -fPIC) # -fopenmp -pthread -fexceptions 
 # for info/warning/assert messages
     add_definitions(-DBR_DEBUG)
 
-# add flags for specyfic compiler
+# add flags for specific compiler
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     message(WARNING "Compiler = Clang")
 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")

@@ -1,7 +1,7 @@
 ----------------------- For Android -----------------------
 
 Add to build.gradle
-    classpath 'com.google.gms:google-services:4.4.0'
+    classpath 'com.google.gms:google-services:4.4.1'
 
 Add to app/build.gradle
     apply plugin: 'com.google.gms.google-services'
@@ -9,11 +9,9 @@ Add to app/build.gradle
     dependencies {
         ...................................................
 
-        // When using the BoM, you don't specify versions in Firebase library dependencies.
-        implementation platform('com.google.firebase:firebase-bom:32.5.0')
+        // Import the Firebase BoM.
+        implementation platform('com.google.firebase:firebase-bom:33.0.0')
         implementation 'com.google.firebase:firebase-analytics'
-
-        implementation 'androidx.fragment:fragment:1.6.2'
     }
 
 Add to AndroidManifest.xml
@@ -46,11 +44,30 @@ java/managers/GoogleAnalyticsManager
         }
 
         // Called from C++ code to send event.
-        public static void sendEvent(String eventType, String eventName) {
-            Log.v("GoogleAnalyticsManager", "Send custom analytics event: " + eventType + " " + eventName);
+        public static void sendEventEmpty(String eventType) {
+            Log.v("GoogleAnalyticsManager", "sendEventEmpty(): " + eventType);
 
             Bundle bundle = new Bundle();
-            bundle.putString(eventType, eventName);
+
+            firebaseAnalytics.logEvent(eventType, bundle);
+        }
+
+        public static void sendEventStringParam(String eventType, String paramName, String paramValue) {
+            // Example: sendEventStringParam("levelStart", "levelName", "first");
+            Log.v("GoogleAnalyticsManager", "sendEventStringParam(): " + eventType + " " + paramName + " " + paramValue);
+
+            Bundle bundle = new Bundle();
+            bundle.putString(paramName, paramValue);
+
+            firebaseAnalytics.logEvent(eventType, bundle);
+        }
+
+        public static void sendEventFloatParam(String eventType, String paramName, float paramValue) {
+            // Example: sendEventFloatParam("playerDie", "second", 145);
+            Log.v("GoogleAnalyticsManager", "sendEventFloatParam(): " + eventType + " " + paramName + " " + paramValue);
+
+            Bundle bundle = new Bundle();
+            bundle.putFloat(paramName, paramValue);
 
             firebaseAnalytics.logEvent(eventType, bundle);
         }
