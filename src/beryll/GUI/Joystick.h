@@ -14,7 +14,7 @@ namespace Beryll
          * touchedTexturePath - texture shown when touched. Can be empty.
          *                      If empty defaultTexturePath will shown always.
          */
-        // Position and size in percent 0...100% of screen.
+        // Position and size in 0...1 range.
         Joystick(const std::string& defaultTexturePath,
                  const std::string& touchedTexturePath,
                  float l, float t, float w, float h, bool bringToFrontOnFocus = false);

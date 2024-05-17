@@ -12,7 +12,7 @@ namespace Beryll
     public:
         Text() = delete;
         // left, top in percent 0...100% of screen.
-        Text(const std::string& pText, const std::string& fontPath, float fontHeightInPercentOfScreen,
+        Text(const std::string& pText, const std::string& fontPath, float fontHeight,
              float l, float t, float w, float h, bool background = false, bool bringToFrontOnFocus = false);
         ~Text() override;
 

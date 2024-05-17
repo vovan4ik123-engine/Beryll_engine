@@ -3,16 +3,16 @@
 
 namespace Beryll
 {
-    Text::Text(const std::string& pText, const std::string& fontPath, float fontHeightInPercentOfScreen,
+    Text::Text(const std::string& pText, const std::string& fontPath, float fontHeight,
                float l, float t, float w, float h, bool background, bool bringToFrontOnFocus)
                : text(pText)
     {
-        BR_ASSERT((fontPath.empty() == false && fontHeightInPercentOfScreen > 0.0f), "%s", "fontPath can not be empty and fontHeight must be > 0.0.");
+        BR_ASSERT((fontPath.empty() == false && fontHeight > 0.0f), "%s", "fontPath can not be empty and fontHeight must be > 0.0.");
 
-        leftPos = l / 100.0f;
-        topPos = t / 100.0f;
-        width = w / 100.0f;
-        height = h / 100.0f;
+        leftPos = l;
+        topPos = t;
+        width = w;
+        height = h;
 
         if(!bringToFrontOnFocus)
         {
@@ -25,7 +25,7 @@ namespace Beryll
         else
             m_flags = m_noBackgroundNoFrame;
 
-        m_font = MainImGUI::getInstance()->createFont(fontPath, fontHeightInPercentOfScreen);
+        m_font = MainImGUI::getInstance()->createFont(fontPath, fontHeight);
     }
 
     Text::~Text()

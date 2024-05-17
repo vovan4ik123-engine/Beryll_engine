@@ -40,13 +40,13 @@ namespace Beryll
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
         // Load default font.
-        float fontHeight = 5.0f / 100.0f; // 5.0% of screen height.
+        float fontHeight = 0.05f; // 5.0% of screen height.
 
         uint32_t bufferSize = 0;
         char* buffer = BeryllUtils::File::readToBuffer("fonts/roboto.ttf", &bufferSize);
         ImFont* fontDefault = io.Fonts->AddFontFromMemoryTTF(buffer, bufferSize, fontHeight  * ImGui::GetIO().DisplaySize.y);
         BR_ASSERT((fontDefault != nullptr), "%s", "Font was not created.");
-        m_loadedFonts.emplace_back(fontDefault, "fonts/roboto.ttf", 5.0f);
+        m_loadedFonts.emplace_back(fontDefault, "fonts/roboto.ttf", fontHeight);
         ImGui_ImplOpenGL3_CreateFontsTexture();
         ImGui::GetIO().FontDefault = fontDefault;
 
@@ -108,22 +108,20 @@ namespace Beryll
             return ImGui::GetIO().DisplaySize.y / ImGui::GetIO().DisplaySize.x;
     }
 
-    ImFont* AndroidGLESImGUI::createFont(const std::string& path, float heightInPercentOfScreen)
+    ImFont* AndroidGLESImGUI::createFont(const std::string& path, float fontHeight)
     {
-        ImFont* storedFont = findStoredFont(path, heightInPercentOfScreen);
+        ImFont* storedFont = findStoredFont(path, fontHeight);
         if(storedFont)
         {
             BR_INFO("%s", "Font found. Return it.");
             return storedFont;
         }
 
-        float fontHeight = heightInPercentOfScreen / 100.0f;
-
         uint32_t bufferSize = 0;
         char* buffer = BeryllUtils::File::readToBuffer(path.c_str(), &bufferSize);
         ImFont* f = ImGui::GetIO().Fonts->AddFontFromMemoryTTF(buffer, bufferSize, fontHeight * ImGui::GetIO().DisplaySize.y);
         BR_ASSERT((f != nullptr), "%s", "Font was not created.");
-        m_loadedFonts.emplace_back(f, path, heightInPercentOfScreen);
+        m_loadedFonts.emplace_back(f, path, fontHeight);
         ImGui_ImplOpenGL3_CreateFontsTexture();
 
         return f;
@@ -134,8 +132,8 @@ namespace Beryll
         BR_ASSERT(false, "%s", "ImGUI does not support delete one font. Only ImGui::GetIO().Fonts->Clear(); can be called to delete all fonts.");
     }
 
-    void AndroidGLESImGUI::setDefaultFont(const std::string& path, float heightInPercentOfScreen)
+    void AndroidGLESImGUI::setDefaultFont(const std::string& path, float fontHeight)
     {
-        ImGui::GetIO().FontDefault = createFont(path, heightInPercentOfScreen);
+        ImGui::GetIO().FontDefault = createFont(path, fontHeight);
     }
 }

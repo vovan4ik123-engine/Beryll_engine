@@ -8,7 +8,7 @@ namespace Beryll
     {
     public:
         ProgressBar() = delete;
-        // Position and size in percent 0...100% of screen.
+        // Position and size in 0...1 range.
         ProgressBar(float l, float t, float w, float h, bool bringToFrontOnFocus = false);
         ~ProgressBar() override;
 

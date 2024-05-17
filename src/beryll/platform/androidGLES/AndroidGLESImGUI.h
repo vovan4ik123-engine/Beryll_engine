@@ -23,11 +23,11 @@ namespace Beryll
 
         /*
         * path must skip assets/ folder and starts from next folder inside assets/.
-        * heightInPercentOfScreen - font height in percent 0%...100% of screen.
+        * fontHeight - font height in range 0...1.
         */
-        ImFont* createFont(const std::string& path, float heightInPercentOfScreen) override;
+        ImFont* createFont(const std::string& path, float fontHeight) override;
         void deleteFont(ImFont* font) override;
-        void setDefaultFont(const std::string& path, float heightInPercentOfScreen) override;
+        void setDefaultFont(const std::string& path, float fontHeight) override;
 
     private:
         friend class MainImGUI;

@@ -8,8 +8,8 @@ namespace Beryll
     {
     public:
         ButtonWithText() = delete;
-        // Position and size in percent 0...100% of screen.
-        ButtonWithText(const std::string& text, const std::string& fontPath, float fontHeightInPercentOfScreen,
+        // Position and size in 0...1 range.
+        ButtonWithText(const std::string& text, const std::string& fontPath, float fontHeight,
                        float l, float t, float w, float h, bool actRepeat = false, bool bringToFrontOnFocus = false);
         ~ButtonWithText() override;
 

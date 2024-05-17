@@ -11,10 +11,10 @@ namespace Beryll
     {
         BR_ASSERT((defaultTexturePath.empty() == false), "%s", "Path to default texture can not be empty.");
 
-        leftPos = l / 100.0f;
-        topPos = t / 100.0f;
-        width = w / 100.0f;
-        height = h / 100.0f;
+        leftPos = l;
+        topPos = t;
+        width = w;
+        height = h;
 
         m_actRepeat = actRepeat;
 
