@@ -1,6 +1,6 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.16)
 
-add_definitions(-DMUSIC_MP3_DRMP3)
+add_definitions(-DMUSIC_MP3_MINIMP3)
 
 include_directories(../SDL2/include)
 include_directories(include)
@@ -13,9 +13,10 @@ add_library(SDL2_mixer-static STATIC
     src/codecs/mp3utils.c
     src/codecs/music_cmd.c
     src/codecs/music_drflac.c
-    src/codecs/music_drmp3.c
     src/codecs/music_flac.c
     src/codecs/music_fluidsynth.c
+    src/codecs/music_gme.c
+    src/codecs/music_minimp3.c
     src/codecs/music_modplug.c
     src/codecs/music_mpg123.c
     src/codecs/music_nativemidi.c
@@ -24,6 +25,7 @@ add_library(SDL2_mixer-static STATIC
     src/codecs/music_opus.c
     src/codecs/music_timidity.c
     src/codecs/music_wav.c
+    src/codecs/music_wavpack.c
     src/codecs/music_xmp.c
     src/effect_position.c
     src/effect_stereoreverse.c

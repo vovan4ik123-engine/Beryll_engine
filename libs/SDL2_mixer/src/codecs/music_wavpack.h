@@ -17,20 +17,12 @@
   2. Altered source versions must be plainly marked as such, and must not be
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
-
-  This is the source needed to decode a Creative Labs VOC file into a
-  waveform. It's pretty straightforward once you get going. The only
-  externally-callable function is Mix_LoadVOC_RW(), which is meant to
-  act as identically to SDL_LoadWAV_RW() as possible.
-
-  This file by Ryan C. Gordon (icculus@icculus.org).
-
-  Heavily borrowed from sox v12.17.1's voc.c.
-        (http://www.freshmeat.net/projects/sox/)
 */
 
-/* Don't call this directly; use Mix_LoadWAV_RW() for now. */
-SDL_AudioSpec *Mix_LoadVOC_RW (SDL_RWops *src, int freesrc,
-        SDL_AudioSpec *spec, Uint8 **audio_buf, Uint32 *audio_len);
+/* This file supports streaming WavPack files */
+
+#include "music.h"
+
+extern Mix_MusicInterface Mix_MusicInterface_WAVPACK;
 
 /* vi: set ts=4 sw=4 expandtab: */

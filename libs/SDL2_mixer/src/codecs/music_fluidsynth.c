@@ -1,6 +1,6 @@
 /*
   SDL_mixer:  An audio mixer library based on the SDL library
-  Copyright (C) 1997-2022 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2024 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -259,9 +259,9 @@ static void *FLUIDSYNTH_CreateFromRW(SDL_RWops *src, int freesrc)
 static void FLUIDSYNTH_SetVolume(void *context, int volume)
 {
     FLUIDSYNTH_Music *music = (FLUIDSYNTH_Music *)context;
-    /* FluidSynth's default is 0.2. Make 1.2 the maximum. */
+    /* FluidSynth's default gain is 0.2. Make 1.0 the maximum gain value to avoid sound overload. */
     music->volume = volume;
-    fluidsynth.fluid_synth_set_gain(music->synth, (float) (volume * 1.2 / MIX_MAX_VOLUME));
+    fluidsynth.fluid_synth_set_gain(music->synth, volume * 1.0f / MIX_MAX_VOLUME);
 }
 
 static int FLUIDSYNTH_GetVolume(void *context)
@@ -297,8 +297,7 @@ static int FLUIDSYNTH_GetSome(void *context, void *data, int bytes, SDL_bool *do
     }
 
     if (music->synth_write(music->synth, music_spec.samples, music->buffer, 0, 2, music->buffer, 1, 2) != FLUID_OK) {
-        Mix_SetError("Error generating FluidSynth audio");
-        return -1;
+        return Mix_SetError("Error generating FluidSynth audio");
     }
     if (SDL_AudioStreamPut(music->stream, music->buffer, music->buffer_size) < 0) {
         return -1;
@@ -363,6 +362,8 @@ Mix_MusicInterface Mix_MusicInterface_FLUIDSYNTH =
     NULL,   /* LoopEnd */
     NULL,   /* LoopLength */
     NULL,   /* GetMetaTag */
+    NULL,   /* GetNumTracks */
+    NULL,   /* StartTrack */
     NULL,   /* Pause */
     NULL,   /* Resume */
     FLUIDSYNTH_Stop,
