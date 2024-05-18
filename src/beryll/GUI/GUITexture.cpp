@@ -45,7 +45,7 @@ namespace Beryll
         ImGui::Begin(m_IDAsString.c_str(), nullptr, m_noBackgroundNoFrame);
 
         ImGui::Image(reinterpret_cast<ImTextureID>(m_texture->getID()),
-                     ImVec2(width * MainImGUI::getInstance()->getGUIWidth(), height * MainImGUI::getInstance()->getGUIHeight()));
+                     ImVec2(width * MainImGUI::getInstance()->getGUIWidth() * 0.96f, height * MainImGUI::getInstance()->getGUIHeight() * 0.96f));
 
         ImGui::End();
     }
