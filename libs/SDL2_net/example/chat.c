@@ -1,6 +1,6 @@
 /*
   CHAT:  A chat client using the SDL example network and GUI libraries
-  Copyright (C) 1997-2016 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2022 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -20,23 +20,17 @@
 */
 
 /* Note that this isn't necessarily the way to run a chat system.
-   This is designed to excercise the network code more than be really
+   This is designed to exercise the network code more than be really
    functional.
 */
+
+#include "SDL_net.h"
+#include "SDL_test.h"
+#include "chat.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include "SDL_net.h"
-#ifdef macintosh
-#include "GUI.h"
-#include "GUI_widgets.h"
-#else
-#include <GUI/GUI.h>
-#include <GUI/GUI_widgets.h>
-#endif
-#include "chat.h"
 
 
 /* Global variables */
@@ -49,22 +43,134 @@ static struct {
     Uint8 name[256+1];
 } people[CHAT_MAXPEOPLE];
 
-static GUI *gui = NULL;
-static GUI_TermWin *termwin;
-static GUI_TermWin *sendwin;
-enum image_names {
-    IMAGE_QUIT,
-    IMAGE_SCROLL_UP,
-    IMAGE_SCROLL_DN,
-    NUM_IMAGES
-};
-char *image_files[NUM_IMAGES] = {
-    "quit.bmp", "scroll_up.bmp", "scroll_dn.bmp"
-};
-SDL_Surface *images[NUM_IMAGES];
+static char keybuf[80-sizeof(CHAT_PROMPT)+1];
+static int  keypos = 0;
 
+#define FONT_LINE_HEIGHT    (FONT_CHARACTER_SIZE + 2)
 
-void SendHello(char *name)
+typedef struct
+{
+    SDL_Rect rect;
+    int current;
+    int numlines;
+    char **lines;
+
+} TextWindow;
+
+static TextWindow *termwin;
+static TextWindow *sendwin;
+
+static TextWindow *TextWindowCreate(int x, int y, int w, int h)
+{
+    TextWindow *textwin = (TextWindow *)SDL_malloc(sizeof(*textwin));
+
+    if ( !textwin ) {
+        return NULL;
+    }
+
+    textwin->rect.x = x;
+    textwin->rect.y = y;
+    textwin->rect.w = w;
+    textwin->rect.h = h;
+    textwin->current = 0;
+    textwin->numlines = (h / FONT_LINE_HEIGHT);
+    textwin->lines = (char **)SDL_calloc(textwin->numlines, sizeof(*textwin->lines));
+    if ( !textwin->lines ) {
+        SDL_free(textwin);
+        return NULL;
+    }
+    return textwin;
+}
+
+static void TextWindowDisplay(TextWindow *textwin, SDL_Renderer *renderer)
+{
+    int i, y;
+
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    for ( y = textwin->rect.y, i = 0; i < textwin->numlines; ++i, y += FONT_LINE_HEIGHT ) {
+        if ( textwin->lines[i] ) {
+            SDLTest_DrawString(renderer, textwin->rect.x, y, textwin->lines[i]);
+        }
+    }
+}
+
+static void TextWindowAddTextWithLength(TextWindow *textwin, const char *text, size_t len)
+{
+    size_t existing;
+    SDL_bool newline = SDL_FALSE;
+    char *line;
+
+    if ( len > 0 && text[len - 1] == '\n' ) {
+        --len;
+        newline = SDL_TRUE;
+    }
+
+    if ( textwin->lines[textwin->current] ) {
+        existing = SDL_strlen(textwin->lines[textwin->current]);
+    } else {
+        existing = 0;
+    }
+
+    if ( *text == '\b' ) {
+        if ( existing ) {
+            textwin->lines[textwin->current][existing - 1] = '\0';
+        }
+        return;
+    }
+
+    line = (char *)SDL_realloc(textwin->lines[textwin->current], existing + len + 1);
+    if ( line ) {
+        SDL_memcpy(&line[existing], text, len);
+        line[existing + len] = '\0';
+        textwin->lines[textwin->current] = line;
+        if ( newline ) {
+            if (textwin->current == textwin->numlines - 1) {
+                SDL_free(textwin->lines[0]);
+                SDL_memcpy(&textwin->lines[0], &textwin->lines[1], (textwin->numlines-1) * sizeof(textwin->lines[1]));
+                textwin->lines[textwin->current] = NULL;
+            } else {
+                ++textwin->current;
+            }
+        }
+    }
+}
+
+static void TextWindowAddText(TextWindow *textwin, const char *fmt, ...)
+{
+	char text[1024];
+	va_list ap;
+
+	va_start(ap, fmt);
+	SDL_vsnprintf(text, sizeof(text), fmt, ap);
+	va_end(ap);
+
+    TextWindowAddTextWithLength(textwin, text, SDL_strlen(text));
+}
+
+static void TextWindowClear(TextWindow *textwin)
+{
+    int i;
+
+    for ( i = 0; i < textwin->numlines; ++i )
+    {
+        if ( textwin->lines[i] ) {
+            SDL_free(textwin->lines[i]);
+            textwin->lines[i] = NULL;
+        }
+    }
+    textwin->current = 0;
+}
+
+static void TextWindowDestroy(TextWindow *textwin)
+{
+    if ( textwin ) {
+        TextWindowClear(textwin);
+        SDL_free(textwin->lines);
+        SDL_free(textwin);
+    }
+}
+
+void SendHello(const char *name)
 {
     IPaddress *myip;
     char hello[1+1+256];
@@ -81,7 +187,7 @@ void SendHello(char *name)
              ((name=getenv("USER")) == NULL ) ) {
             name="Unknown";
         }
-        termwin->AddText("Using name '%s'\n", name);
+        TextWindowAddText(termwin, "Using name '%s'\n", name);
 
         /* Construct the packet */
         hello[0] = CHAT_HELLO;
@@ -106,8 +212,8 @@ void SendBuf(char *buf, int len)
     int i;
 
     /* Redraw the prompt and add a newline to the buffer */
-    sendwin->Clear();
-    sendwin->AddText(CHAT_PROMPT);
+    TextWindowClear(sendwin);
+    TextWindowAddText(sendwin, CHAT_PROMPT);
     buf[len++] = '\n';
 
     /* Send the text to each of our active channels */
@@ -122,51 +228,10 @@ void SendBuf(char *buf, int len)
         }
     }
 }
-void SendKey(SDLKey key, Uint16 unicode)
-{
-    static char keybuf[80-sizeof(CHAT_PROMPT)+1];
-    static int  keypos = 0;
-    unsigned char ch;
-
-    /* We don't handle wide UNICODE characters yet */
-    if ( unicode > 255 ) {
-        return;
-    }
-    ch = (unsigned char)unicode;
-
-    /* Add the key to the buffer, and send it if we have a line */
-    switch (ch) {
-        case '\0':
-            break;
-        case '\r':
-        case '\n':
-            /* Send our line of text */
-            SendBuf(keybuf, keypos);
-            keypos = 0;
-            break;
-        case '\b':
-            /* If there's data, back up over it */
-            if ( keypos > 0 ) {
-                sendwin->AddText((char *)&ch, 1);
-                --keypos;
-            }
-            break;
-        default:
-            /* If the buffer is full, send it */
-            if ( keypos == (sizeof(keybuf)/sizeof(keybuf[0]))-1 ) {
-                SendBuf(keybuf, keypos);
-                keypos = 0;
-            }
-            /* Add the text to our send buffer */
-            sendwin->AddText((char *)&ch, 1);
-            keybuf[keypos++] = ch;
-            break;
-    }
-}
 
 int HandleServerData(Uint8 *data)
 {
-    int used;
+    int used = 0;
 
     switch (data[0]) {
         case CHAT_ADD: {
@@ -189,7 +254,7 @@ int HandleServerData(Uint8 *data)
             people[which].active = 1;
 
             /* Let the user know what happened */
-            termwin->AddText(
+            TextWindowAddText(termwin,
     "* New client on %d from %d.%d.%d.%d:%d (%s)\n", which,
         (newip.host>>24)&0xFF, (newip.host>>16)&0xFF,
             (newip.host>>8)&0xFF, newip.host&0xFF,
@@ -217,7 +282,7 @@ int HandleServerData(Uint8 *data)
             people[which].active = 0;
 
             /* Let the user know what happened */
-            termwin->AddText(
+            TextWindowAddText(termwin,
     "* Lost client on %d (%s)\n", which, people[which].name);
 
             /* Unbind the address on the UDP socket */
@@ -226,7 +291,7 @@ int HandleServerData(Uint8 *data)
         used = CHAT_DEL_LEN;
         break;
         case CHAT_BYE: {
-            termwin->AddText("* Chat server full\n");
+            TextWindowAddText(termwin, "* Chat server full\n");
         }
         used = CHAT_BYE_LEN;
         break;
@@ -251,7 +316,7 @@ void HandleServer(void)
         SDLNet_TCP_DelSocket(socketset, tcpsock);
         SDLNet_TCP_Close(tcpsock);
         tcpsock = NULL;
-        termwin->AddText("Connection with server lost!\n");
+        TextWindowAddText(termwin, "Connection with server lost!\n");
     } else {
         pos = 0;
         while ( len > 0 ) {
@@ -274,14 +339,14 @@ void HandleClient(void)
     n = SDLNet_UDP_RecvV(udpsock, packets);
     while ( n-- > 0 ) {
         if ( packets[n]->channel >= 0 ) {
-            termwin->AddText("[%s] ",
+            TextWindowAddText(termwin, "[%s] ",
                 people[packets[n]->channel].name);
-            termwin->AddText((char *)packets[n]->data, packets[n]->len);
+            TextWindowAddTextWithLength(termwin, (char *)packets[n]->data, packets[n]->len);
         }
     }
 }
 
-GUI_status HandleNet(void)
+void HandleNet(void)
 {
     SDLNet_CheckSockets(socketset, 0);
     if ( SDLNet_SocketReady(tcpsock) ) {
@@ -290,67 +355,39 @@ GUI_status HandleNet(void)
     if ( SDLNet_SocketReady(udpsock) ) {
         HandleClient();
     }
-
-    /* Redraw the screen if the window changed */
-    if ( termwin->Changed() ) {
-        return(GUI_REDRAW);
-    } else {
-        return(GUI_PASS);
-    }
 }
 
-void InitGUI(SDL_Surface *screen)
+void InitGUI(int width, int height)
 {
-    int x1, y1, y2;
-    SDL_Rect empty_rect = { 0, 0, 0, 0 };
-        GUI_Widget *widget;
-
-    gui = new GUI(screen);
+    int lines = (height / FONT_LINE_HEIGHT) - 2;
 
     /* Chat terminal window */
-    termwin = new GUI_TermWin(0, 0, 80*8, 50*8, NULL,NULL,CHAT_SCROLLBACK);
-    gui->AddWidget(termwin);
+    termwin = TextWindowCreate(2, 2, width-4, lines*FONT_LINE_HEIGHT);
 
     /* Send-line window */
-    y1 = termwin->H()+2;
-    sendwin = new GUI_TermWin(0, y1, 80*8, 1*8, NULL, SendKey, 0);
-    sendwin->AddText(CHAT_PROMPT);
-    gui->AddWidget(sendwin);
-
-    /* Add scroll buttons for main window */
-    y1 += sendwin->H()+2;
-    y2 = y1+images[IMAGE_SCROLL_UP]->h;
-    widget = new GUI_ScrollButtons(2, y1, images[IMAGE_SCROLL_UP],
-                       empty_rect, 2, y2, images[IMAGE_SCROLL_DN],
-                    SCROLLBAR_VERTICAL, termwin);
-    gui->AddWidget(widget);
-
-    /* Add QUIT button */
-    x1 = (screen->w-images[IMAGE_QUIT]->w)/2;
-    y1 = sendwin->Y()+sendwin->H()+images[IMAGE_QUIT]->h/2;
-    widget = new GUI_Button(NULL, x1, y1, images[IMAGE_QUIT], NULL);
-    gui->AddWidget(widget);
-
-    /* That's all folks */
-    return;
+    sendwin = TextWindowCreate(2, 2+lines*FONT_LINE_HEIGHT+2, width-4, 1*FONT_LINE_HEIGHT);
+    TextWindowAddText(sendwin, CHAT_PROMPT);
 }
 
-extern "C"
+void DisplayGUI(SDL_Renderer *renderer)
+{
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_RenderClear(renderer);
+    TextWindowDisplay(termwin, renderer);
+    TextWindowDisplay(sendwin, renderer);
+    SDL_RenderPresent(renderer);
+}
+
 void cleanup(int exitcode)
 {
-    int i;
-
     /* Clean up the GUI */
-    if ( gui ) {
-            delete gui;
-        gui = NULL;
+    if ( termwin ) {
+        TextWindowDestroy( termwin );
+        termwin = NULL;
     }
-    /* Clean up any images we have */
-    for ( i=0; i<NUM_IMAGES; ++i ) {
-        if ( images[i] ) {
-            SDL_FreeSurface(images[i]);
-            images[i] = NULL;
-        }
+    if ( sendwin ) {
+        TextWindowDestroy( sendwin );
+        sendwin = NULL;
     }
     /* Close the network connections */
     if ( tcpsock != NULL ) {
@@ -376,78 +413,71 @@ void cleanup(int exitcode)
 
 int main(int argc, char *argv[])
 {
-        SDL_Surface *screen;
-    int i;
+    SDL_Window *window;
+    SDL_Renderer *renderer;
+    int i, done;
     char *server;
     IPaddress serverIP;
+    SDL_Event event;
 
     /* Check command line arguments */
     if ( argv[1] == NULL ) {
-        fprintf(stderr, "Usage: %s <server>\n", argv[0]);
+        SDL_Log("Usage: %s <server>\n", argv[0]);
         exit(1);
     }
 
-        /* Initialize SDL */
-        if ( SDL_Init(SDL_INIT_VIDEO) < 0 ) {
-                fprintf(stderr, "Couldn't initialize SDL: %s\n",SDL_GetError());
-                exit(1);
+    /* Initialize SDL */
+    if ( SDL_Init(SDL_INIT_VIDEO) < 0 ) {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+                    "Couldn't initialize SDL: %s\n",
+                    SDL_GetError());
+        exit(1);
     }
 
-    /* Set a 640x480 video mode -- allows 80x50 window using 8x8 font */
-    screen = SDL_SetVideoMode(640, 480, 0, SDL_SWSURFACE);
-    if ( screen == NULL ) {
-                fprintf(stderr, "Couldn't set video mode: %s\n",SDL_GetError());
+
+    /* Set a 640x480 video mode */
+    if ( SDL_CreateWindowAndRenderer(640, 480, 0, &window, &renderer) < 0 ) {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+                     "Couldn't create window: %s\n",
+                     SDL_GetError());
         SDL_Quit();
-                exit(1);
+        exit(1);
     }
 
     /* Initialize the network */
     if ( SDLNet_Init() < 0 ) {
-        fprintf(stderr, "Couldn't initialize net: %s\n",
-                        SDLNet_GetError());
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+                     "Couldn't initialize net: %s\n",
+                     SDLNet_GetError());
         SDL_Quit();
         exit(1);
     }
 
-    /* Get ready to initialize all of our data */
-
-    /* Load the display font and other images */
-    for ( i=0; i<NUM_IMAGES; ++i ) {
-        images[i] = NULL;
-    }
-    for ( i=0; i<NUM_IMAGES; ++i ) {
-        images[i] = SDL_LoadBMP(image_files[i]);
-        if ( images[i] == NULL ) {
-            fprintf(stderr, "Couldn't load '%s': %s\n",
-                    image_files[i], SDL_GetError());
-            cleanup(2);
-        }
-    }
-
     /* Go! */
-    InitGUI(screen);
+    InitGUI(640, 480);
 
     /* Allocate a vector of packets for client messages */
     packets = SDLNet_AllocPacketV(4, CHAT_PACKETSIZE);
     if ( packets == NULL ) {
-        fprintf(stderr, "Couldn't allocate packets: Out of memory\n");
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+                     "Couldn't allocate packets: Out of memory\n");
         cleanup(2);
     }
 
     /* Connect to remote host and create UDP endpoint */
     server = argv[1];
-    termwin->AddText("Connecting to %s ... ", server);
-    gui->Display();
+    TextWindowAddText(termwin, "Connecting to %s ... ", server);
+    DisplayGUI(renderer);
     SDLNet_ResolveHost(&serverIP, server, CHAT_PORT);
     if ( serverIP.host == INADDR_NONE ) {
-        termwin->AddText("Couldn't resolve hostname\n");
+        TextWindowAddText(termwin, "Couldn't resolve hostname\n");
     } else {
         /* If we fail, it's okay, the GUI shows the problem */
         tcpsock = SDLNet_TCP_Open(&serverIP);
         if ( tcpsock == NULL ) {
-            termwin->AddText("Connect failed\n");
+            TextWindowAddText(termwin, "Connect failed\n");
         } else {
-            termwin->AddText("Connected\n");
+            TextWindowAddText(termwin, "Connected\n");
         }
     }
     /* Try ports in the range {CHAT_PORT - CHAT_PORT+10} */
@@ -457,14 +487,15 @@ int main(int argc, char *argv[])
     if ( udpsock == NULL ) {
         SDLNet_TCP_Close(tcpsock);
         tcpsock = NULL;
-        termwin->AddText("Couldn't create UDP endpoint\n");
+        TextWindowAddText(termwin, "Couldn't create UDP endpoint\n");
     }
 
     /* Allocate the socket set for polling the network */
     socketset = SDLNet_AllocSocketSet(2);
     if ( socketset == NULL ) {
-        fprintf(stderr, "Couldn't create socket set: %s\n",
-                        SDLNet_GetError());
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+                     "Couldn't create socket set: %s\n",
+                     SDLNet_GetError());
         cleanup(2);
     }
     SDLNet_TCP_AddSocket(socketset, tcpsock);
@@ -472,7 +503,60 @@ int main(int argc, char *argv[])
 
     /* Run the GUI, handling network data */
     SendHello(argv[2]);
-    gui->Run(HandleNet);
+    done = 0;
+    while ( !done ) {
+        HandleNet();
+
+        while ( SDL_PollEvent(&event) == 1 ) {
+            switch ( event.type ) {
+            case SDL_QUIT:
+                done = 1;
+                break;
+            case SDL_KEYDOWN:
+                switch ( event.key.keysym.sym ) {
+                case SDLK_ESCAPE:
+                    done = 1;
+                    break;
+                case SDLK_RETURN:
+                    /* Send our line of text */
+                    SendBuf(keybuf, keypos);
+                    keypos = 0;
+                    break;
+                case SDLK_BACKSPACE:
+                    /* If there's data, back up over it */
+                    if ( keypos > 0 ) {
+                        TextWindowAddText(sendwin, "\b", 1);
+                        --keypos;
+                    }
+                    break;
+                default:
+                    break;
+                }
+                break;
+            case SDL_TEXTINPUT:
+                {
+                    size_t textlen = SDL_strlen(event.text.text);
+
+                    if ( textlen < sizeof(keybuf) ) {
+                        /* If the buffer is full, send it */
+                        if ( (keypos + textlen) >= sizeof(keybuf) ) {
+                            SendBuf(keybuf, keypos);
+                            keypos = 0;
+                        }
+                        /* Add the text to our send buffer */
+                        TextWindowAddTextWithLength(sendwin, event.text.text, textlen);
+                        SDL_memcpy(&keybuf[keypos], event.text.text, textlen);
+                        keypos += textlen;
+                    }
+                }
+                break;
+            default:
+                break;
+            }
+        }
+
+        DisplayGUI(renderer);
+    }
     cleanup(0);
 
     /* Keep the compiler happy */

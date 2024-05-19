@@ -1,6 +1,6 @@
 /*
   SDL_net:  An example cross-platform network library for use with SDL
-  Copyright (C) 1997-2016 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2022 Sam Lantinga <slouken@libsdl.org>
   Copyright (C) 2012 Simeon Maxein <smaxein@googlemail.com>
 
   This software is provided 'as-is', without any express or implied
@@ -20,14 +20,35 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-/* $Id$ */
-
 #include "SDLnetsys.h"
 #include "SDL_net.h"
 
 #ifdef WITHOUT_SDL
 #include <string.h>
 #include <stdarg.h>
+#endif
+
+#if defined(SDL_BUILD_MAJOR_VERSION) && defined(SDL_COMPILE_TIME_ASSERT)
+SDL_COMPILE_TIME_ASSERT(SDL_BUILD_MAJOR_VERSION,
+                        SDL_NET_MAJOR_VERSION == SDL_BUILD_MAJOR_VERSION);
+SDL_COMPILE_TIME_ASSERT(SDL_BUILD_MINOR_VERSION,
+                        SDL_NET_MINOR_VERSION == SDL_BUILD_MINOR_VERSION);
+SDL_COMPILE_TIME_ASSERT(SDL_BUILD_MICRO_VERSION,
+                        SDL_NET_PATCHLEVEL == SDL_BUILD_MICRO_VERSION);
+#endif
+
+#if defined(SDL_COMPILE_TIME_ASSERT)
+SDL_COMPILE_TIME_ASSERT(SDL_NET_MAJOR_VERSION_min, SDL_NET_MAJOR_VERSION >= 0);
+/* Limited only by the need to fit in SDL_version */
+SDL_COMPILE_TIME_ASSERT(SDL_NET_MAJOR_VERSION_max, SDL_NET_MAJOR_VERSION <= 255);
+
+SDL_COMPILE_TIME_ASSERT(SDL_NET_MINOR_VERSION_min, SDL_NET_MINOR_VERSION >= 0);
+/* Limited only by the need to fit in SDL_version */
+SDL_COMPILE_TIME_ASSERT(SDL_NET_MINOR_VERSION_max, SDL_NET_MINOR_VERSION <= 255);
+
+SDL_COMPILE_TIME_ASSERT(SDL_NET_PATCHLEVEL_min, SDL_NET_PATCHLEVEL >= 0);
+/* Limited by its encoding in SDL_VERSIONNUM and in the ABI versions */
+SDL_COMPILE_TIME_ASSERT(SDL_NET_PATCHLEVEL_max, SDL_NET_PATCHLEVEL <= 99);
 #endif
 
 const SDLNet_version *SDLNet_Linked_Version(void)
@@ -50,12 +71,20 @@ static int SDLNet_started = 0;
 
 int SDLNet_GetLastError(void)
 {
+    #if defined(__OS2__) && !defined(__EMX__)
+    return sock_errno();
+    #else
     return errno;
+    #endif
 }
 
 void SDLNet_SetLastError(int err)
 {
+    #if defined(__OS2__) && !defined(__EMX__)
+    (void) err; /* FIXME: OS2 doesn't have a function to reset socket errno */
+    #else
     errno = err;
+    #endif
 }
 
 #endif
@@ -95,6 +124,11 @@ int  SDLNet_Init(void)
             SDLNet_SetError("Couldn't initialize Winsock 1.1\n");
             return(-1);
         }
+#elif defined(__OS2__) && !defined(__EMX__)
+        if (sock_init() < 0) {
+            SDLNet_SetError("Couldn't initialize IBM OS/2 sockets");
+            return(-1);
+        }
 #else
         /* SIGPIPE is generated when a remote socket is closed */
         void (*handler)(int);
@@ -107,6 +141,7 @@ int  SDLNet_Init(void)
     ++SDLNet_started;
     return(0);
 }
+
 void SDLNet_Quit(void)
 {
     if ( SDLNet_started == 0 ) {
@@ -117,12 +152,11 @@ void SDLNet_Quit(void)
         /* Clean up windows networking */
         if ( WSACleanup() == SOCKET_ERROR ) {
             if ( WSAGetLastError() == WSAEINPROGRESS ) {
-#ifndef _WIN32_WCE
-                WSACancelBlockingCall();
-#endif
                 WSACleanup();
             }
         }
+#elif defined(__OS2__) && !defined(__EMX__)
+        /* -- nothing */
 #else
         /* Restore the SIGPIPE handler */
         void (*handler)(int);
@@ -259,7 +293,7 @@ int SDLNet_GetLocalAddresses(IPaddress *addresses, int maxcount)
     return count;
 }
 
-#if !defined(WITHOUT_SDL) && !SDL_DATA_ALIGNED /* function versions for binary compatibility */
+/* function versions for binary compatibility */
 
 #undef SDLNet_Write16
 #undef SDLNet_Write32
@@ -271,27 +305,25 @@ extern DECLSPEC void SDLCALL SDLNet_Write16(Uint16 value, void *area);
 extern DECLSPEC void SDLCALL SDLNet_Write32(Uint32 value, void *area);
 
 /* Read a 16/32 bit value from network packet buffer */
-extern DECLSPEC Uint16 SDLCALL SDLNet_Read16(void *area);
+extern DECLSPEC Uint16 SDLCALL SDLNet_Read16(const void *area);
 extern DECLSPEC Uint32 SDLCALL SDLNet_Read32(const void *area);
 
 void  SDLNet_Write16(Uint16 value, void *areap)
 {
-    (*(Uint16 *)(areap) = SDL_SwapBE16(value));
+    _SDLNet_Write16(value, areap);
 }
 
 void   SDLNet_Write32(Uint32 value, void *areap)
 {
-    *(Uint32 *)(areap) = SDL_SwapBE32(value);
+    _SDLNet_Write32(value, areap);
 }
 
-Uint16 SDLNet_Read16(void *areap)
+Uint16 SDLNet_Read16(const void *areap)
 {
-    return (SDL_SwapBE16(*(Uint16 *)(areap)));
+    return _SDLNet_Read16(areap);
 }
 
 Uint32 SDLNet_Read32(const void *areap)
 {
-    return (SDL_SwapBE32(*(Uint32 *)(areap)));
+    return _SDLNet_Read32(areap);
 }
-
-#endif /* !defined(WITHOUT_SDL) && !SDL_DATA_ALIGNED */

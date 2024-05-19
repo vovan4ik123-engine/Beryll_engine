@@ -603,13 +603,14 @@ else()
   set(PNG_STATIC_OUTPUT_NAME "libpng${PNGLIB_ABI_VERSION}_static")
 endif()
 
-  add_library(png_static STATIC ${libpng_sources})
-  add_dependencies(png_static png_genfiles)
-  list(APPEND PNG_LIBRARY_TARGETS png_static)
-  set_target_properties(png_static PROPERTIES
-                        OUTPUT_NAME "${PNG_STATIC_OUTPUT_NAME}"
-                        DEBUG_POSTFIX "${PNG_DEBUG_POSTFIX}")
-  target_link_libraries(png_static ${ZLIB_LIBRARIES} ${M_LIBRARY})
+add_library(png_static STATIC ${libpng_sources})
+
+add_dependencies(png_static png_genfiles)
+list(APPEND PNG_LIBRARY_TARGETS png_static)
+set_target_properties(png_static PROPERTIES
+                    OUTPUT_NAME "${PNG_STATIC_OUTPUT_NAME}"
+                    DEBUG_POSTFIX "${PNG_DEBUG_POSTFIX}")
+target_link_libraries(png_static ${ZLIB_LIBRARIES} ${M_LIBRARY})
 
 if(NOT PNG_LIBRARY_TARGETS)
   message(SEND_ERROR "No library variant selected to build. "

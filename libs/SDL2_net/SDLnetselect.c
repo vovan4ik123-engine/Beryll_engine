@@ -1,6 +1,6 @@
 /*
   SDL_net:  An example cross-platform network library for use with SDL
-  Copyright (C) 1997-2016 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2022 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -18,8 +18,6 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
-
-/* $Id$ */
 
 #include "SDLnetsys.h"
 #include "SDL_net.h"
@@ -153,11 +151,10 @@ int SDLNet_CheckSockets(SDLNet_SocketSet set, Uint32 timeout)
 }
 
 /* Free a set of sockets allocated by SDL_NetAllocSocketSet() */
-extern void SDLNet_FreeSocketSet(SDLNet_SocketSet set)
+void SDLNet_FreeSocketSet(SDLNet_SocketSet set)
 {
     if ( set ) {
         SDL_free(set->sockets);
         SDL_free(set);
     }
 }
-
