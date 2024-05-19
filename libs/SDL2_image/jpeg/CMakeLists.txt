@@ -1,6 +1,5 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.16)
 
-# add defines for preprocessor
 add_definitions(-DAVOID_TABLES)
 
 add_library(jpeg-static STATIC
@@ -12,7 +11,7 @@ add_library(jpeg-static STATIC
 		jdmerge.c jdpostct.c jdsample.c jdtrans.c jerror.c jfdctflt.c
 		jfdctfst.c jfdctint.c jidctflt.c jquant1.c
 		jquant2.c jutils.c jmemmgr.c jidctint.c jidctfst.c
-		)
+)
 
 if (ANDROID)
 	target_sources(jpeg-static PRIVATE jmem-android.c)

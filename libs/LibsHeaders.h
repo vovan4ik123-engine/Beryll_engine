@@ -7,7 +7,7 @@
 #include "SDL2/include/SDL_system.h"
 #include "SDL2/include/SDL_log.h"
 
-#include "SDL2_image/SDL_image.h"
+#include "SDL2_image/include/SDL_image.h"
 
 #include "SDL2_mixer/include/SDL_mixer.h"
 
