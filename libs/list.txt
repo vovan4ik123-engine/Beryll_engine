@@ -3,7 +3,7 @@ SDL mixer   2.8.0
 SDL image   2.8.2
 SDL net     2.2.0
 ImGUI       1.90
-glm         1.0.0
+glm         1.0.1
 assimp      5.3.1
 bullet      3.2.5
 sqlite      3.45.0
