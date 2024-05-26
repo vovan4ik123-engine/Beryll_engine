@@ -20,7 +20,7 @@ namespace Beryll
 
         virtual void sendEventEmpty(std::string eventType) = 0;
         virtual void sendEventStringParam(std::string eventType, std::string paramName, std::string paramValue) = 0;
-        virtual void sendEventFloatParam(std::string eventType, std::string paramName, float paramValue) = 0;
+        virtual void sendEventIntParam(std::string eventType, std::string paramName, int paramValue) = 0;
 
     protected:
         GoogleAnalytics() {}

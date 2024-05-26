@@ -28,10 +28,10 @@ namespace Beryll
             BR_ASSERT(false, "%s", "m_sendEventStringParamMethodID is nullptr.")
         }
 
-        m_sendEventFloatParamMethodID = m_jniEnv->GetStaticMethodID(m_javaGoogleAnalyticsManagerClassID, "sendEventFloatParam", "(Ljava/lang/String;Ljava/lang/String;F)V");
-        if (!m_sendEventFloatParamMethodID)
+        m_sendEventIntParamMethodID = m_jniEnv->GetStaticMethodID(m_javaGoogleAnalyticsManagerClassID, "sendEventIntParam", "(Ljava/lang/String;Ljava/lang/String;I)V");
+        if (!m_sendEventIntParamMethodID)
         {
-            BR_ASSERT(false, "%s", "m_sendEventFloatParamMethodID is nullptr.")
+            BR_ASSERT(false, "%s", "m_sendEventIntParamMethodID is nullptr.")
         }
     }
 
@@ -62,12 +62,12 @@ namespace Beryll
         m_jniEnv->DeleteLocalRef(paramV);
     }
 
-    void AndroidGLESGoogleAnalytics::sendEventFloatParam(std::string eventType, std::string paramName, float paramValue)
+    void AndroidGLESGoogleAnalytics::sendEventIntParam(std::string eventType, std::string paramName, int paramValue)
     {
         jstring eventT = m_jniEnv->NewStringUTF(eventType.c_str());
         jstring paramN = m_jniEnv->NewStringUTF(paramName.c_str());
 
-        m_jniEnv->CallStaticVoidMethod(m_javaGoogleAnalyticsManagerClassID, m_sendEventFloatParamMethodID, eventT, paramN, paramValue);
+        m_jniEnv->CallStaticVoidMethod(m_javaGoogleAnalyticsManagerClassID, m_sendEventIntParamMethodID, eventT, paramN, paramValue);
 
         m_jniEnv->DeleteLocalRef(eventT);
         m_jniEnv->DeleteLocalRef(paramN);

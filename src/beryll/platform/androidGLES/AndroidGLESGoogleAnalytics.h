@@ -13,7 +13,7 @@ namespace Beryll
 
         void sendEventEmpty(std::string eventType) override;
         void sendEventStringParam(std::string eventType, std::string paramName, std::string paramValue) override;
-        void sendEventFloatParam(std::string eventType, std::string paramName, float paramValue) override;
+        void sendEventIntParam(std::string eventType, std::string paramName, int paramValue) override;
 
     private:
         friend class GoogleAnalytics;
@@ -23,6 +23,6 @@ namespace Beryll
         jclass m_javaGoogleAnalyticsManagerClassID = nullptr;
         jmethodID m_sendEventEmptyMethodID = nullptr;
         jmethodID m_sendEventStringParamMethodID = nullptr;
-        jmethodID m_sendEventFloatParamMethodID = nullptr;
+        jmethodID m_sendEventIntParamMethodID = nullptr;
     };
 }
