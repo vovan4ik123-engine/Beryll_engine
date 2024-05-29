@@ -40,12 +40,12 @@ namespace Beryll
     void GUITexture::draw()
     {
         ImGui::SetNextWindowPos(ImVec2(leftPos * MainImGUI::getInstance()->getGUIWidth(), topPos * MainImGUI::getInstance()->getGUIHeight()));
-        ImGui::SetNextWindowSize(ImVec2(width * MainImGUI::getInstance()->getGUIWidth(), height * MainImGUI::getInstance()->getGUIHeight()));
+        ImGui::SetNextWindowSize(ImVec2(0.0f, 0.0f)); // Set next window size. Set axis to 0.0f to force an auto-fit on this axis.
 
         ImGui::Begin(m_IDAsString.c_str(), nullptr, m_noBackgroundNoFrame);
 
         ImGui::Image(reinterpret_cast<ImTextureID>(m_texture->getID()),
-                     ImVec2(width * MainImGUI::getInstance()->getGUIWidth() * 0.96f, height * MainImGUI::getInstance()->getGUIHeight() * 0.96f));
+                     ImVec2(width * MainImGUI::getInstance()->getGUIWidth(), height * MainImGUI::getInstance()->getGUIHeight()));
 
         ImGui::End();
     }

@@ -101,7 +101,7 @@ namespace Beryll
         ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
 
         ImGui::SetNextWindowPos(ImVec2(leftPos * MainImGUI::getInstance()->getGUIWidth(), topPos * MainImGUI::getInstance()->getGUIHeight()));
-        ImGui::SetNextWindowSize(ImVec2(width * MainImGUI::getInstance()->getGUIWidth(), height * MainImGUI::getInstance()->getGUIHeight()));
+        ImGui::SetNextWindowSize(ImVec2(0.0f, 0.0f)); // Set next window size. Set axis to 0.0f to force an auto-fit on this axis.
 
         ImGui::Begin(m_IDAsString.c_str(), nullptr, m_noBackgroundNoFrame);
 
@@ -109,13 +109,13 @@ namespace Beryll
         {
             ImGui::ImageButton(m_IDAsString.c_str(),
                                reinterpret_cast<ImTextureID>(m_touchedTexture->getID()),
-                               ImVec2(width * MainImGUI::getInstance()->getGUIWidth() * 0.96f, height * MainImGUI::getInstance()->getGUIHeight() * 0.96f));
+                               ImVec2(width * MainImGUI::getInstance()->getGUIWidth(), height * MainImGUI::getInstance()->getGUIHeight()));
         }
         else
         {
             ImGui::ImageButton(m_IDAsString.c_str(),
                                reinterpret_cast<ImTextureID>(m_defaultTexture->getID()),
-                               ImVec2(width * MainImGUI::getInstance()->getGUIWidth() * 0.96f, height * MainImGUI::getInstance()->getGUIHeight() * 0.96f));
+                               ImVec2(width * MainImGUI::getInstance()->getGUIWidth(), height * MainImGUI::getInstance()->getGUIHeight()));
         }
 
         ImGui::End();
