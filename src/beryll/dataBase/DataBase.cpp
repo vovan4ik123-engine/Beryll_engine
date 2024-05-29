@@ -29,19 +29,30 @@ namespace Beryll
 
         // The database is opened for reading and writing and is created if it does not already exist.
         // To drop a database, delete the file on drive.
-        sqlite3_close(m_DB);
-        int errorCode = sqlite3_open(internalStoragePath.c_str(), &m_DB);
-
-        if(errorCode != SQLITE_OK)
+        //sqlite3_close(m_DB);
+        if(!m_DB)
         {
-            std::string errorMessage = "Error in openDataBase(): ";
-            errorMessage += sqlite3_errmsg(m_DB);
-            throw DataBaseException(errorMessage);
+            BR_INFO("%s", "Database object == nullptr. Creating it.");
+
+            int errorCode = sqlite3_open(internalStoragePath.c_str(), &m_DB);
+
+            if(errorCode != SQLITE_OK)
+            {
+                std::string errorMessage = "Error in openDataBase(): ";
+                errorMessage += sqlite3_errmsg(m_DB);
+                throw DataBaseException(errorMessage);
+            }
+        }
+        else
+        {
+            BR_INFO("%s", "Database object created. Use it.");
         }
     }
 
     void DataBase::setSqlQuery(const std::string& sqlQuery)
     {
+        BR_ASSERT((m_DB != nullptr), "%s", "Database object == nullptr. Call openDataBase() first.");
+
         sqlite3_finalize(m_stmt);
 
         int errorCode = sqlite3_prepare_v2(m_DB, sqlQuery.c_str(), sqlQuery.size(), &m_stmt, nullptr);
@@ -55,6 +66,8 @@ namespace Beryll
 
     void DataBase::bindParameterInt(const char* paramName, const int paramValue)
     {
+        BR_ASSERT((m_DB != nullptr), "%s", "Database object == nullptr. Call openDataBase() first.");
+
         int paramIndex = sqlite3_bind_parameter_index(m_stmt, paramName);
         if(paramIndex == 0)
         {
@@ -74,6 +87,8 @@ namespace Beryll
 
     void DataBase::bindParameterFloat(const char* paramName, const float paramValue)
     {
+        BR_ASSERT((m_DB != nullptr), "%s", "Database object == nullptr. Call openDataBase() first.");
+
         int paramIndex = sqlite3_bind_parameter_index(m_stmt, paramName);
         if(paramIndex == 0)
         {
@@ -93,6 +108,8 @@ namespace Beryll
 
     void DataBase::bindParameterString(const char* paramName, const std::string& paramValue)
     {
+        BR_ASSERT((m_DB != nullptr), "%s", "Database object == nullptr. Call openDataBase() first.");
+
         int paramIndex = sqlite3_bind_parameter_index(m_stmt, paramName);
         if(paramIndex == 0)
         {
@@ -112,6 +129,8 @@ namespace Beryll
 
     void DataBase::executeNotSelectQuery()
     {
+        BR_ASSERT((m_DB != nullptr), "%s", "Database object == nullptr. Call openDataBase() first.");
+
         int errorCode = sqlite3_step(m_stmt);
         sqlite3_reset(m_stmt);
 
@@ -125,6 +144,8 @@ namespace Beryll
 
     std::vector<std::vector<std::variant<int, float, std::string, SqliteNULL>>> DataBase::executeSelectQuery()
     {
+        BR_ASSERT((m_DB != nullptr), "%s", "Database object == nullptr. Call openDataBase() first.");
+
         std::vector<std::vector<std::variant<int, float, std::string, SqliteNULL>>> rows;
 
         while(true)
