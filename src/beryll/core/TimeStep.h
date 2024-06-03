@@ -28,6 +28,13 @@ namespace Beryll
             return m_timeStepSec;
         }
 
+        static uint64_t getSecSinceEpoch()
+        {
+            uint64_t secSinceEpoch = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+
+            return secSinceEpoch;
+        }
+
     private:
         static uint64_t m_milliSecFromStart; // Time in milliSec passed after application start.
         static float m_secFromStart; // Time in sec passed after application start.

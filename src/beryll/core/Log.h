@@ -2,8 +2,8 @@
 
 #if defined(BR_DEBUG)
 
-#include "LibsHeaders.h"
-#include "CppHeaders.h"
+    #include "LibsHeaders.h"
+    #include "CppHeaders.h"
 
     static std::mutex globalLogMutex;
 
