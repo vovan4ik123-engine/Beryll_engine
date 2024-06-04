@@ -64,7 +64,7 @@ namespace Beryll
         }
     }
 
-    void DataBase::bindParameterInt(const char* paramName, const int paramValue)
+    void DataBase::bindParameterLongLongInt(const char* paramName, const long long int paramValue)
     {
         BR_ASSERT((m_DB != nullptr), "%s", "Database object == nullptr. Call openDataBase() first.");
 
@@ -76,7 +76,7 @@ namespace Beryll
             throw DataBaseException(errorMessage);
         }
 
-        int errorCode = sqlite3_bind_int(m_stmt, paramIndex, paramValue);
+        int errorCode = sqlite3_bind_int64(m_stmt, paramIndex, paramValue);
         if(errorCode != SQLITE_OK)
         {
             std::string errorMessage = "Error in bindParameterInt(): ";
@@ -85,7 +85,7 @@ namespace Beryll
         }
     }
 
-    void DataBase::bindParameterFloat(const char* paramName, const float paramValue)
+    void DataBase::bindParameterDouble(const char* paramName, const double paramValue)
     {
         BR_ASSERT((m_DB != nullptr), "%s", "Database object == nullptr. Call openDataBase() first.");
 
@@ -100,7 +100,7 @@ namespace Beryll
         int errorCode = sqlite3_bind_double(m_stmt, paramIndex, paramValue);
         if(errorCode != SQLITE_OK)
         {
-            std::string errorMessage = "Error in bindParameterFloat(): ";
+            std::string errorMessage = "Error in bindParameterDouble(): ";
             errorMessage += sqlite3_errmsg(m_DB);
             throw DataBaseException(errorMessage);
         }
@@ -142,11 +142,11 @@ namespace Beryll
         }
     }
 
-    std::vector<std::vector<std::variant<int, float, std::string, SqliteNULL>>> DataBase::executeSelectQuery()
+    std::vector<std::vector<std::variant<long long int, double, std::string, SqliteNULL>>> DataBase::executeSelectQuery()
     {
         BR_ASSERT((m_DB != nullptr), "%s", "Database object == nullptr. Call openDataBase() first.");
 
-        std::vector<std::vector<std::variant<int, float, std::string, SqliteNULL>>> rows;
+        std::vector<std::vector<std::variant<long long int, double, std::string, SqliteNULL>>> rows;
 
         while(true)
         {
@@ -174,8 +174,8 @@ namespace Beryll
             }
 
             // row is set of columns.
-            // Each column can be    int, float, std::string, SqliteNULL.
-            std::vector<std::variant<int, float, std::string, SqliteNULL>> row;
+            // Each column can be: long long int, double, std::string, NULL.
+            std::vector<std::variant<long long int, double, std::string, SqliteNULL>> row;
             row.reserve(sqlite3_data_count(m_stmt));
 
             for(int i = 0; i < sqlite3_data_count(m_stmt); ++i)
@@ -188,11 +188,11 @@ namespace Beryll
                 }
                 else if(columnType == SQLITE_INTEGER)
                 {
-                    row.emplace_back(sqlite3_column_int(m_stmt, i));
+                    row.emplace_back(sqlite3_column_int64(m_stmt, i));
                 }
                 else if(columnType == SQLITE_FLOAT)
                 {
-                    row.emplace_back(static_cast<float>(sqlite3_column_double(m_stmt, i)));
+                    row.emplace_back(sqlite3_column_double(m_stmt, i));
                 }
                 else if(columnType == SQLITE_TEXT)
                 {

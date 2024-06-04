@@ -41,8 +41,8 @@ namespace Beryll
 
         // After every execution parameters are reset.
         // You should bind them before every execution.
-        static void bindParameterInt(const char* paramName, const int paramValue);
-        static void bindParameterFloat(const char* paramName, const float paramValue);
+        static void bindParameterLongLongInt(const char* paramName, const long long int paramValue);
+        static void bindParameterDouble(const char* paramName, const double paramValue);
         static void bindParameterString(const char* paramName, const std::string& paramValue);
 
         // Executes query without return values.
@@ -51,8 +51,8 @@ namespace Beryll
         // Return values if some rows was fetched from DB.
         // First vector represent row.
         // Second vector represent set of columns in row.
-        // Every column can has type: int, float, std::string, NULL
-        static std::vector<std::vector<std::variant<int, float, std::string, SqliteNULL>>> executeSelectQuery();
+        // Every column can has type: long long int, double, std::string, NULL
+        static std::vector<std::vector<std::variant<long long int, double, std::string, SqliteNULL>>> executeSelectQuery();
 
     private:
         static sqlite3* m_DB;
