@@ -27,7 +27,7 @@ namespace Beryll
 
     private:
         friend class GameLoop;
-        static void create(); // Should be called only in GameLoop.
+        static void create(); // Should be called only in GameLoop::create().
 
         static std::unique_ptr<BillingSystem> m_billingSystem;
     };
