@@ -27,7 +27,7 @@ namespace Beryll
 
     float GameLoop::m_FPS = 500.0f;
     float GameLoop::m_loopTimeMicroSec = 1000000.0f / 500.0f;
-    long long GameLoop::m_sleepTimeMicroSec = 0;
+    long long int GameLoop::m_sleepTimeMicroSec = 0;
 
     void GameLoop::create(ScreenOrientation orientation)
     {
@@ -109,7 +109,7 @@ namespace Beryll
             m_frameTime = m_timer.getElapsedMicroSec() - m_frameStart;
             //BR_INFO("m_frameTime: %f", m_frameTime);
 
-            m_sleepTimeMicroSec = static_cast<long long>(m_loopTimeMicroSec - m_frameTime);
+            m_sleepTimeMicroSec = static_cast<long long int>(m_loopTimeMicroSec - m_frameTime);
             if(m_sleepTimeMicroSec < 1500) { m_sleepTimeMicroSec = 1500; } // In any way sleep 1.5 ms.
             //BR_INFO("m_sleepTimeMicroSec: %d", int(m_sleepTimeMicroSec));
             std::this_thread::sleep_for(std::chrono::microseconds(m_sleepTimeMicroSec));

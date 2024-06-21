@@ -49,6 +49,6 @@ namespace Beryll
 
         static float m_FPS;
         static float m_loopTimeMicroSec;
-        static long long m_sleepTimeMicroSec;
+        static long long int m_sleepTimeMicroSec;
     };
 }

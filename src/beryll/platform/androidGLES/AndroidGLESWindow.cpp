@@ -26,7 +26,7 @@ namespace Beryll
 
         // SDL antialiasing for real device. Dont work on emulator !!
         SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1); // Enable antialiasing sdl.
-        SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4); // 0 4 8
+        SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 8); // 0 4 8
 
         // Fill native display resolution.
         //SDL_GetDesktopDisplayMode(0, &m_DM);
@@ -41,7 +41,19 @@ namespace Beryll
                                     SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
                                     m_screenWidth, m_screenHeight,
                                     SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN |
-                                         SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
+                                    SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
+
+        if(m_window == nullptr)
+        {
+            SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+            SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
+
+            m_window = SDL_CreateWindow("MainWindow",
+                                        SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+                                        m_screenWidth, m_screenHeight,
+                                        SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN |
+                                        SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
+        }
 
         if(m_window == nullptr)
         {
@@ -52,7 +64,7 @@ namespace Beryll
                                         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
                                         m_screenWidth, m_screenHeight,
                                         SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN |
-                                             SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
+                                        SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
         }
 
         BR_ASSERT((m_window != nullptr), "%s", "m_window == nullptr");
