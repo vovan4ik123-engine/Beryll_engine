@@ -75,9 +75,9 @@ namespace Beryll
 
         glDetachShader(*m_shaderProgramID, vertexShaderID);
         glDetachShader(*m_shaderProgramID, fragmentShaderID);
-        glDeleteShader(vertexShaderID);     // only mark for delete in future if was not detached !!!
+        glDeleteShader(vertexShaderID);     // Only mark for delete in future if was not detached !!!
         glDeleteShader(fragmentShaderID);   // Will be deleted during call glDeleteProgram(programID);
-                                            // or delete now if was detached
+                                                   // or deleted now if was detached.
 
         m_shaderPrograms.insert(std::make_pair(m_ID, m_shaderProgramID));
     }

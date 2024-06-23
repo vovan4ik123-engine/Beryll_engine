@@ -55,5 +55,7 @@ namespace Beryll
 
         static void enableFaceCulling();
         static void disableFaceCulling();
+        static void setDepthFunctionLess();
+        static void setDepthFunctionAlways();
     };
 }

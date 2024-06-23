@@ -241,4 +241,22 @@ namespace Beryll
 
 #endif
     }
+
+    void Renderer::setDepthFunctionLess()
+    {
+#if defined(ANDROID)
+        glDepthFunc(GL_LESS);
+#elif defined(APPLE)
+
+#endif
+    }
+
+    void Renderer::setDepthFunctionAlways()
+    {
+#if defined(ANDROID)
+        glDepthFunc(GL_ALWAYS);
+#elif defined(APPLE)
+
+#endif
+    }
 }
