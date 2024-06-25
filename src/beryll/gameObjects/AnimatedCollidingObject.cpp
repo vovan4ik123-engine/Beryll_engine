@@ -53,7 +53,7 @@ namespace Beryll
                 m_fromOriginToBottom = std::abs(m_mostBottomVertex);
                 m_objectHeight = m_fromOriginToTop + m_fromOriginToBottom;
                 m_XZRadius = (std::abs(m_biggestX) + std::abs(m_smallestX)) * 0.5f;
-                BR_INFO("m_fromOriginToTop: %f, m_fromOriginToBottom: %f, m_XZRadius: %f, m_characterHeight: %f",
+                BR_INFO("m_fromOriginToTop: %f, m_fromOriginToBottom: %f, m_XZRadius: %f, m_objectHeight: %f",
                         m_fromOriginToTop, m_fromOriginToBottom, m_XZRadius, m_objectHeight);
 
                 BR_ASSERT((m_fromOriginToBottom > 0.0f && m_fromOriginToTop > 0.0f && m_XZRadius > 0.0f && m_objectHeight > 0.0f),

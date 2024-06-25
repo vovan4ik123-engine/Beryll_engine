@@ -69,7 +69,9 @@ namespace BeryllUtils
 
         static glm::quat getRotationFrom4x4Glm(const glm::mat4& matr)
         {
-            return glm::normalize(glm::quat{matr});
+            // This works good only with pure rotation matrix. Without scale.
+            // If matrix has scale use glm::decompose().
+            return glm::normalize(glm::quat_cast(matr));
         }
     };
 }
