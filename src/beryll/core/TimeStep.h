@@ -35,15 +35,6 @@ namespace Beryll
             return secSinceEpoch;
         }
 
-    private:
-        static uint64_t m_milliSecFromStart; // Time in milliSec passed after application start.
-        static float m_secFromStart; // Time in sec passed after application start.
-
-        static uint64_t m_currentStepStart; // Time in milliSec.
-        static uint64_t m_timeStepMilliSec; // Time between two last fixateTime() call in milliSec.
-        static float m_timeStepSec; // Time between two last fixateTime() call in sec.
-
-        friend class GameLoop;
         // Should be called inside GameLoop before every frame start.
         static void fixateTime()
         {
@@ -55,5 +46,13 @@ namespace Beryll
 
             m_currentStepStart = m_milliSecFromStart;
         }
+
+    private:
+        static uint64_t m_milliSecFromStart; // Time in milliSec passed after application start.
+        static float m_secFromStart; // Time in sec passed after application start.
+
+        static uint64_t m_currentStepStart; // Time in milliSec.
+        static uint64_t m_timeStepMilliSec; // Time between two last fixateTime() call in milliSec.
+        static float m_timeStepSec; // Time between two last fixateTime() call in sec.
     };
 }
