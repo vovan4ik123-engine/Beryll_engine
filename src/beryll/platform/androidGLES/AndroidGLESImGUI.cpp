@@ -28,7 +28,7 @@ namespace Beryll
 
         // Setup Platform/Renderer backends.
         ImGui_ImplSDL2_InitForOpenGL(Window::getInstance()->getWindow(), Window::getInstance()->getGlContext());
-        ImGui_ImplOpenGL3_Init(); // glsl_version = "#version 300 es" = default.
+        ImGui_ImplOpenGL3_Init("#version 300 es"); // glsl_version = "#version 300 es" = default.
 
         // Complete initialization by calling first frame.
         // Start the ImGui frame.
