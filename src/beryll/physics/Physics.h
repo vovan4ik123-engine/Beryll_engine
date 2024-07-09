@@ -43,8 +43,8 @@ namespace Beryll
 
         GROUND = 1 << 5,
         BUILDING = 1 << 6,
-        MOVING_ENEMY = 1 << 7,
-        RAY_FOR_BUILDING_CHECK = 1 << 8,
+        MOVABLE_ENEMY = 1 << 7,
+        RAY_FOR_ENVIRONMENT = 1 << 8,
         GARBAGE = 1 << 9,
         ENEMY_ATTACK = 1 << 10,
         JUMPPAD = 1 << 11,

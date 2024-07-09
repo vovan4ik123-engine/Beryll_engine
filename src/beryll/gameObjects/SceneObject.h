@@ -95,10 +95,16 @@ namespace Beryll
             if(ignoreYAxisWhenRotate)
             {
                 glm::vec3 dirXZ = glm::normalize(glm::vec3{dir.x, 0.0f, dir.z});
+                if(glm::any(glm::isnan(dirXZ)) || glm::length(dirXZ) == 0.0f)
+                    return;
+
                 addToRotation(glm::rotation(getFaceDirXZ(), dirXZ));
             }
             else
             {
+                if(glm::any(glm::isnan(dir)) || glm::length(dir) == 0.0f)
+                    return;
+
                 addToRotation(glm::rotation(getFaceDirXYZ(), glm::normalize(dir)));
             }
         }
