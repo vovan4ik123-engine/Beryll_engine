@@ -114,13 +114,6 @@ namespace Beryll
         m_collisionMask = collMask;
         m_collisionMass = mass;
 
-        // Dont add collider to simulation if collGroup == NONE. It have no sense.
-        if(collGroup == CollisionGroups::NONE)
-            return;
-
-        m_hasCollisionObject = true;
-        m_isEnabledInPhysicsSimulation = true;
-
         glm::mat4 collisionTransforms{1.0f};
 
         const aiNode* node = BeryllUtils::Common::findAinodeForAimesh(scene, scene->mRootNode, collisionMesh->mName);
@@ -128,6 +121,18 @@ namespace Beryll
         {
             collisionTransforms = BeryllUtils::Matrix::aiToGlm(node->mTransformation);
         }
+        // Check scale. Should be 1.
+        glm::vec3 scale = BeryllUtils::Matrix::getScaleFrom4x4Glm(collisionTransforms);
+        BR_ASSERT((scale.x > 0.9999f && scale.x < 1.0001f &&
+                   scale.y > 0.9999f && scale.y < 1.0001f &&
+                   scale.z > 0.9999f && scale.z < 1.0001f), "%s", "Scale should be baked to 1 in modeling tool.");
+
+        // Dont add collider to simulation if collGroup == NONE. It have no sense.
+        if(collGroup == CollisionGroups::NONE)
+            return;
+
+        m_hasCollisionObject = true;
+        m_isEnabledInPhysicsSimulation = true;
 
         std::vector<glm::vec3> vertices;
         vertices.reserve(collisionMesh->mNumVertices);

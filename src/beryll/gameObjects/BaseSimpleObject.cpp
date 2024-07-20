@@ -191,7 +191,7 @@ namespace Beryll
         if(node)
         {
             glm::mat4 modelMatrix = BeryllUtils::Matrix::aiToGlm(node->mTransformation);
-
+            // Check scale. Should be 1.
             glm::vec3 scale = BeryllUtils::Matrix::getScaleFrom4x4Glm(modelMatrix);
             BR_ASSERT((scale.x > 0.9999f && scale.x < 1.0001f &&
                        scale.y > 0.9999f && scale.y < 1.0001f &&
