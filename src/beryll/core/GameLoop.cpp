@@ -33,7 +33,7 @@ namespace Beryll
     {
         Window::setScreenOrientation(orientation);
         Window::create();
-        Window::getInstance()->setClearColor(0.0666f, 0.666f, 0.0f, 1.0f);
+        Window::getInstance()->setClearColor(0.0667f, 0.6667f, 0.0f, 1.0f);
         Window::getInstance()->clear();
         Window::getInstance()->swapWindow();
         Window::getInstance()->reCreate();

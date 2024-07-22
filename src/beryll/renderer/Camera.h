@@ -45,6 +45,10 @@ namespace Beryll
 
         static void updateCameraVectors()
         {
+            BR_ASSERT((!glm::any(glm::isnan(m_cameraPos)) &&
+                       !glm::any(glm::isnan(m_cameraFrontPos)) &&
+                       glm::distance(m_cameraPos, m_cameraFrontPos) > 0.001f), "%s", "Camera vectors are NAN or same.");
+
             m_cameraDirectionXYZ = glm::normalize(m_cameraFrontPos - m_cameraPos);
             m_cameraDirectionXZ = glm::normalize(glm::vec3(m_cameraDirectionXYZ.x, 0.0f, m_cameraDirectionXYZ.z));
 
