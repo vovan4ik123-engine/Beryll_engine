@@ -4,11 +4,12 @@ Add to app/build.gradle
     dependencies {
         ...................................................
 
-        implementation 'com.android.billingclient:billing:6.0.1'
+        // Billing system.
+        implementation 'com.android.billingclient:billing:7.0.0'
     }
 
 Add to AndroidManifest.xml
-    <!-- Billing system-->
+    <!-- Billing system -->
     <uses-permission android:name="com.android.vending.BILLING" />
 
 Replace in AndroidManifest.xml
@@ -22,8 +23,8 @@ Add to gradle.properties
     # https://developer.android.com/topic/libraries/support-library/androidx-rn
     android.useAndroidX=true
 
-    update
-        org.gradle.jvmargs=-Xmx2048m (take value from new Android studio created project)
+    update according to android studio version. Take value from new Android studio created project.
+        org.gradle.jvmargs=-Xmx2048m
 
 Add to SDLActivity
     public static SDLActivity getSDLActivity() {
@@ -35,7 +36,7 @@ Add to SDLActivity
           SDL.setContext(this);
     BillingManager.init(mSingleton);
 
-java/managers/BillingManager
+java/managers/BillingManager:
     package managers;
 
     import android.util.Log;
@@ -48,6 +49,7 @@ java/managers/BillingManager
     import com.android.billingclient.api.BillingResult;
     import com.android.billingclient.api.ConsumeParams;
     import com.android.billingclient.api.ConsumeResponseListener;
+    import com.android.billingclient.api.PendingPurchasesParams;
     import com.android.billingclient.api.ProductDetails;
     import com.android.billingclient.api.ProductDetailsResponseListener;
     import com.android.billingclient.api.Purchase;
@@ -71,7 +73,7 @@ java/managers/BillingManager
 
             billingClient = BillingClient.newBuilder(activity)
                     .setListener(billingManager) // PurchasesUpdatedListener
-                    .enablePendingPurchases()
+                    .enablePendingPurchases(PendingPurchasesParams.newBuilder().enableOneTimeProducts().build())
                     .build();
         }
 
@@ -108,8 +110,10 @@ java/managers/BillingManager
                 }
 
                 billingSystemSuccessCallback();
+            } else if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.USER_CANCELED) {
+                // Do nothing if user canceled.
             } else {
-                // Handle any error codes.
+                // Handle errors.
                 Log.v("BillingManager", "testBillingLogs Purchase error ThreadID: " + Thread.currentThread().getId());
                 billingSystemErrorCallback();
             }
@@ -121,15 +125,11 @@ java/managers/BillingManager
 
             List<BillingFlowParams.ProductDetailsParams> productDetailsParamsList = new ArrayList<BillingFlowParams.ProductDetailsParams>();
 
-            // For loop for iterating over the List
+            // For loop for iterating over the List.
             for(int i = 0; i < productDetailsList.size(); ++i) {
 
                 BillingFlowParams.ProductDetailsParams param = BillingFlowParams.ProductDetailsParams.newBuilder()
-                        // retrieve a value for "productDetails" by calling queryProductDetailsAsync()
                         .setProductDetails(productDetailsList.get(i))
-                        // to get an offer token, call ProductDetails.getSubscriptionOfferDetails()
-                        // for a list of offers that are available to the user
-                        //.setOfferToken(productDetailsList.get(i).getOneTimePurchaseOfferDetails().toString())
                         .build();
 
                 productDetailsParamsList.add(param);
@@ -142,7 +142,7 @@ java/managers/BillingManager
             // Launch the billing flow.
             BillingResult billingResult2 = billingClient.launchBillingFlow(SDLActivity.getSDLActivity(), billingFlowParams);
             if(billingResult2.getResponseCode() ==  BillingClient.BillingResponseCode.OK) {
-                // Result of success cal should be call: MyPurchasesUpdatedListener::onPurchasesUpdated().
+                // Result of success call should be call: MyPurchasesUpdatedListener::onPurchasesUpdated().
                 // And open Google Play purchase screen on android device.
                 Log.v("BillingManager", "testBillingLogs launchBillingFlow() success ThreadID: " + Thread.currentThread().getId());
             }
