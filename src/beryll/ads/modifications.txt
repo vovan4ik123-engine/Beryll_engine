@@ -1,0 +1,35 @@
+----------------------- For Android -----------------------
+
+Add to app/build.gradle
+    dependencies {
+        ...................................................
+
+        // Ads.
+        implementation 'com.google.android.gms:play-services-ads:23.2.0'
+    }
+
+Add to AndroidManifest.xml
+    <manifest>
+      <application>
+        <!-- Sample AdMob app ID: ca-app-pub-3940256099942544~3347511713 -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-xxxxxxxxxxxxxxxx~yyyyyyyyyy"/>
+      </application>
+    </manifest>
+
+Add to SDLActivity
+    public static SDLActivity getSDLActivity() {
+        return mSingleton;
+    }
+
+    onCreate():
+    after mSingleton = this;
+          SDL.setContext(this);
+    AdsManager.init(mSingleton);
+
+java/managers/AdsManager:
+
+
+
+----------------------- For IOS -----------------------

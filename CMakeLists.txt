@@ -43,6 +43,7 @@ if(ANDROID)
             src/beryll/platform/androidGLES/AndroidGLESShadowMapTexture.cpp
             src/beryll/platform/androidGLES/AndroidGLESBillingSystem.cpp
             src/beryll/platform/androidGLES/AndroidGLESGoogleAnalytics.cpp
+            src/beryll/platform/androidGLES/AndroidGLESAds.cpp
             )
 elseif(APPLE)
     set(IOSMetal_SRC
@@ -105,6 +106,8 @@ set(Common_SRC
         src/beryll/googleAnalytics/GoogleAnalytics.cpp
 
         src/beryll/network/Network.cpp
+
+        src/beryll/ads/Ads.cpp
 )
 
 if(ANDROID)

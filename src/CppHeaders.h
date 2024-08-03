@@ -25,6 +25,7 @@
 #include <variant>
 #include <optional>
 #include <type_traits>
+#include <regex>
 
 #include <thread>
 #include <atomic>

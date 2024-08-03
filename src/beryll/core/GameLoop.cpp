@@ -11,6 +11,7 @@
 #include "beryll/billingSystem/BillingSystem.h"
 #include "beryll/googleAnalytics/GoogleAnalytics.h"
 #include "beryll/network/Network.h"
+#include "beryll/ads/Ads.cpp"
 
 namespace Beryll
 {
@@ -53,6 +54,8 @@ namespace Beryll
         GoogleAnalytics::create();
 
         Network::create();
+
+        Ads::create();
     }
 
     void GameLoop::run()
