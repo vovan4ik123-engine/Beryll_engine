@@ -45,9 +45,9 @@ namespace Beryll
 
 // Callbacks from java code on android.
 extern "C" JNIEXPORT void JNICALL
-Java_managers_AdsManager_adsSuccessCallback(JNIEnv *env, jclass clazz)
+Java_managers_AdsManager_rewardedAdSuccessCallback(JNIEnv *env, jclass clazz)
 {
-    BR_INFO("%s", "adsLogs Java_managers_AdsManager_adsSuccessCallback");
+    BR_INFO("%s", "adsLogs Java_managers_AdsManager_rewardedAdSuccessCallback");
 
     if(Beryll::AndroidGLESAds::successCallback)
     {
@@ -58,9 +58,9 @@ Java_managers_AdsManager_adsSuccessCallback(JNIEnv *env, jclass clazz)
     Beryll::AndroidGLESAds::errorCallback = nullptr;
 }
 extern "C" JNIEXPORT void JNICALL
-Java_managers_AdsManager_adsErrorCallback(JNIEnv *env, jclass clazz)
+Java_managers_AdsManager_rewardedAdErrorCallback(JNIEnv *env, jclass clazz)
 {
-    BR_INFO("%s", "adsLogs Java_managers_AdsManager_adsErrorCallback");
+    BR_INFO("%s", "adsLogs Java_managers_AdsManager_rewardedAdErrorCallback");
 
     if(Beryll::AndroidGLESAds::errorCallback)
     {

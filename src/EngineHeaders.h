@@ -54,3 +54,5 @@
 #include "beryll/googleAnalytics/GoogleAnalytics.h"
 
 #include "beryll/network/Network.h"
+
+#include "beryll/ads/Ads.h"
