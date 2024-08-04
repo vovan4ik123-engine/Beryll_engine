@@ -16,9 +16,9 @@ namespace Beryll
         auto result =  m_textures.find(m_ID);
         if(result != m_textures.end())
         {
-            // Texture was added before, use it.
-            //BR_INFO("%s", "texture was added before");
-            m_openGLID = result->second; // copy shared pointer
+            // Texture was created before, use it.
+            //BR_INFO("%s", "Texture was created before.");
+            m_openGLID = result->second; // Copy shared pointer.
             return;
         }
 
@@ -62,15 +62,16 @@ namespace Beryll
         glBindTexture(GL_TEXTURE_2D, 0);
 
         SDL_FreeSurface(surface);
-        m_textures.insert(std::make_pair(m_ID, m_openGLID)); // add to map
+        m_textures.insert(std::make_pair(m_ID, m_openGLID)); // Add to map.
+        //BR_INFO("%s", "Texture created.");
     }
 
     AndroidGLESTexture::~AndroidGLESTexture()
     {
         if(m_openGLID.use_count() <= 2)
         {
-            // use_count() <= 2 means only shared_ptr in this class left and in map
-            // if we destroy this m_openGLID (last copy except copy in map) also delete from OpenGL and map.
+            // use_count() <= 2 means only shared_ptr in this class left and in map.
+            // If we destroy this m_openGLID (last copy except copy in map) also delete from OpenGL and map.
             auto result =  m_textures.find(m_ID);
             if(result != m_textures.end())
             {
@@ -78,6 +79,7 @@ namespace Beryll
 
                 glDeleteTextures(1, m_openGLID.get());
                 m_textures.erase(result);
+                //BR_INFO("%s", "Texture destroyed.");
             }
         }
     }
