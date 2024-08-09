@@ -100,13 +100,14 @@ java/managers/AdsManager:
             AdsManager.isAdLoaded.set(false);
             AdsManager.rewardedAd = null;
 
-            AdRequest adRequest = new AdRequest.Builder().build();
+            AdRequest adRequest = new AdRequest.Builder().build(); // Test ad id: ca-app-pub-3940256099942544/5224354917
             RewardedAd.load(AdsManager.activity, "ca-app-pub-3940256099942544/5224354917", adRequest, new RewardedAdLoadCallback() {
                 @Override
                 public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
                     Log.v("AdsManager", "Load ads error: " + loadAdError.toString());
                     AdsManager.isAdLoaded.set(false);
                     AdsManager.rewardedAd = null;
+                    rewardedAdErrorCallback();
                 }
 
                 @Override
@@ -191,6 +192,7 @@ java/managers/AdsManager:
         public static native void rewardedAdSuccessCallback();
         public static native void rewardedAdErrorCallback();
     }
+
 
 
 ----------------------- For IOS -----------------------
