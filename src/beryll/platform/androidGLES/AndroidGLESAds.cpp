@@ -19,7 +19,7 @@ namespace Beryll
             BR_ASSERT(false, "%s", "m_javaAdsManagerClassID is nullptr.")
         }
 
-        m_showRewardedAdMethodID = m_jniEnv->GetStaticMethodID(m_javaAdsManagerClassID, "showRewardedAd", "()V");
+        m_showRewardedAdMethodID = m_jniEnv->GetStaticMethodID(m_javaAdsManagerClassID, "showRewardedAd", "(Z)V");
         if (!m_showRewardedAdMethodID)
         {
             BR_ASSERT(false, "%s", "m_showRewardedAdMethodID is nullptr.")
@@ -32,14 +32,15 @@ namespace Beryll
     }
 
     void AndroidGLESAds::showRewardedAd(std::function<void()> successCall,
-                                        std::function<void()> errorCall)
+                                        std::function<void()> errorCall,
+                                        bool callbackAtCloseWindow)
     {
         BR_INFO("%s", "adsLogs showRewardedAd()");
 
         AndroidGLESAds::successCallback = std::move(successCall);
         AndroidGLESAds::errorCallback = std::move(errorCall);
 
-        m_jniEnv->CallStaticVoidMethod(m_javaAdsManagerClassID, m_showRewardedAdMethodID);
+        m_jniEnv->CallStaticVoidMethod(m_javaAdsManagerClassID, m_showRewardedAdMethodID, callbackAtCloseWindow);
     }
 }
 

@@ -18,8 +18,11 @@ namespace Beryll
             return m_ads;
         }
 
+        // True = success call back called when window with add is closing.
+        // False = success call back called when reward earned(last second of ad).
         virtual void showRewardedAd(std::function<void()> successCall,
-                                    std::function<void()> errorCall) = 0;
+                                    std::function<void()> errorCall,
+                                    bool callbackAtCloseWindow) = 0;
 
     protected:
         Ads() {}

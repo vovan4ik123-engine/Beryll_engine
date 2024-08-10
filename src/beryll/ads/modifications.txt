@@ -64,14 +64,17 @@ java/managers/AdsManager:
     public class AdsManager { // implements OnInitializationCompleteListener
 
         //public static AtomicBoolean isAdInitialized = new AtomicBoolean(false);
-        public static AtomicBoolean isAdLoaded = new AtomicBoolean(false);
-        public static RewardedAd rewardedAd;
-        public static SDLActivity activity;
+        private static AtomicBoolean m_isAdLoaded = new AtomicBoolean(false);
+        // True = success call back called when window with add is closing.
+        // False = success call back called when reward earned(last second of ad).
+        private static AtomicBoolean m_callbackAtCloseWindow = new AtomicBoolean(false);
+        private static RewardedAd m_rewardedAd;
+        private static SDLActivity m_activity;
 
         public static void init(SDLActivity activ)  {
             Log.v("AdsManager", "init(SDLActivity activity)");
-            AdsManager.activity = activ;
-            MobileAds.initialize(AdsManager.activity, initializationStatus -> {}); // calls onInitializationComplete().
+            AdsManager.m_activity = activ;
+            MobileAds.initialize(AdsManager.m_activity, initializationStatus -> {}); // calls onInitializationComplete().
             Log.v("AdsManager", "loadAd()");
             loadAd(false);
         }
@@ -97,26 +100,26 @@ java/managers/AdsManager:
 
         private static void loadAd(boolean showAfterLoad) {
             Log.v("AdsManager", "loadAd()");
-            AdsManager.isAdLoaded.set(false);
-            AdsManager.rewardedAd = null;
+            AdsManager.m_isAdLoaded.set(false);
+            AdsManager.m_rewardedAd = null;
 
             AdRequest adRequest = new AdRequest.Builder().build(); // Test ad id: ca-app-pub-3940256099942544/5224354917
-            RewardedAd.load(AdsManager.activity, "ca-app-pub-3940256099942544/5224354917", adRequest, new RewardedAdLoadCallback() {
+            RewardedAd.load(AdsManager.m_activity, "ca-app-pub-3940256099942544/5224354917", adRequest, new RewardedAdLoadCallback() {
                 @Override
                 public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
                     Log.v("AdsManager", "Load ads error: " + loadAdError.toString());
-                    AdsManager.isAdLoaded.set(false);
-                    AdsManager.rewardedAd = null;
+                    AdsManager.m_isAdLoaded.set(false);
+                    AdsManager.m_rewardedAd = null;
                     rewardedAdErrorCallback();
                 }
 
                 @Override
                 public void onAdLoaded(@NonNull RewardedAd ad) {
                     Log.v("AdsManager","Ad was loaded.");
-                    AdsManager.isAdLoaded.set(true);
-                    AdsManager.rewardedAd = ad;
+                    AdsManager.m_isAdLoaded.set(true);
+                    AdsManager.m_rewardedAd = ad;
 
-                    AdsManager.rewardedAd.setFullScreenContentCallback(new FullScreenContentCallback() {
+                    AdsManager.m_rewardedAd.setFullScreenContentCallback(new FullScreenContentCallback() {
                         @Override
                         public void onAdClicked() {
                             // Called when a click is recorded for an ad.
@@ -128,14 +131,17 @@ java/managers/AdsManager:
                             // Called when ad is dismissed.
                             // Set the ad reference to null so you don't show the ad a second time.
                             Log.v("AdsManager", "Ad dismissed fullscreen content.");
+                            if(AdsManager.m_callbackAtCloseWindow.get()) {
+                                rewardedAdSuccessCallback();
+                            }
                         }
 
                         @Override
                         public void onAdFailedToShowFullScreenContent(AdError adError) {
                             // Called when ad fails to show.
                             Log.v("AdsManager", "Ad failed to show fullscreen content.");
-                            AdsManager.rewardedAd = null;
-                            AdsManager.isAdLoaded.set(false);
+                            AdsManager.m_rewardedAd = null;
+                            AdsManager.m_isAdLoaded.set(false);
                             rewardedAdErrorCallback();
                         }
 
@@ -160,18 +166,20 @@ java/managers/AdsManager:
         }
 
         private static void showAd() {
-            AdsManager.activity.runOnUiThread(new Runnable() {
+            AdsManager.m_activity.runOnUiThread(new Runnable() {
                 @Override public void run() {
                     Log.v("AdsManager", "showAd()");
-                    if (AdsManager.rewardedAd != null) {
-                        AdsManager.rewardedAd.show(AdsManager.activity, new OnUserEarnedRewardListener() {
+                    if (AdsManager.m_rewardedAd != null) {
+                        AdsManager.m_rewardedAd.show(AdsManager.m_activity, new OnUserEarnedRewardListener() {
                             @Override
                             public void onUserEarnedReward(@NonNull RewardItem rewardItem) {
                                 Log.v("AdsManager", "The user earned the reward.");
-                                AdsManager.rewardedAd = null;
-                                AdsManager.isAdLoaded.set(false);
+                                AdsManager.m_rewardedAd = null;
+                                AdsManager.m_isAdLoaded.set(false);
                                 loadAd(false);
-                                rewardedAdSuccessCallback();
+                                if(!AdsManager.m_callbackAtCloseWindow.get()) {
+                                    rewardedAdSuccessCallback();
+                                }
                             }
                         });
                     }
@@ -180,9 +188,10 @@ java/managers/AdsManager:
         }
 
         // Called from C++ code.
-        public static void showRewardedAd() {
+        public static void showRewardedAd(boolean callbackAtCloseWindow) {
             Log.v("AdsManager", "showRewardedAd()");
-            if(AdsManager.isAdLoaded.get()) {
+            AdsManager.m_callbackAtCloseWindow.set(callbackAtCloseWindow);
+            if(AdsManager.m_isAdLoaded.get()) {
                 showAd();
             } else {
                 loadAd(true);

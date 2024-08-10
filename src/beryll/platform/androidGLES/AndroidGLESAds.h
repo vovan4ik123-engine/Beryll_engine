@@ -12,7 +12,8 @@ namespace Beryll
         ~AndroidGLESAds() override;
 
         void showRewardedAd(std::function<void()> successCall,
-                            std::function<void()> errorCall) override;
+                            std::function<void()> errorCall,
+                            bool callbackAtCloseWindow) override;
 
         static std::function<void()> successCallback;
         static std::function<void()> errorCallback;
