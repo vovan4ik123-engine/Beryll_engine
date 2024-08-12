@@ -75,7 +75,6 @@ java/managers/AdsManager:
             Log.v("AdsManager", "init(SDLActivity activity)");
             AdsManager.m_activity = activ;
             MobileAds.initialize(AdsManager.m_activity, initializationStatus -> {}); // calls onInitializationComplete().
-            Log.v("AdsManager", "loadAd()");
             loadAd(false);
         }
 
@@ -99,68 +98,76 @@ java/managers/AdsManager:
     //    }
 
         private static void loadAd(boolean showAfterLoad) {
-            Log.v("AdsManager", "loadAd()");
-            AdsManager.m_isAdLoaded.set(false);
-            AdsManager.m_rewardedAd = null;
-
-            AdRequest adRequest = new AdRequest.Builder().build(); // Test ad id: ca-app-pub-3940256099942544/5224354917
-            RewardedAd.load(AdsManager.m_activity, "ca-app-pub-3940256099942544/5224354917", adRequest, new RewardedAdLoadCallback() {
-                @Override
-                public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-                    Log.v("AdsManager", "Load ads error: " + loadAdError.toString());
+            AdsManager.m_activity.runOnUiThread(new Runnable() {
+                @Override public void run() {
+                    Log.v("AdsManager", "loadAd()");
                     AdsManager.m_isAdLoaded.set(false);
                     AdsManager.m_rewardedAd = null;
-                    rewardedAdErrorCallback();
-                }
 
-                @Override
-                public void onAdLoaded(@NonNull RewardedAd ad) {
-                    Log.v("AdsManager","Ad was loaded.");
-                    AdsManager.m_isAdLoaded.set(true);
-                    AdsManager.m_rewardedAd = ad;
-
-                    AdsManager.m_rewardedAd.setFullScreenContentCallback(new FullScreenContentCallback() {
+                    AdRequest adRequest = new AdRequest.Builder().build(); // Test ad id: ca-app-pub-3940256099942544/5224354917
+                    RewardedAd.load(AdsManager.m_activity, "ca-app-pub-3940256099942544/5224354917", adRequest, new RewardedAdLoadCallback() {
                         @Override
-                        public void onAdClicked() {
-                            // Called when a click is recorded for an ad.
-                            Log.v("AdsManager", "Ad was clicked.");
-                        }
-
-                        @Override
-                        public void onAdDismissedFullScreenContent() {
-                            // Called when ad is dismissed.
-                            // Set the ad reference to null so you don't show the ad a second time.
-                            Log.v("AdsManager", "Ad dismissed fullscreen content.");
-                            if(AdsManager.m_callbackAtCloseWindow.get()) {
-                                rewardedAdSuccessCallback();
-                            }
-                        }
-
-                        @Override
-                        public void onAdFailedToShowFullScreenContent(AdError adError) {
-                            // Called when ad fails to show.
-                            Log.v("AdsManager", "Ad failed to show fullscreen content.");
-                            AdsManager.m_rewardedAd = null;
+                        public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+                            Log.v("AdsManager", "Load ads error: " + loadAdError.toString());
                             AdsManager.m_isAdLoaded.set(false);
-                            rewardedAdErrorCallback();
+                            AdsManager.m_rewardedAd = null;
+                            loadAd(showAfterLoad);
                         }
 
                         @Override
-                        public void onAdImpression() {
-                            // Called when an impression is recorded for an ad.
-                            Log.v("AdsManager", "Ad recorded an impression.");
-                        }
+                        public void onAdLoaded(@NonNull RewardedAd ad) {
+                            AdsManager.m_activity.runOnUiThread(new Runnable() {
+                                @Override public void run() {
+                                    Log.v("AdsManager","Ad was loaded.");
+                                    AdsManager.m_isAdLoaded.set(true);
+                                    AdsManager.m_rewardedAd = ad;
 
-                        @Override
-                        public void onAdShowedFullScreenContent() {
-                            // Called when ad is shown.
-                            Log.v("AdsManager", "Ad showed fullscreen content.");
+                                    AdsManager.m_rewardedAd.setFullScreenContentCallback(new FullScreenContentCallback() {
+                                        @Override
+                                        public void onAdClicked() {
+                                            // Called when a click is recorded for an ad.
+                                            Log.v("AdsManager", "Ad was clicked.");
+                                        }
+
+                                        @Override
+                                        public void onAdDismissedFullScreenContent() {
+                                            // Called when ad is dismissed.
+                                            // Set the ad reference to null so you don't show the ad a second time.
+                                            Log.v("AdsManager", "Ad dismissed fullscreen content.");
+                                            if(AdsManager.m_callbackAtCloseWindow.get()) {
+                                                rewardedAdSuccessCallback();
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onAdFailedToShowFullScreenContent(AdError adError) {
+                                            // Called when ad fails to show.
+                                            Log.v("AdsManager", "Ad failed to show fullscreen content.");
+                                            AdsManager.m_rewardedAd = null;
+                                            AdsManager.m_isAdLoaded.set(false);
+                                            rewardedAdErrorCallback();
+                                        }
+
+                                        @Override
+                                        public void onAdImpression() {
+                                            // Called when an impression is recorded for an ad.
+                                            Log.v("AdsManager", "Ad recorded an impression.");
+                                        }
+
+                                        @Override
+                                        public void onAdShowedFullScreenContent() {
+                                            // Called when ad is shown.
+                                            Log.v("AdsManager", "Ad showed fullscreen content.");
+                                        }
+                                    });
+
+                                    if(showAfterLoad) {
+                                        showAd();
+                                    }
+                                }
+                            });
                         }
                     });
-
-                    if(showAfterLoad) {
-                        showAd();
-                    }
                 }
             });
         }
@@ -196,6 +203,13 @@ java/managers/AdsManager:
             } else {
                 loadAd(true);
             }
+
+
+    //        AdsManager.m_activity.runOnUiThread(new Runnable() {
+    //            @Override public void run() {
+    //
+    //            }
+    //        });
         }
 
         public static native void rewardedAdSuccessCallback();
