@@ -15,6 +15,10 @@ namespace Beryll
                             std::function<void()> errorCall,
                             bool callbackAtCloseWindow) override;
 
+        void showInterstitialAd(std::function<void()> successCall,
+                                std::function<void()> errorCall) override;
+
+        // One methods for all ads. That means only one type of ad can be run at one time.
         static std::function<void()> successCallback;
         static std::function<void()> errorCallback;
 
@@ -25,5 +29,6 @@ namespace Beryll
         JNIEnv* m_jniEnv = nullptr;
         jclass m_javaAdsManagerClassID = nullptr;
         jmethodID m_showRewardedAdMethodID = nullptr;
+        jmethodID m_showInterstitialAdMethodID = nullptr;
     };
 }

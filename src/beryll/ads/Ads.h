@@ -24,6 +24,9 @@ namespace Beryll
                                     std::function<void()> errorCall,
                                     bool callbackAtCloseWindow) = 0;
 
+        virtual void showInterstitialAd(std::function<void()> successCall,
+                                        std::function<void()> errorCall) = 0;
+
     protected:
         Ads() {}
 

@@ -24,6 +24,12 @@ namespace Beryll
         {
             BR_ASSERT(false, "%s", "m_showRewardedAdMethodID is nullptr.")
         }
+
+        m_showInterstitialAdMethodID = m_jniEnv->GetStaticMethodID(m_javaAdsManagerClassID, "showInterstitialAd", "()V");
+        if (!m_showInterstitialAdMethodID)
+        {
+            BR_ASSERT(false, "%s", "m_showInterstitialAdMethodID is nullptr.")
+        }
     }
 
     AndroidGLESAds::~AndroidGLESAds()
@@ -41,6 +47,17 @@ namespace Beryll
         AndroidGLESAds::errorCallback = std::move(errorCall);
 
         m_jniEnv->CallStaticVoidMethod(m_javaAdsManagerClassID, m_showRewardedAdMethodID, callbackAtCloseWindow);
+    }
+
+    void AndroidGLESAds::showInterstitialAd(std::function<void()> successCall,
+                                            std::function<void()> errorCall)
+    {
+        BR_INFO("%s", "adsLogs showInterstitialAd()");
+
+        AndroidGLESAds::successCallback = std::move(successCall);
+        AndroidGLESAds::errorCallback = std::move(errorCall);
+
+        m_jniEnv->CallStaticVoidMethod(m_javaAdsManagerClassID, m_showInterstitialAdMethodID);
     }
 }
 
@@ -62,6 +79,33 @@ extern "C" JNIEXPORT void JNICALL
 Java_managers_AdsManager_rewardedAdErrorCallback(JNIEnv *env, jclass clazz)
 {
     BR_INFO("%s", "adsLogs Java_managers_AdsManager_rewardedAdErrorCallback");
+
+    if(Beryll::AndroidGLESAds::errorCallback)
+    {
+        Beryll::AndroidGLESAds::errorCallback();
+    }
+
+    Beryll::AndroidGLESAds::successCallback = nullptr;
+    Beryll::AndroidGLESAds::errorCallback = nullptr;
+}
+
+extern "C" JNIEXPORT void JNICALL
+Java_managers_AdsManager_interstitialAdSuccessCallback(JNIEnv *env, jclass clazz)
+{
+    BR_INFO("%s", "adsLogs Java_managers_AdsManager_interstitialAdSuccessCallback");
+
+    if(Beryll::AndroidGLESAds::successCallback)
+    {
+        Beryll::AndroidGLESAds::successCallback();
+    }
+
+    Beryll::AndroidGLESAds::successCallback = nullptr;
+    Beryll::AndroidGLESAds::errorCallback = nullptr;
+}
+extern "C" JNIEXPORT void JNICALL
+Java_managers_AdsManager_interstitialAdErrorCallback(JNIEnv *env, jclass clazz)
+{
+    BR_INFO("%s", "adsLogs Java_managers_AdsManager_interstitialAdErrorCallback");
 
     if(Beryll::AndroidGLESAds::errorCallback)
     {

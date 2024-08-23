@@ -1147,9 +1147,9 @@ namespace Beryll
         auto iter = m_rigidBodiesMap.find(ID);
         if(iter != m_rigidBodiesMap.end())
         {
+            iter->second->rb->clearForces();
             iter->second->rb->setLinearVelocity(btVector3(0.0f, 0.0f, 0.0f));
             iter->second->rb->setAngularVelocity(btVector3(0.0f, 0.0f, 0.0f));
-            iter->second->rb->clearForces();
         }
     }
 
