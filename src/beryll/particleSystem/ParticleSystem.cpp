@@ -368,6 +368,9 @@ namespace Beryll
     {
         BR_ASSERT((!m_quadParticles.empty() && !m_cubeParticles.empty()), "%s", "Create Particle system before use.");
 
+        if(sizeBegin <= 0.0f || sizeEnd <= 0.0f || lifeTimeSec <= 0.0f)
+            return;
+
         for(int i = 0; i < particlesCount; ++i)
         {
             m_anyQuadParticleIsActive = true;
@@ -419,6 +422,9 @@ namespace Beryll
                                              float speed)
     {
         BR_ASSERT((!m_quadParticles.empty() && !m_cubeParticles.empty()), "%s", "Create Particle system before use.");
+
+        if(sizeBegin <= 0.0f || sizeEnd <= 0.0f || lifeTimeSec <= 0.0f)
+            return;
 
         for(int i = 0; i < particlesCount; ++i)
         {
