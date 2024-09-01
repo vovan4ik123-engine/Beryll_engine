@@ -53,7 +53,9 @@ static int SDL_ANDROID_SensorInit(void)
     int i, sensors_count;
     ASensorList sensors;
 
-    SDL_sensor_manager = ASensorManager_getInstanceForPackage("com.magneticBall3D.app");
+#define M_TO_STR(x) #x
+#define MACRO_TO_STRING(x) M_TO_STR(x)
+    SDL_sensor_manager = ASensorManager_getInstanceForPackage(MACRO_TO_STRING(AndroidPackageName));
     if (!SDL_sensor_manager) {
         return SDL_SetError("Couldn't create sensor manager");
     }
