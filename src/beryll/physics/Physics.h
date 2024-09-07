@@ -39,16 +39,17 @@ namespace Beryll
         STATIC_ENVIRONMENT = 1 << 1,
         DYNAMIC_ENVIRONMENT = 1 << 2,
         PLAYER = 1 << 3,
-        BALL = 1 << 4,
+        PLAYER_BULLET = 1 << 4,
+        BALL = 1 << 5,
 
-        GROUND = 1 << 5,
-        BUILDING = 1 << 6,
-        MOVABLE_ENEMY = 1 << 7,
-        RAY_FOR_ENVIRONMENT = 1 << 8,
-        GARBAGE = 1 << 9,
-        ENEMY_ATTACK = 1 << 10,
-        JUMPPAD = 1 << 11,
-        BOSS = 1 << 12,
+        GROUND = 1 << 6,
+        BUILDING = 1 << 7,
+        MOVABLE_ENEMY = 1 << 8,
+        RAY_FOR_ENVIRONMENT = 1 << 9,
+        GARBAGE = 1 << 10,
+        ENEMY_ATTACK = 1 << 11,
+        JUMPPAD = 1 << 12,
+        BOSS = 1 << 13,
 
         YOU_CAN_COMBINE_GROUPS_WHEN_USE = STATIC_ENVIRONMENT | CAMERA,
 
@@ -63,8 +64,8 @@ namespace Beryll
     {
         NONE = 0,
         DYNAMIC = 1, // Mass > 0.
-        STATIC = 2, // Mass = 0.
-        KINEMATIC = 3 // Use if you want move object with mass = 0, BUT maybe move DYNAMIC object.
+        STATIC = 2, // Mass = 0. Should not change position.
+        KINEMATIC = 3 // Mass = 0. Can change position. Use if you want move object with mass = 0.
     };
 
     struct RigidBodyData

@@ -1,8 +1,7 @@
 ---------------------plan:---------------------
 
-
-Add scene banner with texture set and timer.
 2D text on 3D scene.
+Add scene banner with texture set and timer.
 
 Draw thread?
 

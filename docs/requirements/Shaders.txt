@@ -49,4 +49,3 @@ Fragment shader example:
     {
         outColor = texture(diffuseTexture, textureCoords);
     }
-

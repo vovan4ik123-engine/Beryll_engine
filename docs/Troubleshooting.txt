@@ -8,4 +8,3 @@
 
 2. In Android Studio go to file --> Invalidate Cache & Restart.
    Restart smartphone (physical device)
-

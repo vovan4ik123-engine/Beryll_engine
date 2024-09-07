@@ -1,10 +1,10 @@
-Dynamic collision shapes by performance:
-    200 items collision Convex  300 ms
-    200 items collision Box     180 ms
+Dynamic collision shapes by best performance:
     200 items collision Sphere  140 ms
+    200 items collision Box     180 ms
     200 items collision Capsule 180 ms
+    200 items collision Convex  300 ms
 
 Most heavy operations for GPU:
-    1. Bind new framebuffer
-    2. Bind new shader
-    3. Bind new texture
+    1. Bind new framebuffer.
+    2. Bind new shader.
+    3. Bind new texture.
