@@ -42,7 +42,7 @@ namespace Beryll
             m_origin = orig;
 
             if(m_hasCollisionObject && m_isEnabledInPhysicsSimulation)
-                Physics::setOrigin(m_ID, orig, resetVelocities);
+                Physics::setOrigin(m_ID, m_origin, resetVelocities);
         }
 
         void addToOrigin(const glm::vec3& distance, bool resetVelocities = false)
@@ -52,7 +52,7 @@ namespace Beryll
             m_origin += distance;
 
             if(m_hasCollisionObject && m_isEnabledInPhysicsSimulation)
-                Physics::addToOrigin(m_ID, distance, resetVelocities);
+                Physics::setOrigin(m_ID, m_origin, resetVelocities);
         }
 
         void addToRotation(float angleRad, const glm::vec3& axis, bool resetVelocities = false)
@@ -195,7 +195,7 @@ namespace Beryll
             }
         }
 
-        void setGravity(const glm::vec3& grav, bool resetVelocities = false, bool activate = true)
+        virtual void setGravity(const glm::vec3& grav, bool resetVelocities = false, bool activate = true) // Will be overriden for characters.
         {
             BR_ASSERT((!glm::any(glm::isnan(grav))), "%s", "You want set grav but it is NAN.");
 
@@ -207,7 +207,7 @@ namespace Beryll
             }
         }
 
-        const glm::vec3 getGravity() const
+        virtual const glm::vec3 getGravity() const // Will be overriden for characters.
         {
             BR_ASSERT((m_hasCollisionObject == true && m_collisionFlag == CollisionFlags::DYNAMIC),
                       "%s", "getGravity() should be called only for object with DYNAMIC collider.");
@@ -487,13 +487,13 @@ namespace Beryll
         CollisionFlags m_collisionFlag = CollisionFlags::NONE; // Set inside colliding objects.
         bool m_isEnabledInPhysicsSimulation = false; // Set inside colliding objects.
         float m_collisionMass = 0.0f;
+        glm::vec3 m_gravity = Physics::getWorldDefaultGravity();
         // Physics data end.
 
     private:
         // Only for internal checks inside this file.
         glm::vec3 m_linearFactor{1.0f, 1.0f, 1.0f};
         glm::vec3 m_angularFactor{1.0f, 1.0f, 1.0f};
-        glm::vec3 m_gravity{std::numeric_limits<float>::max()};
         float m_linearDamping = -1.0f;
         float m_angularDamping = -1.0f;
 

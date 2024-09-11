@@ -4,6 +4,7 @@
 #include "CppHeaders.h"
 
 #include "beryll/core/Timer.h"
+#include "beryll/core/Log.h"
 
 namespace Beryll
 {
@@ -193,11 +194,11 @@ namespace Beryll
         static std::vector<std::pair<glm::vec3, glm::vec3>> getAllCollisionPoints(const int ID1, const int ID2); // Return point + his normal.
         static std::vector<std::pair<glm::vec3, glm::vec3>> getAllCollisionPoints(const int ID1, const std::vector<const int>& IDs); // Return point + his normal.
 
-        static void setGravity(const glm::vec3& grav) { m_dynamicsWorldMT->setGravity(btVector3(grav.x, grav.y, grav.z)); }
+        static void setGravity(const glm::vec3& grav) { BR_ASSERT(false, "%s", "Change gravity for specific objects. Not for all world."); }
 
-        static glm::vec3 getGravity() { return  glm::vec3{m_dynamicsWorldMT->getGravity().getX(),
-                                                          m_dynamicsWorldMT->getGravity().getY(),
-                                                          m_dynamicsWorldMT->getGravity().getZ()}; }
+        static glm::vec3 getWorldDefaultGravity() { return  glm::vec3{m_dynamicsWorldMT->getGravity().getX(),
+                                                                      m_dynamicsWorldMT->getGravity().getY(),
+                                                                      m_dynamicsWorldMT->getGravity().getZ()}; }
 
         // Cast ray. Only objects in physics world can be hit.
         static RayClosestHit castRayClosestHit(const glm::vec3& from, const glm::vec3& to, CollisionGroups collGroup, CollisionGroups collMask);
@@ -251,8 +252,8 @@ namespace Beryll
         static void resetVelocitiesForObject(const std::shared_ptr<btRigidBody>& b, bool reset);
 
         friend class SceneObject;
+        friend class CharacterController;
         static void setOrigin(const int ID, const glm::vec3& orig, bool resetVelocities);
-        static void addToOrigin(const int ID, const glm::vec3& dist, bool resetVelocities);
         static void addToRotation(const int ID, const glm::quat& qua, bool resetVelocities);
         static void setAngularFactor(const int ID, const glm::vec3& angFactor, bool resetVelocities); // Affect objects rotation speed during collisions.
         static void setLinearFactor(const int ID, const glm::vec3& linFactor, bool resetVelocities); // Affect objects translation speed during collisions.

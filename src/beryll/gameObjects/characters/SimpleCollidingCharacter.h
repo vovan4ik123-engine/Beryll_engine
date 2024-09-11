@@ -33,6 +33,25 @@ namespace Beryll
         void updateAfterPhysics() override;
         void draw() override;
 
+        void setGravity(const glm::vec3& grav, bool resetVelocities = false, bool activate = true) override
+        {
+            BR_ASSERT((!glm::any(glm::isnan(grav))), "%s", "You want set grav but it is NAN.");
+
+            if(m_gravity != grav && m_hasCollisionObject && m_collisionFlag == CollisionFlags::DYNAMIC)
+            {
+                // Gravity will applied by CharacterController.
+                SceneObject::setGravity(glm::vec3(0.0f), resetVelocities, activate);
+
+                // Store gravity only inside character.
+                m_gravity = grav;
+            }
+        }
+
+        const glm::vec3 getGravity() const override
+        {
+            return m_gravity;
+        }
+
         CharacterController& getController() { return m_controller; }
 
     private:

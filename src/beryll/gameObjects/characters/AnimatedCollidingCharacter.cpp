@@ -20,8 +20,6 @@ namespace Beryll
     {
         BR_ASSERT(((collFlag == CollisionFlags::DYNAMIC && wantCollisionCallBack == true) ||
                    (collFlag != CollisionFlags::DYNAMIC)), "%s", "collFlag DYNAMIC must have wantCollisionCallBack = true to use character controller.");
-
-        m_controller.m_previousYPos = m_origin.y;
     }
 
     AnimatedCollidingCharacter::~AnimatedCollidingCharacter()

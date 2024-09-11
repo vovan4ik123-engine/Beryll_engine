@@ -741,34 +741,6 @@ namespace Beryll
         }
     }
 
-    void Physics::addToOrigin(const int ID, const glm::vec3& dist, bool resetVelocities)
-    {
-        auto iter = m_rigidBodiesMap.find(ID);
-        if(iter != m_rigidBodiesMap.end())
-        {
-            btTransform t;
-
-            if(iter->second->rb->getMotionState())
-                iter->second->rb->getMotionState()->getWorldTransform(t);
-            else
-                t = iter->second->rb->getWorldTransform();
-
-            t.getOrigin() += btVector3(dist.x, dist.y, dist.z); // Add to reference.
-
-            iter->second->rb->setWorldTransform(t);
-            if(iter->second->rb->getMotionState())
-                iter->second->rb->getMotionState()->setWorldTransform(t);
-
-            resetVelocitiesForObject(iter->second->rb, resetVelocities);
-
-            iter->second->rb->activate(true);
-        }
-        else
-        {
-            BR_ASSERT(false, "Can not add to origin for ID: %d", ID);
-        }
-    }
-
     void Physics::addToRotation(const int ID, const glm::quat& qua, bool resetVelocities)
     {
         auto iter = m_rigidBodiesMap.find(ID);
