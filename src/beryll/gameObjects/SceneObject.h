@@ -255,7 +255,7 @@ namespace Beryll
             }
         }
 
-        void applyCentralImpulse(const glm::vec3& impulse) const
+        virtual void applyCentralImpulse(const glm::vec3& impulse) const
         {
             BR_ASSERT((!glm::any(glm::isnan(impulse))), "%s", "You want set impulse but it is NAN.");
 
@@ -265,7 +265,7 @@ namespace Beryll
             }
         }
 
-        void applyTorqueImpulse(const glm::vec3& impulse) const
+        virtual void applyTorqueImpulse(const glm::vec3& impulse) const
         {
             BR_ASSERT((!glm::any(glm::isnan(impulse))), "%s", "You want set impulse but it is NAN.");
 

@@ -52,6 +52,16 @@ namespace Beryll
             return m_gravity;
         }
 
+        void applyCentralImpulse(const glm::vec3& impulse) const override
+        {
+            BR_ASSERT(false, "%s", "Dont apply impulse to character. Use or modify character controller.");
+        }
+
+        void applyTorqueImpulse(const glm::vec3& impulse) const override
+        {
+            BR_ASSERT(false, "%s", "Dont apply impulse to character. Use or modify character controller.");
+        }
+
         CharacterController& getController() { return m_controller; }
 
     private:

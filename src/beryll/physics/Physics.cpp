@@ -83,7 +83,7 @@ namespace Beryll
         m_simulationTime = m_timer.getElapsedMilliSec();
         //BR_INFO("m_dynamicsWorldMT objects count: %d", m_dynamicsWorldMT->getNumCollisionObjects());
         //BR_INFO("m_rigidBodiesMap objects count : %d", m_rigidBodiesMap.size());
-        //BR_INFO("Simulation time millisec: %d", timer.getElapsedMilliSec());
+        //BR_INFO("Simulation time millisec: %f", m_timer.getElapsedMilliSec());
     }
 
     void Physics::addObject(const std::vector<glm::vec3>& vertices,

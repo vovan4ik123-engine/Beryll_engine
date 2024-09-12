@@ -19,6 +19,7 @@ namespace Beryll
         if(m_firstUpdate)
         {
             m_lastTimeOnGround = TimeStep::getSecFromStart();
+            // This controller will apply gravity.
             Physics::setGravityForObject(m_sceneObject->getID(), glm::vec3(0.0f), false, false);
             m_firstUpdate = false;
         }
@@ -30,6 +31,9 @@ namespace Beryll
 
         if(!m_sceneObject->getIsActive())
         {
+            m_lastTimeOnGround = TimeStep::getSecFromStart();
+            m_canJump = true;
+            m_applyJumpImpulse = false;
             return;
         }
 
@@ -52,9 +56,10 @@ namespace Beryll
                 if(floorAngleRadians < walkableFloorAngleRadians)
                 {
                     // Character touch allowed floor/object angle.
-                    //BR_INFO("%s", "m_canStay == true 1");
+                    //BR_INFO("%s", "m_canStay == true");
                     m_canStay = true;
                     m_canJump = true;
+                    m_applyJumpImpulse = false;
 
                     m_lastTimeOnGround = TimeStep::getSecFromStart();
                     // DONT break loop here !!! Continue collect m_bottomCollisionPoint.
@@ -69,8 +74,12 @@ namespace Beryll
 
         // Apply gravity.
         const float fallingTime = TimeStep::getSecFromStart() - m_lastTimeOnGround;
-        const glm::vec3 fallingVelocity = m_sceneObject->getGravity() * std::max(fallingTime, 0.015f);
-        m_sceneObject->addToOrigin(fallingVelocity * Beryll::TimeStep::getTimeStepSec());
+        const glm::vec3 fallingVelocity = m_sceneObject->getGravity() * std::max(fallingTime, 0.01f);
+        glm::vec3 newOrigin = m_sceneObject->getOrigin() + (fallingVelocity * Beryll::TimeStep::getTimeStepSec());
+        if(m_applyJumpImpulse)
+            newOrigin += m_jumpImpulse * Beryll::TimeStep::getTimeStepSec();
+        m_sceneObject->setOrigin(newOrigin);
+        //BR_INFO("grav %f", (fallingVelocity * Beryll::TimeStep::getTimeStepSec()).y);
     }
 
     void CharacterController::moveToPosition(const glm::vec3& position, bool rotateWhenMove, bool ignoreYAxisWhenRotate)
@@ -110,6 +119,7 @@ namespace Beryll
     void CharacterController::move(const glm::vec3& moveVector)
     {
         //BR_INFO("origin X: %f Y: %f Z: %f", m_sceneObject->getOrigin().x, m_sceneObject->getOrigin().y, m_sceneObject->getOrigin().z);
+        m_moveDir = glm::normalize(moveVector);
         if(m_sceneObject->getCollisionFlag() != CollisionFlags::DYNAMIC)
         {
             m_sceneObject->addToOrigin(moveVector);
@@ -135,7 +145,7 @@ namespace Beryll
             const float yDistanceToHitPoint = glm::distance(m_bottomCollisionPoint.first.y, newPosYHit.hitPoint.y);
             if(yDistanceToHitPoint < walkableFloorMaxDistance)
             {
-                newOrigin.y += newPosYHit.hitPoint.y - m_bottomCollisionPoint.first.y;
+                newOrigin.y += (newPosYHit.hitPoint.y - m_bottomCollisionPoint.first.y) - 0.01f; // - 0.01f <- make sure collision happens.
             }
         }
 
@@ -143,12 +153,15 @@ namespace Beryll
         m_moving = true;
     }
 
-    bool CharacterController::jump()
+    bool CharacterController::jump(const glm::vec3& impulse)
     {
-        if(m_sceneObject->getCollisionFlag() != CollisionFlags::DYNAMIC)
+        if(!m_canJump || m_sceneObject->getCollisionFlag() != CollisionFlags::DYNAMIC)
             return false;
 
-        //m_sceneObject->resetVelocities();
+        m_jumpImpulse = impulse;
+        m_applyJumpImpulse = true;
+        m_sceneObject->addToOrigin(m_jumpImpulse * Beryll::TimeStep::getTimeStepSec());
+        m_canJump = false;
 
         return true;
     }
