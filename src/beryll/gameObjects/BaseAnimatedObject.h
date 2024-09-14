@@ -25,8 +25,8 @@ namespace Beryll
         const std::vector<BoneMatrix>& getBoneMatrices() { return m_bonesMatrices; }
         bool getIsOneTimeAnimationFinished() { return !m_playAnimOneTime; }
 
-        void setCurrentAnimationByName(const char* name, bool playOneTime, bool startEvenIfSameAnimPlaying);
-        void setCurrentAnimationByIndex(int index, bool playOneTime, bool startEvenIfSameAnimPlaying);
+        void setCurrentAnimationByName(const char* name, bool playOneTime, bool startEvenIfSameAnimPlaying, bool randomizeAnimStartTime = false);
+        void setCurrentAnimationByIndex(int index, bool playOneTime, bool startEvenIfSameAnimPlaying, bool randomizeAnimStartTime = false);
         void setDefaultAnimationByName(const char* name);
         void setDefaultAnimationByIndex(int index);
 

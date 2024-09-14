@@ -4,6 +4,7 @@
 #include "beryll/renderer/Camera.h"
 #include "beryll/utils/File.h"
 #include "beryll/renderer/Renderer.h"
+#include "beryll/core/RandomGenerator.h"
 
 namespace Beryll
 {
@@ -284,7 +285,9 @@ namespace Beryll
                 BR_INFO("Animation index: %d Name: %s Duration: %f", g, animName.c_str(), m_scene->mAnimations[g]->mDuration);
             }
 
-            m_animStartTimeInSec = TimeStep::getSecFromStart();
+            m_animStartTimeInSec = TimeStep::getSecFromStart() - (RandomGenerator::getFloat() * 2.0f);
+            if(m_animStartTimeInSec < 0.0f)
+                m_animStartTimeInSec = 0.0f;
 
             const aiNode *node = BeryllUtils::Common::findAinodeForAimesh(m_scene, m_scene->mRootNode, m_scene->mMeshes[i]->mName);
             if(node)
@@ -553,7 +556,7 @@ namespace Beryll
         return scaleMatrix;
     }
 
-    void BaseAnimatedObject::setCurrentAnimationByName(const char* name, bool playOneTime, bool startEvenIfSameAnimPlaying)
+    void BaseAnimatedObject::setCurrentAnimationByName(const char* name, bool playOneTime, bool startEvenIfSameAnimPlaying, bool randomizeAnimStartTime)
     {
         if(m_currentAnimName == name && !startEvenIfSameAnimPlaying) { return; }
 
@@ -565,6 +568,9 @@ namespace Beryll
                 m_currentAnimName = name;
                 m_playAnimOneTime = playOneTime;
                 m_animStartTimeInSec = TimeStep::getSecFromStart();
+                if(randomizeAnimStartTime)
+                    randomizeAnimStartTime = std::max(0.0f, m_animStartTimeInSec - (RandomGenerator::getFloat() * 2.0f));
+
                 float ticksPerSecond = static_cast<float>(m_scene->mAnimations[m_currentAnimIndex]->mTicksPerSecond);
                 if(ticksPerSecond == 0.0f)
                     ticksPerSecond = 24.0f;
@@ -575,7 +581,7 @@ namespace Beryll
         }
     }
 
-    void BaseAnimatedObject::setCurrentAnimationByIndex(int index, bool playOneTime, bool startEvenIfSameAnimPlaying)
+    void BaseAnimatedObject::setCurrentAnimationByIndex(int index, bool playOneTime, bool startEvenIfSameAnimPlaying, bool randomizeAnimStartTime)
     {
         if(m_currentAnimIndex == index && !startEvenIfSameAnimPlaying) { return; }
 
@@ -584,6 +590,9 @@ namespace Beryll
             m_currentAnimIndex = index;
             m_playAnimOneTime = playOneTime;
             m_animStartTimeInSec = TimeStep::getSecFromStart();
+            if(randomizeAnimStartTime)
+                randomizeAnimStartTime = std::max(0.0f, m_animStartTimeInSec - (RandomGenerator::getFloat() * 2.0f));
+
             float ticksPerSecond = static_cast<float>(m_scene->mAnimations[m_currentAnimIndex]->mTicksPerSecond);
             if(ticksPerSecond == 0.0f)
                 ticksPerSecond = 24.0f;
