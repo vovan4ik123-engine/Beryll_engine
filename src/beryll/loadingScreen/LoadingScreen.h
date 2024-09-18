@@ -47,6 +47,7 @@ namespace Beryll
     private:
         friend class GameLoop;
         static void create();
+        static bool m_created;
 
         static std::shared_ptr<VertexBuffer> m_vertexPosBuffer;
         static std::shared_ptr<VertexBuffer> m_textureCoordsBuffer;
@@ -57,6 +58,5 @@ namespace Beryll
 
         static float m_loadingProgress; // 0.0f...1.0f range.
         static int m_textureIndex;
-        static bool m_created;
     };
 }

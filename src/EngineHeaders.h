@@ -56,3 +56,5 @@
 #include "beryll/network/Network.h"
 
 #include "beryll/ads/Ads.h"
+
+#include "beryll/textOnScene/TextOnScene.h"

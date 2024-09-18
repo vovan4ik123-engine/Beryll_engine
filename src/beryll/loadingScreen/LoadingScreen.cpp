@@ -5,6 +5,7 @@
 
 namespace Beryll
 {
+    bool LoadingScreen::m_created = false;
     std::shared_ptr<VertexBuffer> LoadingScreen::m_vertexPosBuffer;
     std::shared_ptr<VertexBuffer> LoadingScreen::m_textureCoordsBuffer;
     std::shared_ptr<IndexBuffer> LoadingScreen::m_indexBuffer;
@@ -14,7 +15,6 @@ namespace Beryll
 
     float LoadingScreen::m_loadingProgress = 0.0f;
     int LoadingScreen::m_textureIndex = 0;
-    bool LoadingScreen::m_created = false;
 
     void LoadingScreen::create()
     {

@@ -26,7 +26,6 @@ namespace Beryll
     class MainImGUI
     {
     public:
-        MainImGUI() {}
         virtual ~MainImGUI() {}
 
         static std::unique_ptr<MainImGUI>& getInstance()
@@ -53,6 +52,8 @@ namespace Beryll
         virtual void setDefaultFont(const std::string& path, float fontHeight) = 0;
 
     protected:
+        MainImGUI() {}
+
         // Store all loaded fonts in vector and check this vector before create new font.
         // Should be cleared together with call ImGui::GetIO().Fonts->Clear();
         static std::vector<FontsLoadedInImFontAtlas> m_loadedFonts;

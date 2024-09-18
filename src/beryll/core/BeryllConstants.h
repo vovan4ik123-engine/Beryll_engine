@@ -36,26 +36,10 @@ namespace BeryllConstants
 
     const std::string_view bannerTwoColorsProgressVertexPath = "shaders/GLES/default/BannerTwoColorsProgress.vert";
     const std::string_view bannerTwoColorsProgressFragmentPath = "shaders/GLES/default/BannerTwoColorsProgress.frag";
+
+    const std::string_view textOnSceneVertexPath = "shaders/GLES/default/TextOnScene.vert";
+    const std::string_view textOnSceneFragmentPath = "shaders/GLES/default/TextOnScene.frag";
 #elif defined(APPLE)
-    const std::string_view simpleObjDefaultVertexPath = "";
-    const std::string_view simpleObjDefaultFragmentPath = "";
 
-    const std::string_view animatedObjDefaultVertexPath = "";
-    const std::string_view animatedObjDefaultFragmentPath = "";
-
-    const std::string_view simpleObjShadowMapVertexPath = "";
-    const std::string_view simpleObjShadowMapFragmentPath = "";
-
-    const std::string_view animatedObjShadowMapVertexPath = "";
-    const std::string_view animatedObjShadowMapFragmentPath = "";
-
-    const std::string_view skyBoxVertexPath = "";
-    const std::string_view skyBoxFragmentPath = "";
-
-    const std::string_view particleVertexPath = "";
-    const std::string_view particleFragmentPath = "";
-
-    const std::string_view loadingScreenVertexPath = "";
-    const std::string_view loadingScreenFragmentPath = "";
 #endif
 }

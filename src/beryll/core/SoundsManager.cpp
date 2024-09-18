@@ -3,11 +3,10 @@
 
 namespace Beryll
 {
+    bool SoundsManager::m_created = false;
     std::map<std::string, std::unique_ptr<Mix_Chunk, decltype(&Mix_FreeChunk)>> SoundsManager::m_WAVs;
-
     std::map<std::string, std::unique_ptr<Mix_Music, decltype(&Mix_FreeMusic)>> SoundsManager::m_MP3s;
 
-    bool SoundsManager::m_created = false;
 
     void SoundsManager::create()
     {

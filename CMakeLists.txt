@@ -108,6 +108,8 @@ set(Common_SRC
         src/beryll/network/Network.cpp
 
         src/beryll/ads/Ads.cpp
+
+        src/beryll/textOnScene/TextOnScene.cpp
 )
 
 if(ANDROID)

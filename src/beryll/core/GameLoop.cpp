@@ -12,6 +12,7 @@
 #include "beryll/googleAnalytics/GoogleAnalytics.h"
 #include "beryll/network/Network.h"
 #include "beryll/ads/Ads.cpp"
+#include "beryll/textOnScene/TextOnScene.h"
 
 namespace Beryll
 {
@@ -56,6 +57,8 @@ namespace Beryll
         Network::create();
 
         Ads::create();
+
+        TextOnScene::create();
     }
 
     void GameLoop::run()

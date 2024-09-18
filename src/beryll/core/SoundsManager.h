@@ -11,8 +11,6 @@ namespace Beryll
         SoundsManager() = delete;
         ~SoundsManager() = delete;
 
-        static void create();
-
         // Short WAV sound effect. Can be playing 8 effects at same time.
         static void loadWAV(const std::string& path, int volume); // volume = 0...128.
         static void playWAV(const std::string& path, int timesRepeat = 0);
@@ -31,10 +29,11 @@ namespace Beryll
         static bool getIsBackgroundMP3Started();
 
     private:
-        static std::map<std::string, std::unique_ptr<Mix_Chunk, decltype(&Mix_FreeChunk)>> m_WAVs; // With custom deleter.
-
-        static std::map<std::string, std::unique_ptr<Mix_Music, decltype(&Mix_FreeMusic)>> m_MP3s;
-
+        friend class GameLoop;
+        static void create();
         static bool m_created;
+
+        static std::map<std::string, std::unique_ptr<Mix_Chunk, decltype(&Mix_FreeChunk)>> m_WAVs; // With custom deleter.
+        static std::map<std::string, std::unique_ptr<Mix_Music, decltype(&Mix_FreeMusic)>> m_MP3s;
     };
 }
