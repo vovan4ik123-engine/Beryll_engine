@@ -321,6 +321,11 @@ namespace Beryll
             return m_origin;
         }
 
+        const glm::vec3 getOriginXZ() const
+        {
+            return glm::vec3(m_origin.x, 0.0f, m_origin.z);
+        }
+
         // Use it if you call set/get origin from many threads.
 //        glm::vec3 getOriginForMultithreading()
 //        {
