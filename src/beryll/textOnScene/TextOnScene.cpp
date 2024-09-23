@@ -69,10 +69,26 @@ namespace Beryll
 
     void TextOnScene::addNumbersToShow(int pNumber, float pHeight, float pLifetime, glm::vec3 pOrigin, glm::vec3 pMoveDir, float pMoveSpeed)
     {
+        NumberToShow n(pNumber, pHeight, pLifetime, pOrigin, glm::normalize(pMoveDir), pMoveSpeed);
         if(m_numbersToShow.size() >= m_maxCountToShow)
-            return;
+        {
+            int smallestTimeIndex = 0;
+            float smallestLifetime = std::numeric_limits<float>::max();
+            for(int i = 0; i < m_numbersToShow.size(); ++i)
+            {
+                if(m_numbersToShow[i].lifetimeSec < smallestLifetime)
+                {
+                    smallestLifetime = m_numbersToShow[i].lifetimeSec;
+                    smallestTimeIndex = i;
+                }
+            }
 
-        m_numbersToShow.emplace_back(pNumber, pHeight, pLifetime, pOrigin, glm::normalize(pMoveDir), pMoveSpeed);
+            m_numbersToShow[smallestTimeIndex] = std::move(n);
+        }
+        else
+        {
+            m_numbersToShow.push_back(std::move(n));
+        }
 
         std::sort(m_numbersToShow.begin(), m_numbersToShow.end(), [](const NumberToShow& n1, const NumberToShow& n2)
                   {
