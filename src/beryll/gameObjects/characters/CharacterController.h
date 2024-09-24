@@ -27,7 +27,7 @@ namespace Beryll
         const glm::vec3& getMoveDir() { return m_moveDir; }
 
         float moveSpeed = 5.0f; // Meters in sec.
-        float walkableFloorAngleRadians = glm::radians(50.0f);
+        float walkableFloorAngleRadians = glm::radians(50.1f);
         float jumpExtendTime = 0.3f; // In seconds. Time after leave ground but still can jump.
 
     private:

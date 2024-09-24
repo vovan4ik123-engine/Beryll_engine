@@ -73,8 +73,9 @@ namespace Beryll
             m_canJump = false;
 
         // Apply gravity.
-        const float fallingTime = TimeStep::getSecFromStart() - m_lastTimeOnGround;
-        const glm::vec3 fallingVelocity = m_sceneObject->getGravity() * std::max(fallingTime, 0.01f);
+        glm::vec3 fallingVelocity = glm::normalize(m_sceneObject->getGravity()) * 0.01f;
+        if(!m_canStay)
+            fallingVelocity = m_sceneObject->getGravity() * (TimeStep::getSecFromStart() - m_lastTimeOnGround); // Falling time.
         glm::vec3 newOrigin = m_sceneObject->getOrigin() + (fallingVelocity * Beryll::TimeStep::getTimeStepSec());
         if(m_applyJumpImpulse)
             newOrigin += m_jumpImpulse * Beryll::TimeStep::getTimeStepSec();
@@ -127,9 +128,23 @@ namespace Beryll
             return;
         }
 
+        const glm::vec3 moveVectorXZ = glm::vec3(moveVector.x, 0.0f, moveVector.z);
+
+        // Check wall in move dir.
+        const glm::vec3 checkWallFrom = m_sceneObject->getOrigin();
+        const glm::vec3 checkWallTo = checkWallFrom + glm::normalize(moveVectorXZ) * m_sceneObject->getXZRadius() * 2.0f;
+        const RayClosestHit checkWall = Physics::castRayClosestHit(checkWallFrom, checkWallTo,
+                                                                    m_sceneObject->getCollisionGroup(),
+                                                                    m_sceneObject->getCollisionMask());
+        if(checkWall &&
+           BeryllUtils::Common::getAngleInRadians(checkWall.hitNormal, BeryllConstants::worldUp) > walkableFloorAngleRadians)
+        {
+            // On move direction is wall or slope we can not walk.
+            return;
+        }
+
         glm::vec3 newOrigin = m_sceneObject->getOrigin() + moveVector;
 
-        const glm::vec3 moveVectorXZ = glm::vec3(moveVector.x, 0.0f, moveVector.z);
         glm::vec3 newBottomCollisionPoint = m_bottomCollisionPoint.first + moveVectorXZ;
         glm::vec3 nextPosMaxUp = newBottomCollisionPoint;
         nextPosMaxUp.y += m_sceneObject->getObjectHeight();
