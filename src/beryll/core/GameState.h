@@ -41,7 +41,7 @@ namespace Beryll
 
         void updateAfterPhysics()
         {
-            for(auto it = layerStack.rbegin(); it != layerStack.rend(); ++it)
+            for(auto it = layerStack.begin(); it != layerStack.end(); ++it)
             {
                 (*it)->updateAfterPhysics();
             }
@@ -49,9 +49,7 @@ namespace Beryll
 
         void draw()
         {
-            // Start draw from last layer = GUI (GUI layer should be pushed as overlay).
-            // This probably avoid draw part of scene hidden by GUI.
-            for(auto it = layerStack.rbegin(); it != layerStack.rend(); ++it)
+            for(auto it = layerStack.begin(); it != layerStack.end(); ++it)
             {
                 (*it)->draw();
             }
