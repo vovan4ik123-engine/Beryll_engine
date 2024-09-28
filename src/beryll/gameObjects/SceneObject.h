@@ -57,7 +57,7 @@ namespace Beryll
 
         void addToRotation(float angleRad, const glm::vec3& axis, bool resetVelocities = false)
         {
-            if(angleRad < 0.0017f) { return; } // Less that 0.1 degree.
+            if(angleRad < 0.00035f) { return; } // Less that 0.02 degree.
 
             glm::quat normQuat = glm::normalize(glm::angleAxis(angleRad, glm::normalize(axis)));
 
@@ -76,7 +76,7 @@ namespace Beryll
 
             BR_ASSERT((!glm::any(glm::isnan(normQuat))), "%s", "You want add normQuat but it is NAN.");
 
-            if(glm::angle(normQuat) < 0.0017f) { return; } // Less than 0.1 degree.
+            if(glm::angle(normQuat) < 0.00035f) { return; } // Less than 0.02 degree.
 
             m_totalRotation = glm::normalize(normQuat * m_totalRotation);
             m_engineAddedRotation = glm::normalize(normQuat * m_engineAddedRotation);
