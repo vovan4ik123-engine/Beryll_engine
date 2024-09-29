@@ -368,13 +368,11 @@ namespace Beryll
     
     void BaseAnimatedObject::calculateTransforms()
     {
-        if(m_playAnimOneTime)
+        if(m_playAnimOneTime && m_animStartTimeInSec + m_animTimeInSec < TimeStep::getSecFromStart())
         {
-            if(m_animStartTimeInSec + m_animTimeInSec < TimeStep::getSecFromStart())
-            {
-                m_playAnimOneTime = false;
-                m_currentAnimIndex = m_defaultAnimIndex;
-            }
+            m_playAnimOneTime = false;
+            m_currentAnimIndex = m_defaultAnimIndex;
+            return;
         }
 
         float ticksPerSecond = static_cast<float>(m_scene->mAnimations[m_currentAnimIndex]->mTicksPerSecond);
@@ -412,7 +410,11 @@ namespace Beryll
             uint32_t nextFrameIndex = currentFrameIndex + 1;
             if(nextFrameIndex >= nodeAnim->mNumPositionKeys)
             {
+                // Last frame was played, jump to first again.
                 nextFrameIndex = 0;
+
+                if(m_playAnimOneTime)
+                    return;
             }
 
             float currentFrameStartTime = static_cast<float>(nodeAnim->mPositionKeys[currentFrameIndex].mTime);
