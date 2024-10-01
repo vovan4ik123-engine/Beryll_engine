@@ -128,7 +128,11 @@ namespace Beryll
             return;
         }
 
-        const glm::vec3 moveVectorXZ = glm::vec3(moveVector.x, 0.0f, moveVector.z);
+        glm::vec3 moveVectorForDynamic = moveVector;
+        if(!m_canStay)
+            moveVectorForDynamic *= moveSpeedOnAirFactor;
+
+        const glm::vec3 moveVectorXZ = glm::vec3(moveVectorForDynamic.x, 0.0f, moveVectorForDynamic.z);
 
         // Check wall in move dir.
         const glm::vec3 checkWallFrom = m_sceneObject->getOrigin();
@@ -143,7 +147,7 @@ namespace Beryll
             return;
         }
 
-        glm::vec3 newOrigin = m_sceneObject->getOrigin() + moveVector;
+        glm::vec3 newOrigin = m_sceneObject->getOrigin() + moveVectorForDynamic;
 
         glm::vec3 newBottomCollisionPoint = m_bottomCollisionPoint.first + moveVectorXZ;
         glm::vec3 nextPosMaxUp = newBottomCollisionPoint;
