@@ -59,11 +59,14 @@ namespace Beryll
         std::string m_currentAnimName;
         float m_animStartTimeInSec = 0.0f;
         float m_animTimeInSec = 0.0f;
-        bool m_playAnimOneTime = false;
+        float m_ticksPerSecond = 0.0f;
+        bool m_playAnimOneTime = false; // Anim will play once and then default anim will start automatically.
+        float m_animOneTimeLastFrameTime = 0.0f; // If anim played once keep time of last frame.
 
         void calculateTransforms();
         void readNodeHierarchy(const float animationTime, const aiNode* node, const aiMatrix4x4& parentTransform);
-        const aiNodeAnim* findNodeAnim(const aiAnimation* animation, const aiString& nodeName);
+        const aiNodeAnim* findNodeAnimByName(const aiAnimation* animation, const aiString& nodeName);
+        const aiNodeAnim* findNodeAnimAny(const aiAnimation* animation);
         aiMatrix4x4 interpolatePosition(const aiNodeAnim* nodeAnim, const uint32_t currentFrameIndex, const uint32_t nextFrameIndex, const float factor);
         aiMatrix4x4 interpolateRotation(const aiNodeAnim* nodeAnim, const uint32_t currentFrameIndex, const uint32_t nextFrameIndex, const float factor);
         aiMatrix4x4 interpolateScaling(const aiNodeAnim* nodeAnim, const uint32_t currentFrameIndex, const uint32_t nextFrameIndex, const float factor);

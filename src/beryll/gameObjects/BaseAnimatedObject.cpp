@@ -285,9 +285,11 @@ namespace Beryll
                 BR_INFO("Animation index: %d Name: %s Duration: %f", g, animName.c_str(), m_scene->mAnimations[g]->mDuration);
             }
 
-            m_animStartTimeInSec = TimeStep::getSecFromStart() - (RandomGenerator::getFloat() * 2.0f);
-            if(m_animStartTimeInSec < 0.0f)
-                m_animStartTimeInSec = 0.0f;
+            m_animStartTimeInSec = std::max(0.0f, TimeStep::getSecFromStart() - (RandomGenerator::getFloat() * 2.0f));
+
+            m_ticksPerSecond = static_cast<float>(m_scene->mAnimations[0]->mTicksPerSecond);
+            if(m_ticksPerSecond == 0.0f)
+                m_ticksPerSecond = 24.0f;
 
             const aiNode *node = BeryllUtils::Common::findAinodeForAimesh(m_scene, m_scene->mRootNode, m_scene->mMeshes[i]->mName);
             if(node)
@@ -368,19 +370,21 @@ namespace Beryll
     
     void BaseAnimatedObject::calculateTransforms()
     {
-        if(m_playAnimOneTime && m_animStartTimeInSec + m_animTimeInSec < TimeStep::getSecFromStart())
-        {
-            m_playAnimOneTime = false;
-            m_currentAnimIndex = m_defaultAnimIndex;
-            return;
-        }
-
-        float ticksPerSecond = static_cast<float>(m_scene->mAnimations[m_currentAnimIndex]->mTicksPerSecond);
-        if(ticksPerSecond == 0.0f)
-            ticksPerSecond = 24.0f;
-
-        float timeInTicks = (TimeStep::getSecFromStart() - m_animStartTimeInSec) * ticksPerSecond;
+        float timeInTicks = (TimeStep::getSecFromStart() - m_animStartTimeInSec) * m_ticksPerSecond;
         float animTime = std::fmodf(timeInTicks, static_cast<float>(m_scene->mAnimations[m_currentAnimIndex]->mDuration));
+
+        if(m_playAnimOneTime)
+        {
+            if(animTime > m_animOneTimeLastFrameTime || m_animStartTimeInSec + m_animTimeInSec < TimeStep::getSecFromStart())
+            {
+                m_playAnimOneTime = false;
+                // Prepare default animation.
+                m_currentAnimIndex = m_defaultAnimIndex;
+                m_animStartTimeInSec = TimeStep::getSecFromStart();
+                timeInTicks = 0.0f;
+                animTime = 0.0f;
+            }
+        }
 
         aiMatrix4x4 identity;
         readNodeHierarchy(animTime, m_scene->mRootNode, identity);
@@ -390,7 +394,7 @@ namespace Beryll
     {
         aiMatrix4x4 nodeTransform; // identity
 
-        const aiNodeAnim* nodeAnim = findNodeAnim(m_scene->mAnimations[m_currentAnimIndex], node->mName);
+        const aiNodeAnim* nodeAnim = findNodeAnimByName(m_scene->mAnimations[m_currentAnimIndex], node->mName);
 
         if(nodeAnim)
         {
@@ -409,20 +413,12 @@ namespace Beryll
 
             uint32_t nextFrameIndex = currentFrameIndex + 1;
             if(nextFrameIndex >= nodeAnim->mNumPositionKeys)
-            {
-                // Last frame was played, jump to first again.
-                nextFrameIndex = 0;
-
-                if(m_playAnimOneTime)
-                    return;
-            }
+                nextFrameIndex = 0; // Last frame was played, jump to first again.
 
             float currentFrameStartTime = static_cast<float>(nodeAnim->mPositionKeys[currentFrameIndex].mTime);
             float currentFrameEndTime = static_cast<float>(nodeAnim->mPositionKeys[nextFrameIndex].mTime);
             if(currentFrameStartTime > currentFrameEndTime)
-            {
                 currentFrameEndTime = static_cast<float>(m_scene->mAnimations[m_currentAnimIndex]->mDuration);
-            }
 
             BR_ASSERT((animationTime >= currentFrameStartTime && animationTime <= currentFrameEndTime),
                       "animationTime must be between currentFrameStartTime and currentFrameEndTime animationTime: %f, currentFrameStartTime: %f, currentFrameEndTime: %f",
@@ -458,7 +454,7 @@ namespace Beryll
         }
     }
 
-    const aiNodeAnim* BaseAnimatedObject::findNodeAnim(const aiAnimation* animation, const aiString& nodeName)
+    const aiNodeAnim* BaseAnimatedObject::findNodeAnimByName(const aiAnimation* animation, const aiString& nodeName)
     {
         // channel in animation it is aiNodeAnim (aiNodeAnim has transformation for node/bone with same name)
         // contains 3 arrays (scale/rotations/translations) for transform one node/bone in all frames
@@ -467,7 +463,7 @@ namespace Beryll
         // numChannels == numBones
 
         if(nodeName.length < 4 || // use only aiNodeAnim which belong to bones
-           nodeName.data[0] != 'B' || // Bones names must start with Bone.......
+           nodeName.data[0] != 'B' || // Bones names must starts with Bone.......
            nodeName.data[1] != 'o' ||
            nodeName.data[2] != 'n' ||
            nodeName.data[3] != 'e')
@@ -479,6 +475,24 @@ namespace Beryll
         {
             const aiNodeAnim* nodeAnim = animation->mChannels[i];
             if(nodeAnim->mNodeName == nodeName)
+            {
+                return nodeAnim;
+            }
+        }
+
+        return nullptr;
+    }
+
+    const aiNodeAnim* BaseAnimatedObject::findNodeAnimAny(const aiAnimation* animation)
+    {
+        for(int i = 0; i < animation->mNumChannels; ++i)
+        {
+            const aiNodeAnim* nodeAnim = animation->mChannels[i];
+
+            if(nodeAnim->mNodeName.data[0] == 'B' &&
+               nodeAnim->mNodeName.data[1] == 'o' &&
+               nodeAnim->mNodeName.data[2] == 'n' &&
+               nodeAnim->mNodeName.data[3] == 'e')
             {
                 return nodeAnim;
             }
@@ -569,15 +583,18 @@ namespace Beryll
                 m_currentAnimIndex = anim.second;
                 m_currentAnimName = name;
                 m_playAnimOneTime = playOneTime;
+                if(m_playAnimOneTime)
+                {
+                    const aiNodeAnim* nodeAnim = findNodeAnimAny(m_scene->mAnimations[m_currentAnimIndex]);
+                    BR_ASSERT((nodeAnim != nullptr), "%s", "Can not find any node anim.");
+                    BR_ASSERT((nodeAnim->mNumPositionKeys  > 0), "%s", "Node anim does not have keys.");
+                    m_animOneTimeLastFrameTime = nodeAnim->mPositionKeys[nodeAnim->mNumPositionKeys - 1].mTime;
+                }
                 m_animStartTimeInSec = TimeStep::getSecFromStart();
                 if(randomizeAnimStartTime)
-                    randomizeAnimStartTime = std::max(0.0f, m_animStartTimeInSec - (RandomGenerator::getFloat() * 2.0f));
+                    m_animStartTimeInSec = std::max(0.0f, TimeStep::getSecFromStart() - (RandomGenerator::getFloat() * 2.0f));
 
-                float ticksPerSecond = static_cast<float>(m_scene->mAnimations[m_currentAnimIndex]->mTicksPerSecond);
-                if(ticksPerSecond == 0.0f)
-                    ticksPerSecond = 24.0f;
-
-                m_animTimeInSec = static_cast<float>(m_scene->mAnimations[m_currentAnimIndex]->mDuration) / ticksPerSecond;
+                m_animTimeInSec = static_cast<float>(m_scene->mAnimations[m_currentAnimIndex]->mDuration) / m_ticksPerSecond;
                 return;
             }
         }
@@ -591,15 +608,18 @@ namespace Beryll
         {
             m_currentAnimIndex = index;
             m_playAnimOneTime = playOneTime;
+            if(m_playAnimOneTime)
+            {
+                const aiNodeAnim* nodeAnim = findNodeAnimAny(m_scene->mAnimations[m_currentAnimIndex]);
+                BR_ASSERT((nodeAnim != nullptr), "%s", "Can not find any node anim.");
+                BR_ASSERT((nodeAnim->mNumPositionKeys  > 0), "%s", "Node anim does not have keys.");
+                m_animOneTimeLastFrameTime = nodeAnim->mPositionKeys[nodeAnim->mNumPositionKeys - 1].mTime;
+            }
             m_animStartTimeInSec = TimeStep::getSecFromStart();
             if(randomizeAnimStartTime)
-                randomizeAnimStartTime = std::max(0.0f, m_animStartTimeInSec - (RandomGenerator::getFloat() * 2.0f));
+                m_animStartTimeInSec = std::max(0.0f, TimeStep::getSecFromStart() - (RandomGenerator::getFloat() * 2.0f));
 
-            float ticksPerSecond = static_cast<float>(m_scene->mAnimations[m_currentAnimIndex]->mTicksPerSecond);
-            if(ticksPerSecond == 0.0f)
-                ticksPerSecond = 24.0f;
-
-            m_animTimeInSec = static_cast<float>(m_scene->mAnimations[m_currentAnimIndex]->mDuration) / ticksPerSecond;
+            m_animTimeInSec = static_cast<float>(m_scene->mAnimations[m_currentAnimIndex]->mDuration) / m_ticksPerSecond;
         }
     }
 
