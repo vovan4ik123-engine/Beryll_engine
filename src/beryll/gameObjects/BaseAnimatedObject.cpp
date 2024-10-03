@@ -598,10 +598,14 @@ namespace Beryll
                 return;
             }
         }
+
+        BR_ASSERT(false, "Animation with name does not exists: %s", name);
     }
 
     void BaseAnimatedObject::setCurrentAnimationByIndex(int index, bool playOneTime, bool startEvenIfSameAnimPlaying, bool randomizeAnimStartTime)
     {
+        BR_ASSERT((index >= 0 && index < m_animationNameIndex.size()), "Animation with index does not exists: %d", index);
+
         if(m_currentAnimIndex == index && !startEvenIfSameAnimPlaying) { return; }
 
         if(index >= 0 && index < m_animationNameIndex.size())
@@ -630,14 +634,17 @@ namespace Beryll
             if(anim.first == name)
             {
                 m_defaultAnimIndex = anim.second;
-
                 return;
             }
         }
+
+        BR_ASSERT(false, "Animation with name does not exists: %s", name);
     }
 
     void BaseAnimatedObject::setDefaultAnimationByIndex(int index)
     {
+        BR_ASSERT((index >= 0 && index < m_animationNameIndex.size()), "Animation with index does not exists: %d", index);
+
         if(index >= 0 && index < m_animationNameIndex.size())
         {
             m_defaultAnimIndex = index;
