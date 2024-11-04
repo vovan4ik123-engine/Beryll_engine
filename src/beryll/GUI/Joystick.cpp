@@ -27,12 +27,12 @@ namespace Beryll
         if( !touchedTexturePath.empty())
             m_touchedTexture = Renderer::createTexture(touchedTexturePath.c_str(), TextureType::DIFFUSE_TEXTURE_MAT_1);
 
-        float leftPosPixels = leftPos * MainImGUI::getInstance()->getGUIWidth();
-        float rightPosPixels = leftPosPixels + (MainImGUI::getInstance()->getGUIWidth() * width);
+        const float leftPosPixels = leftPos * MainImGUI::getInstance()->getGUIWidth();
+        const float rightPosPixels = leftPosPixels + (MainImGUI::getInstance()->getGUIWidth() * width);
         m_joystickOriginInPixels.x = leftPosPixels + ((rightPosPixels - leftPosPixels) * 0.5f);
 
-        float topPosPixels = topPos * MainImGUI::getInstance()->getGUIHeight();
-        float bottomPosPixels = topPosPixels + (height * MainImGUI::getInstance()->getGUIHeight());
+        const float topPosPixels = topPos * MainImGUI::getInstance()->getGUIHeight();
+        const float bottomPosPixels = topPosPixels + (height * MainImGUI::getInstance()->getGUIHeight());
         m_joystickOriginInPixels.y = topPosPixels + ((bottomPosPixels - topPosPixels) * 0.5f);
     }
 
@@ -59,8 +59,8 @@ namespace Beryll
 
                 m_touched = true;
 
-                glm::vec2 touchDistanceFromOriginInPixels = f.ImGuiScreenPos - m_joystickOriginInPixels;
-                if(glm::length(touchDistanceFromOriginInPixels) > 0.0f)
+                const glm::vec2 touchDistanceFromOriginInPixels = f.ImGuiScreenPos - m_joystickOriginInPixels;
+                if(glm::length(touchDistanceFromOriginInPixels) > 0.001f)
                 {
                     m_touchedDirectionFromOrigin = glm::normalize(touchDistanceFromOriginInPixels);
                     m_touchedDirectionFromOrigin.y = -m_touchedDirectionFromOrigin.y;

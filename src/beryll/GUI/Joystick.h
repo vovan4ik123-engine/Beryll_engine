@@ -26,7 +26,7 @@ namespace Beryll
 
         bool getIsTouched() { return m_touched; }
 
-        // Be careful. Can be {0.0f, 0.0f}. Check length(vec2) > 0.0f if need.
+        // Be careful. Can be {0.0f, 0.0f}. Check length(vec2) > 0.0f.
         glm::vec2 getDirection()
         {
             return m_touchedDirectionFromOrigin;

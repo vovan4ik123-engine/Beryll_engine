@@ -7,29 +7,29 @@
 
 namespace BeryllUtils
 {
-    // quaternion(cos(angle/2), sin(angle/2) * axis)
+    // quaternion(cos(angle/2), sin(angle/2) * axis).
 
-    // w=1 x=0 y=0 z=0 identity quaternion = no rotation
+    // w=1 x=0 y=0 z=0 <-- identity quaternion = no rotation.
 
-    // for make vector unit:
+    // To make vector unit:
     // 1.
-    // std::sqrt(x*x + y*y + z*z + w*w) - calculate vector magnitude = square root
-    // w,x,y,z / square root - divide all components by square root(magnitude)
+    // std::sqrt(x*x + y*y + z*z + w*w) - calculate vector magnitude = square root.
+    // w,x,y,z / square root - divide all components by square root(magnitude).
     // 2.
-    // 1 / std::sqrt(x*x + y*y + z*z + w*w) - calculate inverse square root once
-    // x * inverse square root - multiply by inverse square root (faster than division)
+    // 1 / std::sqrt(x*x + y*y + z*z + w*w) - calculate inverse square root once.
+    // x * inverse square root - multiply by inverse square root (faster than division).
 
-    // if we need keep vector original magnitude we can make four component vector and store it in fourth component
+    // If we need keep three component vector original magnitude we can make four component vector and store it in fourth component.
 
-    // vectors division = quaternion
-    // v1 * quaternion = v2
-    // v2 / v1 = quaternion
+    // Vectors division = quaternion.
+    // v1 * quaternion = v2.
+    // v2 / v1 = quaternion.
 
     //http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-17-quaternions/#how-do-i-create-a-quaternion-in-c-
 
-    // quaternion::mix(quat1, quat2, 0.5f); // or whatever factor = interpolation between two quaternions
+    // quaternion::mix(quat1, quat2, 0.5f); // Interpolation between two quaternions.
 
-    // quat combined_rotation = applied_second_rotation * applied_first_rotation; - order as for matrices
+    // quat combined_rotation = applied_second_rotation * applied_first_rotation; - order same as for matrices.
 
     class Quaternion
     {
@@ -37,11 +37,11 @@ namespace BeryllUtils
         Quaternion() = delete;
         ~Quaternion() = delete;
 
-        // normalized linear interpolation. much faster than rotation on sphere
+        // Normalized linear interpolation.
         static aiQuaternion nlerp(const aiQuaternion& a, const aiQuaternion& b, const float blend)
         {
-            float dotProduct = a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w;
-            float oneMinusBlend = 1.0f - blend;
+            const float dotProduct = a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w;
+            const float oneMinusBlend = 1.0f - blend;
 
             aiQuaternion result;
             if (dotProduct < 0.0f)
