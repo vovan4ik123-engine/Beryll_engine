@@ -43,13 +43,15 @@ namespace Beryll
         {
             m_pressed = false;
             m_touched = false;
+            m_pressedFingerID = -100;
+            m_isPressedFingerStillOnScreen = false;
         }
         else
         {
             if(m_actRepeat && m_pressed) // still keep button pressed or not
             {
                 m_pressed = false;
-                for(Finger& f : fingers)
+                for(const Finger& f : fingers)
                 {
                     if(f.normalizedPos.x > leftPos && f.normalizedPos.x < leftPos + width &&
                        f.normalizedPos.y > topPos && f.normalizedPos.y < topPos + height)
@@ -77,9 +79,21 @@ namespace Beryll
                     {
                         f.handled = true;
                         m_pressed = true;
+                        m_pressedFingerID = f.ID;
+                        m_isPressedFingerStillOnScreen = true;
                     }
                 }
             }
+
+            m_isPressedFingerStillOnScreen = false;
+            for(const Finger& f : fingers)
+            {
+                if(f.ID == m_pressedFingerID)
+                    m_isPressedFingerStillOnScreen = true;
+            }
+
+            if(!m_isPressedFingerStillOnScreen)
+                m_pressedFingerID = -100;
         }
 
         if(m_pressed && m_action)

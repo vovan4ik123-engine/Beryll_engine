@@ -25,6 +25,7 @@ namespace Beryll
         void draw() override;
 
         bool getIsPressed() { return m_pressed; }
+        bool getIsPressedFingerStillOnScreen() { return m_isPressedFingerStillOnScreen; }
 
         void setAction(std::function<void()> fn) { m_action = fn; }
 
@@ -36,5 +37,8 @@ namespace Beryll
 
         std::unique_ptr<Texture> m_defaultTexture;
         std::unique_ptr<Texture> m_touchedTexture;
+
+        int m_pressedFingerID = -100;
+        bool m_isPressedFingerStillOnScreen = false;
     };
 }
