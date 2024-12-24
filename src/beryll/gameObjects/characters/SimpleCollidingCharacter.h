@@ -37,7 +37,7 @@ namespace Beryll
         {
             BR_ASSERT((!glm::any(glm::isnan(grav))), "%s", "You want set grav but it is NAN.");
 
-            if(m_gravity != grav && m_hasCollisionObject && m_collisionFlag == CollisionFlags::DYNAMIC)
+            if(m_hasCollisionObject && m_collisionFlag == CollisionFlags::DYNAMIC)
             {
                 // Gravity will applied by CharacterController.
                 SceneObject::setGravity(glm::vec3(0.0f), resetVelocities, activate);
@@ -66,5 +66,6 @@ namespace Beryll
 
     private:
         CharacterController m_controller{this};
+        glm::vec3 m_gravity{0.0f};
     };
 }

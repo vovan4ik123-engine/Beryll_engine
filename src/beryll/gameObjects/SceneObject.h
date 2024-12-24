@@ -201,10 +201,9 @@ namespace Beryll
         {
             BR_ASSERT((!glm::any(glm::isnan(grav))), "%s", "You want set grav but it is NAN.");
 
-            if(m_gravity != grav && m_hasCollisionObject && m_collisionFlag == CollisionFlags::DYNAMIC)
+            if(m_hasCollisionObject && m_collisionFlag == CollisionFlags::DYNAMIC)
             {
                 //BR_INFO("Set gravity: %f", grav.y);
-                m_gravity = grav;
                 Physics::setGravityForObject(m_ID, grav, resetVelocities, activate);
             }
         }
@@ -494,7 +493,6 @@ namespace Beryll
         CollisionFlags m_collisionFlag = CollisionFlags::NONE; // Set inside colliding objects.
         bool m_isEnabledInPhysicsSimulation = false; // Set inside colliding objects.
         float m_collisionMass = 0.0f;
-        glm::vec3 m_gravity = Physics::getWorldDefaultGravity();
         // Physics data end.
 
     private:

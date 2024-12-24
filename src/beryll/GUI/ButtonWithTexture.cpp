@@ -72,8 +72,8 @@ namespace Beryll
                 if(f.normalizedPos.x > leftPos && f.normalizedPos.x < leftPos + width &&
                    f.normalizedPos.y > topPos && f.normalizedPos.y < topPos + height)
                 {
-                    // If any finger in button area.
-                    m_touched = true;
+                    if(f.ID == m_pressedFingerID)
+                        m_touched = true;
 
                     if(f.downEvent && !f.handled)
                     {
@@ -100,7 +100,6 @@ namespace Beryll
         {
             m_action();
         }
-
     }
 
     void ButtonWithTexture::updateAfterPhysics()

@@ -26,6 +26,7 @@ namespace Beryll
 
         bool getIsPressed() { return m_pressed; }
         bool getIsPressedFingerStillOnScreen() { return m_isPressedFingerStillOnScreen; }
+        bool getIsPressedFingerStillOnButton() { return m_touched; }
 
         void setAction(std::function<void()> fn) { m_action = fn; }
 
