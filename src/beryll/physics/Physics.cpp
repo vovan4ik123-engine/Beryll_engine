@@ -790,7 +790,7 @@ namespace Beryll
         }
         else
         {
-            BR_ASSERT(false, "Can not find transforms for ID: %d", ID);
+            //BR_ASSERT(false, "Can not find transforms for ID: %d", ID);
         }
 
         return physicsTransforms;

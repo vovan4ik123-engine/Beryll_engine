@@ -36,7 +36,7 @@ namespace Beryll
                 return;
             }
 
-            // Run in std::async()
+            // Run with std::async().
             m_futuresVoid.clear();
 
             float chunkFloat = float(numberElements) / float(m_numThreads);
@@ -52,18 +52,18 @@ namespace Beryll
             {
                 int chunkEnd = std::min(i + oneChunkSize, numberElements);
 
-                // without std::cref(v)/std::ref(v) std::async() will COPY all parameters !!!
+                // Without std::cref(v)/std::ref(v) std::async() will COPY all parameters !!!
                 m_futuresVoid.emplace_back(std::async(std::launch::async, func, std::ref(v), i, chunkEnd));
             }
 
-            // wait all threads
+            // Wait for all threads.
             for(const std::future<void>& ft : m_futuresVoid)
             {
                 ft.wait();
             }
         }
 
-        static const uint32_t m_numThreads; // all available threads on device -1
+        static const uint32_t m_numThreads; // All available threads on device -1.
         static std::vector<std::future<void>> m_futuresVoid;
     };
 }
