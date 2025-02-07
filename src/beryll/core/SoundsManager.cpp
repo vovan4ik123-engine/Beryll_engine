@@ -12,8 +12,13 @@ namespace Beryll
     {
         if(m_created) { return; }
 
-        // MIX_DEFAULT_FREQUENCY = sample rate = frequency = speed playing				// size (speed playing )
-        if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, MIX_CHANNELS, 1024) == -1)
+        // MIX_DEFAULT_FREQUENCY = sample rate = frequency = speed playing
+        SDL_AudioSpec as;
+        as.format = MIX_DEFAULT_FORMAT;
+        as.channels = MIX_CHANNELS;
+        as.freq = MIX_DEFAULT_FREQUENCY;
+
+        if(!Mix_OpenAudio(0, &as))
         {
             BR_ASSERT(false, "%s", "SDL mixer init error");
         }

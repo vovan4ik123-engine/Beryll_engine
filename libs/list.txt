@@ -1,8 +1,8 @@
-SDL         2.30.3
-SDL mixer   2.8.0
-SDL image   2.8.2
-SDL net     2.2.0
-ImGUI       1.90
+SDL         3.2.2
+SDL_mixer   3.0.0
+SDL_image   3.2.0
+SDL_net     3.0.0
+ImGUI       1.91.8
 glm         1.0.1
 assimp      5.3.1
 bullet      3.2.5

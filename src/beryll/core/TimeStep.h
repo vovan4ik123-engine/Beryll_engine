@@ -38,7 +38,7 @@ namespace Beryll
         // Should be called inside GameLoop before every frame start.
         static void fixateTime()
         {
-            m_milliSecFromStart = SDL_GetTicks64();
+            m_milliSecFromStart = SDL_GetTicks();
             m_secFromStart = static_cast<float>(m_milliSecFromStart) * 0.001f; // Same as / 1000.0f.
 
             m_timeStepMilliSec = m_milliSecFromStart - m_currentStepStart;

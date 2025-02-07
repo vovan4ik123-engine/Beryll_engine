@@ -27,13 +27,13 @@ namespace Beryll
         ImGui::StyleColorsClassic();
 
         // Setup Platform/Renderer backends.
-        ImGui_ImplSDL2_InitForOpenGL(Window::getInstance()->getWindow(), Window::getInstance()->getGlContext());
+        ImGui_ImplSDL3_InitForOpenGL(Window::getInstance()->getWindow(), Window::getInstance()->getGlContext());
         ImGui_ImplOpenGL3_Init("#version 300 es"); // glsl_version = "#version 300 es" = default.
 
         // Complete initialization by calling first frame.
         // Start the ImGui frame.
         ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplSDL2_NewFrame(Window::getInstance()->getWindow());
+        ImGui_ImplSDL3_NewFrame();
         ImGui::NewFrame();
         // Rendering ImGUI.
         ImGui::Render();
@@ -61,7 +61,7 @@ namespace Beryll
         m_loadedFonts.clear();
 
         ImGui_ImplOpenGL3_Shutdown();
-        ImGui_ImplSDL2_Shutdown();
+        ImGui_ImplSDL3_Shutdown();
         ImGui::DestroyContext();
     }
 
@@ -79,7 +79,7 @@ namespace Beryll
     {
         // Start the Dear ImGui frame.
         ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplSDL2_NewFrame(Window::getInstance()->getWindow());
+        ImGui_ImplSDL3_NewFrame();
         ImGui::NewFrame();
     }
 

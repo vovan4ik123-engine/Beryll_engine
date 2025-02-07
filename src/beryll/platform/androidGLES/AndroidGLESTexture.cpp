@@ -32,17 +32,17 @@ namespace Beryll
                    type == TextureType::DIFFUSE_TEXTURE_MAT_2 || type == TextureType::SPECULAR_TEXTURE_MAT_2 || type == TextureType::NORMAL_MAP_TEXTURE_MAT_2 ||
                    type == TextureType::BLEND_TEXTURE_MAT_2), "%s", "Wrong texture type");
 
-        SDL_RWops* rw = SDL_RWFromFile(m_ID.c_str(), "rb");
+        SDL_IOStream* rw = SDL_IOFromFile(m_ID.c_str(), "rb");
         BR_ASSERT((rw != nullptr), "Load texture failed: %s", m_ID.c_str());
 
-        SDL_Surface* surface = IMG_Load_RW(rw, 1);
+        SDL_Surface* surface = IMG_Load_IO(rw, true);
         BR_ASSERT((surface != nullptr), "Create surface failed: %s", m_ID.c_str());
 
-        BR_ASSERT((surface->format->BytesPerPixel > 0 && surface->format->BytesPerPixel <= 4), "Load texture failed: %s. Depth = 0 or > 4", m_ID.c_str());
+        BR_ASSERT((SDL_BYTESPERPIXEL(surface->format) > 0 && SDL_BYTESPERPIXEL(surface->format) <= 4), "Load texture failed: %s. Depth = 0 or > 4", m_ID.c_str());
 
         int pixelFormat = GL_RGB;
-        if(4 == surface->format->BytesPerPixel) pixelFormat = GL_RGBA;
-        else if(1 == surface->format->BytesPerPixel) pixelFormat = GL_RED;
+        if(SDL_BYTESPERPIXEL(surface->format) == 4) pixelFormat = GL_RGBA;
+        else if(SDL_BYTESPERPIXEL(surface->format) == 1) pixelFormat = GL_RED;
 
         m_openGLID = std::make_shared<uint32_t>();
         m_width = surface->w;
@@ -61,7 +61,7 @@ namespace Beryll
 
         glBindTexture(GL_TEXTURE_2D, 0);
 
-        SDL_FreeSurface(surface);
+        SDL_DestroySurface(surface);
         m_textures.insert(std::make_pair(m_ID, m_openGLID)); // Add to map.
         //BR_INFO("%s", "Texture created.");
     }

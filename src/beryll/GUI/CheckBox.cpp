@@ -5,8 +5,8 @@
 namespace Beryll
 {
     CheckBox::CheckBox(const std::string& pText, const std::string& fontPath, float fontHeight,
-                       float l, float t, bool disableCheckLogic, bool bringToFrontOnFocus)
-                       : text(pText), m_disableCheckLogic(disableCheckLogic)
+                       float l, float t, bool bringToFrontOnFocus)
+                       : text(pText)
     {
         BR_ASSERT((fontPath.empty() == false && fontHeight > 0.0f), "%s", "fontPath can not be empty and fontHeight must be > 0.0.");
 
@@ -76,17 +76,9 @@ namespace Beryll
         if(m_font)
             ImGui::PushFont(m_font);
 
-        if(m_disableCheckLogic)
+        if(ImGui::Checkbox(text.c_str(), &checked) && checked) // True only if marked. False if unmarked.
         {
-            bool avoidCheckLogic = checked;
-            ImGui::Checkbox(text.c_str(), &avoidCheckLogic, true);
-        }
-        else
-        {
-            if(ImGui::Checkbox(text.c_str(), &checked, false) && checked) // True only if marked. False if unmarked.
-            {
-                m_valueChangingToMarked = true;
-            }
+            m_valueChangingToMarked = true;
         }
 
         if(m_font)

@@ -19,7 +19,7 @@ namespace Beryll
 
         while(SDL_PollEvent(&event))
         {
-            ImGui_ImplSDL2_ProcessEvent(&event);
+            ImGui_ImplSDL3_ProcessEvent(&event);
             switch (event.type)
             {
 //MOBILE APP LIFECYCLE
@@ -29,7 +29,7 @@ namespace Beryll
                 //The application is low on memory, free memory if possible.
                 // Called on iOS in applicationDidReceiveMemoryWarning()
                 //Called on Android in onLowMemory()
-                case SDL_APP_LOWMEMORY:
+                case SDL_EVENT_LOW_MEMORY:
                     m_events[static_cast<int>(EventID::APP_LOWMEMORY)] = true;
                     break;
 
@@ -37,28 +37,28 @@ namespace Beryll
                     // Prepare for potential terminating here !!!!
                     // Called on iOS in applicationWillResignActive()
                     // Called on Android in onPause()
-                case SDL_APP_WILLENTERBACKGROUND:
+                case SDL_EVENT_WILL_ENTER_BACKGROUND:
                     m_events[static_cast<int>(EventID::APP_WILLENTERBACKGROUND)] = true;
                     break;
 
                     //already in background
                     //Called on iOS in applicationDidEnterBackground()
                     //Called on Android in onPause()
-                case SDL_APP_DIDENTERBACKGROUND:
+                case SDL_EVENT_DID_ENTER_BACKGROUND:
                     m_events[static_cast<int>(EventID::APP_DIDENTERBACKGROUND)] = true;
                     break;
 
                     //prepare to appear in foreground
                     //Called on iOS in applicationWillEnterForeground()
                     //Called on Android in onResume()
-                case SDL_APP_WILLENTERFOREGROUND:
+                case SDL_EVENT_WILL_ENTER_FOREGROUND:
                     m_events[static_cast<int>(EventID::APP_WILLENTERFOREGROUND)] = true;
                     break;
 
                     //already in foreground
                     //Called on iOS in applicationDidBecomeActive()
                     //Called on Android in onResume()
-                case SDL_APP_DIDENTERFOREGROUND:
+                case SDL_EVENT_DID_ENTER_FOREGROUND:
                     m_events[static_cast<int>(EventID::APP_DIDENTERFOREGROUND)] = true;
                     break;
 // ENDMOBILE APP LIFECYCLE
@@ -66,20 +66,20 @@ namespace Beryll
                     //Android OS can decide to terminate your application by calling onDestroy()
                     //Your application will receive a SDL_QUIT event
                     //Save game before Android will close it
-                case SDL_QUIT:
+                case SDL_EVENT_QUIT:
                     m_events[static_cast<int>(EventID::QUIT)] = true;
                     break;
 
 //KEYS
-                case SDL_KEYDOWN:
-                    if (event.key.keysym.scancode == SDL_SCANCODE_AC_BACK)
+                case SDL_EVENT_KEY_DOWN:
+                    if (event.key.scancode == SDL_SCANCODE_AC_BACK)
                     {
                         m_events[static_cast<int>(EventID::KEY_AC_BACK_DOWN)] = true;
                     }
                     break;
 
-                case SDL_KEYUP:
-                    if (event.key.keysym.scancode == SDL_SCANCODE_AC_BACK)
+                case SDL_EVENT_KEY_UP:
+                    if (event.key.scancode == SDL_SCANCODE_AC_BACK)
                     {
                         m_events[static_cast<int>(EventID::KEY_AC_BACK_UP)] = true;
                     }
@@ -87,18 +87,18 @@ namespace Beryll
 //END KEYS
 
 //TOUCH EVENT
-                case SDL_FINGERDOWN:
+                case SDL_EVENT_FINGER_DOWN:
                     m_fingers.emplace_back(Finger{glm::vec2(event.tfinger.x, event.tfinger.y),
                                                  glm::vec2(event.tfinger.x * MainImGUI::getInstance()->getGUIWidth(), event.tfinger.y * MainImGUI::getInstance()->getGUIHeight()),
                                                  glm::vec2(event.tfinger.x * Window::getInstance()->getScreenWidth(), event.tfinger.y * Window::getInstance()->getScreenHeight()),
                                                   false,
                                                   true,
-                                                  static_cast<int>(event.tfinger.fingerId)});
+                                                  static_cast<int>(event.tfinger.fingerID)});
                     break;
 
-                case SDL_FINGERUP:
+                case SDL_EVENT_FINGER_UP:
                     {
-                        auto it = std::find_if(m_fingers.begin(), m_fingers.end(), [&event](const Finger& f){ return f.ID == static_cast<int>(event.tfinger.fingerId); });
+                        auto it = std::find_if(m_fingers.begin(), m_fingers.end(), [&event](const Finger& f){ return f.ID == static_cast<int>(event.tfinger.fingerID); });
                         if(it != m_fingers.end())
                         {
                             m_fingers.erase(it);
@@ -106,9 +106,9 @@ namespace Beryll
                         break;
                     }
 
-                case SDL_FINGERMOTION:
+                case SDL_EVENT_FINGER_MOTION:
                     {
-                        auto it = std::find_if(m_fingers.begin(), m_fingers.end(), [&event](const Finger& f){ return f.ID == static_cast<int>(event.tfinger.fingerId); });
+                        auto it = std::find_if(m_fingers.begin(), m_fingers.end(), [&event](const Finger& f){ return f.ID == static_cast<int>(event.tfinger.fingerID); });
                         if(it != m_fingers.end())
                         {
                             (*it).normalizedPos.x = event.tfinger.x;
@@ -122,23 +122,14 @@ namespace Beryll
                         }
                         break;
                     }
-
-                case SDL_MULTIGESTURE:
-                    // multi touch pinch
-                    // if( glm::abs(event.mgesture.dDist) > 0.00001f)
-
-                    // multi touch rotation
-                    // if( glm::abs(event.mgesture.dTheta) > min angle)
-
-                    break;
 //END TOUCH EVENT
 
 //SCREEN
-                case SDL_WINDOWEVENT :
-                    if (SDL_GetDisplayOrientation(0) != Window::getInstance()->currentOrientation)
+                case SDL_EVENT_DISPLAY_ORIENTATION :
+                    if (SDL_GetCurrentDisplayOrientation(0) != Window::getInstance()->currentOrientation)
                     {
                         m_events[static_cast<int>(EventID::DISPLAY_ORIENTATION_CHANGE)] = true;
-                        Window::getInstance()->currentOrientation = SDL_GetDisplayOrientation(0);
+                        Window::getInstance()->currentOrientation = SDL_GetCurrentDisplayOrientation(0);
                     }
                     break;
 //END SCREEN

@@ -6,7 +6,7 @@ namespace Beryll
 {
     AndroidGLESWindow::AndroidGLESWindow()
     {
-        if (SDL_Init(SDL_INIT_TIMER | SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_SENSOR) < 0)
+        if(!SDL_Init(SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_SENSOR))
         {
             BR_ASSERT(false, "%s", "SDL init error.");
         }
@@ -28,20 +28,22 @@ namespace Beryll
         SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1); // Enable antialiasing sdl.
         SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 8); // 0 4 8
 
-        // Fill native display resolution.
-        //SDL_GetDesktopDisplayMode(0, &m_DM);
-        // Fill new resolution if resolution was changed in fullscreen mode.
-        SDL_DisplayMode DM;
-        SDL_GetCurrentDisplayMode(0, &DM);
-        m_screenWidth = DM.w;
-        m_screenHeight = DM.h;
+        // Look for display.
+        int displaysCount = 0;
+        SDL_DisplayID * dIDs = SDL_GetDisplays(&displaysCount);
+        BR_ASSERT((displaysCount > 0 && dIDs != nullptr), "%s", "SDL can not find any display.")
+
+        const SDL_DisplayMode* DM = SDL_GetCurrentDisplayMode(dIDs[0]); // Take first found display.
+        m_screenWidth = DM->w;
+        m_screenHeight = DM->h;
+
+        SDL_free(dIDs);
 
         // Create an application window with the following settings:
         m_window = SDL_CreateWindow("MainWindow",
-                                    SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
                                     m_screenWidth, m_screenHeight,
                                     SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN |
-                                    SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
+                                    SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY);
 
         if(m_window == nullptr)
         {
@@ -49,10 +51,9 @@ namespace Beryll
             SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 
             m_window = SDL_CreateWindow("MainWindow",
-                                        SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
                                         m_screenWidth, m_screenHeight,
                                         SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN |
-                                        SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
+                                        SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY);
         }
 
         if(m_window == nullptr)
@@ -61,10 +62,9 @@ namespace Beryll
             SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 0);
 
             m_window = SDL_CreateWindow("MainWindow",
-                                        SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
                                         m_screenWidth, m_screenHeight,
                                         SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN |
-                                        SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
+                                        SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY);
         }
 
         BR_ASSERT((m_window != nullptr), "%s", "m_window == nullptr");
@@ -105,7 +105,7 @@ namespace Beryll
 
     AndroidGLESWindow::~AndroidGLESWindow()
     {
-        SDL_GL_DeleteContext(m_glContext);
+        SDL_GL_DestroyContext(m_glContext);
         SDL_DestroyWindow(m_window);
         SDL_Quit();
 
@@ -116,17 +116,21 @@ namespace Beryll
     {
         SDL_DestroyWindow(m_window);
 
-        SDL_DisplayMode DM;
-        SDL_GetCurrentDisplayMode(0, &DM);
-        m_screenWidth = DM.w;
-        m_screenHeight = DM.h;
+        // Look for display.
+        int displaysCount = 0;
+        SDL_DisplayID * dIDs = SDL_GetDisplays(&displaysCount);
+        BR_ASSERT((displaysCount > 0 && dIDs != nullptr), "%s", "SDL can not find any display.")
 
-        //SDL_GetDesktopDisplayMode(0, &m_DM); // Native display resolution.
+        const SDL_DisplayMode* DM = SDL_GetCurrentDisplayMode(dIDs[0]); // Take first found display.
+        m_screenWidth = DM->w;
+        m_screenHeight = DM->h;
+
+        SDL_free(dIDs);
 
         m_window = SDL_CreateWindow("MainWindow",
-                                    SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
                                     m_screenWidth, m_screenHeight,
-                                    SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN | SDL_WINDOW_RESIZABLE);
+                                    SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN |
+                                    SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY);
 
         BR_ASSERT((m_window != nullptr), "%s", "m_window == nullptr");
 

@@ -22,10 +22,10 @@ elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     message(WARNING "Compiler = Visual Studio")
 endif()
 
-add_subdirectory(libs/SDL2)
-add_subdirectory(libs/SDL2_image)
-add_subdirectory(libs/SDL2_mixer)
-add_subdirectory(libs/SDL2_net)
+add_subdirectory(libs/SDL3)
+add_subdirectory(libs/SDL3_image)
+add_subdirectory(libs/SDL3_mixer)
+add_subdirectory(libs/SDL3_net)
 add_subdirectory(libs/imgui)
 add_subdirectory(libs/assimp)
 add_subdirectory(libs/sqlite)
@@ -120,10 +120,10 @@ endif()
 
 target_link_libraries(Beryll-static #target
 
-                      SDL2-static # libs
-                      SDL2_image-static
-                      SDL2_mixer-static
-                      SDL2_net-static
+                      SDL3-static # libs
+                      SDL3_image-static
+                      SDL3_mixer-static
+                      SDL3_net-static
                       ImGUI-static
                       assimp-static
                       sqlite3-static

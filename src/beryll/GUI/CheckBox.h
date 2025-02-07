@@ -10,7 +10,7 @@ namespace Beryll
         CheckBox() = delete;
         // Position and size in 0...1 range.
         CheckBox(const std::string& pText, const std::string& fontPath, float fontHeight,
-                 float l, float t, bool disableCheckLogic = false, bool bringToFrontOnFocus = false);
+                 float l, float t, bool bringToFrontOnFocus = false);
         ~CheckBox() override;
 
         void updateBeforePhysics() override;
@@ -34,7 +34,6 @@ namespace Beryll
         std::function<void()> m_action;
 
         bool m_valueChangingToMarked = false;
-        bool m_disableCheckLogic = false; // Set to true if you want control check box state from outside (by assign checked = true/false).
 
         // Color can be different for each check box.
         ImVec4 m_fontColor { 0.0f, 0.0f, 0.0f, 1.0f }; // 0.0f - 1.0f range.

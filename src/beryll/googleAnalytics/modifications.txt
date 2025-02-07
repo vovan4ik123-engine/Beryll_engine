@@ -1,7 +1,7 @@
 ----------------------- For Android -----------------------
 
 Add to build.gradle
-    classpath 'com.google.gms:google-services:4.4.1'
+    classpath 'com.google.gms:google-services:4.4.2'
 
 Add to app/build.gradle
     apply plugin: 'com.google.gms.google-services'
@@ -10,7 +10,7 @@ Add to app/build.gradle
         ...................................................
 
         // Import the Firebase BoM.
-        implementation platform('com.google.firebase:firebase-bom:33.0.0')
+        implementation platform('com.google.firebase:firebase-bom:33.8.0')
         implementation 'com.google.firebase:firebase-analytics'
     }
 

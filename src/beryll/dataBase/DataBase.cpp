@@ -10,7 +10,7 @@ namespace Beryll
     {
         std::string internalStoragePath;
 #if defined(ANDROID)
-        internalStoragePath = SDL_AndroidGetInternalStoragePath();
+        internalStoragePath = SDL_GetAndroidInternalStoragePath();
 #elif defined(APPLE)
 
 #else

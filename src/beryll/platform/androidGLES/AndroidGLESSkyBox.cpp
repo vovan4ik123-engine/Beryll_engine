@@ -18,46 +18,46 @@ namespace Beryll
         std::string backSide = folderPath + "/back.jpg";
         std::string frontSide = folderPath + "/front.jpg";
 
-        SDL_RWops* rwRight = SDL_RWFromFile(rightSide.c_str(), "rb");
+        SDL_IOStream* rwRight = SDL_IOFromFile(rightSide.c_str(), "rb");
         BR_ASSERT((rwRight != nullptr), "Load cube texture failed: %s", rightSide.c_str());
-        SDL_Surface* surfaceRight = IMG_Load_RW(rwRight, 1);
+        SDL_Surface* surfaceRight = IMG_Load_IO(rwRight, true);
         BR_ASSERT((surfaceRight != nullptr), "Create surface failed: %s", rightSide.c_str());
 
-        SDL_RWops* rwLeft = SDL_RWFromFile(leftSide.c_str(), "rb");
+        SDL_IOStream* rwLeft = SDL_IOFromFile(leftSide.c_str(), "rb");
         BR_ASSERT((rwLeft != nullptr), "Load cube texture failed: %s", leftSide.c_str());
-        SDL_Surface* surfaceLeft = IMG_Load_RW(rwLeft, 1);
+        SDL_Surface* surfaceLeft = IMG_Load_IO(rwLeft, true);
         BR_ASSERT((surfaceLeft != nullptr), "Create surface failed: %s", leftSide.c_str());
 
-        SDL_RWops* rwTop = SDL_RWFromFile(topSide.c_str(), "rb");
+        SDL_IOStream* rwTop = SDL_IOFromFile(topSide.c_str(), "rb");
         BR_ASSERT((rwTop != nullptr), "Load cube texture failed: %s", topSide.c_str());
-        SDL_Surface* surfaceTop = IMG_Load_RW(rwTop, 1);
+        SDL_Surface* surfaceTop = IMG_Load_IO(rwTop, true);
         BR_ASSERT((surfaceTop != nullptr), "Create surface failed: %s", topSide.c_str());
 
-        SDL_RWops* rwBottom = SDL_RWFromFile(bottomSide.c_str(), "rb");
+        SDL_IOStream* rwBottom = SDL_IOFromFile(bottomSide.c_str(), "rb");
         BR_ASSERT((rwBottom != nullptr), "Load cube texture failed: %s", bottomSide.c_str());
-        SDL_Surface* surfaceBottom = IMG_Load_RW(rwBottom, 1);
+        SDL_Surface* surfaceBottom = IMG_Load_IO(rwBottom, true);
         BR_ASSERT((surfaceBottom != nullptr), "Create surface failed: %s", bottomSide.c_str());
 
-        SDL_RWops* rwBack = SDL_RWFromFile(backSide.c_str(), "rb");
+        SDL_IOStream* rwBack = SDL_IOFromFile(backSide.c_str(), "rb");
         BR_ASSERT((rwBack != nullptr), "Load cube texture failed: %s", backSide.c_str());
-        SDL_Surface* surfaceBack = IMG_Load_RW(rwBack, 1);
+        SDL_Surface* surfaceBack = IMG_Load_IO(rwBack, true);
         BR_ASSERT((surfaceBack != nullptr), "Create surface failed: %s", backSide.c_str());
 
-        SDL_RWops* rwFront = SDL_RWFromFile(frontSide.c_str(), "rb");
+        SDL_IOStream* rwFront = SDL_IOFromFile(frontSide.c_str(), "rb");
         BR_ASSERT((rwFront != nullptr), "Load cube texture failed: %s", frontSide.c_str());
-        SDL_Surface* surfaceFront = IMG_Load_RW(rwFront, 1);
+        SDL_Surface* surfaceFront = IMG_Load_IO(rwFront, true);
         BR_ASSERT((surfaceFront != nullptr), "Create surface failed: %s", frontSide.c_str());
 
-        BR_ASSERT(((surfaceRight->format->BytesPerPixel == 3 || surfaceRight->format->BytesPerPixel == 4) &&
-                   (surfaceLeft->format->BytesPerPixel == 3 || surfaceLeft->format->BytesPerPixel == 4) &&
-                   (surfaceTop->format->BytesPerPixel == 3 || surfaceTop->format->BytesPerPixel == 4) &&
-                   (surfaceBottom->format->BytesPerPixel == 3 || surfaceBottom->format->BytesPerPixel == 4) &&
-                   (surfaceBack->format->BytesPerPixel == 3 || surfaceBack->format->BytesPerPixel == 4) &&
-                   (surfaceFront->format->BytesPerPixel == 3 || surfaceFront->format->BytesPerPixel == 4))
+        BR_ASSERT(((SDL_BYTESPERPIXEL(surfaceRight->format) == 3  || SDL_BYTESPERPIXEL(surfaceRight->format) == 4) &&
+                   (SDL_BYTESPERPIXEL(surfaceLeft->format) == 3   || SDL_BYTESPERPIXEL(surfaceLeft->format) == 4) &&
+                   (SDL_BYTESPERPIXEL(surfaceTop->format) == 3    || SDL_BYTESPERPIXEL(surfaceTop->format) == 4) &&
+                   (SDL_BYTESPERPIXEL(surfaceBottom->format) == 3 || SDL_BYTESPERPIXEL(surfaceBottom->format) == 4) &&
+                   (SDL_BYTESPERPIXEL(surfaceBack->format) == 3   || SDL_BYTESPERPIXEL(surfaceBack->format) == 4) &&
+                   (SDL_BYTESPERPIXEL(surfaceFront->format) == 3  || SDL_BYTESPERPIXEL(surfaceFront->format) == 4))
         , "Load cube texture failed: %s. Use 24 or 32 bit depth", folderPath.c_str());
 
         int pixelFormat = GL_RGB;
-        if(4 == surfaceRight->format->BytesPerPixel)
+        if(SDL_BYTESPERPIXEL(surfaceRight->format) == 4)
             pixelFormat = GL_RGBA;
 
         glGenTextures(1, &m_openGLID);
@@ -79,12 +79,12 @@ namespace Beryll
 
         glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 
-        SDL_FreeSurface(surfaceRight);
-        SDL_FreeSurface(surfaceLeft);
-        SDL_FreeSurface(surfaceTop);
-        SDL_FreeSurface(surfaceBottom);
-        SDL_FreeSurface(surfaceBack);
-        SDL_FreeSurface(surfaceFront);
+        SDL_DestroySurface(surfaceRight);
+        SDL_DestroySurface(surfaceLeft);
+        SDL_DestroySurface(surfaceTop);
+        SDL_DestroySurface(surfaceBottom);
+        SDL_DestroySurface(surfaceBack);
+        SDL_DestroySurface(surfaceFront);
 
         m_internalShader = Renderer::createShader(BeryllConstants::skyBoxVertexPath.data(),
                                                   BeryllConstants::skyBoxFragmentPath.data());

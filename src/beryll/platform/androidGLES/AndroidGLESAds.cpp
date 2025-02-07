@@ -7,7 +7,7 @@ namespace Beryll
 
     AndroidGLESAds::AndroidGLESAds()
     {
-        m_jniEnv = static_cast<JNIEnv*>(SDL_AndroidGetJNIEnv());
+        m_jniEnv = static_cast<JNIEnv*>(SDL_GetAndroidJNIEnv());
         if (!m_jniEnv)
         {
             BR_ASSERT(false, "%s", "SDL_AndroidGetJNIEnv() returned nullptr.")
