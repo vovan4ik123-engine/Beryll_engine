@@ -18,7 +18,48 @@ subject to the following restrictions:
 
 #include "BulletCollision/CollisionDispatch/btCollisionDispatcher.h"
 #include "LinearMath/btThreads.h"
-#include <mutex>
+
+#include <atomic>
+
+class Spinlock
+{
+public:
+    void lock()
+    {
+        while(m_flag.test_and_set(std::memory_order_acquire))
+        {
+            // Busy wait.
+        }
+    }
+
+    void unlock()
+    {
+        m_flag.clear(std::memory_order_release);
+    }
+
+private:
+    std::atomic_flag m_flag = ATOMIC_FLAG_INIT;
+};
+
+class ScopedSpinlock
+{
+public:
+    explicit ScopedSpinlock(Spinlock& spinlock) : m_spinlock(spinlock)
+    {
+        m_spinlock.lock();
+    }
+
+    ~ScopedSpinlock()
+    {
+        m_spinlock.unlock();
+    }
+
+    ScopedSpinlock(const ScopedSpinlock&) = delete;
+    ScopedSpinlock& operator=(const ScopedSpinlock&) = delete;
+
+private:
+    Spinlock& m_spinlock;
+};
 
 class btCollisionDispatcherMt : public btCollisionDispatcher
 {
@@ -32,7 +73,7 @@ public:
 
 protected:
 	int m_grainSize;
-    std::mutex m_mutex;
+    Spinlock m_spinLock;
 };
 
 #endif  //BT_COLLISION_DISPATCHER_MT_H

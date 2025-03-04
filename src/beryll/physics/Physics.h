@@ -126,6 +126,46 @@ namespace Beryll
         operator bool() const { return isHit; }
     };
 
+    class Spinlock
+    {
+    public:
+        void lock()
+        {
+            while(m_flag.test_and_set(std::memory_order_acquire))
+            {
+                // Busy wait.
+            }
+        }
+
+        void unlock()
+        {
+            m_flag.clear(std::memory_order_release);
+        }
+
+    private:
+        std::atomic_flag m_flag = ATOMIC_FLAG_INIT;
+    };
+
+    class ScopedSpinlock
+    {
+    public:
+        explicit ScopedSpinlock(Spinlock& spinlock) : m_spinlock(spinlock)
+        {
+            m_spinlock.lock();
+        }
+
+        ~ScopedSpinlock()
+        {
+            m_spinlock.unlock();
+        }
+
+        ScopedSpinlock(const ScopedSpinlock&) = delete;
+        ScopedSpinlock& operator=(const ScopedSpinlock&) = delete;
+
+    private:
+        Spinlock& m_spinlock;
+    };
+
     class Physics final
     {
     public:
@@ -215,7 +255,7 @@ namespace Beryll
 
         static Timer m_timer;
 
-        static std::mutex m_mutex;
+        static Spinlock m_spinLock;
 
         static std::unique_ptr<btDefaultCollisionConfiguration> m_collisionConfiguration;
         static std::unique_ptr<btCollisionDispatcherMt> m_dispatcherMT;

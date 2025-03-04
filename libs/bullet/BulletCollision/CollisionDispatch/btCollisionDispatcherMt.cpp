@@ -43,9 +43,9 @@ btPersistentManifold* btCollisionDispatcherMt::getNewManifold(const btCollisionO
 
 	btPersistentManifold* manifold = new (mem) btPersistentManifold(body0, body1, 0, gContactBreakingThreshold, contactProcessingThreshold);
 
-    // Scope for std::scoped_lock<std::mutex>.
+    // Scope for lock.
 	{
-        std::scoped_lock<std::mutex> lock (m_mutex);
+        ScopedSpinlock lock{m_spinLock};
 
 		manifold->m_index1a = m_manifoldsPtr.size();
 		m_manifoldsPtr.push_back(manifold);
@@ -59,9 +59,9 @@ void btCollisionDispatcherMt::releaseManifold(btPersistentManifold* manifold)
     clearManifold(manifold);
     int findIndex = manifold->m_index1a;
 
-    // Scope for std::scoped_lock<std::mutex>.
+    // Scope for lock.
 	{
-        std::scoped_lock<std::mutex> lock (m_mutex);
+        ScopedSpinlock lock{m_spinLock};
 
 		btAssert(findIndex < m_manifoldsPtr.size());
 		m_manifoldsPtr.swap(findIndex, m_manifoldsPtr.size() - 1);

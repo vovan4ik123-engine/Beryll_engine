@@ -11,7 +11,7 @@ namespace Beryll
     bool Physics::m_simulationEnabled = true;
     float Physics::m_simulationTime = 0.0f;
     int Physics::m_resolutionFactor = 1;
-    std::mutex Physics::m_mutex;
+    Spinlock Physics::m_spinLock;
     std::vector<std::pair<const int, const int>> Physics::m_collisionPairs;
 
     std::vector<std::shared_ptr<btCollisionShape>> Physics::m_collisionShapes;
@@ -530,7 +530,7 @@ namespace Beryll
             return false;
 
         {
-            std::scoped_lock<std::mutex> lock (m_mutex);
+            ScopedSpinlock lock{m_spinLock};
 
             m_collisionPairs.emplace_back(ob1->getCollisionObject()->beryllEngineObjectID,
                                           ob2->getCollisionObject()->beryllEngineObjectID);
@@ -802,7 +802,7 @@ namespace Beryll
     {
         auto iter = m_rigidBodiesMap.find(ID);
 
-        std::scoped_lock<std::mutex> lock (m_mutex);
+        ScopedSpinlock lock{m_spinLock};
 
         if(iter != m_rigidBodiesMap.end() && iter->second->existInDynamicWorld) // Found object by ID and it exist in world.
         {
@@ -815,7 +815,7 @@ namespace Beryll
     {
         auto iter = m_rigidBodiesMap.find(ID);
 
-        std::scoped_lock<std::mutex> lock (m_mutex);
+        ScopedSpinlock lock{m_spinLock};
 
         if(iter != m_rigidBodiesMap.end() && !iter->second->existInDynamicWorld)
         {
