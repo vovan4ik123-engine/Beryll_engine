@@ -88,13 +88,13 @@ namespace Beryll
         if(m_touched && m_touchedTexture)
         {
             ImGui::ImageButton(m_IDAsString.c_str(),
-                               reinterpret_cast<ImTextureID>(ImU64(m_touchedTexture->getID())),
+                               static_cast<ImTextureID>(m_touchedTexture->getID()),
                                ImVec2(width * MainImGUI::getInstance()->getGUIWidth(), height * MainImGUI::getInstance()->getGUIHeight()));
         }
         else
         {
             ImGui::ImageButton(m_IDAsString.c_str(),
-                               reinterpret_cast<ImTextureID>(ImU64(m_defaultTexture->getID())),
+                               static_cast<ImTextureID>(m_defaultTexture->getID()),
                                ImVec2(width * MainImGUI::getInstance()->getGUIWidth(), height * MainImGUI::getInstance()->getGUIHeight()));
         }
 

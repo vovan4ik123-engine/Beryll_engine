@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.16)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -82,6 +82,7 @@ set(Common_SRC
         src/beryll/GUI/Joystick.cpp
         src/beryll/GUI/CheckBox.cpp
         src/beryll/GUI/Text.cpp
+        src/beryll/GUI/GUITexture.cpp
         src/beryll/GUI/SliderHorizontal.cpp
 
         src/beryll/dataBase/DataBase.cpp

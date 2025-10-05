@@ -18,20 +18,18 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
+
 #include "SDL_internal.h"
 
-#ifdef SDL_VIDEO_DRIVER_PSP
+#ifndef SDL_waylandcolor_h_
+#define SDL_waylandcolor_h_
 
-#include <stdio.h>
+#include "../SDL_sysvideo.h"
 
-#include "../../events/SDL_events_c.h"
+struct Wayland_ColorInfoState;
 
-#include "SDL_pspmouse_c.h"
+extern void Wayland_FreeColorInfoState(struct Wayland_ColorInfoState *state);
+extern void Wayland_GetColorInfoForWindow(SDL_WindowData *window_data, bool defer_event_processing);
+extern void Wayland_GetColorInfoForOutput(SDL_DisplayData *display_data, bool defer_event_processing);
 
-// The implementation dependent data for the window manager cursor
-struct WMcursor
-{
-    int unused;
-};
-
-#endif // SDL_VIDEO_DRIVER_PSP
+#endif // SDL_waylandcolor_h_

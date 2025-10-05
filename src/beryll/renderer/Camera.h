@@ -70,16 +70,16 @@ namespace Beryll
             // Check distance.
             if(glm::distance(m_cameraPos, objectPos) > maxViewDistance) { return false; }
 
-            if(Window::getInstance()->currentOrientation == SDL_ORIENTATION_LANDSCAPE ||
-               Window::getInstance()->currentOrientation == SDL_ORIENTATION_LANDSCAPE_FLIPPED)
+            if(Window::getInstance()->currentDisplayOrientation == SDL_ORIENTATION_LANDSCAPE ||
+               Window::getInstance()->currentDisplayOrientation == SDL_ORIENTATION_LANDSCAPE_FLIPPED)
             {
                 if(BeryllUtils::Common::getAngleInRadians(m_cameraDirectionXYZ, glm::normalize(objectPos - m_cameraPos)) > (m_fovRadians * fovMultiplier))
                 {
                     return false;
                 }
             }
-            else if(Window::getInstance()->currentOrientation == SDL_ORIENTATION_PORTRAIT ||
-                    Window::getInstance()->currentOrientation == SDL_ORIENTATION_PORTRAIT_FLIPPED)
+            else if(Window::getInstance()->currentDisplayOrientation == SDL_ORIENTATION_PORTRAIT ||
+                    Window::getInstance()->currentDisplayOrientation == SDL_ORIENTATION_PORTRAIT_FLIPPED)
             {
                 if(BeryllUtils::Common::getAngleInRadians(m_cameraDirectionXYZ, glm::normalize(objectPos - m_cameraPos)) > (m_halfFovRadians * fovMultiplier))
                 {

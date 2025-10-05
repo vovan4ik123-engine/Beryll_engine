@@ -18,7 +18,19 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
+#include "SDL_internal.h"
 
-#include "SDL_pspvideo.h"
+#ifndef SDL_gameinput_h_
+#define SDL_gameinput_h_
 
-// Functions to be exported
+#ifdef HAVE_GAMEINPUT_H
+
+#define COBJMACROS
+#include <gameinput.h>
+
+extern bool SDL_InitGameInput(IGameInput **ppGameInput);
+extern void SDL_QuitGameInput(void);
+
+#endif // HAVE_GAMEINPUT_H
+
+#endif // SDL_gameinput_h_

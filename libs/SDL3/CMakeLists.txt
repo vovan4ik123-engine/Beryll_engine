@@ -5,13 +5,19 @@ if(NOT DEFINED CMAKE_BUILD_TYPE)
 endif()
 
 # See docs/release_checklist.md
-project(SDL3 LANGUAGES C VERSION "3.2.2")
+project(SDL3 LANGUAGES C VERSION "3.2.24")
 
 if(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
   set(SDL3_MAINPROJECT ON)
 else()
   set(SDL3_MAINPROJECT OFF)
 endif()
+
+# Add UTF-8 encoding support for MSVC compiler.
+# This ensures that the MSVC compiler interprets source files as UTF-8 encoded,
+# which is useful for projects containing non-ASCII characters in source files.
+add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
+add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 
 # By default, configure SDL3 in RelWithDebInfo configuration
 if(SDL3_MAINPROJECT)
@@ -73,6 +79,12 @@ include("${SDL3_SOURCE_DIR}/cmake/PreseedEmscriptenCache.cmake")
 
 SDL_DetectCompiler()
 SDL_DetectTargetCPUArchitectures(SDL_CPUS)
+if(APPLE AND CMAKE_OSX_ARCHITECTURES)
+  list(LENGTH CMAKE_OSX_ARCHITECTURES _num_arches)
+  if(_num_arches GREATER 1)
+    set(APPLE_MULTIARCH TRUE)
+  endif()
+endif()
 
 # Increment this if there is an incompatible change - but if that happens,
 # we should rename the library from SDL3 to SDL4, at which point this would
@@ -175,26 +187,6 @@ endif()
 set(SDL_RELOCATABLE_DEFAULT OFF)
 if(MSVC)
   set(SDL_RELOCATABLE_DEFAULT ON)
-endif()
-
-if(MSVC)
-  if(NOT SDL_LIBC)
-    # Make sure /RTC1 is disabled, otherwise it will use functions from the CRT
-    foreach(flag_var
-        CMAKE_C_FLAGS CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_RELEASE
-        CMAKE_C_FLAGS_MINSIZEREL CMAKE_C_FLAGS_RELWITHDEBINFO)
-      string(REGEX REPLACE "/RTC(su|[1su])" "" ${flag_var} "${${flag_var}}")
-    endforeach(flag_var)
-  endif()
-
-  if(MSVC_CLANG)
-    # clang-cl treats /W4 as '-Wall -Wextra' -- we don't need -Wextra
-    foreach(flag_var
-        CMAKE_C_FLAGS CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_RELEASE
-        CMAKE_C_FLAGS_MINSIZEREL CMAKE_C_FLAGS_RELWITHDEBINFO)
-      string(REGEX REPLACE "/W4" "/W3" ${flag_var} "${${flag_var}}")
-    endforeach(flag_var)
-  endif()
 endif()
 
 # All these *_DEFAULT vars will default to ON if not specified,
@@ -300,19 +292,19 @@ set_option(SDL_PTHREADS            "Use POSIX threads for multi-threading" ${SDL
 dep_option(SDL_PTHREADS_SEM        "Use pthread semaphores" ON "SDL_PTHREADS" OFF)
 dep_option(SDL_OSS                 "Support the OSS audio API" ${SDL_OSS_DEFAULT} "UNIX_SYS OR RISCOS;SDL_AUDIO" OFF)
 dep_option(SDL_ALSA                "Support the ALSA audio API" ${UNIX_SYS} "SDL_AUDIO" OFF)
-dep_option(SDL_ALSA_SHARED         "Dynamically load ALSA audio support" ON "SDL_ALSA" OFF)
+dep_option(SDL_ALSA_SHARED         "Dynamically load ALSA audio support" ON "SDL_ALSA;SDL_DEPS_SHARED" OFF)
 dep_option(SDL_JACK                "Support the JACK audio API" ${UNIX_SYS} "SDL_AUDIO" OFF)
-dep_option(SDL_JACK_SHARED         "Dynamically load JACK audio support" ON "SDL_JACK" OFF)
+dep_option(SDL_JACK_SHARED         "Dynamically load JACK audio support" ON "SDL_JACK;SDL_DEPS_SHARED" OFF)
 set_option(SDL_PIPEWIRE            "Use Pipewire audio" ${UNIX_SYS})
-dep_option(SDL_PIPEWIRE_SHARED     "Dynamically load Pipewire support" ON "SDL_PIPEWIRE" OFF)
+dep_option(SDL_PIPEWIRE_SHARED     "Dynamically load Pipewire support" ON "SDL_PIPEWIRE;SDL_DEPS_SHARED" OFF)
 dep_option(SDL_PULSEAUDIO          "Use PulseAudio" ${UNIX_SYS} "SDL_AUDIO" OFF)
-dep_option(SDL_PULSEAUDIO_SHARED   "Dynamically load PulseAudio support" ON "SDL_PULSEAUDIO" OFF)
+dep_option(SDL_PULSEAUDIO_SHARED   "Dynamically load PulseAudio support" ON "SDL_PULSEAUDIO;SDL_DEPS_SHARED" OFF)
 dep_option(SDL_SNDIO               "Support the sndio audio API" ${UNIX_SYS} "SDL_AUDIO" OFF)
-dep_option(SDL_SNDIO_SHARED        "Dynamically load the sndio audio API" ON "SDL_SNDIO" OFF)
+dep_option(SDL_SNDIO_SHARED        "Dynamically load the sndio audio API" ON "SDL_SNDIO;SDL_DEPS_SHARED" OFF)
 set_option(SDL_RPATH               "Use an rpath when linking SDL" ${SDL_RPATH_DEFAULT})
 set_option(SDL_CLOCK_GETTIME       "Use clock_gettime() instead of gettimeofday()" ${SDL_CLOCK_GETTIME_DEFAULT})
 dep_option(SDL_X11                 "Use X11 video driver" ${UNIX_SYS} "SDL_VIDEO" OFF)
-dep_option(SDL_X11_SHARED          "Dynamically load X11 support" ON "SDL_X11" OFF)
+dep_option(SDL_X11_SHARED          "Dynamically load X11 support" ON "SDL_X11;SDL_DEPS_SHARED" OFF)
 dep_option(SDL_X11_XCURSOR         "Enable Xcursor support" ON SDL_X11 OFF)
 dep_option(SDL_X11_XDBE            "Enable Xdbe support" ON SDL_X11 OFF)
 dep_option(SDL_X11_XINPUT          "Enable XInput support" ON SDL_X11 OFF)
@@ -322,9 +314,9 @@ dep_option(SDL_X11_XSCRNSAVER      "Enable Xscrnsaver support" ON SDL_X11 OFF)
 dep_option(SDL_X11_XSHAPE          "Enable XShape support" ON SDL_X11 OFF)
 dep_option(SDL_X11_XSYNC           "Enable Xsync support" ON SDL_X11 OFF)
 dep_option(SDL_WAYLAND             "Use Wayland video driver" ${UNIX_SYS} "SDL_VIDEO" OFF)
-dep_option(SDL_WAYLAND_SHARED      "Dynamically load Wayland support" ON "SDL_WAYLAND" OFF)
+dep_option(SDL_WAYLAND_SHARED      "Dynamically load Wayland support" ON "SDL_WAYLAND;SDL_DEPS_SHARED" OFF)
 dep_option(SDL_WAYLAND_LIBDECOR    "Use client-side window decorations on Wayland" ON "SDL_WAYLAND" OFF)
-dep_option(SDL_WAYLAND_LIBDECOR_SHARED     "Dynamically load libdecor support" ON "SDL_WAYLAND_LIBDECOR;SDL_WAYLAND_SHARED" OFF)
+dep_option(SDL_WAYLAND_LIBDECOR_SHARED     "Dynamically load libdecor support" ON "SDL_WAYLAND_LIBDECOR;SDL_WAYLAND_SHARED;SDL_DEPS_SHARED" OFF)
 dep_option(SDL_RPI                 "Use Raspberry Pi video driver" ON "SDL_VIDEO;UNIX_SYS;SDL_CPU_ARM32 OR SDL_CPU_ARM64" OFF)
 dep_option(SDL_ROCKCHIP            "Use ROCKCHIP Hardware Acceleration video driver" ON "SDL_VIDEO;UNIX_SYS;SDL_CPU_ARM32 OR SDL_CPU_ARM64" OFF)
 dep_option(SDL_COCOA               "Use Cocoa video driver" ON "APPLE" OFF)
@@ -334,7 +326,7 @@ dep_option(SDL_WASAPI              "Use the Windows WASAPI audio driver" ON "WIN
 dep_option(SDL_RENDER_D3D          "Enable the Direct3D 9 render driver" ON "SDL_RENDER;SDL_DIRECTX" OFF)
 dep_option(SDL_RENDER_D3D11        "Enable the Direct3D 11 render driver" ON "SDL_RENDER;SDL_DIRECTX" OFF)
 dep_option(SDL_RENDER_D3D12        "Enable the Direct3D 12 render driver" ON "SDL_RENDER;SDL_DIRECTX" OFF)
-dep_option(SDL_RENDER_METAL        "Enable the Metal render driver" ON "SDL_RENDER;${APPLE}" OFF)
+dep_option(SDL_RENDER_METAL        "Enable the Metal render driver" ON "SDL_RENDER;APPLE" OFF)
 dep_option(SDL_RENDER_GPU          "Enable the SDL_GPU render driver" ON "SDL_RENDER;SDL_GPU" OFF)
 dep_option(SDL_VIVANTE             "Use Vivante EGL video driver" ON "${UNIX_SYS};SDL_CPU_ARM32" OFF)
 dep_option(SDL_VULKAN              "Enable Vulkan support" ON "SDL_VIDEO;ANDROID OR APPLE OR LINUX OR FREEBSD OR WINDOWS" OFF)
@@ -342,14 +334,14 @@ dep_option(SDL_RENDER_VULKAN       "Enable the Vulkan render driver" ON "SDL_REN
 dep_option(SDL_METAL               "Enable Metal support" ON "APPLE" OFF)
 set_option(SDL_OPENVR              "Use OpenVR video driver" OFF)
 dep_option(SDL_KMSDRM              "Use KMS DRM video driver" ${UNIX_SYS} "SDL_VIDEO" OFF)
-dep_option(SDL_KMSDRM_SHARED       "Dynamically load KMS DRM support" ON "SDL_KMSDRM" OFF)
+dep_option(SDL_KMSDRM_SHARED       "Dynamically load KMS DRM support" ON "SDL_KMSDRM;SDL_DEPS_SHARED" OFF)
 set_option(SDL_OFFSCREEN           "Use offscreen video driver" ON)
 dep_option(SDL_DUMMYCAMERA         "Support the dummy camera driver" ON SDL_CAMERA OFF)
 option_string(SDL_BACKGROUNDING_SIGNAL "number to use for magic backgrounding signal or 'OFF'" OFF)
 option_string(SDL_FOREGROUNDING_SIGNAL "number to use for magic foregrounding signal or 'OFF'" OFF)
 dep_option(SDL_HIDAPI              "Enable the HIDAPI subsystem" ON "NOT VISIONOS" OFF)
 dep_option(SDL_HIDAPI_LIBUSB       "Use libusb for low level joystick drivers" ON SDL_HIDAPI_LIBUSB_AVAILABLE OFF)
-dep_option(SDL_HIDAPI_LIBUSB_SHARED "Dynamically load libusb support" ON SDL_HIDAPI_LIBUSB OFF)
+dep_option(SDL_HIDAPI_LIBUSB_SHARED "Dynamically load libusb support" ON "SDL_HIDAPI_LIBUSB;SDL_DEPS_SHARED" OFF)
 dep_option(SDL_HIDAPI_JOYSTICK     "Use HIDAPI for low level joystick drivers" ON SDL_HIDAPI OFF)
 dep_option(SDL_VIRTUAL_JOYSTICK    "Enable the virtual-joystick driver" ON SDL_HIDAPI OFF)
 set_option(SDL_LIBUDEV             "Enable libudev support" ON)
@@ -383,6 +375,29 @@ endif()
 
 if(SDL_PRESEED)
   SDL_Preseed_CMakeCache()
+endif()
+
+if(MSVC)
+  if(NOT SDL_LIBC)
+    # Make sure /RTC1 is disabled, otherwise it will use functions from the CRT
+    foreach(flag_var
+        CMAKE_C_FLAGS CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_RELEASE
+        CMAKE_C_FLAGS_MINSIZEREL CMAKE_C_FLAGS_RELWITHDEBINFO
+        CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
+        CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
+      string(REGEX REPLACE "/RTC(su|[1su])" "" ${flag_var} "${${flag_var}}")
+    endforeach(flag_var)
+    set(CMAKE_MSVC_RUNTIME_CHECKS "")
+  endif()
+
+  if(MSVC_CLANG)
+    # clang-cl treats /W4 as '-Wall -Wextra' -- we don't need -Wextra
+    foreach(flag_var
+        CMAKE_C_FLAGS CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_RELEASE
+        CMAKE_C_FLAGS_MINSIZEREL CMAKE_C_FLAGS_RELWITHDEBINFO)
+      string(REGEX REPLACE "/W4" "/W3" ${flag_var} "${${flag_var}}")
+    endforeach(flag_var)
+  endif()
 endif()
 
 if(SDL_SHARED)
@@ -598,6 +613,11 @@ if(MSVC)
     # Mark SDL3.dll as compatible with Control-flow Enforcement Technology (CET)
     sdl_shared_link_options("-CETCOMPAT")
   endif()
+
+  # for VS >= 17.14 targeting ARM64: inline the Interlocked funcs
+  if(MSVC_VERSION GREATER 1943 AND SDL_CPU_ARM64 AND NOT SDL_LIBC)
+    sdl_compile_options(PRIVATE "/forceInterlockedFunctions-")
+  endif()
 endif()
 
 if(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
@@ -614,7 +634,7 @@ if(SDL_ASSEMBLY)
     if(USE_GCC OR USE_CLANG OR USE_INTELCC)
       string(APPEND CMAKE_REQUIRED_FLAGS " -mmmx")
     endif()
-    check_c_source_compiles("
+    check_x86_source_compiles([==[
       #include <mmintrin.h>
       void ints_add(int *dest, int *a, int *b, unsigned size) {
         for (; size >= 2; size -= 2, dest += 2, a += 2, b += 2) {
@@ -624,7 +644,7 @@ if(SDL_ASSEMBLY)
       int main(int argc, char *argv[]) {
         ints_add((int*)0, (int*)0, (int*)0, 0);
         return 0;
-      }" COMPILER_SUPPORTS_MMX)
+      }]==] COMPILER_SUPPORTS_MMX)
     cmake_pop_check_state()
     if(COMPILER_SUPPORTS_MMX)
       set(HAVE_MMX TRUE)
@@ -635,7 +655,7 @@ if(SDL_ASSEMBLY)
     if(USE_GCC OR USE_CLANG OR USE_INTELCC)
       string(APPEND CMAKE_REQUIRED_FLAGS " -msse")
     endif()
-    check_c_source_compiles("
+    check_x86_source_compiles([==[
       #include <xmmintrin.h>
       void floats_add(float *dest, float *a, float *b, unsigned size) {
         for (; size >= 4; size -= 4, dest += 4, a += 4, b += 4) {
@@ -645,7 +665,7 @@ if(SDL_ASSEMBLY)
       int main(int argc, char **argv) {
         floats_add((float*)0, (float*)0, (float*)0, 0);
         return 0;
-      }" COMPILER_SUPPORTS_SSE)
+      }]==] COMPILER_SUPPORTS_SSE)
     cmake_pop_check_state()
     if(COMPILER_SUPPORTS_SSE)
       set(HAVE_SSE TRUE)
@@ -656,7 +676,7 @@ if(SDL_ASSEMBLY)
     if(USE_GCC OR USE_CLANG OR USE_INTELCC)
       string(APPEND CMAKE_REQUIRED_FLAGS " -msse2")
     endif()
-    check_c_source_compiles("
+    check_x86_source_compiles([==[
       #include <emmintrin.h>
       void doubles_add(double *dest, double *a, double *b, unsigned size) {
         for (; size >= 4; size -= 4, dest += 4, a += 4, b += 4) {
@@ -666,7 +686,7 @@ if(SDL_ASSEMBLY)
       int main(int argc, char **argv) {
         doubles_add((double*)0, (double*)0, (double*)0, 0);
         return 0;
-      }" COMPILER_SUPPORTS_SSE2)
+      }]==] COMPILER_SUPPORTS_SSE2)
     cmake_pop_check_state()
     if(COMPILER_SUPPORTS_SSE2)
       set(HAVE_SSE2 TRUE)
@@ -677,7 +697,7 @@ if(SDL_ASSEMBLY)
     if(USE_GCC OR USE_CLANG OR USE_INTELCC)
       string(APPEND CMAKE_REQUIRED_FLAGS " -msse3")
     endif()
-    check_c_source_compiles("
+    check_x86_source_compiles([==[
       #include <pmmintrin.h>
       void ints_add(int *dest, int *a, int *b, unsigned size) {
         for (; size >= 4; size -= 4, dest += 4, a += 4, b += 4) {
@@ -687,7 +707,7 @@ if(SDL_ASSEMBLY)
       int main(int argc, char **argv) {
         ints_add((int*)0, (int*)0, (int*)0, 0);
         return 0;
-      }" COMPILER_SUPPORTS_SSE3)
+      }]==] COMPILER_SUPPORTS_SSE3)
     cmake_pop_check_state()
     if(COMPILER_SUPPORTS_SSE3)
       set(HAVE_SSE3 TRUE)
@@ -698,7 +718,7 @@ if(SDL_ASSEMBLY)
     if(USE_GCC OR USE_CLANG OR USE_INTELCC)
       string(APPEND CMAKE_REQUIRED_FLAGS " -msse4.1")
     endif()
-    check_c_source_compiles("
+    check_x86_source_compiles([==[
       #include <smmintrin.h>
       void ints_mul(int *dest, int *a, int *b, unsigned size) {
         for (; size >= 4; size -= 4, dest += 4, a += 4, b += 4) {
@@ -708,7 +728,7 @@ if(SDL_ASSEMBLY)
       int main(int argc, char **argv) {
         ints_mul((int*)0, (int*)0, (int*)0, 0);
         return 0;
-      }" COMPILER_SUPPORTS_SSE4_1)
+      }]==] COMPILER_SUPPORTS_SSE4_1)
     cmake_pop_check_state()
     if(COMPILER_SUPPORTS_SSE4_1)
       set(HAVE_SSE4_1 TRUE)
@@ -719,19 +739,14 @@ if(SDL_ASSEMBLY)
     if(USE_GCC OR USE_CLANG OR USE_INTELCC)
       string(APPEND CMAKE_REQUIRED_FLAGS " -msse4.2")
     endif()
-    check_c_source_compiles("
+    check_x86_source_compiles([==[
       #include <nmmintrin.h>
-      unsigned calc_crc32c(const char *text, unsigned len) {
-          unsigned crc32c = ~0;
-          for (; len >= 4; len -= 4, text += 4) {
-            crc32c = (unsigned)_mm_crc32_u32(crc32c, *(unsigned*)text);
-          }
-          return crc32c;
-      }
+      __m128i bitmask;
+      char data[16];
       int main(int argc, char **argv) {
-        calc_crc32c(\"SDL_SSE4\",8);
+        bitmask = _mm_cmpgt_epi64(_mm_set1_epi64x(0), _mm_loadu_si128((void*)data));
         return 0;
-      }" COMPILER_SUPPORTS_SSE4_2)
+      }]==] COMPILER_SUPPORTS_SSE4_2)
     cmake_pop_check_state()
     if(COMPILER_SUPPORTS_SSE4_2)
       set(HAVE_SSE4_2 TRUE)
@@ -742,7 +757,7 @@ if(SDL_ASSEMBLY)
     if(USE_GCC OR USE_CLANG OR USE_INTELCC)
       string(APPEND CMAKE_REQUIRED_FLAGS " -mavx")
     endif()
-    check_c_source_compiles("
+    check_x86_source_compiles([==[
       #include <immintrin.h>
       void floats_add(float *dest, float *a, float *b, unsigned size) {
         for (; size >= 8; size -= 8, dest += 8, a += 8, b += 8) {
@@ -752,7 +767,7 @@ if(SDL_ASSEMBLY)
       int main(int argc, char **argv) {
         floats_add((float*)0, (float*)0, (float*)0, 0);
         return 0;
-      }" COMPILER_SUPPORTS_AVX)
+      }]==] COMPILER_SUPPORTS_AVX)
     cmake_pop_check_state()
     if(COMPILER_SUPPORTS_AVX)
       set(HAVE_AVX TRUE)
@@ -763,7 +778,7 @@ if(SDL_ASSEMBLY)
     if(USE_GCC OR USE_CLANG OR USE_INTELCC)
       string(APPEND CMAKE_REQUIRED_FLAGS " -mavx2")
     endif()
-    check_c_source_compiles("
+    check_x86_source_compiles([==[
       #include <immintrin.h>
       void ints_add(int *dest, int *a, int *b, unsigned size) {
         for (; size >= 8; size -= 8, dest += 8, a += 8, b += 8) {
@@ -773,7 +788,7 @@ if(SDL_ASSEMBLY)
       int main(int argc, char **argv) {
         ints_add((int*)0, (int*)0, (int*)0, 0);
         return 0;
-      }" COMPILER_SUPPORTS_AVX2)
+      }]==] COMPILER_SUPPORTS_AVX2)
     cmake_pop_check_state()
     if(COMPILER_SUPPORTS_AVX2)
       set(HAVE_AVX2 TRUE)
@@ -784,7 +799,7 @@ if(SDL_ASSEMBLY)
     if(USE_GCC OR USE_CLANG OR USE_INTELCC)
       string(APPEND CMAKE_REQUIRED_FLAGS " -mavx512f")
     endif()
-    check_c_source_compiles("
+    check_x86_source_compiles([==[
       #include <immintrin.h>
       void floats_add(float *dest, float *a, float *b, unsigned size) {
         for (; size >= 16; size -= 16, dest += 16, a += 16, b += 16) {
@@ -794,7 +809,7 @@ if(SDL_ASSEMBLY)
       int main(int argc, char **argv) {
         floats_add((float*)0, (float*)0, (float*)0, 0);
         return 0;
-      }" COMPILER_SUPPORTS_AVX512F)
+      }]==] COMPILER_SUPPORTS_AVX512F)
     cmake_pop_check_state()
     if(COMPILER_SUPPORTS_AVX512F)
       set(HAVE_AVX512F TRUE)
@@ -802,18 +817,17 @@ if(SDL_ASSEMBLY)
   endif()
 
   if(SDL_ARMNEON)
-    check_c_source_compiles("
-        #include <arm_neon.h>
-        void floats_add(float *dest, float *a, float *b, unsigned size) {
-          for (; size >= 4; size -= 4, dest += 4, a += 4, b += 4) {
-            vst1q_f32(dest, vaddq_f32(vld1q_f32(a), vld1q_f32(b)));
-          }
+    check_arm_source_compiles([==[
+      #include <arm_neon.h>
+      void floats_add(float *dest, float *a, float *b, unsigned size) {
+        for (; size >= 4; size -= 4, dest += 4, a += 4, b += 4) {
+          vst1q_f32(dest, vaddq_f32(vld1q_f32(a), vld1q_f32(b)));
         }
-        int main(int argc, char *argv[]) {
-          floats_add((float*)0, (float*)0, (float*)0, 0);
-          return 0;
-         }" COMPILER_SUPPORTS_ARMNEON)
-
+      }
+      int main(int argc, char *argv[]) {
+        floats_add((float*)0, (float*)0, (float*)0, 0);
+        return 0;
+      }]==] COMPILER_SUPPORTS_ARMNEON)
     if(COMPILER_SUPPORTS_ARMNEON)
       set(HAVE_ARMNEON TRUE)
     endif()
@@ -1016,8 +1030,10 @@ if(SDL_LIBC)
   cmake_push_check_state()
   if(MSVC)
     string(APPEND CMAKE_REQUIRED_FLAGS " -we4244 -WX")  # 'conversion' conversion from 'type1' to 'type2', possible loss of data
-  else()
+  elseif(HAVE_GCC_WFLOAT_CONVERSION)
     string(APPEND CMAKE_REQUIRED_FLAGS " -Wfloat-conversion -Werror")
+  else()
+    string(APPEND CMAKE_REQUIRED_FLAGS " -Wconversion -Werror")
   endif()
   foreach(math_fn isinf isnan)
     string(TOUPPER "${math_fn}" MATH_FN)
@@ -1055,6 +1071,7 @@ if(SDL_LIBC)
     check_symbol_exists(gethostname "unistd.h" HAVE_GETHOSTNAME)
     check_symbol_exists(getpagesize "unistd.h" HAVE_GETPAGESIZE)
     check_symbol_exists(sigaction "signal.h" HAVE_SIGACTION)
+    check_symbol_exists(sigtimedwait "signal.h" HAVE_SIGTIMEDWAIT)
     check_symbol_exists(setjmp "setjmp.h" HAVE_SETJMP)
     check_symbol_exists(nanosleep "time.h" HAVE_NANOSLEEP)
     check_symbol_exists(gmtime_r "time.h" HAVE_GMTIME_R)
@@ -1255,8 +1272,8 @@ if(ANDROID)
   list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake/android")
 
   sdl_glob_sources("${SDL3_SOURCE_DIR}/src/core/android/*.c")
-  sdl_sources("${ANDROID_NDK}/sources/android/cpufeatures/cpu-features.c")
-  set_property(SOURCE "${ANDROID_NDK}/sources/android/cpufeatures/cpu-features.c" APPEND_STRING PROPERTY COMPILE_FLAGS " -Wno-declaration-after-statement")
+  sdl_sources("${CMAKE_ANDROID_NDK}/sources/android/cpufeatures/cpu-features.c")
+  set_property(SOURCE "${CMAKE_ANDROID_NDK}/sources/android/cpufeatures/cpu-features.c" APPEND_STRING PROPERTY COMPILE_FLAGS " -Wno-declaration-after-statement")
 
   sdl_glob_sources("${SDL3_SOURCE_DIR}/src/misc/android/*.c")
   set(HAVE_SDL_MISC TRUE)
@@ -1300,9 +1317,7 @@ if(ANDROID)
     set(HAVE_SDL_HAPTIC TRUE)
   endif()
 
-  if(SDL_HIDAPI)
-    CheckHIDAPI()
-  endif()
+  CheckHIDAPI()
 
   if(SDL_JOYSTICK)
     set(SDL_JOYSTICK_ANDROID 1)
@@ -2152,6 +2167,7 @@ elseif(APPLE)
       set(SDL_CAMERA_DRIVER_COREMEDIA 1)
       set(HAVE_CAMERA TRUE)
       sdl_glob_sources("${SDL3_SOURCE_DIR}/src/camera/coremedia/*.m")
+      set(SDL_FRAMEWORK_AVFOUNDATION 1)
     endif()
   endif()
 
@@ -2853,6 +2869,7 @@ elseif(N3DS)
   set(SDL_THREAD_N3DS 1)
   sdl_glob_sources("${SDL3_SOURCE_DIR}/src/thread/n3ds/*.c")
   sdl_sources(
+    "${SDL3_SOURCE_DIR}/src/thread/generic/SDL_syscond.c"
     "${SDL3_SOURCE_DIR}/src/thread/generic/SDL_systls.c"
     "${SDL3_SOURCE_DIR}/src/thread/generic/SDL_sysrwlock.c"
   )
@@ -2916,7 +2933,7 @@ if(WINDOWS)
   sdl_glob_sources("${SDL3_SOURCE_DIR}/src/process/windows/*.c")
   set(SDL_PROCESS_WINDOWS 1)
   set(HAVE_SDL_PROCESS TRUE)
-else()
+elseif(NOT ANDROID)
   check_c_source_compiles("
 #include <spawn.h>
 #include <unistd.h>
@@ -2979,7 +2996,7 @@ if(SDL_GPU)
     set(SDL_GPU_D3D11 1)
     set(HAVE_SDL_GPU TRUE)
   endif()
-  if(SDL_RENDER_D3D12)
+  if(WINDOWS)
     sdl_glob_sources("${SDL3_SOURCE_DIR}/src/gpu/d3d12/*.c")
     set(SDL_GPU_D3D12 1)
     set(HAVE_SDL_GPU TRUE)
@@ -3106,14 +3123,15 @@ endforeach()
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/REVISION.txt")
   file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/REVISION.txt" revisions)
   list(GET revisions 0 revisions_0)
-  string(STRIP "${revisions_0}" SDL_REVISION)
+  string(STRIP "${revisions_0}" revisions_0_stripped)
+  set(SDL_REVISION "SDL-${revisions_0_stripped}")
 else()
   set(SDL_REVISION "" CACHE STRING "Custom SDL revision (only used when REVISION.txt does not exist)")
 endif()
 if(NOT SDL_REVISION)
   # If SDL_REVISION is not overrided, use git to describe
   git_describe(SDL_REVISION_GIT)
-  set(SDL_REVISION "SDL3-${SDL3_VERSION}-${SDL_REVISION_GIT}")
+  set(SDL_REVISION "SDL-${SDL3_VERSION}-${SDL_REVISION_GIT}")
 endif()
 
 execute_process(COMMAND "${CMAKE_COMMAND}" -E make_directory "${SDL3_BINARY_DIR}/include-revision/SDL3")
@@ -3250,7 +3268,7 @@ else()
 endif()
 
 if(ANDROID)
-  sdl_include_directories(PRIVATE SYSTEM "${ANDROID_NDK}/sources/android/cpufeatures")
+  sdl_include_directories(PRIVATE SYSTEM "${CMAKE_ANDROID_NDK}/sources/android/cpufeatures")
 endif()
 
 if(APPLE)

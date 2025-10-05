@@ -810,7 +810,8 @@ namespace Beryll
             iter->second->existInDynamicWorld = false;
         }
     }
-
+    // Is dangerous call restoreObject() from many threads especially during ray casts
+    // because this change m_dynamicsWorldMT state.
     void Physics::restoreObject(const int ID, bool resetVelocities)
     {
         auto iter = m_rigidBodiesMap.find(ID);

@@ -89,12 +89,13 @@ struct CollisionDispatcherUpdater : public btIParallelForBody
 
 	CollisionDispatcherUpdater()
 	{
-		mPairArray = NULL;
-		mCallback = NULL;
-		mDispatcher = NULL;
-		mInfo = NULL;
+		mPairArray = nullptr;
+		mCallback = nullptr;
+		mDispatcher = nullptr;
+		mInfo = nullptr;
 	}
-	void forLoop(int iBegin, int iEnd) const
+
+	void forLoop(int iBegin, int iEnd) const override
 	{
 		for (int i = iBegin; i < iEnd; ++i)
 		{

@@ -87,6 +87,11 @@ namespace Beryll
         else
             m_screenAspectRation = float(m_screenHeight) / float(m_screenWidth);
 
+        currentDisplayID = SDL_GetDisplayForWindow(m_window);
+        BR_ASSERT((currentDisplayID != 0), "%s", "Can not find current display ID.");
+        currentDisplayOrientation = SDL_GetCurrentDisplayOrientation(currentDisplayID);
+        BR_ASSERT((currentDisplayOrientation != SDL_ORIENTATION_UNKNOWN), "%s", "Can not find current display ID.");
+
         int check = 0;
         glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &check);
         BR_INFO("GL_MAX_TEXTURE_IMAGE_UNITS: %d", check);
@@ -150,6 +155,11 @@ namespace Beryll
             m_screenAspectRation = float(m_screenWidth) / float(m_screenHeight);
         else
             m_screenAspectRation = float(m_screenHeight) / float(m_screenWidth);
+
+        currentDisplayID = SDL_GetDisplayForWindow(m_window);
+        BR_ASSERT((currentDisplayID != 0), "%s", "Can not find current display ID.");
+        currentDisplayOrientation = SDL_GetCurrentDisplayOrientation(currentDisplayID);
+        BR_ASSERT((currentDisplayOrientation != SDL_ORIENTATION_UNKNOWN), "%s", "Can not find current display ID.");
 
         BR_INFO("AndroidGLESWindow re created. width: %d, height: %d", m_screenWidth, m_screenHeight);
     }

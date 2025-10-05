@@ -5,7 +5,7 @@ Add to app/build.gradle
         ...................................................
 
         // Billing system.
-        implementation 'com.android.billingclient:billing:7.0.0'
+        implementation 'com.android.billingclient:billing:8.0.0'
     }
 
 Add to AndroidManifest.xml
@@ -55,6 +55,7 @@ java/managers/BillingManager:
     import com.android.billingclient.api.Purchase;
     import com.android.billingclient.api.PurchasesUpdatedListener;
     import com.android.billingclient.api.QueryProductDetailsParams;
+    import com.android.billingclient.api.QueryProductDetailsResult;
 
     import org.libsdl.app.SDLActivity;
 
@@ -62,7 +63,7 @@ java/managers/BillingManager:
     import java.util.List;
 
     public class BillingManager implements PurchasesUpdatedListener, ProductDetailsResponseListener, BillingClientStateListener {
-        private static int connectionFailures = 0;
+        //private static int connectionFailures = 0;
         private static String inAppProductID = "";
 
         private static BillingManager billingManager;
@@ -75,6 +76,7 @@ java/managers/BillingManager:
             billingClient = BillingClient.newBuilder(activity)
                     .setListener(billingManager) // PurchasesUpdatedListener
                     .enablePendingPurchases(PendingPurchasesParams.newBuilder().enableOneTimeProducts().build())
+                    .enableAutoServiceReconnection() // Now we dont need implement onBillingServiceDisconnected().
                     .build();
         }
 
@@ -121,17 +123,16 @@ java/managers/BillingManager:
         }
 
         // ProductDetailsResponseListener
-        public void onProductDetailsResponse(@NonNull BillingResult billingResult, @NonNull List<ProductDetails> productDetailsList) {
+        @Override
+        public void onProductDetailsResponse(@NonNull BillingResult billingResult, @NonNull QueryProductDetailsResult productDetailsResult) {
             Log.v("BillingManager", "testBillingLogs onProductDetailsResponse() ThreadID: " + Thread.currentThread().getId());
 
             try {
                 List<BillingFlowParams.ProductDetailsParams> productDetailsParamsList = new ArrayList<BillingFlowParams.ProductDetailsParams>();
 
-                // For loop for iterating over the List.
-                for(int i = 0; i < productDetailsList.size(); ++i) {
-
+                for (ProductDetails productDetails : productDetailsResult.getProductDetailsList()) {
                     BillingFlowParams.ProductDetailsParams param = BillingFlowParams.ProductDetailsParams.newBuilder()
-                            .setProductDetails(productDetailsList.get(i))
+                            .setProductDetails(productDetails)
                             .build();
 
                     productDetailsParamsList.add(param);
@@ -180,16 +181,16 @@ java/managers/BillingManager:
 
         @Override
         public void onBillingServiceDisconnected() {
-            Log.v("BillingManager", "testBillingLogs onBillingServiceDisconnected() ThreadID: " + Thread.currentThread().getId());
-            // Try to restart the connection on the next request to
-            // Google Play by calling the startConnection() method.
-            if(connectionFailures < 2) {
-                ++connectionFailures;
-                makeInAppPurchase(inAppProductID);
-            }
-            else {
-                connectionFailures = 0;
-            }
+    //        Log.v("BillingManager", "testBillingLogs onBillingServiceDisconnected() ThreadID: " + Thread.currentThread().getId());
+    //        // Try to restart the connection on the next request to
+    //        // Google Play by calling the startConnection() method.
+    //        if(connectionFailures < 2) {
+    //            ++connectionFailures;
+    //            makeInAppPurchase(inAppProductID);
+    //        }
+    //        else {
+    //            connectionFailures = 0;
+    //        }
         }
 
         public static native void billingSystemSuccessCallback();

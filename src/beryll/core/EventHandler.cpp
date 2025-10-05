@@ -126,10 +126,10 @@ namespace Beryll
 
 //SCREEN
                 case SDL_EVENT_DISPLAY_ORIENTATION :
-                    if (SDL_GetCurrentDisplayOrientation(0) != Window::getInstance()->currentOrientation)
+                    if (SDL_GetCurrentDisplayOrientation(Window::getInstance()->currentDisplayID) != Window::getInstance()->currentDisplayOrientation)
                     {
                         m_events[static_cast<int>(EventID::DISPLAY_ORIENTATION_CHANGE)] = true;
-                        Window::getInstance()->currentOrientation = SDL_GetCurrentDisplayOrientation(0);
+                        Window::getInstance()->currentDisplayOrientation = SDL_GetCurrentDisplayOrientation(Window::getInstance()->currentDisplayID);
                     }
                     break;
 //END SCREEN

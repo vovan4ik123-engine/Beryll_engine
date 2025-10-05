@@ -51,7 +51,8 @@ namespace Beryll
         // Metal specific methods.
         // ...
 
-        SDL_DisplayOrientation currentOrientation = SDL_ORIENTATION_UNKNOWN;
+        SDL_DisplayID currentDisplayID = 0;
+        SDL_DisplayOrientation currentDisplayOrientation = SDL_ORIENTATION_UNKNOWN;
 
     protected:
         Window() {}
