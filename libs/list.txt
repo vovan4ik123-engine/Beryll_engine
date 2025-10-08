@@ -1,9 +1,9 @@
 SDL         3.2.24
 SDL_mixer   3.0.0
-SDL_image   3.2.0
+SDL_image   3.2.0  need update 3.2.4
 SDL_net     3.0.0
 ImGUI       1.91.8
 glm         1.0.1
-assimp      5.3.1
+assimp      5.3.1  need update 6.0.2
 bullet      3.2.5
-sqlite      3.45.0
+sqlite      3.50.4
