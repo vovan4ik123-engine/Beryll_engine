@@ -1,6 +1,6 @@
 SDL         3.2.24
 SDL_mixer   3.0.0
-SDL_image   3.2.0  need update 3.2.4
+SDL_image   3.2.4
 SDL_net     3.0.0
 ImGUI       1.91.8
 glm         1.0.1
