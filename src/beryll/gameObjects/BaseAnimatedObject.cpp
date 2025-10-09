@@ -23,19 +23,26 @@ namespace Beryll
         else
         {
             BR_INFO("Load animated object: %s", filePath);
-            std::shared_ptr<Assimp::Importer> importer = std::make_shared<Assimp::Importer>();
-            const aiScene* scene = nullptr;
+
+            const std::string path = filePath;
+            const size_t lastDotPos = path.find_last_of('.');
+            BR_ASSERT(lastDotPos != std::string::npos, "%s", "File does not have extension.");
+            const std::string fileExtension = path.substr(lastDotPos + 1);
+            BR_ASSERT((fileExtension == "fbx" || fileExtension == "dae"), "%s", "File extension must be fbx or dae.");
 
             uint32_t bufferSize = 0;
             char *buffer = BeryllUtils::File::readToBuffer(filePath, &bufferSize);
 
+            std::shared_ptr<Assimp::Importer> importer = std::make_shared<Assimp::Importer>();
+            const aiScene* scene = nullptr;
             scene = importer->ReadFileFromMemory(buffer, bufferSize,
                                                  aiProcess_Triangulate | aiProcess_FlipUVs |
-                                                 aiProcess_JoinIdenticalVertices | aiProcess_CalcTangentSpace);
+                                                 aiProcess_JoinIdenticalVertices | aiProcess_CalcTangentSpace,
+                                                 fileExtension.c_str());
             delete[] buffer;
             if(!scene || !scene->mRootNode || scene->mFlags == AI_SCENE_FLAGS_INCOMPLETE)
             {
-                BR_ASSERT(false, "Scene loading error for file: %s", filePath);
+                 BR_ASSERT(false, "Scene loading error for file: %s", filePath);
             }
 
             m_scene = scene;

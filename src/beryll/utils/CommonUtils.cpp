@@ -107,16 +107,21 @@ namespace BeryllUtils
 
     std::vector<glm::vec3> Common::loadMeshVerticesToVector(const char* filePath)
     {
-        BR_ASSERT((std::string(filePath).substr(std::string(filePath).find_last_of('.')) == ".fbx"),
-                  "Mesh must be in .fbx file: %s", filePath);
-
         BR_INFO("Loading vertices to vector from file: %s", filePath);
+
+        const std::string path = filePath;
+        const size_t lastDotPos = path.find_last_of('.');
+        BR_ASSERT(lastDotPos != std::string::npos, "%s", "File does not have extension.");
+        const std::string fileExtension = path.substr(lastDotPos + 1);
+        BR_ASSERT((fileExtension == "fbx"), "%s", "File extension must be fbx or dae.");
 
         uint32_t bufferSize = 0;
         char* buffer = BeryllUtils::File::readToBuffer(filePath, &bufferSize);
 
         Assimp::Importer importer;
-        const aiScene* scene = importer.ReadFileFromMemory(buffer, bufferSize, aiProcess_JoinIdenticalVertices);
+        const aiScene* scene = importer.ReadFileFromMemory(buffer, bufferSize,
+                                                           aiProcess_JoinIdenticalVertices,
+                                                           fileExtension.c_str());
         delete[] buffer;
         if(!scene || !scene->mRootNode || scene->mFlags == AI_SCENE_FLAGS_INCOMPLETE)
         {

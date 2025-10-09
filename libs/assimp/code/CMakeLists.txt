@@ -1,6 +1,6 @@
 # Open Asset Import Library (assimp)
 # ----------------------------------------------------------------------
-# Copyright (c) 2006-2022, assimp team
+# Copyright (c) 2006-2025, assimp team
 #
 # All rights reserved.
 #
@@ -42,7 +42,7 @@
 # 3) Add libassimp using the file lists (eliminates duplication of file names between
 #    source groups and library command)
 #
-cmake_minimum_required( VERSION 3.10 )
+cmake_minimum_required( VERSION 3.22 )
 SET( HEADER_PATH ../include/assimp )
 
 if(NOT ANDROID AND ASSIMP_ANDROID_JNIIOSYSTEM)
@@ -271,7 +271,6 @@ MACRO(ADD_ASSIMP_IMPORTER name)
 ENDMACRO()
 
 if (NOT ASSIMP_NO_EXPORT)
-
   # if this variable is set to TRUE, the user can manually disable exporters by setting
   # ASSIMP_BUILD_XXX_EXPORTER to FALSE for each exporter
   # if this variable is set to FALSE, the user can manually enable exporters by setting
@@ -312,52 +311,58 @@ SET(ASSIMP_EXPORTER_SRCS "")
 SET(ASSIMP_EXPORTERS_ENABLED "") # list of enabled exporters
 SET(ASSIMP_EXPORTERS_DISABLED "") # disabled exporters list (used to print)
 
+add_definitions(-DASSIMP_BUILD_NO_USD_IMPORTER)
+add_definitions(-DASSIMP_BUILD_NO_X_IMPORTER)
 add_definitions(-DASSIMP_BUILD_NO_AMF_IMPORTER)
 add_definitions(-DASSIMP_BUILD_NO_3DS_IMPORTER)
-add_definitions(-DASSIMP_BUILD_NO_AC_IMPORTER)
-add_definitions(-DASSIMP_BUILD_NO_ASE_IMPORTER)
-add_definitions(-DASSIMP_BUILD_NO_ASSBIN_IMPORTER)
-add_definitions(-DASSIMP_BUILD_NO_B3D_IMPORTER)
-add_definitions(-DASSIMP_BUILD_NO_BVH_IMPORTER)
-add_definitions(-DASSIMP_BUILD_NO_DXF_IMPORTER)
-add_definitions(-DASSIMP_BUILD_NO_CSM_IMPORTER)
-add_definitions(-DASSIMP_BUILD_NO_HMP_IMPORTER)
-add_definitions(-DASSIMP_BUILD_NO_IRRMESH_IMPORTER)
-add_definitions(-DASSIMP_BUILD_NO_IQM_IMPORTER)
-add_definitions(-DASSIMP_BUILD_NO_IRR_IMPORTER)
-add_definitions(-DASSIMP_BUILD_NO_LWO_IMPORTER)
-add_definitions(-DASSIMP_BUILD_NO_LWS_IMPORTER)
-add_definitions(-DASSIMP_BUILD_NO_M3D_IMPORTER)
-add_definitions(-DASSIMP_BUILD_NO_MD2_IMPORTER)
 add_definitions(-DASSIMP_BUILD_NO_MD3_IMPORTER)
-add_definitions(-DASSIMP_BUILD_NO_MD5_IMPORTER)
-add_definitions(-DASSIMP_BUILD_NO_MDC_IMPORTER)
 add_definitions(-DASSIMP_BUILD_NO_MDL_IMPORTER)
-add_definitions(-DASSIMP_BUILD_NO_NFF_IMPORTER)
-add_definitions(-DASSIMP_BUILD_NO_NDO_IMPORTER)
-add_definitions(-DASSIMP_BUILD_NO_OFF_IMPORTER)
+add_definitions(-DASSIMP_BUILD_NO_MD2_IMPORTER)
+add_definitions(-DASSIMP_BUILD_NO_PLY_IMPORTER)
+add_definitions(-DASSIMP_BUILD_NO_ASE_IMPORTER)
 add_definitions(-DASSIMP_BUILD_NO_OBJ_IMPORTER)
+add_definitions(-DASSIMP_BUILD_NO_HMP_IMPORTER)
+add_definitions(-DASSIMP_BUILD_NO_SMD_IMPORTER)
+add_definitions(-DASSIMP_BUILD_NO_MDC_IMPORTER)
+add_definitions(-DASSIMP_BUILD_NO_MD5_IMPORTER)
+add_definitions(-DASSIMP_BUILD_NO_STL_IMPORTER)
+add_definitions(-DASSIMP_BUILD_NO_LWO_IMPORTER)
+add_definitions(-DASSIMP_BUILD_NO_DXF_IMPORTER)
+add_definitions(-DASSIMP_BUILD_NO_NFF_IMPORTER)
+add_definitions(-DASSIMP_BUILD_NO_RAW_IMPORTER)
+add_definitions(-DASSIMP_BUILD_NO_SIB_IMPORTER)
+add_definitions(-DASSIMP_BUILD_NO_OFF_IMPORTER)
+add_definitions(-DASSIMP_BUILD_NO_AC_IMPORTER)
+add_definitions(-DASSIMP_BUILD_NO_BVH_IMPORTER)
+add_definitions(-DASSIMP_BUILD_NO_IRRMESH_IMPORTER)
+add_definitions(-DASSIMP_BUILD_NO_IRR_IMPORTER)
+add_definitions(-DASSIMP_BUILD_NO_Q3D_IMPORTER)
+add_definitions(-DASSIMP_BUILD_NO_B3D_IMPORTER)
+#add_definitions(-DASSIMP_BUILD_NO_COLLADA_IMPORTER)
+add_definitions(-DASSIMP_BUILD_NO_TERRAGEN_IMPORTER)
+add_definitions(-DASSIMP_BUILD_NO_CSM_IMPORTER)
+add_definitions(-DASSIMP_BUILD_NO_3D_IMPORTER)
+add_definitions(-DASSIMP_BUILD_NO_LWS_IMPORTER)
 add_definitions(-DASSIMP_BUILD_NO_OGRE_IMPORTER)
 add_definitions(-DASSIMP_BUILD_NO_OPENGEX_IMPORTER)
-add_definitions(-DASSIMP_BUILD_NO_PLY_IMPORTER)
 add_definitions(-DASSIMP_BUILD_NO_MS3D_IMPORTER)
 add_definitions(-DASSIMP_BUILD_NO_COB_IMPORTER)
 add_definitions(-DASSIMP_BUILD_NO_BLEND_IMPORTER)
-add_definitions(-DASSIMP_BUILD_NO_IFC_IMPORTER)
-add_definitions(-DASSIMP_BUILD_NO_Q3D_IMPORTER)
 add_definitions(-DASSIMP_BUILD_NO_Q3BSP_IMPORTER)
-add_definitions(-DASSIMP_BUILD_NO_RAW_IMPORTER)
-add_definitions(-DASSIMP_BUILD_NO_SIB_IMPORTER)
-add_definitions(-DASSIMP_BUILD_NO_SMD_IMPORTER)
-add_definitions(-DASSIMP_BUILD_NO_STL_IMPORTER)
-add_definitions(-DASSIMP_BUILD_NO_TERRAGEN_IMPORTER)
-add_definitions(-DASSIMP_BUILD_NO_3D_IMPORTER)
-add_definitions(-DASSIMP_BUILD_NO_X_IMPORTER)
-add_definitions(-DASSIMP_BUILD_NO_X3D_IMPORTER)
-add_definitions(-DASSIMP_BUILD_NO_GLTF_IMPORTER)
-add_definitions(-DASSIMP_BUILD_NO_3MF_IMPORTER)
-add_definitions(-DASSIMP_BUILD_NO_MMD_IMPORTER)
+add_definitions(-DASSIMP_BUILD_NO_NDO_IMPORTER)
+add_definitions(-DASSIMP_BUILD_NO_IFC_IMPORTER)
 add_definitions(-DASSIMP_BUILD_NO_XGL_IMPORTER)
+#add_definitions(-DASSIMP_BUILD_NO_FBX_IMPORTER)
+add_definitions(-DASSIMP_BUILD_NO_ASSBIN_IMPORTER)
+add_definitions(-DASSIMP_BUILD_NO_GLTF_IMPORTER)
+add_definitions(-DASSIMP_BUILD_NO_GLTF1_IMPORTER)
+add_definitions(-DASSIMP_BUILD_NO_GLTF2_IMPORTER)
+add_definitions(-DASSIMP_BUILD_NO_C4D_IMPORTER)
+add_definitions(-DASSIMP_BUILD_NO_3MF_IMPORTER)
+add_definitions(-DASSIMP_BUILD_NO_X3D_IMPORTER)
+add_definitions(-DASSIMP_BUILD_NO_MMD_IMPORTER)
+add_definitions(-DASSIMP_BUILD_NO_M3D_IMPORTER)
+add_definitions(-DASSIMP_BUILD_NO_IQM_IMPORTER)
 
 ADD_ASSIMP_IMPORTER( COLLADA
   AssetLib/Collada/ColladaHelper.cpp
@@ -373,14 +378,6 @@ SET( MaterialSystem_SRCS
   Material/MaterialSystem.h
 )
 SOURCE_GROUP( MaterialSystem FILES ${MaterialSystem_SRCS})
-
-if (ASSIMP_BUILD_IFC_IMPORTER)
-  if (MSVC)
-    set_source_files_properties(Importer/IFC/IFCReaderGen1_2x3.cpp Importer/IFC/IFCReaderGen2_2x3.cpp PROPERTIES COMPILE_FLAGS "/bigobj")
-  elseif(MINGW)
-    set_source_files_properties(Importer/IFC/IFCReaderGen1_2x3.cpp Importer/IFC/IFCReaderGen2_2x3.cpp PROPERTIES COMPILE_FLAGS "-O2 -Wa,-mbig-obj")
-  endif()
-endif ()
 
 ADD_ASSIMP_IMPORTER( FBX
   AssetLib/FBX/FBXImporter.cpp
@@ -498,18 +495,18 @@ if ((NOT ASSIMP_NO_EXPORT) OR (NOT ASSIMP_EXPORTERS_ENABLED STREQUAL ""))
 	SOURCE_GROUP( Exporter FILES ${Exporter_SRCS})
 endif()
 
-SET( Extra_SRCS
-  MD4FileData.h
-)
-SOURCE_GROUP( Extra FILES ${Extra_SRCS})
+set(Meshlab_SRCS "")
+set(Tinyusdz_SRCS "")
+set(Tinyusdz_DEP_SOURCES "")
 
 # pugixml
 IF(ASSIMP_HUNTER_ENABLED)
   hunter_add_package(pugixml)
   find_package(pugixml CONFIG REQUIRED)
-ELSE()
+ELSEIF(NOT TARGET pugixml::pugixml)
   SET( Pugixml_SRCS
     ../contrib/pugixml/src/pugiconfig.hpp
+    ../contrib/pugixml/src/pugixml.cpp
     ../contrib/pugixml/src/pugixml.hpp
   )
   INCLUDE_DIRECTORIES("../contrib/pugixml/src")
@@ -521,7 +518,7 @@ IF(ASSIMP_HUNTER_ENABLED)
   hunter_add_package(utf8)
   find_package(utf8cpp CONFIG REQUIRED)
 ELSE()
-  # utf8 is header-only, so Assimp doesn't need to do anything.
+  INCLUDE_DIRECTORIES("../contrib/utf8cpp/source")
 ENDIF()
 
 # polyclipping
@@ -740,6 +737,7 @@ SET( assimp_src
   ${PostProcessing_SRCS}
   ${MaterialSystem_SRCS}
   ${STEPParser_SRCS}
+  ${glTFCommon_src}
 #  ${Step_SRCS} check if we need a different approach
 
   # Model Support
@@ -753,6 +751,9 @@ SET( assimp_src
   ${openddl_parser_SRCS}
   ${open3dgc_SRCS}
   ${ziplib_SRCS}
+  ${Meshlab_SRCS}
+  ${Tinyusdz_SRCS}
+  ${Tinyusdz_DEP_SOURCES}
   ${Pugixml_SRCS}
   ${stb_SRCS}
   # Necessary to show the headers in the project when using the VC++ generator:
@@ -779,17 +780,21 @@ IF (ASSIMP_BUILD_DRACO)
   ADD_DEFINITIONS( -DASSIMP_ENABLE_DRACO )
 ENDIF()
 
-ADD_LIBRARY(assimp-static STATIC ${assimp_src} )
+ADD_LIBRARY(assimp-static STATIC ${assimp_src})
 ADD_LIBRARY(assimp::assimp ALIAS assimp-static)
 
 # Add or remove dllexport tags depending on the library type.
 IF (BUILD_SHARED_LIBS)
   TARGET_COMPILE_DEFINITIONS(assimp-static PRIVATE ASSIMP_BUILD_DLL_EXPORT)
 ELSE ()
-  TARGET_COMPILE_DEFINITIONS(assimp-static PRIVATE OPENDDL_STATIC_LIBARY)
+  TARGET_COMPILE_DEFINITIONS(assimp-static PRIVATE OPENDDL_STATIC_LIBARY P2T_STATIC_EXPORTS)
 ENDIF ()
 
 TARGET_USE_COMMON_OUTPUT_DIRECTORY(assimp-static)
+
+add_compile_options(
+  "$<$<CONFIG:DEBUG>:-O0;-g3;-ggdb>"
+)
 
 IF (ASSIMP_WARNINGS_AS_ERRORS)
   MESSAGE(STATUS "Treating all warnings as errors (for assimp-static library only)")
@@ -844,6 +849,8 @@ IF (ASSIMP_WARNINGS_AS_ERRORS)
         -Wno-unused-template
         -Wno-undefined-func-template
         -Wno-declaration-after-statement
+        -Wno-deprecated-declarations
+	      -Wno-deprecated-non-prototype
       )
     ELSE()
       TARGET_COMPILE_OPTIONS(assimp-static PRIVATE /W4 /WX)
@@ -865,9 +872,7 @@ TARGET_INCLUDE_DIRECTORIES ( assimp-static PUBLIC
 IF(ASSIMP_HUNTER_ENABLED)
   TARGET_LINK_LIBRARIES(assimp-static
       PUBLIC
-      #polyclipping::polyclipping
       openddlparser::openddl_parser
-      #poly2tri::poly2tri
       minizip::minizip
       ZLIB::zlib
       RapidJSON::rapidjson
@@ -880,12 +885,15 @@ IF(ASSIMP_HUNTER_ENABLED)
   endif()
 
   if (ASSIMP_BUILD_DRACO)
-    target_link_libraries(assimp-static PUBLIC ${draco_LIBRARIES})
+    target_link_libraries(assimp-static PRIVATE ${draco_LIBRARIES})
   endif()
 ELSE()
   TARGET_LINK_LIBRARIES(assimp-static ${ZLIB_LIBRARIES} ${OPENDDL_PARSER_LIBRARIES})
   if (ASSIMP_BUILD_DRACO)
     target_link_libraries(assimp-static ${draco_LIBRARIES})
+  endif()
+  if(TARGET pugixml::pugixml)
+    target_link_libraries(assimp-static pugixml::pugixml)
   endif()
 ENDIF()
 
@@ -978,7 +986,12 @@ ENDIF()
 IF(NOT ASSIMP_HUNTER_ENABLED)
   if (UNZIP_FOUND)
     INCLUDE_DIRECTORIES(${UNZIP_INCLUDE_DIRS})
-    TARGET_LINK_LIBRARIES(assimp-static ${UNZIP_LIBRARIES})
+    # TODO if cmake required version has been updated to >3.12.0, collapse this to the second case only
+    if(${CMAKE_VERSION} VERSION_LESS "3.12.0")
+      TARGET_LINK_LIBRARIES(assimp-static ${UNZIP_LIBRARIES})
+    else()
+      TARGET_LINK_LIBRARIES(assimp-static ${UNZIP_LINK_LIBRARIES})
+    endif()
   else ()
     INCLUDE_DIRECTORIES("../")
   endif ()
@@ -989,19 +1002,20 @@ IF (RT_FOUND AND ASSIMP_IMPORTER_GLTF_USE_OPEN3DGC)
   TARGET_LINK_LIBRARIES(assimp-static rt)
 ENDIF ()
 
+IF(ASSIMP_INSTALL)
+  INSTALL( TARGETS assimp-static
+    EXPORT "${TARGETS_EXPORT_NAME}"
+    LIBRARY DESTINATION ${ASSIMP_LIB_INSTALL_DIR} COMPONENT ${LIBASSIMP_COMPONENT}
+    ARCHIVE DESTINATION ${ASSIMP_LIB_INSTALL_DIR} COMPONENT ${LIBASSIMP-DEV_COMPONENT}
+    RUNTIME DESTINATION ${ASSIMP_BIN_INSTALL_DIR} COMPONENT ${LIBASSIMP_COMPONENT}
+    FRAMEWORK DESTINATION ${ASSIMP_LIB_INSTALL_DIR} COMPONENT ${LIBASSIMP_COMPONENT}
+    INCLUDES DESTINATION ${ASSIMP_INCLUDE_INSTALL_DIR}
+  )
+  INSTALL( FILES ${PUBLIC_HEADERS} DESTINATION ${ASSIMP_INCLUDE_INSTALL_DIR}/assimp-static COMPONENT assimp-dev)
+  INSTALL( FILES ${COMPILER_HEADERS} DESTINATION ${ASSIMP_INCLUDE_INSTALL_DIR}/assimp-static/Compiler COMPONENT assimp-dev)
+ENDIF()
 
-INSTALL( TARGETS assimp-static
-  EXPORT "${TARGETS_EXPORT_NAME}"
-  LIBRARY DESTINATION ${ASSIMP_LIB_INSTALL_DIR} COMPONENT ${LIBASSIMP_COMPONENT}
-  ARCHIVE DESTINATION ${ASSIMP_LIB_INSTALL_DIR} COMPONENT ${LIBASSIMP-DEV_COMPONENT}
-  RUNTIME DESTINATION ${ASSIMP_BIN_INSTALL_DIR} COMPONENT ${LIBASSIMP_COMPONENT}
-  FRAMEWORK DESTINATION ${ASSIMP_LIB_INSTALL_DIR} COMPONENT ${LIBASSIMP_COMPONENT}
-  INCLUDES DESTINATION ${ASSIMP_INCLUDE_INSTALL_DIR}
-)
-INSTALL( FILES ${PUBLIC_HEADERS} DESTINATION ${ASSIMP_INCLUDE_INSTALL_DIR}/assimp-static COMPONENT assimp-dev)
-INSTALL( FILES ${COMPILER_HEADERS} DESTINATION ${ASSIMP_INCLUDE_INSTALL_DIR}/assimp-static/Compiler COMPONENT assimp-dev)
-
-if (ASSIMP_ANDROID_JNIIOSYSTEM)
+if (ASSIMP_ANDROID_JNIIOSYSTEM AND ASSIMP_INSTALL)
   INSTALL(FILES ${HEADER_PATH}/${ASSIMP_ANDROID_JNIIOSYSTEM_PATH}/AndroidJNIIOSystem.h
     DESTINATION ${ASSIMP_INCLUDE_INSTALL_DIR}
     COMPONENT assimp-dev)
@@ -1017,7 +1031,7 @@ if(MSVC AND ASSIMP_INSTALL_PDB)
       COMPILE_PDB_NAME_DEBUG assimp${LIBRARY_SUFFIX}${CMAKE_DEBUG_POSTFIX}
     )
 
-    IF(GENERATOR_IS_MULTI_CONFIG)
+    IF(is_multi_config)
       install(FILES ${Assimp_BINARY_DIR}/code/Debug/assimp${LIBRARY_SUFFIX}${CMAKE_DEBUG_POSTFIX}.pdb
         DESTINATION ${ASSIMP_LIB_INSTALL_DIR}
         CONFIGURATIONS Debug
