@@ -30,6 +30,7 @@
 #include "beryll/GUI/MainImGUI.h"
 #include "beryll/GUI/DemoImGUI.h"
 #include "beryll/GUI/ButtonWithTexture.h"
+#include "beryll/GUI/ButtonWithAnimation.h"
 #include "beryll/GUI/Joystick.h"
 #include "beryll/GUI/CheckBox.h"
 #include "beryll/GUI/Text.h"

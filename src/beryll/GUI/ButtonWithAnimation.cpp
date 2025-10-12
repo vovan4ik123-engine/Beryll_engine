@@ -1,15 +1,17 @@
-#include "ButtonWithTexture.h"
+#include "ButtonWithAnimation.h"
 #include "beryll/renderer/Renderer.h"
 #include "beryll/core/EventHandler.h"
 #include "MainImGUI.h"
+#include "beryll/core/TimeStep.h"
 
 namespace Beryll
 {
-    ButtonWithTexture::ButtonWithTexture(const std::string& defaultTexturePath,
-                                         const std::string& touchedTexturePath,
-                                         float l, float t, float w, float h, bool actRepeat, bool bringToFrontOnFocus)
+    ButtonWithAnimation::ButtonWithAnimation(const std::string texturesPath, const std::vector<const std::string> texturesNames,
+                                             const float animDurationSec, bool repeatAnimation,
+                                             float l, float t, float w, float h, bool actRepeat, bool bringToFrontOnFocus)
     {
-        BR_ASSERT((defaultTexturePath.empty() == false), "%s", "Path to default texture can not be empty.");
+        BR_ASSERT((texturesPath.empty() == false), "%s", "Path to default texture can not be empty.");
+        BR_ASSERT((texturesNames.empty() == false), "%s", "No textures names.");
 
         leftPos = l;
         topPos = t;
@@ -24,18 +26,42 @@ namespace Beryll
             m_noFrame = m_noFrame | ImGuiWindowFlags_NoBringToFrontOnFocus;
         }
 
-        m_defaultTexture = Renderer::createTexture(defaultTexturePath.c_str(), TextureType::DIFFUSE_TEXTURE_MAT_1);
+        m_animationFrames.reserve(texturesNames.size());
+        std::string pathAndName;
+        for(const std::string& name : texturesNames)
+        {
+            pathAndName = texturesPath;
+            pathAndName += '/';
+            pathAndName += name;
+            m_animationFrames.push_back(Beryll::Renderer::createTexture(pathAndName.c_str(), Beryll::TextureType::DIFFUSE_TEXTURE_MAT_1));
+        }
 
-        if( !touchedTexturePath.empty())
-            m_touchedTexture = Renderer::createTexture(touchedTexturePath.c_str(), TextureType::DIFFUSE_TEXTURE_MAT_1);
+        m_animationTotalDuration = animDurationSec;
+        m_repeatAnimation = repeatAnimation;
+        m_animationFinished = false;
+        m_currentFrameIndex = 0;
+        m_timeOfOneFrame = m_animationTotalDuration / float(m_animationFrames.size());
+        m_animationStartTime = Beryll::TimeStep::getSecFromStart();
     }
 
-    ButtonWithTexture::~ButtonWithTexture()
+    ButtonWithAnimation::~ButtonWithAnimation()
     {
 
     }
 
-    void ButtonWithTexture::updateBeforePhysics()
+    void ButtonWithAnimation::enable(bool restartAnim)
+    {
+        GUIObject::enable();
+
+        if(restartAnim)
+        {
+            m_animationStartTime = Beryll::TimeStep::getSecFromStart();
+            m_animationFinished = false;
+            BR_INFO("%s", "restartAnim");
+        }
+    }
+
+    void ButtonWithAnimation::updateBeforePhysics()
     {
         std::vector<Finger>& fingers = EventHandler::getFingers();
 
@@ -102,13 +128,27 @@ namespace Beryll
         }
     }
 
-    void ButtonWithTexture::updateAfterPhysics()
+    void ButtonWithAnimation::updateAfterPhysics()
     {
 
     }
 
-    void ButtonWithTexture::draw()
+    void ButtonWithAnimation::draw()
     {
+        m_animationFinished = true;
+        m_currentFrameIndex = m_animationFrames.size() - 1;
+
+        if(m_repeatAnimation ||
+           m_animationStartTime + m_animationTotalDuration > Beryll::TimeStep::getSecFromStart())
+        {
+            m_animationCurrentTime = std::fmodf(Beryll::TimeStep::getSecFromStart() - m_animationStartTime, m_animationTotalDuration);
+            m_animationFinished = false;
+            m_currentFrameIndex = int(m_animationCurrentTime / m_timeOfOneFrame);
+
+            if(m_currentFrameIndex >= m_animationFrames.size())
+                m_currentFrameIndex = m_animationFrames.size() - 1;
+        }
+
         ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
         ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
         ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
@@ -118,18 +158,9 @@ namespace Beryll
 
         ImGui::Begin(m_IDAsString.c_str(), nullptr, m_noBackgroundNoFrame);
 
-        if(m_touched && m_touchedTexture)
-        {
-            ImGui::ImageButton(m_IDAsString.c_str(),
-                               static_cast<ImTextureID>(m_touchedTexture->getID()),
-                               ImVec2(width * MainImGUI::getInstance()->getGUIWidth(), height * MainImGUI::getInstance()->getGUIHeight()));
-        }
-        else
-        {
-            ImGui::ImageButton(m_IDAsString.c_str(),
-                               static_cast<ImTextureID>(m_defaultTexture->getID()),
-                               ImVec2(width * MainImGUI::getInstance()->getGUIWidth(), height * MainImGUI::getInstance()->getGUIHeight()));
-        }
+        ImGui::ImageButton(m_IDAsString.c_str(),
+                           static_cast<ImTextureID>(m_animationFrames[m_currentFrameIndex]->getID()),
+                           ImVec2(width * MainImGUI::getInstance()->getGUIWidth(), height * MainImGUI::getInstance()->getGUIHeight()));
 
         ImGui::End();
 

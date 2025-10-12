@@ -79,6 +79,7 @@ set(Common_SRC
         src/beryll/GUI/MainImGUI.cpp
         src/beryll/GUI/DemoImGUI.cpp
         src/beryll/GUI/ButtonWithTexture.cpp
+        src/beryll/GUI/ButtonWithAnimation.cpp
         src/beryll/GUI/Joystick.cpp
         src/beryll/GUI/CheckBox.cpp
         src/beryll/GUI/Text.cpp
