@@ -48,7 +48,7 @@ namespace Beryll
         glm::vec3 m_jumpImpulse{0.0f};
         bool m_applyJumpImpulse = false;
 
-        std::vector<const int> m_collidingObjects; // Prevent creation and deletion every frame.
+        std::vector<int> m_collidingObjects; // Prevent creation and deletion every frame.
         std::vector<std::pair<glm::vec3, glm::vec3>> m_collidingPoints; // Prevent creation and deletion every frame.
 
         std::pair<glm::vec3, glm::vec3> m_bottomCollisionPoint; // Lowest collision point with ground ant its normal.

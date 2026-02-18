@@ -6,7 +6,7 @@
 
 namespace Beryll
 {
-    ButtonWithAnimation::ButtonWithAnimation(const std::string texturesPath, const std::vector<const std::string> texturesNames,
+    ButtonWithAnimation::ButtonWithAnimation(const std::string texturesPath, const std::vector<std::string> texturesNames,
                                              const float animDurationSec, bool repeatAnimation,
                                              float l, float t, float w, float h, bool actRepeat, bool bringToFrontOnFocus)
     {

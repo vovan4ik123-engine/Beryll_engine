@@ -114,7 +114,7 @@ namespace Beryll
     struct RayAllHits
     {
         bool isHit = false;
-        std::vector<const int> hittedObjectsID; // All hitted.
+        std::vector<int> hittedObjectsID; // All hitted.
         std::vector<CollisionFlags> hittedObjectsCollFlags;
         std::vector<CollisionGroups> hittedObjectsCollGroups;
         std::vector<float> hittedObjectsMass;
@@ -227,12 +227,12 @@ namespace Beryll
         static bool getIsCollisionWithGroup(const int ID, const CollisionGroups group);
 
         static int getAnyCollisionForID(const int ID); // Return first found ID colliding with. Or 0 if no collisions.
-        static std::vector<const int> getAllCollisionsForID(const int ID);
+        static std::vector<int> getAllCollisionsForID(const int ID);
 
-        static std::vector<const int> getAllCollisionsForIDWithGroup(const int id, const CollisionGroups group); // Return IDs of all colliding objects in specific group.
-        static std::vector<std::pair<const int, const int>>& getAllCollisions() { return m_collisionPairs; }
+        static std::vector<int> getAllCollisionsForIDWithGroup(const int id, const CollisionGroups group); // Return IDs of all colliding objects in specific group.
+        static std::vector<std::pair<int, int>>& getAllCollisions() { return m_collisionPairs; }
         static std::vector<std::pair<glm::vec3, glm::vec3>> getAllCollisionPoints(const int ID1, const int ID2); // Return point + his normal.
-        static std::vector<std::pair<glm::vec3, glm::vec3>> getAllCollisionPoints(const int ID1, const std::vector<const int>& IDs); // Return point + his normal.
+        static std::vector<std::pair<glm::vec3, glm::vec3>> getAllCollisionPoints(const int ID1, const std::vector<int>& IDs); // Return point + his normal.
 
         static void setGravity(const glm::vec3& grav) { BR_ASSERT(false, "%s", "Change gravity for specific objects. Not for all world."); }
 
@@ -251,7 +251,7 @@ namespace Beryll
 
         static bool collisionsCallBack(btManifoldPoint& cp, const btCollisionObjectWrapper* ob1, int ID1, int index1,
                                                             const btCollisionObjectWrapper* ob2, int ID2, int index2);
-        static std::vector<std::pair<const int, const int>> m_collisionPairs;
+        static std::vector<std::pair<int, int>> m_collisionPairs;
 
         static Timer m_timer;
 
@@ -270,7 +270,7 @@ namespace Beryll
         static std::vector<std::shared_ptr<btCollisionShape>> m_collisionShapes;
         static std::vector<std::shared_ptr<btTriangleMesh>> m_triangleMeshes;
         static std::vector<std::shared_ptr<btDefaultMotionState>> m_motionStates;
-        static std::map<const int, std::shared_ptr<RigidBodyData>> m_rigidBodiesMap;
+        static std::map<int, std::shared_ptr<RigidBodyData>> m_rigidBodiesMap;
 
         // Increase resolution if your ball penetrate wall but you want collision.
         // Physics engine will do more small iteration during one simulation.
@@ -358,22 +358,22 @@ namespace Beryll
                                   CollisionGroups collMask); // vypuklaja
 
         static void addBoxShape(const std::vector<glm::vec3>& vertices,
-                                  const glm::mat4& transforms,
-                                  const int objectID,
-                                  float mass,
-                                  bool wantCallBack,
-                                  CollisionFlags collFlag,
-                                  CollisionGroups collGroup,
-                                  CollisionGroups collMask);
+                                const glm::mat4& transforms,
+                                const int objectID,
+                                float mass,
+                                bool wantCallBack,
+                                CollisionFlags collFlag,
+                                CollisionGroups collGroup,
+                                CollisionGroups collMask);
 
         static void addSphereShape(const std::vector<glm::vec3>& vertices,
-                                    const glm::mat4& transforms,
-                                    const int objectID,
-                                    float mass,
-                                    bool wantCallBack,
-                                    CollisionFlags collFlag,
-                                    CollisionGroups collGroup,
-                                    CollisionGroups collMask);
+                                   const glm::mat4& transforms,
+                                   const int objectID,
+                                   float mass,
+                                   bool wantCallBack,
+                                   CollisionFlags collFlag,
+                                   CollisionGroups collGroup,
+                                   CollisionGroups collMask);
 
         static void addCapsuleShape(const std::vector<glm::vec3>& vertices,
                                     const glm::mat4& transforms,
@@ -385,12 +385,12 @@ namespace Beryll
                                     CollisionGroups collMask);
 
         static void addCylinderShape(const std::vector<glm::vec3>& vertices,
-                                    const glm::mat4& transforms,
-                                    const int objectID,
-                                    float mass,
-                                    bool wantCallBack,
-                                    CollisionFlags collFlag,
-                                    CollisionGroups collGroup,
-                                    CollisionGroups collMask);
+                                     const glm::mat4& transforms,
+                                     const int objectID,
+                                     float mass,
+                                     bool wantCallBack,
+                                     CollisionFlags collFlag,
+                                     CollisionGroups collGroup,
+                                     CollisionGroups collMask);
     };
 }

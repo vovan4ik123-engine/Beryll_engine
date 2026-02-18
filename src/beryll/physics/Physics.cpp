@@ -12,12 +12,12 @@ namespace Beryll
     float Physics::m_simulationTime = 0.0f;
     int Physics::m_resolutionFactor = 1;
     Spinlock Physics::m_spinLock;
-    std::vector<std::pair<const int, const int>> Physics::m_collisionPairs;
+    std::vector<std::pair<int, int>> Physics::m_collisionPairs;
 
     std::vector<std::shared_ptr<btCollisionShape>> Physics::m_collisionShapes;
     std::vector<std::shared_ptr<btTriangleMesh>> Physics::m_triangleMeshes;
     std::vector<std::shared_ptr<btDefaultMotionState>> Physics::m_motionStates;
-    std::map<const int, std::shared_ptr<RigidBodyData>> Physics::m_rigidBodiesMap;
+    std::map<int, std::shared_ptr<RigidBodyData>> Physics::m_rigidBodiesMap;
 
     std::unique_ptr<btDefaultCollisionConfiguration> Physics::m_collisionConfiguration = nullptr;
     std::unique_ptr<btCollisionDispatcherMt> Physics::m_dispatcherMT = nullptr;
@@ -329,13 +329,13 @@ namespace Beryll
     }
 
     void Physics::addSphereShape(const std::vector<glm::vec3>& vertices,
-                        const glm::mat4& transforms,
-                        const int objectID,
-                        float mass,
-                        bool wantCallBack,
-                        CollisionFlags collFlag,
-                        CollisionGroups collGroup,
-                        CollisionGroups collMask)
+                                 const glm::mat4& transforms,
+                                 const int objectID,
+                                 float mass,
+                                 bool wantCallBack,
+                                 CollisionFlags collFlag,
+                                 CollisionGroups collGroup,
+                                 CollisionGroups collMask)
     {
         BR_ASSERT(((mass == 0.0f && collFlag != CollisionFlags::DYNAMIC) ||
                    (mass > 0.0f && collFlag == CollisionFlags::DYNAMIC)), "%s", "Wrong parameters for sphere shape.");
@@ -380,13 +380,13 @@ namespace Beryll
     }
 
     void Physics::addCapsuleShape(const std::vector<glm::vec3>& vertices,
-                                const glm::mat4& transforms,
-                                const int objectID,
-                                float mass,
-                                bool wantCallBack,
-                                CollisionFlags collFlag,
-                                CollisionGroups collGroup,
-                                CollisionGroups collMask)
+                                  const glm::mat4& transforms,
+                                  const int objectID,
+                                  float mass,
+                                  bool wantCallBack,
+                                  CollisionFlags collFlag,
+                                  CollisionGroups collGroup,
+                                  CollisionGroups collMask)
     {
         BR_ASSERT(((mass == 0.0f && collFlag != CollisionFlags::DYNAMIC) ||
                    (mass > 0.0f && collFlag == CollisionFlags::DYNAMIC)), "%s", "Wrong parameters for capsule shape.");
@@ -543,7 +543,7 @@ namespace Beryll
     {
         if(ID1 == ID2) { return false; }
 
-        for(const std::pair<const int, const int>& pair : m_collisionPairs)
+        for(const std::pair<int, int>& pair : m_collisionPairs)
         {
             if((pair.first == ID1 && pair.second == ID2) ||
                (pair.first == ID2 && pair.second == ID1))
@@ -573,7 +573,7 @@ namespace Beryll
 
     int Physics::getAnyCollisionForID(const int ID)
     {
-        for(const std::pair<const int, const int>& pair : m_collisionPairs)
+        for(const std::pair<int, int>& pair : m_collisionPairs)
         {
             if(ID == pair.first)
                 return pair.second;
@@ -586,11 +586,11 @@ namespace Beryll
         return 0;
     }
 
-    std::vector<const int> Physics::getAllCollisionsForID(const int ID)
+    std::vector<int> Physics::getAllCollisionsForID(const int ID)
     {
-        std::vector<const int> ids;
+        std::vector<int> ids;
 
-        for(const std::pair<const int, const int>& pair : m_collisionPairs)
+        for(const std::pair<int, int>& pair : m_collisionPairs)
         {
             if(ID == pair.first)
                 ids.push_back(pair.second);
@@ -602,9 +602,9 @@ namespace Beryll
         return ids;
     }
 
-    std::vector<const int> Physics::getAllCollisionsForIDWithGroup(const int ID, const CollisionGroups group)
+    std::vector<int> Physics::getAllCollisionsForIDWithGroup(const int ID, const CollisionGroups group)
     {
-        std::vector<const int> ids;
+        std::vector<int> ids;
         ids.reserve(5);
 
         for(int i = 0; i < m_dynamicsWorldMT->getNumCollisionObjects(); ++i)
@@ -656,7 +656,7 @@ namespace Beryll
         return pointsAndNormals;
     }
 
-    std::vector<std::pair<glm::vec3, glm::vec3>> Physics::getAllCollisionPoints(const int ID1, const std::vector<const int>& IDs)
+    std::vector<std::pair<glm::vec3, glm::vec3>> Physics::getAllCollisionPoints(const int ID1, const std::vector<int>& IDs)
     {
         std::vector<std::pair<glm::vec3, glm::vec3>> pointsAndNormals;
         pointsAndNormals.reserve(5);

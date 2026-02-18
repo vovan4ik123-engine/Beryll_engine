@@ -18,8 +18,8 @@ namespace Beryll
         PLAYER_TALENTS
     };
 
-    inline const std::vector<const std::string> gameStateAsString{"NO_STATE", "UNKNOWN", "START_SCREEN", "PLAY", "PAUSE", "SETTINGS",
-                                                                  "SELECT_LEVEL", "SHOP", "PLAYER_TALENTS"};
+    inline const std::vector<std::string> gameStateAsString{"NO_STATE", "UNKNOWN", "START_SCREEN", "PLAY", "PAUSE", "SETTINGS",
+                                                            "SELECT_LEVEL", "SHOP", "PLAYER_TALENTS"};
 
     // You can create many objects of this class with different layers in layerStack.
     // Then push these objects to GameStateMachine which will update and draw only last pushed state.
