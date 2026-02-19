@@ -13,7 +13,7 @@ namespace BeryllUtils
         File() = delete;
         ~File() = delete;
 
-        // This fn() call new[] !!! You must call delete[] for free buffer.
+        // This fn() call new[] !!! You must call delete[] to free buffer.
         // Returns buffer + '\0'. size will contains number of bytes without '\0'.
         static char* readToBuffer(const char* filepath, uint32_t* size = nullptr)
         {

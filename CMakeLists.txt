@@ -30,6 +30,7 @@ add_subdirectory(libs/imgui)
 add_subdirectory(libs/assimp)
 add_subdirectory(libs/sqlite)
 add_subdirectory(libs/bullet)
+add_subdirectory(libs/freetype)
 
 if(ANDROID)
     set(AndroidGLES_SRC
@@ -129,4 +130,5 @@ target_link_libraries(Beryll-static #target
                       ImGUI-static
                       assimp-static
                       sqlite3-static
-                      bullet-static)
+                      bullet-static
+                      freetype-static)

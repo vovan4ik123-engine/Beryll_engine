@@ -40,4 +40,7 @@
 #include "bullet/BulletDynamics/Dynamics/btDiscreteDynamicsWorldMt.h"
 #include "bullet/BulletDynamics/ConstraintSolver/btSequentialImpulseConstraintSolverMt.h"
 
+#include "freetype/include/ft2build.h"
+#include "freetype/include/freetype/freetype.h"
+
 // OpenGL 4.3 (GLSL #version 430) == GLES 3.0 (GLSL #version 300 es).
