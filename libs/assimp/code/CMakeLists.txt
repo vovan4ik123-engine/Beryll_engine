@@ -1,6 +1,6 @@
 # Open Asset Import Library (assimp)
 # ----------------------------------------------------------------------
-# Copyright (c) 2006-2025, assimp team
+# Copyright (c) 2006-2026, assimp team
 #
 # All rights reserved.
 #
@@ -379,6 +379,12 @@ SET( MaterialSystem_SRCS
 )
 SOURCE_GROUP( MaterialSystem FILES ${MaterialSystem_SRCS})
 
+SET( FBX_COMMON_SRCS
+  AssetLib/FBX/FBXUtil.h
+  AssetLib/FBX/FBXUtil.cpp
+  AssetLib/FBX/FBXCommon.h
+)
+
 ADD_ASSIMP_IMPORTER( FBX
   AssetLib/FBX/FBXImporter.cpp
   AssetLib/FBX/FBXCompileConfig.h
@@ -390,8 +396,6 @@ ADD_ASSIMP_IMPORTER( FBX
   AssetLib/FBX/FBXImportSettings.h
   AssetLib/FBX/FBXConverter.h
   AssetLib/FBX/FBXConverter.cpp
-  AssetLib/FBX/FBXUtil.h
-  AssetLib/FBX/FBXUtil.cpp
   AssetLib/FBX/FBXDocument.h
   AssetLib/FBX/FBXDocument.cpp
   AssetLib/FBX/FBXProperties.h
@@ -405,7 +409,6 @@ ADD_ASSIMP_IMPORTER( FBX
   AssetLib/FBX/FBXDeformer.cpp
   AssetLib/FBX/FBXBinaryTokenizer.cpp
   AssetLib/FBX/FBXDocumentUtil.cpp
-  AssetLib/FBX/FBXCommon.h
 )
 
 SET( PostProcessing_SRCS
@@ -702,11 +705,6 @@ if(MSVC10)
   endif()
 endif()
 
-IF( MSVC OR "${CMAKE_CXX_SIMULATE_ID}" MATCHES "MSVC") # clang with MSVC ABI
-  ADD_DEFINITIONS( -D_SCL_SECURE_NO_WARNINGS )
-  ADD_DEFINITIONS( -D_CRT_SECURE_NO_WARNINGS )
-endif ()
-
 IF(NOT ASSIMP_HUNTER_ENABLED)
   if (UNZIP_FOUND)
     SET (unzip_compile_SRCS "")
@@ -743,6 +741,8 @@ SET( assimp_src
   # Model Support
   ${ASSIMP_LOADER_SRCS}
   ${ASSIMP_EXPORTER_SRCS}
+
+  ${FBX_COMMON_SRCS}
 
   # Third-party libraries
   ${unzip_compile_SRCS}
@@ -799,7 +799,6 @@ add_compile_options(
 IF (ASSIMP_WARNINGS_AS_ERRORS)
   MESSAGE(STATUS "Treating all warnings as errors (for assimp-static library only)")
   IF (MSVC)
-
     IF(CMAKE_CXX_COMPILER_ID MATCHES "Clang" ) # clang-cl
       TARGET_COMPILE_OPTIONS(assimp-static PRIVATE -Wall -Werror
         -Wno-microsoft-enum-value
