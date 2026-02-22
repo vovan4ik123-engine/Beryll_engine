@@ -51,6 +51,7 @@ namespace Beryll
             m_internalShader->activateNormalMapTextureMat2();
 
         m_internalShader->activateBlendTextureMat2();
+        m_internalShader->unBind();
 
         BR_INFO("%s", "Loaded material 2 and created new shader.");
     }

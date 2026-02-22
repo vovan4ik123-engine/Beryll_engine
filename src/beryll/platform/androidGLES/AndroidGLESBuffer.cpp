@@ -104,6 +104,7 @@ namespace Beryll
 
         glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
         glBufferSubData(GL_ARRAY_BUFFER, 0, elementsCount * sizeof(glm::vec3), data.data());
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
     void AndroidGLESDynamicVertexBuffer::setDynamicBufferData(const std::vector<glm::vec4>& data, uint32_t elementsCount)
@@ -116,6 +117,7 @@ namespace Beryll
 
         glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
         glBufferSubData(GL_ARRAY_BUFFER, 0, elementsCount * sizeof(glm::vec4), data.data());
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
     void AndroidGLESDynamicVertexBuffer::setDynamicBufferData(const std::vector<glm::mat4>& data, uint32_t elementsCount)
@@ -128,6 +130,7 @@ namespace Beryll
 
         glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
         glBufferSubData(GL_ARRAY_BUFFER, 0, elementsCount * sizeof(glm::mat4), data.data());
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
     void AndroidGLESDynamicVertexBuffer::bind()

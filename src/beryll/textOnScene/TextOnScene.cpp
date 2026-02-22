@@ -2,6 +2,7 @@
 #include "beryll/core/BeryllConstants.h"
 #include "beryll/renderer/Camera.h"
 #include "beryll/core/TimeStep.h"
+#include "beryll/core/Log.h"
 
 namespace Beryll
 {
@@ -20,22 +21,22 @@ namespace Beryll
     {
         if(m_created) { return; }
 
-        std::vector<glm::vec3> vertices{glm::vec3(0.0f, 0.0f, 0.0f),
-                                        glm::vec3( 0.0f, 0.0f, 1.0f),
-                                        glm::vec3( 0.0f,  1.0f, 1.0f),
-                                        glm::vec3(0.0f,  1.0f, 0.0f)};
-
 #if defined(ANDROID)
+        std::vector<glm::vec3> vertices{glm::vec3(0.0f, 0.0f, 0.0f),
+                                        glm::vec3(0.0f, 0.0f, 1.0f),
+                                        glm::vec3(0.0f, 1.0f, 1.0f),
+                                        glm::vec3(0.0f, 1.0f, 0.0f)};
+
         std::vector<glm::vec2> textureCoords{glm::vec2(0.0f, 1.0f), // Flipped Y for OpenGL.
                                              glm::vec2(1.0f, 1.0f),
                                              glm::vec2(1.0f, 0.0f),
                                              glm::vec2(0.0f, 0.0f)};
-#elif defined(APPLE)
-
-#endif
 
         std::vector<uint32_t> indices{0,1,2,
                                       2,3,0};
+#elif defined(APPLE)
+
+#endif
 
         m_vertexPosBuffer = Renderer::createStaticVertexBuffer(vertices);
         m_textureCoordsBuffer = Renderer::createStaticVertexBuffer(textureCoords);
@@ -50,6 +51,7 @@ namespace Beryll
                                                   BeryllConstants::textOnSceneFragmentPath.data());
         m_internalShader->bind();
         m_internalShader->activateDiffuseTextureMat1();
+        m_internalShader->unBind();
 
         std::string path;
         for(int i = 0; i < 10; ++i)

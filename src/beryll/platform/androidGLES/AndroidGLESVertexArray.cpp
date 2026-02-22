@@ -33,7 +33,7 @@ namespace Beryll
 
     void AndroidGLESVertexArray::unBind()
     {
-        // Should unbind only own VAO
+        // Should unbind only own VAO.
         if(GLESStateVariables::currentVAO == m_VAO)
         {
             glBindVertexArray(0);
@@ -97,8 +97,8 @@ namespace Beryll
             ++m_indexNumber;
         }
 
-        vertBuff->unBind();
         unBind();
+        vertBuff->unBind();
 
         m_vertBuffers.push_back(vertBuff);
     }
@@ -107,8 +107,8 @@ namespace Beryll
     {
         bind();
         indexBuff->bind();
-        unBind();
 
+        unBind();
         indexBuff->unBind();
 
         m_indexBuffer = indexBuff;

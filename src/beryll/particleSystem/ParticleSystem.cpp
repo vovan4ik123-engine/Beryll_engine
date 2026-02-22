@@ -288,6 +288,8 @@ namespace Beryll
                 m_internalShader->bind();
                 m_quadVertexArray->bind();
                 m_quadVertexArray->draw();
+
+                m_internalShader->unBind();
             }
         }
 
@@ -335,6 +337,8 @@ namespace Beryll
                 m_internalShader->bind();
                 m_cubeVertexArray->bind();
                 m_cubeVertexArray->draw();
+
+                m_internalShader->unBind();
             }
         }
 

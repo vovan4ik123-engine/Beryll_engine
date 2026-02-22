@@ -13,10 +13,10 @@ namespace Beryll
         m_leftXPos = 0.0f - m_width * 0.5f;
         m_RightXPos = 0.0f + m_width * 0.5f;
 
-        std::vector<glm::vec3> vertices{ {0.0f - m_width * 0.5f, 0.0f - m_height * 0.5f, 0.0f},
-                                         {0.0f + m_width * 0.5f, 0.0f - m_height * 0.5f, 0.0f},
-                                         {0.0f + m_width * 0.5f, 0.0f + m_height * 0.5f, 0.0f},
-                                         {0.0f - m_width * 0.5f, 0.0f + m_height * 0.5f, 0.0f} };
+        std::vector<glm::vec3> vertices{{0.0f - m_width * 0.5f, 0.0f - m_height * 0.5f, 0.0f},
+                                        {0.0f + m_width * 0.5f, 0.0f - m_height * 0.5f, 0.0f},
+                                        {0.0f + m_width * 0.5f, 0.0f + m_height * 0.5f, 0.0f},
+                                        {0.0f - m_width * 0.5f, 0.0f + m_height * 0.5f, 0.0f}};
         m_vertexPosBuffer = Renderer::createStaticVertexBuffer(vertices);
 
         // Counter clockwise winding order.

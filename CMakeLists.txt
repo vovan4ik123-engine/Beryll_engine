@@ -45,6 +45,7 @@ if(ANDROID)
             src/beryll/platform/androidGLES/AndroidGLESBillingSystem.cpp
             src/beryll/platform/androidGLES/AndroidGLESGoogleAnalytics.cpp
             src/beryll/platform/androidGLES/AndroidGLESAds.cpp
+            src/beryll/platform/androidGLES/AndroidGLESGUIText.cpp
             )
 elseif(APPLE)
     set(IOSMetal_SRC
@@ -83,9 +84,9 @@ set(Common_SRC
         src/beryll/GUI/ButtonWithAnimation.cpp
         src/beryll/GUI/Joystick.cpp
         src/beryll/GUI/CheckBox.cpp
-        src/beryll/GUI/Text.cpp
         src/beryll/GUI/GUITexture.cpp
         src/beryll/GUI/SliderHorizontal.cpp
+        src/beryll/GUI/LoadingScreen.cpp
 
         src/beryll/dataBase/DataBase.cpp
 
@@ -97,8 +98,6 @@ set(Common_SRC
         src/beryll/async/AsyncRun.cpp
 
         src/beryll/particleSystem/ParticleSystem.cpp
-
-        src/beryll/loadingScreen/LoadingScreen.cpp
 
         src/beryll/billingSystem/BillingSystem.cpp
 

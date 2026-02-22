@@ -20,22 +20,22 @@ namespace Beryll
     {
         if(m_created) { return; }
 
+#if defined(ANDROID)
         std::vector<glm::vec3> vertices{glm::vec3(-1.0f, -1.0f, 1.0f),
                                         glm::vec3( 1.0f, -1.0f, 1.0f),
                                         glm::vec3( 1.0f,  1.0f, 1.0f),
                                         glm::vec3(-1.0f,  1.0f, 1.0f)};
 
-#if defined(ANDROID)
         std::vector<glm::vec2> textureCoords{glm::vec2(0.0f, 1.0f), // Flipped Y for OpenGL.
                                              glm::vec2(1.0f, 1.0f),
                                              glm::vec2(1.0f, 0.0f),
                                              glm::vec2(0.0f, 0.0f)};
-#elif defined(APPLE)
-
-#endif
 
         std::vector<uint32_t> indices{0,1,2,
                                       2,3,0};
+#elif defined(APPLE)
+
+#endif
 
         m_vertexPosBuffer = Renderer::createStaticVertexBuffer(vertices);
         m_textureCoordsBuffer = Renderer::createStaticVertexBuffer(textureCoords);
@@ -50,6 +50,7 @@ namespace Beryll
                                                   BeryllConstants::loadingScreenFragmentPath.data());
         m_internalShader->bind();
         m_internalShader->activateDiffuseTextureMat1();
+        m_internalShader->unBind();
 
         m_created = true;
     }
@@ -79,7 +80,7 @@ namespace Beryll
         Window::getInstance()->clear();
 
         m_internalShader->bind();
-        m_internalShader->setMatrix4x4Float("VPMatrix", Camera::getLoadingScreenCamera());
+        m_internalShader->setMatrix4x4Float("VPMatrix", Camera::getCameraGUI());
         SDL_DisplayOrientation display = Window::getInstance()->currentDisplayOrientation;
         if(display == SDL_ORIENTATION_PORTRAIT || display == SDL_ORIENTATION_PORTRAIT_FLIPPED)
         {

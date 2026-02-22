@@ -7,7 +7,7 @@
 #include "beryll/physics/Physics.h"
 #include "beryll/renderer/Camera.h"
 #include "beryll/particleSystem/ParticleSystem.h"
-#include "beryll/loadingScreen/LoadingScreen.h"
+#include "beryll/GUI/LoadingScreen.h"
 #include "beryll/billingSystem/BillingSystem.h"
 #include "beryll/googleAnalytics/GoogleAnalytics.h"
 #include "beryll/network/Network.h"

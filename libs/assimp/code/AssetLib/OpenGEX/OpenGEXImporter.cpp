@@ -212,7 +212,7 @@ static void propId2StdString(Property *prop, std::string &name, std::string &key
 
     if (nullptr != prop->m_key) {
 #ifdef ASSIMP_USE_HUNTER
-        name = prop->m_key->m_text.m_buffer;
+        name = prop->m_key->text.m_buffer;
 #else
         name = prop->m_key->m_buffer;
 #endif
@@ -495,7 +495,7 @@ static void getRefNames(DDLNode *node, std::vector<std::string> &names) {
             Name *currentName(ref->m_referencedName[i]);
             if (nullptr != currentName && nullptr != currentName->m_id) {
 #ifdef ASSIMP_USE_HUNTER
-                const std::string name(currentName->m_id->m_text.m_buffer);
+                const std::string name(currentName->m_id->text.m_buffer);
 #else
                 const std::string name(currentName->m_id->m_buffer);
 #endif
@@ -1039,7 +1039,7 @@ void OpenGEXImporter::handleColorNode(ODDLParser::DDLNode *node, aiScene * /*pSc
                 col.b = col4.b;
             }
 #ifdef ASSIMP_USE_HUNTER
-            const ColorType colType(getColorType(&prop->m_key->m_text));
+            const ColorType colType(getColorType(&prop->m_key->text));
 #else
             const ColorType colType(getColorType(prop->m_key));
 #endif

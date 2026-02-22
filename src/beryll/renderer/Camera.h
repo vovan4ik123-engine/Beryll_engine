@@ -25,11 +25,14 @@ namespace Beryll
             return m_view;
         }
 
-        static glm::mat4 getLoadingScreenCamera()
+        static const glm::mat4& getCameraGUI()
         {
-            // Loading image near plan: Z = 1.0f.
-            // Loading image far plan: Z = 0.0f.
-            return m_loadingScreenCamera;
+            // Dimensions of this camera are -1...1 on X and Y axis.
+            // GUI elements distance from the camera is controlled by position on Z axis.
+            // More near element will hidde more far.
+            // Nearest GUI element: Z = 1.0f.
+            // Farest GUI element:  Z = 0.0f.
+            return m_cameraGUI;
         }
 
         // Call before getViewProjection() / getProjection() / getView().
@@ -153,7 +156,7 @@ namespace Beryll
         static glm::mat4 m_projection;
         static glm::mat4 m_view;
 
-        static glm::mat4 m_loadingScreenCamera;
+        static glm::mat4 m_cameraGUI;
 
         static glm::mat4 getVeiw3D() // updateCameraVectors() MUST be called before this method !!!
         {

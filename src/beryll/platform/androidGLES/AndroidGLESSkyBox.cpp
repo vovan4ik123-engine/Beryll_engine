@@ -90,6 +90,7 @@ namespace Beryll
                                                   BeryllConstants::skyBoxFragmentPath.data());
         m_internalShader->bind();
         m_internalShader->activateSkyBoxTexture();
+        m_internalShader->unBind();
 
         std::vector<glm::vec3> vertices;
         vertices.emplace_back(glm::vec3{1.0f, -1.0f, -1.0f}); // right side +X

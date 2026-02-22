@@ -26,7 +26,7 @@ namespace Beryll
         else
             m_flags = m_noBackgroundNoFrame;
 
-        // m_text can not be empty because it is ID for slider window.
+        // text can not be empty because it is ID for slider window.
         if(m_text.empty())
             m_text = "##ImGUILibrarySpecificID" + m_IDAsString;
 

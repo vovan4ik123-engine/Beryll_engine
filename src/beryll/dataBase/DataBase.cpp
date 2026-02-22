@@ -163,7 +163,7 @@ namespace Beryll
 
             if(rows.size() > 5000)
             {
-                BR_WARN("%s", "Database module fetched more than 5 000 rows. Probably error.")
+                BR_WARN("%s", "Database module fetched more than 5 000 rows. Probably error.");
             }
 
             if(errorCode == SQLITE_DONE)

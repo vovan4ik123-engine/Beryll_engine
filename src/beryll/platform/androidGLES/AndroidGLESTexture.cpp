@@ -13,7 +13,7 @@ namespace Beryll
     {
         m_type = type;
 
-        auto result =  m_textures.find(m_ID);
+        auto result = m_textures.find(m_ID);
         if(result != m_textures.end())
         {
             // Texture was created before, use it.
@@ -72,7 +72,7 @@ namespace Beryll
         {
             // use_count() <= 2 means only shared_ptr in this class left and in map.
             // If we destroy this m_openGLID (last copy except copy in map) also delete from OpenGL and map.
-            auto result =  m_textures.find(m_ID);
+            auto result = m_textures.find(m_ID);
             if(result != m_textures.end())
             {
                 unBindNotVirtual();

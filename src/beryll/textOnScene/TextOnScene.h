@@ -3,7 +3,6 @@
 #include "LibsHeaders.h"
 #include "CppHeaders.h"
 
-#include "beryll/core/Log.h"
 #include "beryll/renderer/Renderer.h"
 
 namespace Beryll

@@ -278,6 +278,8 @@ namespace Beryll
                 }
             }
 
+            m_internalShader->unBind();
+
             // Animations.
             for(int g = 0; g < m_scene->mNumAnimations; ++g)
             {

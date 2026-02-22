@@ -29,7 +29,7 @@ namespace Beryll
 
     private:
         friend class Renderer;
-        // add constructor with proper vector for different buffer
+        // Add constructor with proper vector for different buffer.
         AndroidGLESStaticVertexBuffer(const std::vector<glm::vec2>& data);
         AndroidGLESStaticVertexBuffer(const std::vector<glm::vec3>& data);
         AndroidGLESStaticVertexBuffer(const std::vector<glm::vec4>& data);

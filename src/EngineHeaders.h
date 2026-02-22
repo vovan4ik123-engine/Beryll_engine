@@ -33,17 +33,16 @@
 #include "beryll/GUI/ButtonWithAnimation.h"
 #include "beryll/GUI/Joystick.h"
 #include "beryll/GUI/CheckBox.h"
-#include "beryll/GUI/Text.h"
+#include "beryll/GUI/GUIText.h"
 #include "beryll/GUI/GUITexture.h"
 #include "beryll/GUI/SliderHorizontal.h"
+#include "beryll/GUI/LoadingScreen.h"
 
 #include "beryll/physics/Physics.h"
 
 #include "beryll/async/AsyncRun.h"
 
 #include "beryll/particleSystem/ParticleSystem.h"
-
-#include "beryll/loadingScreen/LoadingScreen.h"
 
 #include "beryll/dataBase/DataBase.h"
 

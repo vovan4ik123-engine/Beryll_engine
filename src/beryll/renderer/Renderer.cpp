@@ -14,6 +14,7 @@
     #include "beryll/platform/androidGLES/AndroidGLESTexture.h"
     #include "beryll/platform/androidGLES/AndroidGLESShadowMapTexture.h"
     #include "beryll/platform/androidGLES/AndroidGLESSkyBox.h"
+    #include "beryll/platform/androidGLES/AndroidGLESGUIText.h"
 
     #include "beryll/platform/androidGLES/AndroidGLESGlobal.h"
 #elif defined(APPLE)
@@ -22,10 +23,10 @@
 
 namespace Beryll
 {
-    std::shared_ptr<VertexBuffer> Renderer::createStaticVertexBuffer(const std::vector<glm::vec2>& data)
+    std::unique_ptr<VertexBuffer> Renderer::createStaticVertexBuffer(const std::vector<glm::vec2>& data)
     {
 #if defined(ANDROID)
-        return std::shared_ptr<VertexBuffer>(new AndroidGLESStaticVertexBuffer(data));
+        return std::unique_ptr<VertexBuffer>(new AndroidGLESStaticVertexBuffer(data));
 #elif defined(APPLE)
 
 #else
@@ -34,10 +35,10 @@ namespace Beryll
 #endif
     }
 
-    std::shared_ptr<VertexBuffer> Renderer::createStaticVertexBuffer(const std::vector<glm::vec3>& data)
+    std::unique_ptr<VertexBuffer> Renderer::createStaticVertexBuffer(const std::vector<glm::vec3>& data)
     {
 #if defined(ANDROID)
-        return std::shared_ptr<VertexBuffer>(new AndroidGLESStaticVertexBuffer(data));
+        return std::unique_ptr<VertexBuffer>(new AndroidGLESStaticVertexBuffer(data));
 #elif defined(APPLE)
 
 #else
@@ -46,10 +47,10 @@ namespace Beryll
 #endif
     }
 
-    std::shared_ptr<VertexBuffer> Renderer::createStaticVertexBuffer(const std::vector<glm::vec4>& data)
+    std::unique_ptr<VertexBuffer> Renderer::createStaticVertexBuffer(const std::vector<glm::vec4>& data)
     {
 #if defined(ANDROID)
-        return std::shared_ptr<VertexBuffer>(new AndroidGLESStaticVertexBuffer(data));
+        return std::unique_ptr<VertexBuffer>(new AndroidGLESStaticVertexBuffer(data));
 #elif defined(APPLE)
 
 #else
@@ -58,10 +59,10 @@ namespace Beryll
 #endif
     }
 
-    std::shared_ptr<VertexBuffer> Renderer::createStaticVertexBuffer(const std::vector<glm::ivec4>& data)
+    std::unique_ptr<VertexBuffer> Renderer::createStaticVertexBuffer(const std::vector<glm::ivec4>& data)
     {
 #if defined(ANDROID)
-        return std::shared_ptr<VertexBuffer>(new AndroidGLESStaticVertexBuffer(data));
+        return std::unique_ptr<VertexBuffer>(new AndroidGLESStaticVertexBuffer(data));
 #elif defined(APPLE)
 
 #else
@@ -70,10 +71,10 @@ namespace Beryll
 #endif
     }
 
-    std::shared_ptr<VertexBuffer> Renderer::createStaticVertexBuffer(const std::vector<glm::mat4>& data)
+    std::unique_ptr<VertexBuffer> Renderer::createStaticVertexBuffer(const std::vector<glm::mat4>& data)
     {
 #if defined(ANDROID)
-        return std::shared_ptr<VertexBuffer>(new AndroidGLESStaticVertexBuffer(data));
+        return std::unique_ptr<VertexBuffer>(new AndroidGLESStaticVertexBuffer(data));
 #elif defined(APPLE)
 
 #else
@@ -82,10 +83,10 @@ namespace Beryll
 #endif
     }
 
-    std::shared_ptr<VertexBuffer> Renderer::createDynamicVertexBuffer(VertexAttribType type, VertexAttribSize size, uint32_t maxSizeBytes)
+    std::unique_ptr<VertexBuffer> Renderer::createDynamicVertexBuffer(VertexAttribType type, VertexAttribSize size, uint32_t maxSizeBytes)
     {
 #if defined(ANDROID)
-        return std::shared_ptr<VertexBuffer>(new AndroidGLESDynamicVertexBuffer(type, size, maxSizeBytes));
+        return std::unique_ptr<VertexBuffer>(new AndroidGLESDynamicVertexBuffer(type, size, maxSizeBytes));
 #elif defined(APPLE)
 
 #else
@@ -94,10 +95,10 @@ namespace Beryll
 #endif
     }
 
-    std::shared_ptr<IndexBuffer> Renderer::createStaticIndexBuffer(const std::vector<uint32_t>& indices)
+    std::unique_ptr<IndexBuffer> Renderer::createStaticIndexBuffer(const std::vector<uint32_t>& indices)
     {
 #if defined(ANDROID)
-        return std::shared_ptr<IndexBuffer>(new AndroidGLESStaticIndexBuffer(indices));
+        return std::unique_ptr<IndexBuffer>(new AndroidGLESStaticIndexBuffer(indices));
 #elif defined(APPLE)
 
 #else
@@ -118,10 +119,10 @@ namespace Beryll
 #endif
     }
 
-    std::shared_ptr<Shader> Renderer::createShader(const char* vertexPath, const char* fragmentPath)
+    std::unique_ptr<Shader> Renderer::createShader(const char* vertexPath, const char* fragmentPath)
     {
 #if defined(ANDROID)
-        return std::shared_ptr<Shader>(new AndroidGLESShader(vertexPath, fragmentPath));
+        return std::unique_ptr<Shader>(new AndroidGLESShader(vertexPath, fragmentPath));
 #elif defined(APPLE)
 
 #else
@@ -158,6 +159,18 @@ namespace Beryll
     {
 #if defined(ANDROID)
         return std::unique_ptr<SkyBox>(new AndroidGLESSkyBox(folderPath));
+#elif defined(APPLE)
+
+#else
+        BR_ASSERT(false, "%s", "Can not create SkyBox. Unknown platform.");
+        return nullptr;
+#endif
+    }
+
+    std::unique_ptr<GUIText> Renderer::createGUIText(std::string text, const glm::vec3 color, const glm::vec3 pos, const float scale)
+    {
+#if defined(ANDROID)
+        return std::unique_ptr<GUIText>(new AndroidGLESGUIText(std::move(text), color, pos, scale));
 #elif defined(APPLE)
 
 #else

@@ -31,8 +31,11 @@ namespace BeryllConstants
     const std::string_view particleVertexPath = "shaders/GLES/default/Particle.vert";
     const std::string_view particleFragmentPath = "shaders/GLES/default/Particle.frag";
 
-    const std::string_view loadingScreenVertexPath = "shaders/GLES/default/LoadingScreen.vert";
-    const std::string_view loadingScreenFragmentPath = "shaders/GLES/default/LoadingScreen.frag";
+    const std::string_view GUITextVertexPath = "shaders/GLES/GUI/GUIText.vert";
+    const std::string_view GUITextFragmentPath = "shaders/GLES/GUI/GUIText.frag";
+
+    const std::string_view loadingScreenVertexPath = "shaders/GLES/GUI/LoadingScreen.vert";
+    const std::string_view loadingScreenFragmentPath = "shaders/GLES/GUI/LoadingScreen.frag";
 
     const std::string_view bannerTwoColorsProgressVertexPath = "shaders/GLES/default/BannerTwoColorsProgress.vert";
     const std::string_view bannerTwoColorsProgressFragmentPath = "shaders/GLES/default/BannerTwoColorsProgress.frag";

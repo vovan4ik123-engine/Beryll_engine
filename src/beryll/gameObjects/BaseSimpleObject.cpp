@@ -187,6 +187,8 @@ namespace Beryll
             }
         }
 
+        m_internalShader->unBind();
+
         const aiNode* node = BeryllUtils::Common::findAinodeForAimesh(scene, scene->mRootNode, graphicsMesh->mName);
         if(node)
         {
