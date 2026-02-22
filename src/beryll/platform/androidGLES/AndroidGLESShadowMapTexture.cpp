@@ -13,6 +13,8 @@ namespace Beryll
 {
     AndroidGLESShadowMapTexture::AndroidGLESShadowMapTexture(int width, int height) : m_mapWidth(width), m_mapHeight(height)
     {
+        BR_ASSERT((m_mapWidth % 4 == 0 && m_mapHeight % 4 == 0), "%s", "Width and height must be divisible by 4.");
+
         // Generate texture to store Z values of framebuffer.
         glGenTextures(1, &m_openGLID);
         glBindTexture(GL_TEXTURE_2D ,m_openGLID);

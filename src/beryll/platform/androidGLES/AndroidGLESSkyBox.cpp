@@ -22,31 +22,37 @@ namespace Beryll
         BR_ASSERT((rwRight != nullptr), "Load cube texture failed: %s", rightSide.c_str());
         SDL_Surface* surfaceRight = IMG_Load_IO(rwRight, true);
         BR_ASSERT((surfaceRight != nullptr), "Create surface failed: %s", rightSide.c_str());
+        BR_ASSERT((surfaceRight->w % 4 == 0 && surfaceRight->h % 4 == 0), "%s Width and height must be divisible by 4.", rightSide.c_str());
 
         SDL_IOStream* rwLeft = SDL_IOFromFile(leftSide.c_str(), "rb");
         BR_ASSERT((rwLeft != nullptr), "Load cube texture failed: %s", leftSide.c_str());
         SDL_Surface* surfaceLeft = IMG_Load_IO(rwLeft, true);
         BR_ASSERT((surfaceLeft != nullptr), "Create surface failed: %s", leftSide.c_str());
+        BR_ASSERT((surfaceLeft->w % 4 == 0 && surfaceLeft->h % 4 == 0), "%s Width and height must be divisible by 4.", leftSide.c_str());
 
         SDL_IOStream* rwTop = SDL_IOFromFile(topSide.c_str(), "rb");
         BR_ASSERT((rwTop != nullptr), "Load cube texture failed: %s", topSide.c_str());
         SDL_Surface* surfaceTop = IMG_Load_IO(rwTop, true);
         BR_ASSERT((surfaceTop != nullptr), "Create surface failed: %s", topSide.c_str());
+        BR_ASSERT((surfaceTop->w % 4 == 0 && surfaceTop->h % 4 == 0), "%s Width and height must be divisible by 4.", topSide.c_str());
 
         SDL_IOStream* rwBottom = SDL_IOFromFile(bottomSide.c_str(), "rb");
         BR_ASSERT((rwBottom != nullptr), "Load cube texture failed: %s", bottomSide.c_str());
         SDL_Surface* surfaceBottom = IMG_Load_IO(rwBottom, true);
         BR_ASSERT((surfaceBottom != nullptr), "Create surface failed: %s", bottomSide.c_str());
+        BR_ASSERT((surfaceBottom->w % 4 == 0 && surfaceBottom->h % 4 == 0), "%s Width and height must be divisible by 4.", bottomSide.c_str());
 
         SDL_IOStream* rwBack = SDL_IOFromFile(backSide.c_str(), "rb");
         BR_ASSERT((rwBack != nullptr), "Load cube texture failed: %s", backSide.c_str());
         SDL_Surface* surfaceBack = IMG_Load_IO(rwBack, true);
         BR_ASSERT((surfaceBack != nullptr), "Create surface failed: %s", backSide.c_str());
+        BR_ASSERT((surfaceBack->w % 4 == 0 && surfaceBack->h % 4 == 0), "%s Width and height must be divisible by 4.", backSide.c_str());
 
         SDL_IOStream* rwFront = SDL_IOFromFile(frontSide.c_str(), "rb");
         BR_ASSERT((rwFront != nullptr), "Load cube texture failed: %s", frontSide.c_str());
         SDL_Surface* surfaceFront = IMG_Load_IO(rwFront, true);
         BR_ASSERT((surfaceFront != nullptr), "Create surface failed: %s", frontSide.c_str());
+        BR_ASSERT((surfaceFront->w % 4 == 0 && surfaceFront->h % 4 == 0), "%s Width and height must be divisible by 4.", frontSide.c_str());
 
         BR_ASSERT(((SDL_BYTESPERPIXEL(surfaceRight->format) == 3  || SDL_BYTESPERPIXEL(surfaceRight->format) == 4) &&
                    (SDL_BYTESPERPIXEL(surfaceLeft->format) == 3   || SDL_BYTESPERPIXEL(surfaceLeft->format) == 4) &&

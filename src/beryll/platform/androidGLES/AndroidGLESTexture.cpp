@@ -48,6 +48,8 @@ namespace Beryll
         m_width = surface->w;
         m_height = surface->h;
 
+        BR_ASSERT((surface->w % 4 == 0 && surface->h % 4 == 0), "%s Width and height must be divisible by 4.", m_ID.c_str());
+
         glGenTextures(1, m_openGLID.get());
         glBindTexture(GL_TEXTURE_2D, *m_openGLID);
 
