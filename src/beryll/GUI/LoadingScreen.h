@@ -3,10 +3,7 @@
 #include "LibsHeaders.h"
 #include "CppHeaders.h"
 
-#include "beryll/renderer/Shader.h"
-#include "beryll/renderer/Buffer.h"
-#include "beryll/renderer/VertexArray.h"
-#include "beryll/renderer/Texture.h"
+#include "beryll/renderer/Renderer.h"
 #include "beryll/core/RandomGenerator.h"
 #include "beryll/core/Log.h"
 
@@ -18,12 +15,7 @@ namespace Beryll
         LoadingScreen() = delete;
         ~LoadingScreen() = delete;
 
-        static void showProgress(float pr);
-
-        static float getProgress()
-        {
-            return m_loadingProgress * 100.0f;
-        }
+        static void show();
 
         static void selectRandomTexture()
         {
@@ -56,7 +48,6 @@ namespace Beryll
         static std::shared_ptr<Shader> m_internalShader;
         static std::vector<std::unique_ptr<Texture>> m_diffuseTextures;
 
-        static float m_loadingProgress; // 0.0f...1.0f range.
         static int m_textureIndex;
     };
 }

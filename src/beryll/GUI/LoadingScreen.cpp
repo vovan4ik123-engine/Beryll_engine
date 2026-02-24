@@ -6,6 +6,7 @@
 namespace Beryll
 {
     bool LoadingScreen::m_created = false;
+
     std::shared_ptr<VertexBuffer> LoadingScreen::m_vertexPosBuffer;
     std::shared_ptr<VertexBuffer> LoadingScreen::m_textureCoordsBuffer;
     std::shared_ptr<IndexBuffer> LoadingScreen::m_indexBuffer;
@@ -13,7 +14,6 @@ namespace Beryll
     std::shared_ptr<Shader> LoadingScreen::m_internalShader;
     std::vector<std::unique_ptr<Texture>> LoadingScreen::m_diffuseTextures;
 
-    float LoadingScreen::m_loadingProgress = 0.0f;
     int LoadingScreen::m_textureIndex = 0;
 
     void LoadingScreen::create()
@@ -46,8 +46,8 @@ namespace Beryll
         m_vertexArray->addVertexBuffer(m_textureCoordsBuffer);
         m_vertexArray->setIndexBuffer(m_indexBuffer);
 
-        m_internalShader = Renderer::createShader(BeryllConstants::loadingScreenVertexPath.data(),
-                                                  BeryllConstants::loadingScreenFragmentPath.data());
+        m_internalShader = Renderer::createShader(BeryllConstants::GUIElementWithTextureVertexPath.data(),
+                                                  BeryllConstants::GUIElementWithTextureFragmentPath.data());
         m_internalShader->bind();
         m_internalShader->activateDiffuseTextureMat1();
         m_internalShader->unBind();
@@ -69,29 +69,14 @@ namespace Beryll
         selectRandomTexture();
     }
 
-    void LoadingScreen::showProgress(float pr)
+    void LoadingScreen::show()
     {
         BR_ASSERT((!m_diffuseTextures.empty()), "%s", "Loading screen textures are empty. Use setTextures().");
-
-        BR_ASSERT((pr >= 0.0f && pr <= 100.0f), "%s", "Loading progress must be between 0.0f and 100.0f.");
-
-        m_loadingProgress = pr * 0.01f; // Same as pr / 100.0f.
 
         Window::getInstance()->clear();
 
         m_internalShader->bind();
         m_internalShader->setMatrix4x4Float("VPMatrix", Camera::getCameraGUI());
-        SDL_DisplayOrientation display = Window::getInstance()->currentDisplayOrientation;
-        if(display == SDL_ORIENTATION_PORTRAIT || display == SDL_ORIENTATION_PORTRAIT_FLIPPED)
-        {
-            m_internalShader->set1Float("loadingProgressInScreenSpace", Window::getInstance()->getScreenHeight() * m_loadingProgress);
-            m_internalShader->set1Int("displayPortraitOrientation", 1);
-        }
-        else
-        {
-            m_internalShader->set1Float("loadingProgressInScreenSpace", Window::getInstance()->getScreenWidth() * m_loadingProgress);
-            m_internalShader->set1Int("displayPortraitOrientation", 0);
-        }
 
         m_diffuseTextures[m_textureIndex]->bind();
 

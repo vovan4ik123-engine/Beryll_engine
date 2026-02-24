@@ -8,7 +8,6 @@ namespace Beryll
     {
     public:
         SliderHorizontal() = delete;
-        // Position and size in 0...1 range.
         SliderHorizontal(const std::string& text, const std::string& fontPath, float fontHeight,
                          float l, float t, float w, float h, float min = 0.0f, float max = 1.0f,
                          bool background = false, bool bringToFrontOnFocus = false);

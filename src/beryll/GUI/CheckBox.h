@@ -8,7 +8,6 @@ namespace Beryll
     {
     public:
         CheckBox() = delete;
-        // Position and size in 0...1 range.
         CheckBox(const std::string& pText, const std::string& fontPath, float fontHeight,
                  float l, float t, bool bringToFrontOnFocus = false);
         ~CheckBox() override;

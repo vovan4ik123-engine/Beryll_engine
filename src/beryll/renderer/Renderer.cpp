@@ -167,7 +167,7 @@ namespace Beryll
 #endif
     }
 
-    std::unique_ptr<GUIText> Renderer::createGUIText(std::string text, const glm::vec3 color, const glm::vec3 pos, const float scale)
+    std::unique_ptr<GUIText> Renderer::createGUIText(std::string text, const glm::vec3& color, const glm::vec3& pos, const float scale)
     {
 #if defined(ANDROID)
         return std::unique_ptr<GUIText>(new AndroidGLESGUIText(std::move(text), color, pos, scale));

@@ -44,7 +44,7 @@ namespace Beryll
 
         static std::unique_ptr<SkyBox> createSkyBox(const char* folderPath);
 
-        static std::unique_ptr<GUIText> createGUIText(std::string text, const glm::vec3 color, const glm::vec3 pos, const float scale);
+        static std::unique_ptr<GUIText> createGUIText(std::string text, const glm::vec3& color, const glm::vec3& pos, const float scale);
 
         // These 2 methods will set BaseSimpleObject and BaseAnimatedObject specific uniform variables
         // which shader must have to draw them.

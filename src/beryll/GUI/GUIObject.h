@@ -30,30 +30,24 @@ namespace Beryll
         float width;
         float height;
 
-        // New GUI vars
-        glm::vec3 leftBottomPosInPercents; // X,Y in screen percents (0...100), Z in value as is (0...1).
-        glm::vec3 leftBottomPosInPixels; // X,Y in screen resolution, Z in value as is (0...1).
-        glm::vec3 leftBottomPosNormalized; // X,Y in 0...1 range, Z in value as is (0...1).
-
-        glm::vec2 getLeftBottomPosInPercents()
+        // New GUI vars.
+        void updatePositionInPercents(const glm::vec3& pos) // Left bottom corner.
         {
-            return glm::vec2{leftBottomPosInPercents.x, leftBottomPosInPercents.y};
+            setPositionInPercents(pos);
+            updateBuffersWithPositions();
         }
+        const glm::vec3& getPositionInPercents() const { return positionInPercents; }
+        const glm::vec3& getPositionInPixels() const { return positionInPixels; }
+        const glm::vec3& getPositionNormalized() const { return positionNormalized; }
 
-        void setLeftBottomPosInPercents(glm::vec2 newLeftBottomPosInPercents)
+        void updateWidthHeightInPercents(const glm::vec2& wh)
         {
-            BR_ASSERT((newLeftBottomPosInPercents.x >= 0.0f && newLeftBottomPosInPercents.x <= 100.0f &&
-                       newLeftBottomPosInPercents.y >= 0.0f && newLeftBottomPosInPercents.y <= 100.0f), "%s", "PosInPercents must be between 0.0f and 100.0f.");
-
-            leftBottomPosInPercents.x = newLeftBottomPosInPercents.x;
-            leftBottomPosInPercents.y = newLeftBottomPosInPercents.y;
-
-            leftBottomPosNormalized.x = leftBottomPosInPercents.x / 100.0f;
-            leftBottomPosNormalized.y = leftBottomPosInPercents.y / 100.0f;
-
-            leftBottomPosInPixels.x = leftBottomPosNormalized.x * Window::getInstance()->getScreenWidth();
-            leftBottomPosInPixels.y = leftBottomPosNormalized.y * Window::getInstance()->getScreenHeight();
+            setWidthHeightInPercents(wh);
+            updateBuffersWithPositions();
         }
+        const glm::vec2& getWidthHeightInPercents() { return widthHeightInPercents; }
+        const glm::vec2& getWidthHeightInPixels() { return widthHeightInPixels; }
+        const glm::vec2& getWidthHeightNormalized() { return widthHeightNormalized; }
 
     protected:
         // Properties only for GUI objects.
@@ -69,5 +63,49 @@ namespace Beryll
         bool m_isEnabled = true;
         bool m_pressed = false;
         bool m_touched = false;
+
+        // New GUI vars.
+        // Left bottom corner.
+        glm::vec3 positionInPercents; // X,Y in screen percents (0...100), Z in value as is (0...1).
+        glm::vec3 positionInPixels; // X,Y in screen resolution, Z in value as is (0...1).
+        glm::vec3 positionNormalized; // X,Y in 0...1 range, Z in value as is (0...1).
+
+        void setPositionInPercents(const glm::vec3& pos) // Left bottom corner.
+        {
+            BR_ASSERT((pos.x >= 0.0f && pos.x <= 100.0f &&
+                       pos.y >= 0.0f && pos.y <= 100.0f &&
+                       pos.z >= 0.0f && pos.z <= 1.0f), "%s", "pos must be between 0.0f and 100.0f.");
+
+            positionInPercents = pos;
+
+            // Recalculate only X and Y. Z will always in range 0...1.
+            positionNormalized.x = positionInPercents.x / 100.0f;
+            positionNormalized.y = positionInPercents.y / 100.0f;
+            positionNormalized.z = positionInPercents.z;
+
+            positionInPixels.x = positionNormalized.x * Window::getInstance()->getScreenWidth();
+            positionInPixels.y = positionNormalized.y * Window::getInstance()->getScreenHeight();
+            positionInPixels.z = positionInPercents.z;
+        }
+
+        glm::vec2 widthHeightInPercents; // X,Y in screen percents (0...100).
+        glm::vec2 widthHeightInPixels; // X,Y in screen resolution.
+        glm::vec2 widthHeightNormalized; // X,Y in 0...1 range.
+
+        void setWidthHeightInPercents(const glm::vec2& wh)
+        {
+            BR_ASSERT((wh.x >= 0.0f && wh.x <= 100.0f &&
+                       wh.y >= 0.0f && wh.y <= 100.0f), "%s", "wh must be between 0.0f and 100.0f.");
+
+            widthHeightInPercents = wh;
+            widthHeightNormalized = widthHeightInPercents / 100.0f;
+            widthHeightInPixels.x = widthHeightNormalized.x * Window::getInstance()->getScreenWidth();
+            widthHeightInPixels.y = widthHeightNormalized.y * Window::getInstance()->getScreenHeight();
+        }
+
+        virtual void updateBuffersWithPositions()
+        {
+            // Implement in subclasses if needed.
+        }
     };
 }

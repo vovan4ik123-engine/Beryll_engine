@@ -9,7 +9,6 @@ namespace Beryll
     {
     public:
         GUITexture() = delete;
-        // Position and size in 0...1 range.
         GUITexture(const std::string& texturePath, float l, float t, float w, float h, bool bringToFrontOnFocus = false);
         ~GUITexture() override;
 

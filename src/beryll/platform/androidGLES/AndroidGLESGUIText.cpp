@@ -10,11 +10,11 @@ namespace Beryll
     bool AndroidGLESGUIText::m_initialized = false;
     std::map<char, AndroidGLESGUIText::Character> AndroidGLESGUIText::m_characters;
 
-    AndroidGLESGUIText::AndroidGLESGUIText(std::string pText, const glm::vec3 color, const glm::vec3 pos, const float scale)
+    AndroidGLESGUIText::AndroidGLESGUIText(std::string pText, const glm::vec3& color, const glm::vec3& pos, const float scale)
     {
         text = std::move(pText);
         m_color = color;
-        leftBottomPosInPercents = pos;
+        setPositionInPercents(pos);
         m_scale = scale;
 
         if(!m_initialized)
@@ -93,10 +93,6 @@ namespace Beryll
             glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
         }
 
-        // Move pos X,Y from screen percents range (0...100) into screen resolution range.
-        leftBottomPosInPixels.x = (leftBottomPosInPercents.x / 100.0f) * Window::getInstance()->getScreenWidth();
-        leftBottomPosInPixels.y = (leftBottomPosInPercents.y / 100.0f) * Window::getInstance()->getScreenHeight();
-
 #if defined(ANDROID)
         std::vector<glm::vec2> textureCoords{glm::vec2(0.0f, 1.0f), // Flipped Y for OpenGL.
                                              glm::vec2(1.0f, 1.0f),
@@ -123,13 +119,11 @@ namespace Beryll
         m_internalShader->bind();
         m_internalShader->activateDiffuseTextureMat1();
         m_internalShader->unBind();
-
-        BR_INFO("%s", "AndroidGLESGUIText created");
     }
 
     AndroidGLESGUIText::~AndroidGLESGUIText()
     {
-        BR_INFO("%s", "AndroidGLESGUIText destroyed");
+
     }
 
     void AndroidGLESGUIText::updateBeforePhysics()
@@ -149,7 +143,12 @@ namespace Beryll
         m_internalShader->set3Float("textColor", m_color);
         glActiveTexture(GL_TEXTURE0);
 
-        glm::vec3 currentCarriagePos = leftBottomPosInPixels;
+        glm::vec3 currentCarriagePos = getPositionInPixels();
+
+        m_vertices[0].z = currentCarriagePos.z; // Z will not changing for all characters. X, Y will calculated in loop.
+        m_vertices[1].z = currentCarriagePos.z;
+        m_vertices[2].z = currentCarriagePos.z;
+        m_vertices[3].z = currentCarriagePos.z;
 
         // Iterate through all characters.
         for (char ch : text)
@@ -172,10 +171,10 @@ namespace Beryll
             w = (w / Window::getInstance()->getScreenWidth()) * 2.0f;
             h = (h / Window::getInstance()->getScreenHeight()) * 2.0f;
 
-            m_vertices[0].x = xPos;      m_vertices[0].y = yPos;      m_vertices[0].z = leftBottomPosInPixels.z;
-            m_vertices[1].x = xPos + w;  m_vertices[1].y = yPos;      m_vertices[1].z = leftBottomPosInPixels.z;
-            m_vertices[2].x = xPos + w;  m_vertices[2].y = yPos + h;  m_vertices[2].z = leftBottomPosInPixels.z;
-            m_vertices[3].x = xPos;      m_vertices[3].y = yPos + h;  m_vertices[3].z = leftBottomPosInPixels.z;
+            m_vertices[0].x = xPos;      m_vertices[0].y = yPos;
+            m_vertices[1].x = xPos + w;  m_vertices[1].y = yPos;
+            m_vertices[2].x = xPos + w;  m_vertices[2].y = yPos + h;
+            m_vertices[3].x = xPos;      m_vertices[3].y = yPos + h;
 
             m_vertexPosBuffer->setDynamicBufferData(m_vertices, m_vertices.size());
 

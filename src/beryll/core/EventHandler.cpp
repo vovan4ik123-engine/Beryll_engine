@@ -89,8 +89,8 @@ namespace Beryll
 //TOUCH EVENT
                 case SDL_EVENT_FINGER_DOWN:
                     m_fingers.emplace_back(Finger{glm::vec2(event.tfinger.x, event.tfinger.y),
-                                                 glm::vec2(event.tfinger.x * MainImGUI::getInstance()->getGUIWidth(), event.tfinger.y * MainImGUI::getInstance()->getGUIHeight()),
-                                                 glm::vec2(event.tfinger.x * Window::getInstance()->getScreenWidth(), event.tfinger.y * Window::getInstance()->getScreenHeight()),
+                                                  glm::vec2(event.tfinger.x * MainImGUI::getInstance()->getGUIWidth(), event.tfinger.y * MainImGUI::getInstance()->getGUIHeight()),
+                                                  glm::vec2(event.tfinger.x * Window::getInstance()->getScreenWidth(), event.tfinger.y * Window::getInstance()->getScreenHeight()),
                                                   false,
                                                   true,
                                                   static_cast<int>(event.tfinger.fingerID)});
@@ -111,6 +111,8 @@ namespace Beryll
                         auto it = std::find_if(m_fingers.begin(), m_fingers.end(), [&event](const Finger& f){ return f.ID == static_cast<int>(event.tfinger.fingerID); });
                         if(it != m_fingers.end())
                         {
+                            //BR_INFO("finger X %f finger Y %f", event.tfinger.x, event.tfinger.y);
+
                             (*it).normalizedPos.x = event.tfinger.x;
                             (*it).normalizedPos.y = event.tfinger.y;
 

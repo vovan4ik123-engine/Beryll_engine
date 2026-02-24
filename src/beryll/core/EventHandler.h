@@ -24,7 +24,7 @@ namespace Beryll
 
     struct Finger
     {
-        // Range 0...1.
+        // Starts from left top corner. Range 0...1.
         glm::vec2 normalizedPos;
         // ImGUI recognize screen size different than SDL3 window size.
         // Use it for positioning ImGUI elements.

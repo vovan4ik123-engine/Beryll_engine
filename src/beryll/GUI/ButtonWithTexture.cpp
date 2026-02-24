@@ -1,33 +1,69 @@
 #include "ButtonWithTexture.h"
 #include "beryll/renderer/Renderer.h"
+#include "beryll/renderer/Camera.h"
 #include "beryll/core/EventHandler.h"
-#include "MainImGUI.h"
 
 namespace Beryll
 {
     ButtonWithTexture::ButtonWithTexture(const std::string& defaultTexturePath,
                                          const std::string& touchedTexturePath,
-                                         float l, float t, float w, float h, bool actRepeat, bool bringToFrontOnFocus)
+                                         const glm::vec3& pos, const glm::vec2& widthHeight, bool actRepeat)
     {
         BR_ASSERT((defaultTexturePath.empty() == false), "%s", "Path to default texture can not be empty.");
 
-        leftPos = l;
-        topPos = t;
-        width = w;
-        height = h;
-
+        setPositionInPercents(pos);
+        setWidthHeightInPercents(widthHeight);
         m_actRepeat = actRepeat;
-
-        if(!bringToFrontOnFocus)
-        {
-            m_noBackgroundNoFrame = m_noBackgroundNoFrame | ImGuiWindowFlags_NoBringToFrontOnFocus;
-            m_noFrame = m_noFrame | ImGuiWindowFlags_NoBringToFrontOnFocus;
-        }
 
         m_defaultTexture = Renderer::createTexture(defaultTexturePath.c_str(), TextureType::DIFFUSE_TEXTURE_MAT_1);
 
         if( !touchedTexturePath.empty())
             m_touchedTexture = Renderer::createTexture(touchedTexturePath.c_str(), TextureType::DIFFUSE_TEXTURE_MAT_1);
+
+#if defined(ANDROID)
+        // Vertices created as dynamic buffer. Will be updated in updateBuffersWithPositions().
+        std::vector<glm::vec3> vertices{glm::vec3(0.0f, 0.0f, 0.0f),
+                                        glm::vec3(0.0f, 0.0f, 0.0f),
+                                        glm::vec3(0.0f, 0.0f, 0.0f),
+                                        glm::vec3(0.0f, 0.0f, 0.0f)};
+
+        std::vector<glm::vec2> textureCoords{glm::vec2(0.0f, 1.0f), // Flipped Y for OpenGL.
+                                             glm::vec2(1.0f, 1.0f),
+                                             glm::vec2(1.0f, 0.0f),
+                                             glm::vec2(0.0f, 0.0f)};
+
+        std::vector<uint32_t> indices{0,1,2,
+                                      2,3,0};
+#elif defined(APPLE)
+
+#endif
+
+        m_vertexPosBuffer = Renderer::createDynamicVertexBuffer(VertexAttribType::FLOAT, VertexAttribSize::THREE, sizeof(glm::vec3) * vertices.size());
+        m_textureCoordsBuffer = Renderer::createStaticVertexBuffer(textureCoords);
+        m_indexBuffer = Renderer::createStaticIndexBuffer(indices);
+
+        m_vertexArray = Renderer::createVertexArray();
+        m_vertexArray->addVertexBuffer(m_vertexPosBuffer);
+        m_vertexArray->addVertexBuffer(m_textureCoordsBuffer);
+        m_vertexArray->setIndexBuffer(m_indexBuffer);
+
+        m_internalShader = Renderer::createShader(BeryllConstants::GUIElementWithTextureVertexPath.data(),
+                                                  BeryllConstants::GUIElementWithTextureFragmentPath.data());
+        m_internalShader->bind();
+        m_internalShader->activateDiffuseTextureMat1();
+        m_internalShader->unBind();
+
+        // Move coords to screenSpace -1...1.
+        glm::vec3 screenSpacePos = getPositionNormalized();
+        screenSpacePos.x = screenSpacePos.x * 2.0f - 1.0f;
+        screenSpacePos.y = screenSpacePos.y * 2.0f - 1.0f;
+        glm::vec2 WH = getWidthHeightNormalized() * 2.0f;
+        vertices = std::vector<glm::vec3>{glm::vec3(screenSpacePos.x,         screenSpacePos.y,        screenSpacePos.z),
+                                          glm::vec3(screenSpacePos.x + WH.x,  screenSpacePos.y,        screenSpacePos.z),
+                                          glm::vec3(screenSpacePos.x + WH.x,  screenSpacePos.y + WH.y, screenSpacePos.z),
+                                          glm::vec3(screenSpacePos.x,         screenSpacePos.y + WH.y, screenSpacePos.z)};
+
+        m_vertexPosBuffer->setDynamicBufferData(vertices, vertices.size());
     }
 
     ButtonWithTexture::~ButtonWithTexture()
@@ -53,8 +89,12 @@ namespace Beryll
                 m_pressed = false;
                 for(const Finger& f : fingers)
                 {
-                    if(f.normalizedPos.x > leftPos && f.normalizedPos.x < leftPos + width &&
-                       f.normalizedPos.y > topPos && f.normalizedPos.y < topPos + height)
+                    // Flipper Y for opengl
+                    glm::vec2 flippedY = f.normalizedPos;
+                    flippedY.y = 1.0f - flippedY.y;
+
+                    if(flippedY.x > getPositionNormalized().x && flippedY.x < getPositionNormalized().x + getWidthHeightNormalized().x &&
+                       flippedY.y > getPositionNormalized().y && flippedY.y < getPositionNormalized().y + getWidthHeightNormalized().y)
                     {
                         // If any finger in button area.
                         m_pressed = true;
@@ -69,8 +109,12 @@ namespace Beryll
             m_touched = false;
             for(Finger& f : fingers)
             {
-                if(f.normalizedPos.x > leftPos && f.normalizedPos.x < leftPos + width &&
-                   f.normalizedPos.y > topPos && f.normalizedPos.y < topPos + height)
+                // Flipper Y for opengl
+                glm::vec2 flippedY = f.normalizedPos;
+                flippedY.y = 1.0f - flippedY.y;
+
+                if(flippedY.x > getPositionNormalized().x && flippedY.x < getPositionNormalized().x + getWidthHeightNormalized().x &&
+                   flippedY.y > getPositionNormalized().y && flippedY.y < getPositionNormalized().y + getWidthHeightNormalized().y)
                 {
                     if(f.ID == m_pressedFingerID)
                         m_touched = true;
@@ -109,30 +153,31 @@ namespace Beryll
 
     void ButtonWithTexture::draw()
     {
-        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
-        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
-        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
-
-        ImGui::SetNextWindowPos(ImVec2(leftPos * MainImGUI::getInstance()->getGUIWidth(), topPos * MainImGUI::getInstance()->getGUIHeight()));
-        ImGui::SetNextWindowSize(ImVec2(0.0f, 0.0f)); // Set next window size. Set axis to 0.0f to force an auto-fit on this axis.
-
-        ImGui::Begin(m_IDAsString.c_str(), nullptr, m_noBackgroundNoFrame);
+        m_internalShader->bind();
+        m_internalShader->setMatrix4x4Float("VPMatrix", Camera::getCameraGUI());
 
         if(m_touched && m_touchedTexture)
-        {
-            ImGui::ImageButton(m_IDAsString.c_str(),
-                               static_cast<ImTextureID>(m_touchedTexture->getID()),
-                               ImVec2(width * MainImGUI::getInstance()->getGUIWidth(), height * MainImGUI::getInstance()->getGUIHeight()));
-        }
+            m_touchedTexture->bind();
         else
-        {
-            ImGui::ImageButton(m_IDAsString.c_str(),
-                               static_cast<ImTextureID>(m_defaultTexture->getID()),
-                               ImVec2(width * MainImGUI::getInstance()->getGUIWidth(), height * MainImGUI::getInstance()->getGUIHeight()));
-        }
+            m_defaultTexture->bind();
 
-        ImGui::End();
+        m_vertexArray->bind();
+        m_vertexArray->draw();
+        m_vertexArray->unBind();
+    }
 
-        ImGui::PopStyleColor(3);
+    void ButtonWithTexture::updateBuffersWithPositions()
+    {
+        // Move coords to screenSpace -1...1.
+        glm::vec3 screenSpacePos = getPositionNormalized();
+        screenSpacePos.x = screenSpacePos.x * 2.0f - 1.0f;
+        screenSpacePos.y = screenSpacePos.y * 2.0f - 1.0f;
+        glm::vec2 WH = getWidthHeightNormalized() * 2.0f;
+        std::vector<glm::vec3> vertices{glm::vec3(screenSpacePos.x,         screenSpacePos.y,        screenSpacePos.z),
+                                        glm::vec3(screenSpacePos.x + WH.x,  screenSpacePos.y,        screenSpacePos.z),
+                                        glm::vec3(screenSpacePos.x + WH.x,  screenSpacePos.y + WH.y, screenSpacePos.z),
+                                        glm::vec3(screenSpacePos.x,         screenSpacePos.y + WH.y, screenSpacePos.z)};
+
+        m_vertexPosBuffer->setDynamicBufferData(vertices, vertices.size());
     }
 }
