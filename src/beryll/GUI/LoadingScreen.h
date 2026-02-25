@@ -3,9 +3,12 @@
 #include "LibsHeaders.h"
 #include "CppHeaders.h"
 
-#include "beryll/renderer/Renderer.h"
 #include "beryll/core/RandomGenerator.h"
 #include "beryll/core/Log.h"
+#include "beryll/renderer/Buffer.h"
+#include "beryll/renderer/VertexArray.h"
+#include "beryll/renderer/Shader.h"
+#include "beryll/renderer/Texture.h"
 
 namespace Beryll
 {

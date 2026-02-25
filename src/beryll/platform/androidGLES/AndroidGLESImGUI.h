@@ -19,7 +19,6 @@ namespace Beryll
 
         float getGUIWidth() override;
         float getGUIHeight() override;
-        float getGUIScreenAspectRation() override;
 
         /*
         * path must skip assets/ folder and starts from next folder inside assets/.

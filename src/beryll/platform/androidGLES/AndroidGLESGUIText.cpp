@@ -4,6 +4,7 @@
 #include <GLES3/gl3ext.h>
 #include "beryll/utils/File.h"
 #include "beryll/renderer/Camera.h"
+#include "beryll/renderer/Renderer.h"
 
 namespace Beryll
 {

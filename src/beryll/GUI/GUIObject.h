@@ -3,6 +3,11 @@
 #include "beryll/core/GameObject.h"
 #include "beryll/core/Window.h"
 
+#include "beryll/renderer/Buffer.h"
+#include "beryll/renderer/VertexArray.h"
+#include "beryll/renderer/Shader.h"
+#include "beryll/renderer/Texture.h"
+
 namespace Beryll
 {
     // Base class of all GUI objects.
@@ -103,9 +108,25 @@ namespace Beryll
             widthHeightInPixels.y = widthHeightNormalized.y * Window::getInstance()->getScreenHeight();
         }
 
-        virtual void updateBuffersWithPositions()
+        void updateBuffersWithPositions()
         {
-            // Implement in subclasses if needed.
+            // Move coords to GUI screenSpace -1...1.
+            glm::vec3 screenSpacePos = getPositionNormalized();
+            screenSpacePos.x = screenSpacePos.x * 2.0f - 1.0f;
+            screenSpacePos.y = screenSpacePos.y * 2.0f - 1.0f;
+            glm::vec2 WH = getWidthHeightNormalized() * 2.0f;
+            std::vector<glm::vec3> vertices{glm::vec3(screenSpacePos.x,         screenSpacePos.y,        screenSpacePos.z),
+                                            glm::vec3(screenSpacePos.x + WH.x,  screenSpacePos.y,        screenSpacePos.z),
+                                            glm::vec3(screenSpacePos.x + WH.x,  screenSpacePos.y + WH.y, screenSpacePos.z),
+                                            glm::vec3(screenSpacePos.x,         screenSpacePos.y + WH.y, screenSpacePos.z)};
+
+            m_vertexPosBuffer->setDynamicBufferData(vertices, vertices.size());
         }
+
+        std::shared_ptr<VertexBuffer> m_vertexPosBuffer;
+        std::shared_ptr<VertexBuffer> m_textureCoordsBuffer;
+        std::shared_ptr<IndexBuffer> m_indexBuffer;
+        std::unique_ptr<VertexArray> m_vertexArray;
+        std::shared_ptr<Shader> m_internalShader;
     };
 }

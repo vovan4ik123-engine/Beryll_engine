@@ -1,7 +1,6 @@
 #pragma once
 
 #include "GUIObject.h"
-#include "beryll/renderer/Renderer.h"
 
 namespace Beryll
 {
@@ -25,8 +24,6 @@ namespace Beryll
         void updateAfterPhysics() override;
         void draw() override;
 
-        void updateBuffersWithPositions() override;
-
         bool getIsPressed() { return m_pressed; }
         bool getIsPressedFingerStillOnScreen() { return m_isPressedFingerStillOnScreen; }
         bool getIsPressedFingerStillOnButton() { return m_touched; }
@@ -38,15 +35,11 @@ namespace Beryll
         std::function<void()> m_action;
 
         bool m_actRepeat = false; // If you want m_pressed = true all time during button touched pass actRepeat = true.
-
         int m_pressedFingerID = -100;
         bool m_isPressedFingerStillOnScreen = false;
 
-        std::shared_ptr<VertexBuffer> m_vertexPosBuffer;
-        std::shared_ptr<VertexBuffer> m_textureCoordsBuffer;
-        std::shared_ptr<IndexBuffer> m_indexBuffer;
-        std::unique_ptr<VertexArray> m_vertexArray;
-        std::shared_ptr<Shader> m_internalShader;
+        // Vertex and index buffers are in base class.
+        // ........
         std::unique_ptr<Texture> m_defaultTexture;
         std::unique_ptr<Texture> m_touchedTexture;
     };

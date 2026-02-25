@@ -41,7 +41,6 @@ namespace Beryll
 
         virtual float getGUIWidth() = 0;
         virtual float getGUIHeight() = 0;
-        virtual float getGUIScreenAspectRation() = 0;
 
         /*
         * path must skip assets/ folder and starts from next folder inside assets/.

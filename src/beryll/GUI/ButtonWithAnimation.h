@@ -1,7 +1,6 @@
 #pragma once
 
 #include "GUIObject.h"
-#include "beryll/renderer/Texture.h"
 
 namespace Beryll
 {
@@ -10,14 +9,17 @@ namespace Beryll
     public:
         ButtonWithAnimation() = delete;
         /*
-         * defaultTexturePath - Cannot be empty.
-         * touchedTexturePath - texture shown when touched. Can be empty.
-         *                      If empty defaultTexturePath will shown always.
-         * texturesSetPath    - Textures set which will plays as animation frames one after one.
+         * texturesPath - path to folder with textures(animation frames).
+         * texturesNames - textures(animation frames) names.
+         * animDurationSec - duration in seconds.
+         * repeatAnimation -
+         * pos - X,Y in screen percents (0...100), Z in value as is (0...1).
+         * widthHeight - width and height in screen percents (0...100).
+         * actRepeat - if true button will considered as pressed all frames until finder up.
          */
         ButtonWithAnimation(const std::string texturesPath, const std::vector<std::string> texturesNames,
                             const float animDurationSec, bool repeatAnimation,
-                            float l, float t, float w, float h, bool actRepeat = false, bool bringToFrontOnFocus = false);
+                            const glm::vec3& pos, const glm::vec2& widthHeight, bool actRepeat = false);
         ~ButtonWithAnimation() override;
 
         void enable(bool restartAnim);
@@ -38,6 +40,11 @@ namespace Beryll
         std::function<void()> m_action;
 
         bool m_actRepeat = false; // If you want m_pressed = true all time during button touched pass actRepeat = true.
+        int m_pressedFingerID = -100;
+        bool m_isPressedFingerStillOnScreen = false;
+
+        // Vertex and index buffers are in base class.
+        // ........
         // Animation data.
         std::vector<std::unique_ptr<Beryll::Texture>> m_animationFrames;
         float m_animationTotalDuration = 0.0f;
@@ -47,8 +54,5 @@ namespace Beryll
         int m_currentFrameIndex = 0;
         float m_timeOfOneFrame = 0.0f;
         float m_animationStartTime = 0.0f;
-
-        int m_pressedFingerID = -100;
-        bool m_isPressedFingerStillOnScreen = false;
     };
 }

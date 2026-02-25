@@ -100,14 +100,6 @@ namespace Beryll
         return ImGui::GetIO().DisplaySize.y;
     }
 
-    float AndroidGLESImGUI::getGUIScreenAspectRation()
-    {
-        if(ImGui::GetIO().DisplaySize.x > ImGui::GetIO().DisplaySize.y)
-            return ImGui::GetIO().DisplaySize.x / ImGui::GetIO().DisplaySize.y;
-        else
-            return ImGui::GetIO().DisplaySize.y / ImGui::GetIO().DisplaySize.x;
-    }
-
     ImFont* AndroidGLESImGUI::createFont(const std::string& path, float fontHeight)
     {
         ImFont* storedFont = findStoredFont(path, fontHeight);

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "beryll/GUI/GUIText.h"
-#include "beryll/renderer/Renderer.h"
 
 namespace Beryll
 {
@@ -42,10 +41,7 @@ namespace Beryll
                                           glm::vec3(0.0f, 0.0f, 0.0f),
                                           glm::vec3(0.0f, 0.0f, 0.0f)};
 
-        std::shared_ptr<VertexBuffer> m_vertexPosBuffer;
-        std::shared_ptr<VertexBuffer> m_textureCoordsBuffer;
-        std::shared_ptr<IndexBuffer> m_indexBuffer;
-        std::unique_ptr<VertexArray> m_vertexArray;
-        std::shared_ptr<Shader> m_internalShader;
+        // Vertex and index buffers are in base class.
+        // ........
     };
 }

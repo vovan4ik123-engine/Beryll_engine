@@ -53,17 +53,7 @@ namespace Beryll
         m_internalShader->activateDiffuseTextureMat1();
         m_internalShader->unBind();
 
-        // Move coords to screenSpace -1...1.
-        glm::vec3 screenSpacePos = getPositionNormalized();
-        screenSpacePos.x = screenSpacePos.x * 2.0f - 1.0f;
-        screenSpacePos.y = screenSpacePos.y * 2.0f - 1.0f;
-        glm::vec2 WH = getWidthHeightNormalized() * 2.0f;
-        vertices = std::vector<glm::vec3>{glm::vec3(screenSpacePos.x,         screenSpacePos.y,        screenSpacePos.z),
-                                          glm::vec3(screenSpacePos.x + WH.x,  screenSpacePos.y,        screenSpacePos.z),
-                                          glm::vec3(screenSpacePos.x + WH.x,  screenSpacePos.y + WH.y, screenSpacePos.z),
-                                          glm::vec3(screenSpacePos.x,         screenSpacePos.y + WH.y, screenSpacePos.z)};
-
-        m_vertexPosBuffer->setDynamicBufferData(vertices, vertices.size());
+        updateBuffersWithPositions(); // Only after buffers created.
     }
 
     ButtonWithTexture::~ButtonWithTexture()
@@ -163,21 +153,5 @@ namespace Beryll
 
         m_vertexArray->bind();
         m_vertexArray->draw();
-        m_vertexArray->unBind();
-    }
-
-    void ButtonWithTexture::updateBuffersWithPositions()
-    {
-        // Move coords to screenSpace -1...1.
-        glm::vec3 screenSpacePos = getPositionNormalized();
-        screenSpacePos.x = screenSpacePos.x * 2.0f - 1.0f;
-        screenSpacePos.y = screenSpacePos.y * 2.0f - 1.0f;
-        glm::vec2 WH = getWidthHeightNormalized() * 2.0f;
-        std::vector<glm::vec3> vertices{glm::vec3(screenSpacePos.x,         screenSpacePos.y,        screenSpacePos.z),
-                                        glm::vec3(screenSpacePos.x + WH.x,  screenSpacePos.y,        screenSpacePos.z),
-                                        glm::vec3(screenSpacePos.x + WH.x,  screenSpacePos.y + WH.y, screenSpacePos.z),
-                                        glm::vec3(screenSpacePos.x,         screenSpacePos.y + WH.y, screenSpacePos.z)};
-
-        m_vertexPosBuffer->setDynamicBufferData(vertices, vertices.size());
     }
 }

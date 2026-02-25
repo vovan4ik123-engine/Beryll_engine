@@ -1,30 +1,21 @@
 #include "ButtonWithAnimation.h"
 #include "beryll/renderer/Renderer.h"
+#include "beryll/renderer/Camera.h"
 #include "beryll/core/EventHandler.h"
-#include "MainImGUI.h"
 #include "beryll/core/TimeStep.h"
 
 namespace Beryll
 {
     ButtonWithAnimation::ButtonWithAnimation(const std::string texturesPath, const std::vector<std::string> texturesNames,
                                              const float animDurationSec, bool repeatAnimation,
-                                             float l, float t, float w, float h, bool actRepeat, bool bringToFrontOnFocus)
+                                             const glm::vec3& pos, const glm::vec2& widthHeight, bool actRepeat)
     {
         BR_ASSERT((texturesPath.empty() == false), "%s", "Path to default texture can not be empty.");
         BR_ASSERT((texturesNames.empty() == false), "%s", "No textures names.");
 
-        leftPos = l;
-        topPos = t;
-        width = w;
-        height = h;
-
+        setPositionInPercents(pos);
+        setWidthHeightInPercents(widthHeight);
         m_actRepeat = actRepeat;
-
-        if(!bringToFrontOnFocus)
-        {
-            m_noBackgroundNoFrame = m_noBackgroundNoFrame | ImGuiWindowFlags_NoBringToFrontOnFocus;
-            m_noFrame = m_noFrame | ImGuiWindowFlags_NoBringToFrontOnFocus;
-        }
 
         m_animationFrames.reserve(texturesNames.size());
         std::string pathAndName;
@@ -42,6 +33,41 @@ namespace Beryll
         m_currentFrameIndex = 0;
         m_timeOfOneFrame = m_animationTotalDuration / float(m_animationFrames.size());
         m_animationStartTime = Beryll::TimeStep::getSecFromStart();
+
+#if defined(ANDROID)
+        // Vertices created as dynamic buffer. Will be updated in updateBuffersWithPositions().
+        std::vector<glm::vec3> vertices{glm::vec3(0.0f, 0.0f, 0.0f),
+                                        glm::vec3(0.0f, 0.0f, 0.0f),
+                                        glm::vec3(0.0f, 0.0f, 0.0f),
+                                        glm::vec3(0.0f, 0.0f, 0.0f)};
+
+        std::vector<glm::vec2> textureCoords{glm::vec2(0.0f, 1.0f), // Flipped Y for OpenGL.
+                                             glm::vec2(1.0f, 1.0f),
+                                             glm::vec2(1.0f, 0.0f),
+                                             glm::vec2(0.0f, 0.0f)};
+
+        std::vector<uint32_t> indices{0,1,2,
+                                      2,3,0};
+#elif defined(APPLE)
+
+#endif
+
+        m_vertexPosBuffer = Renderer::createDynamicVertexBuffer(VertexAttribType::FLOAT, VertexAttribSize::THREE, sizeof(glm::vec3) * vertices.size());
+        m_textureCoordsBuffer = Renderer::createStaticVertexBuffer(textureCoords);
+        m_indexBuffer = Renderer::createStaticIndexBuffer(indices);
+
+        m_vertexArray = Renderer::createVertexArray();
+        m_vertexArray->addVertexBuffer(m_vertexPosBuffer);
+        m_vertexArray->addVertexBuffer(m_textureCoordsBuffer);
+        m_vertexArray->setIndexBuffer(m_indexBuffer);
+
+        m_internalShader = Renderer::createShader(BeryllConstants::GUIElementWithTextureVertexPath.data(),
+                                                  BeryllConstants::GUIElementWithTextureFragmentPath.data());
+        m_internalShader->bind();
+        m_internalShader->activateDiffuseTextureMat1();
+        m_internalShader->unBind();
+
+        updateBuffersWithPositions(); // Only after buffers created.
     }
 
     ButtonWithAnimation::~ButtonWithAnimation()
@@ -79,8 +105,12 @@ namespace Beryll
                 m_pressed = false;
                 for(const Finger& f : fingers)
                 {
-                    if(f.normalizedPos.x > leftPos && f.normalizedPos.x < leftPos + width &&
-                       f.normalizedPos.y > topPos && f.normalizedPos.y < topPos + height)
+                    // Flipper Y for opengl
+                    glm::vec2 flippedY = f.normalizedPos;
+                    flippedY.y = 1.0f - flippedY.y;
+
+                    if(flippedY.x > getPositionNormalized().x && flippedY.x < getPositionNormalized().x + getWidthHeightNormalized().x &&
+                       flippedY.y > getPositionNormalized().y && flippedY.y < getPositionNormalized().y + getWidthHeightNormalized().y)
                     {
                         // If any finger in button area.
                         m_pressed = true;
@@ -95,8 +125,12 @@ namespace Beryll
             m_touched = false;
             for(Finger& f : fingers)
             {
-                if(f.normalizedPos.x > leftPos && f.normalizedPos.x < leftPos + width &&
-                   f.normalizedPos.y > topPos && f.normalizedPos.y < topPos + height)
+                // Flipper Y for opengl
+                glm::vec2 flippedY = f.normalizedPos;
+                flippedY.y = 1.0f - flippedY.y;
+
+                if(flippedY.x > getPositionNormalized().x && flippedY.x < getPositionNormalized().x + getWidthHeightNormalized().x &&
+                   flippedY.y > getPositionNormalized().y && flippedY.y < getPositionNormalized().y + getWidthHeightNormalized().y)
                 {
                     if(f.ID == m_pressedFingerID)
                         m_touched = true;
@@ -149,21 +183,12 @@ namespace Beryll
                 m_currentFrameIndex = m_animationFrames.size() - 1;
         }
 
-        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
-        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
-        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+        m_internalShader->bind();
+        m_internalShader->setMatrix4x4Float("VPMatrix", Camera::getCameraGUI());
 
-        ImGui::SetNextWindowPos(ImVec2(leftPos * MainImGUI::getInstance()->getGUIWidth(), topPos * MainImGUI::getInstance()->getGUIHeight()));
-        ImGui::SetNextWindowSize(ImVec2(0.0f, 0.0f)); // Set next window size. Set axis to 0.0f to force an auto-fit on this axis.
+        m_animationFrames[m_currentFrameIndex]->bind();
 
-        ImGui::Begin(m_IDAsString.c_str(), nullptr, m_noBackgroundNoFrame);
-
-        ImGui::ImageButton(m_IDAsString.c_str(),
-                           static_cast<ImTextureID>(m_animationFrames[m_currentFrameIndex]->getID()),
-                           ImVec2(width * MainImGUI::getInstance()->getGUIWidth(), height * MainImGUI::getInstance()->getGUIHeight()));
-
-        ImGui::End();
-
-        ImGui::PopStyleColor(3);
+        m_vertexArray->bind();
+        m_vertexArray->draw();
     }
 }

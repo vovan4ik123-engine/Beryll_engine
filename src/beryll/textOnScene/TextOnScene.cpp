@@ -1,6 +1,7 @@
 #include "TextOnScene.h"
 #include "beryll/core/BeryllConstants.h"
 #include "beryll/renderer/Camera.h"
+#include "beryll/renderer/Renderer.h"
 #include "beryll/core/TimeStep.h"
 #include "beryll/core/Log.h"
 
