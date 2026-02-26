@@ -12,7 +12,7 @@
 
 namespace Beryll
 {
-    class LoadingScreen
+    class LoadingScreen final
     {
     public:
         LoadingScreen() = delete;
