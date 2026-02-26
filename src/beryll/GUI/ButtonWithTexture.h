@@ -15,8 +15,8 @@ namespace Beryll
          * widthHeight - width and height in screen percents (0...100).
          * actRepeat - if true button will considered as pressed all frames until finder up.
          */
-        ButtonWithTexture(const std::string& defaultTexturePath,
-                          const std::string& touchedTexturePath,
+        ButtonWithTexture(const char* defaultTexturePath,
+                          const char* touchedTexturePath,
                           const glm::vec3& pos, const glm::vec2& widthHeight, bool actRepeat = false);
         ~ButtonWithTexture() override;
 

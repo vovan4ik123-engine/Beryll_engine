@@ -731,7 +731,7 @@ namespace Beryll
             //for(int i = m_dynamicsWorldMT->getNumCollisionObjects() - 1; i >= 0; --i)
             //{
             //    btRigidBody* body = btRigidBody::upcast(m_dynamicsWorldMT->getCollisionObjectArray()[i]);
-            //    if (body && body->getActivationState() != ACTIVE_TAG)
+            //    if(body && body->getActivationState() != ACTIVE_TAG)
             //        body->activate(true);
             //}
         }
@@ -1032,7 +1032,7 @@ namespace Beryll
             btTransform transforms;
 
             const btRigidBody* body = btRigidBody::upcast(closestResults.m_collisionObject);
-            if (body && body->getMotionState())
+            if(body && body->getMotionState())
                 body->getMotionState()->getWorldTransform(transforms);
             else
                 transforms = closestResults.m_collisionObject->getWorldTransform();
@@ -1085,7 +1085,7 @@ namespace Beryll
                 btTransform transforms;
 
                 const btRigidBody* body = btRigidBody::upcast(allResults.m_collisionObjects[i]);
-                if (body && body->getMotionState())
+                if(body && body->getMotionState())
                     body->getMotionState()->getWorldTransform(transforms);
                 else
                     transforms = allResults.m_collisionObjects[i]->getWorldTransform();

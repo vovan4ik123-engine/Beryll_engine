@@ -5,31 +5,31 @@ namespace Beryll
     AndroidGLESGoogleAnalytics::AndroidGLESGoogleAnalytics()
     {
         m_jniEnv = static_cast<JNIEnv*>(SDL_GetAndroidJNIEnv());
-        if (!m_jniEnv)
+        if(!m_jniEnv)
         {
             BR_ASSERT(false, "%s", "SDL_AndroidGetJNIEnv() returned nullptr.")
         }
 
         m_javaGoogleAnalyticsManagerClassID = m_jniEnv->FindClass("managers/GoogleAnalyticsManager"); // app/src/main/java/managers/GoogleAnalyticsManager.java
-        if (!m_javaGoogleAnalyticsManagerClassID)
+        if(!m_javaGoogleAnalyticsManagerClassID)
         {
             BR_ASSERT(false, "%s", "m_javaGoogleAnalyticsManagerClassID is nullptr.")
         }
 
         m_sendEventEmptyMethodID = m_jniEnv->GetStaticMethodID(m_javaGoogleAnalyticsManagerClassID, "sendEventEmpty", "(Ljava/lang/String;)V");
-        if (!m_sendEventEmptyMethodID)
+        if(!m_sendEventEmptyMethodID)
         {
             BR_ASSERT(false, "%s", "m_sendEventEmptyMethodID is nullptr.")
         }
 
         m_sendEventStringParamMethodID = m_jniEnv->GetStaticMethodID(m_javaGoogleAnalyticsManagerClassID, "sendEventStringParam", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V");
-        if (!m_sendEventStringParamMethodID)
+        if(!m_sendEventStringParamMethodID)
         {
             BR_ASSERT(false, "%s", "m_sendEventStringParamMethodID is nullptr.")
         }
 
         m_sendEventIntParamMethodID = m_jniEnv->GetStaticMethodID(m_javaGoogleAnalyticsManagerClassID, "sendEventIntParam", "(Ljava/lang/String;Ljava/lang/String;I)V");
-        if (!m_sendEventIntParamMethodID)
+        if(!m_sendEventIntParamMethodID)
         {
             BR_ASSERT(false, "%s", "m_sendEventIntParamMethodID is nullptr.")
         }

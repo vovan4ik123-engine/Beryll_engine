@@ -8,19 +8,19 @@ namespace Beryll
     AndroidGLESBillingSystem::AndroidGLESBillingSystem()
     {
         m_jniEnv = static_cast<JNIEnv*>(SDL_GetAndroidJNIEnv());
-        if (!m_jniEnv)
+        if(!m_jniEnv)
         {
             BR_ASSERT(false, "%s", "SDL_AndroidGetJNIEnv() returned nullptr.")
         }
 
         m_javaBillingManagerClassID = m_jniEnv->FindClass("managers/BillingManager"); // app/src/main/java/managers/BillingManager.java
-        if (!m_javaBillingManagerClassID)
+        if(!m_javaBillingManagerClassID)
         {
             BR_ASSERT(false, "%s", "m_javaBillingManagerClassID is nullptr.")
         }
 
         m_makeInAppPurchaseMethodID = m_jniEnv->GetStaticMethodID(m_javaBillingManagerClassID, "makeInAppPurchase", "(Ljava/lang/String;)V");
-        if (!m_makeInAppPurchaseMethodID)
+        if(!m_makeInAppPurchaseMethodID)
         {
             BR_ASSERT(false, "%s", "m_inAppMethodID is nullptr.")
         }

@@ -17,7 +17,7 @@ namespace Beryll
          * widthHeight - width and height in screen percents (0...100).
          * actRepeat - if true button will considered as pressed all frames until finder up.
          */
-        ButtonWithAnimation(const std::string texturesPath, const std::vector<std::string> texturesNames,
+        ButtonWithAnimation(const char* texturesPath, const std::vector<const char*> texturesNames,
                             const float animDurationSec, bool repeatAnimation,
                             const glm::vec3& pos, const glm::vec2& widthHeight, bool actRepeat = false);
         ~ButtonWithAnimation() override;

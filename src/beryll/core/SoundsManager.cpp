@@ -90,12 +90,12 @@ namespace Beryll
 
     void SoundsManager::pauseBackgroundMP3()
     {
-        if ( !Mix_PausedMusic()) { Mix_PauseMusic(); }
+        if( !Mix_PausedMusic()) { Mix_PauseMusic(); }
     }
 
     void SoundsManager::resumeBackgroundMP3()
     {
-        if (Mix_PausedMusic()) { Mix_ResumeMusic(); }
+        if(Mix_PausedMusic()) { Mix_ResumeMusic(); }
     }
 
     void SoundsManager::stopBackgroundMP3()

@@ -22,6 +22,8 @@ namespace Beryll
             return;
         }
 
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+
         BR_ASSERT((m_ID.find_last_of('.') != std::string::npos), "Texture does not have extension: %s", m_ID.c_str());
 
         BR_ASSERT(((m_ID.substr(m_ID.find_last_of('.')) == ".png") ||

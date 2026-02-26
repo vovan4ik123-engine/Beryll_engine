@@ -87,21 +87,21 @@ namespace Beryll
         for (int g = 0; g < collisionMesh->mNumVertices; ++g)
         {
             // Top and bottom points must be taken from Z axis.
-            if (collisionMesh->mVertices[g].z < m_mostBottomVertex)
+            if(collisionMesh->mVertices[g].z < m_mostBottomVertex)
                 m_mostBottomVertex = collisionMesh->mVertices[g].z;
-            if (collisionMesh->mVertices[g].z > m_mostTopVertex)
+            if(collisionMesh->mVertices[g].z > m_mostTopVertex)
                 m_mostTopVertex = collisionMesh->mVertices[g].z;
 
-            if (collisionMesh->mVertices[g].x < m_smallestX)
+            if(collisionMesh->mVertices[g].x < m_smallestX)
                 m_smallestX = collisionMesh->mVertices[g].x;
-            if (collisionMesh->mVertices[g].x > m_biggestX)
+            if(collisionMesh->mVertices[g].x > m_biggestX)
                 m_biggestX = collisionMesh->mVertices[g].x;
 
             // Z dimensions should be taken from Y axis.
             // In Blender Y axis is horizontal and will replaced by Z after exporting.
-            if (collisionMesh->mVertices[g].y < m_smallestZ)
+            if(collisionMesh->mVertices[g].y < m_smallestZ)
                 m_smallestZ = collisionMesh->mVertices[g].y;
-            if (collisionMesh->mVertices[g].y > m_biggestZ)
+            if(collisionMesh->mVertices[g].y > m_biggestZ)
                 m_biggestZ = collisionMesh->mVertices[g].y;
         }
 

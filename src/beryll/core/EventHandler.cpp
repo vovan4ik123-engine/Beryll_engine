@@ -72,14 +72,14 @@ namespace Beryll
 
 //KEYS
                 case SDL_EVENT_KEY_DOWN:
-                    if (event.key.scancode == SDL_SCANCODE_AC_BACK)
+                    if(event.key.scancode == SDL_SCANCODE_AC_BACK)
                     {
                         m_events[static_cast<int>(EventID::KEY_AC_BACK_DOWN)] = true;
                     }
                     break;
 
                 case SDL_EVENT_KEY_UP:
-                    if (event.key.scancode == SDL_SCANCODE_AC_BACK)
+                    if(event.key.scancode == SDL_SCANCODE_AC_BACK)
                     {
                         m_events[static_cast<int>(EventID::KEY_AC_BACK_UP)] = true;
                     }
@@ -128,7 +128,7 @@ namespace Beryll
 
 //SCREEN
                 case SDL_EVENT_DISPLAY_ORIENTATION :
-                    if (SDL_GetCurrentDisplayOrientation(Window::getInstance()->currentDisplayID) != Window::getInstance()->currentDisplayOrientation)
+                    if(SDL_GetCurrentDisplayOrientation(Window::getInstance()->currentDisplayID) != Window::getInstance()->currentDisplayOrientation)
                     {
                         m_events[static_cast<int>(EventID::DISPLAY_ORIENTATION_CHANGE)] = true;
                         Window::getInstance()->currentDisplayOrientation = SDL_GetCurrentDisplayOrientation(Window::getInstance()->currentDisplayID);

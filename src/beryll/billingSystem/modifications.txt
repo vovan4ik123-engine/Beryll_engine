@@ -92,7 +92,7 @@ java/managers/BillingManager:
         public void onPurchasesUpdated(@NonNull BillingResult billingResult, List<Purchase> purchases) {
             Log.v("BillingManager", "testBillingLogs onPurchasesUpdated() ThreadID: " + Thread.currentThread().getId());
 
-            if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK && purchases != null) {
+            if(billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK && purchases != null) {
                 Log.v("BillingManager", "testBillingLogs billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK ThreadID: " + Thread.currentThread().getId());
 
                 // Consume purchased item = make them purchasable again.
@@ -113,7 +113,7 @@ java/managers/BillingManager:
                 }
 
                 billingSystemSuccessCallback();
-            } else if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.USER_CANCELED) {
+            } else if(billingResult.getResponseCode() == BillingClient.BillingResponseCode.USER_CANCELED) {
                 // Do nothing if user canceled.
             } else {
                 // Handle errors.

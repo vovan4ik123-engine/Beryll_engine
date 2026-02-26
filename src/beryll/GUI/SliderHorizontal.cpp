@@ -77,7 +77,7 @@ namespace Beryll
             {
                 // Calculate position on slider and set m_sliderValue here because ImGUI ignore screen multitouch.
                 // Next modify ImGUI library:
-                // In method bool ImGui::SliderBehaviorT() in file imgui_widgets.cpp delete if (set_new_value) {...}
+                // In method bool ImGui::SliderBehaviorT() in file imgui_widgets.cpp delete if(set_new_value) {...}
                 // Now we calculate slider value. Not ImGUI.
                 float fingerXPos = f.normalizedPos.x;
                 if(fingerXPos <= leftPos)

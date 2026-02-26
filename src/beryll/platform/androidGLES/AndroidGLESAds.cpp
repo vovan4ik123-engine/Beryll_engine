@@ -8,25 +8,25 @@ namespace Beryll
     AndroidGLESAds::AndroidGLESAds()
     {
         m_jniEnv = static_cast<JNIEnv*>(SDL_GetAndroidJNIEnv());
-        if (!m_jniEnv)
+        if(!m_jniEnv)
         {
             BR_ASSERT(false, "%s", "SDL_AndroidGetJNIEnv() returned nullptr.")
         }
 
         m_javaAdsManagerClassID = m_jniEnv->FindClass("managers/AdsManager"); // app/src/main/java/managers/AdsManager.java
-        if (!m_javaAdsManagerClassID)
+        if(!m_javaAdsManagerClassID)
         {
             BR_ASSERT(false, "%s", "m_javaAdsManagerClassID is nullptr.")
         }
 
         m_showRewardedAdMethodID = m_jniEnv->GetStaticMethodID(m_javaAdsManagerClassID, "showRewardedAd", "(Z)V");
-        if (!m_showRewardedAdMethodID)
+        if(!m_showRewardedAdMethodID)
         {
             BR_ASSERT(false, "%s", "m_showRewardedAdMethodID is nullptr.")
         }
 
         m_showInterstitialAdMethodID = m_jniEnv->GetStaticMethodID(m_javaAdsManagerClassID, "showInterstitialAd", "()V");
-        if (!m_showInterstitialAdMethodID)
+        if(!m_showInterstitialAdMethodID)
         {
             BR_ASSERT(false, "%s", "m_showInterstitialAdMethodID is nullptr.")
         }

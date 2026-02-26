@@ -6,11 +6,11 @@
 
 namespace Beryll
 {
-    ButtonWithAnimation::ButtonWithAnimation(const std::string texturesPath, const std::vector<std::string> texturesNames,
+    ButtonWithAnimation::ButtonWithAnimation(const char* texturesPath, const std::vector<const char*> texturesNames,
                                              const float animDurationSec, bool repeatAnimation,
                                              const glm::vec3& pos, const glm::vec2& widthHeight, bool actRepeat)
     {
-        BR_ASSERT((texturesPath.empty() == false), "%s", "Path to default texture can not be empty.");
+        BR_ASSERT((texturesPath != nullptr && texturesPath[0] != '\0'), "%s", "Path to default texture can not be empty.");
         BR_ASSERT((texturesNames.empty() == false), "%s", "No textures names.");
 
         setPositionInPercents(pos);
@@ -19,7 +19,7 @@ namespace Beryll
 
         m_animationFrames.reserve(texturesNames.size());
         std::string pathAndName;
-        for(const std::string& name : texturesNames)
+        for(const char* name : texturesNames)
         {
             pathAndName = texturesPath;
             pathAndName += '/';

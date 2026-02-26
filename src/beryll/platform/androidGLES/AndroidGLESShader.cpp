@@ -39,7 +39,7 @@ namespace Beryll
         glCompileShader(vertexShaderID);
         GLint compiled;
         glGetShaderiv(vertexShaderID, GL_COMPILE_STATUS, &compiled);
-        if (GL_FALSE == compiled)
+        if(GL_FALSE == compiled)
         {
             int len;
             glGetShaderiv(vertexShaderID, GL_INFO_LOG_LENGTH, &len);
@@ -53,7 +53,7 @@ namespace Beryll
 
         glCompileShader(fragmentShaderID);
         glGetShaderiv(fragmentShaderID, GL_COMPILE_STATUS, &compiled);
-        if (GL_FALSE == compiled)
+        if(GL_FALSE == compiled)
         {
             int len;
             glGetShaderiv(fragmentShaderID, GL_INFO_LOG_LENGTH, &len);

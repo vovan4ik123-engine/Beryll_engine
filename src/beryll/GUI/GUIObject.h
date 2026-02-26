@@ -110,6 +110,11 @@ namespace Beryll
 
         void updateBuffersWithPositions()
         {
+            if(m_vertexPosBuffer == nullptr)
+            {
+                BR_ASSERT(false, "%s", "Buffer is nullptr.");
+                return;
+            }
             // Move coords to GUI screenSpace -1...1.
             glm::vec3 screenSpacePos = getPositionNormalized();
             screenSpacePos.x = screenSpacePos.x * 2.0f - 1.0f;

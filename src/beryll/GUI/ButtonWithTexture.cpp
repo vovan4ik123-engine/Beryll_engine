@@ -5,20 +5,20 @@
 
 namespace Beryll
 {
-    ButtonWithTexture::ButtonWithTexture(const std::string& defaultTexturePath,
-                                         const std::string& touchedTexturePath,
+    ButtonWithTexture::ButtonWithTexture(const char* defaultTexturePath,
+                                         const char* touchedTexturePath,
                                          const glm::vec3& pos, const glm::vec2& widthHeight, bool actRepeat)
     {
-        BR_ASSERT((defaultTexturePath.empty() == false), "%s", "Path to default texture can not be empty.");
+        BR_ASSERT((defaultTexturePath != nullptr && defaultTexturePath[0] != '\0'), "%s", "Path to default texture can not be empty.");
 
         setPositionInPercents(pos);
         setWidthHeightInPercents(widthHeight);
         m_actRepeat = actRepeat;
 
-        m_defaultTexture = Renderer::createTexture(defaultTexturePath.c_str(), TextureType::DIFFUSE_TEXTURE_MAT_1);
+        m_defaultTexture = Renderer::createTexture(defaultTexturePath, TextureType::DIFFUSE_TEXTURE_MAT_1);
 
-        if( !touchedTexturePath.empty())
-            m_touchedTexture = Renderer::createTexture(touchedTexturePath.c_str(), TextureType::DIFFUSE_TEXTURE_MAT_1);
+        if(touchedTexturePath != nullptr && touchedTexturePath[0] != '\0')
+            m_touchedTexture = Renderer::createTexture(touchedTexturePath, TextureType::DIFFUSE_TEXTURE_MAT_1);
 
 #if defined(ANDROID)
         // Vertices created as dynamic buffer. Will be updated in updateBuffersWithPositions().

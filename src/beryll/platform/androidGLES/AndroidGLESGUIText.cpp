@@ -5,6 +5,7 @@
 #include "beryll/utils/File.h"
 #include "beryll/renderer/Camera.h"
 #include "beryll/renderer/Renderer.h"
+#include "beryll/platform/androidGLES/AndroidGLESGlobal.h"
 
 namespace Beryll
 {
@@ -25,7 +26,7 @@ namespace Beryll
 
             // Init library.
             FT_Library ftLib;
-            if (FT_Init_FreeType(&ftLib) != 0)
+            if(FT_Init_FreeType(&ftLib) != 0)
             {
                 BR_ASSERT(false, "%s", "ERROR FREETYPE can not init FreeType Library.");
             }
@@ -34,7 +35,7 @@ namespace Beryll
             FT_Face ftFace;
             uint32_t fontBufferSize = 0;
             char* fontBuffer = BeryllUtils::File::readToBuffer("fonts/roboto.ttf", &fontBufferSize);
-            if (FT_New_Memory_Face(ftLib, reinterpret_cast<unsigned char*>(fontBuffer), fontBufferSize, 0, &ftFace)  != 0)
+            if(FT_New_Memory_Face(ftLib, reinterpret_cast<unsigned char*>(fontBuffer), fontBufferSize, 0, &ftFace)  != 0)
             {
                 BR_ASSERT(false, "%s", "ERROR FREETYPE can not load font: fonts/roboto.ttf.");
             }
@@ -48,7 +49,7 @@ namespace Beryll
             for (unsigned char c = 32; c < 128; c++)
             {
                 // Load character glyph.
-                if (FT_Load_Char(ftFace, c, FT_LOAD_RENDER))
+                if(FT_Load_Char(ftFace, c, FT_LOAD_RENDER))
                 {
                     BR_WARN("Freetype can not load char %s", c);
                     continue;
@@ -186,5 +187,8 @@ namespace Beryll
             m_vertexArray->bind();
             m_vertexArray->draw();
         }
+
+        glBindTexture(GL_TEXTURE_2D, 0);
+        GLESStateVariables::currentDiffuseTextureMat1ID0 = 0;
     }
 }

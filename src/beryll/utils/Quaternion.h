@@ -44,7 +44,7 @@ namespace BeryllUtils
             const float oneMinusBlend = 1.0f - blend;
 
             aiQuaternion result;
-            if (dotProduct < 0.0f)
+            if(dotProduct < 0.0f)
             {
                 result.x = a.x * oneMinusBlend + blend * -b.x;
                 result.y = a.y * oneMinusBlend + blend * -b.y;
