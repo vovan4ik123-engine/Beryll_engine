@@ -12,11 +12,11 @@ namespace Beryll
     bool AndroidGLESGUIText::m_initialized = false;
     std::map<char, AndroidGLESGUIText::Character> AndroidGLESGUIText::m_characters;
 
-    AndroidGLESGUIText::AndroidGLESGUIText(std::string pText, const glm::vec3& color, const glm::vec3& pos, const float scale)
+    AndroidGLESGUIText::AndroidGLESGUIText(std::string pText,
+                                           const glm::vec3& color, const glm::vec3& pos, const float scale) : GUIText(pos, glm::vec2{1.0f})
     {
         text = std::move(pText);
         m_color = color;
-        setPositionInPercents(pos);
         m_scale = scale;
 
         if(!m_initialized)
@@ -94,27 +94,6 @@ namespace Beryll
 
             glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
         }
-
-#if defined(ANDROID)
-        std::vector<glm::vec2> textureCoords{glm::vec2(0.0f, 1.0f), // Flipped Y for OpenGL.
-                                             glm::vec2(1.0f, 1.0f),
-                                             glm::vec2(1.0f, 0.0f),
-                                             glm::vec2(0.0f, 0.0f)};
-
-        std::vector<uint32_t> indices{0,1,2,
-                                      2,3,0};
-#elif defined(APPLE)
-
-#endif
-
-        m_vertexPosBuffer = Renderer::createDynamicVertexBuffer(VertexAttribType::FLOAT, VertexAttribSize::THREE, sizeof(glm::vec3) * m_vertices.size());
-        m_textureCoordsBuffer = Renderer::createStaticVertexBuffer(textureCoords);
-        m_indexBuffer = Renderer::createStaticIndexBuffer(indices);
-
-        m_vertexArray = Renderer::createVertexArray();
-        m_vertexArray->addVertexBuffer(m_vertexPosBuffer);
-        m_vertexArray->addVertexBuffer(m_textureCoordsBuffer);
-        m_vertexArray->setIndexBuffer(m_indexBuffer);
 
         m_internalShader = Renderer::createShader(BeryllConstants::GUITextVertexPath.data(),
                                                   BeryllConstants::GUITextFragmentPath.data());

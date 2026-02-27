@@ -7,14 +7,10 @@ namespace Beryll
 {
     CheckBox::CheckBox(const char* unMarkedTexturePath,
                        const char* markedTexturePath,
-                       const glm::vec3& pos, const glm::vec2& widthHeight)
+                       const glm::vec3& pos, const glm::vec2& widthHeight) : GUIObject(pos, widthHeight)
     {
         BR_ASSERT((unMarkedTexturePath != nullptr && unMarkedTexturePath[0] != '\0'), "%s", "Path to unMarked Texture can not be empty.");
         BR_ASSERT((markedTexturePath != nullptr && markedTexturePath[0] != '\0'), "%s", "Path to marked Texture can not be empty.");
-
-        setPositionInPercents(pos);
-        setWidthHeightInPercents(widthHeight);
-        setBuffers();
 
         m_unMarkedTexture = Renderer::createTexture(unMarkedTexturePath, TextureType::DIFFUSE_TEXTURE_MAT_1);
         m_markedTexture = Renderer::createTexture(markedTexturePath, TextureType::DIFFUSE_TEXTURE_MAT_1);

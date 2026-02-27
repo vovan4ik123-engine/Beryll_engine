@@ -14,6 +14,8 @@ namespace Beryll
     class GUIObject : public GameObject
     {
     public:
+        GUIObject() = delete;
+        GUIObject(const glm::vec3& pos, const glm::vec2& widthHeight);
         ~GUIObject() override {}
 
         /*
@@ -30,88 +32,64 @@ namespace Beryll
             m_touched = false;
         }
 
-        float leftPos; // In range 0 = 0%...1 = 100% of screen size.
-        float topPos;
-        float width;
-        float height;
-
-        // New GUI vars.
         void updatePositionInPercents(const glm::vec3& pos) // Left bottom corner.
         {
             setPositionInPercents(pos);
             updateBuffersWithPositions();
         }
-        const glm::vec3& getPositionInPercents() const { return positionInPercents; }
-        const glm::vec3& getPositionInPixels() const { return positionInPixels; }
-        const glm::vec3& getPositionNormalized() const { return positionNormalized; }
+        const glm::vec3& getPositionInPercents() const { return m_positionInPercents; }
+        const glm::vec3& getPositionInPixels() const { return m_positionInPixels; }
+        const glm::vec3& getPositionNormalized() const { return m_positionNormalized; }
 
         void updateWidthHeightInPercents(const glm::vec2& wh)
         {
             setWidthHeightInPercents(wh);
             updateBuffersWithPositions();
         }
-        const glm::vec2& getWidthHeightInPercents() { return widthHeightInPercents; }
-        const glm::vec2& getWidthHeightInPixels() { return widthHeightInPixels; }
-        const glm::vec2& getWidthHeightNormalized() { return widthHeightNormalized; }
+        const glm::vec2& getWidthHeightInPercents() { return m_widthHeightInPercents; }
+        const glm::vec2& getWidthHeightInPixels() { return m_widthHeightInPixels; }
+        const glm::vec2& getWidthHeightNormalized() { return m_widthHeightNormalized; }
 
     protected:
-        // Properties only for GUI objects.
-        int32_t m_noBackgroundNoFrame = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize |
-                                        ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBackground |
-                                        ImGuiWindowFlags_NoScrollbar;
-
-        int32_t m_noFrame = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize |
-                            ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar;
-
-        const std::string m_IDAsString = std::to_string(m_ID); // Only for GUI elements.
-
         bool m_isEnabled = true;
         bool m_pressed = false;
         bool m_touched = false;
-
-        // New GUI vars.
-        // Left bottom corner.
-        glm::vec3 positionInPercents; // X,Y in screen percents (0...100), Z in value as is (0...1).
-        glm::vec3 positionInPixels; // X,Y in screen resolution, Z in value as is (0...1).
-        glm::vec3 positionNormalized; // X,Y in 0...1 range, Z in value as is (0...1).
-
-        void setPositionInPercents(const glm::vec3& pos) // Left bottom corner.
-        {
-            BR_ASSERT((pos.z >= 0.0f && pos.z <= 1.0f), "%s", "pos Z must be between 0 and 1.");
-
-            positionInPercents = pos;
-
-            // Recalculate only X and Y. Z will always in range 0...1.
-            positionNormalized.x = positionInPercents.x / 100.0f;
-            positionNormalized.y = positionInPercents.y / 100.0f;
-            positionNormalized.z = positionInPercents.z;
-
-            positionInPixels.x = positionNormalized.x * Window::getInstance()->getScreenWidth();
-            positionInPixels.y = positionNormalized.y * Window::getInstance()->getScreenHeight();
-            positionInPixels.z = positionInPercents.z;
-        }
-
-        glm::vec2 widthHeightInPercents; // X,Y in screen percents (0...100).
-        glm::vec2 widthHeightInPixels; // X,Y in screen resolution.
-        glm::vec2 widthHeightNormalized; // X,Y in 0...1 range.
-
-        void setWidthHeightInPercents(const glm::vec2& wh)
-        {
-            BR_ASSERT((wh.x >= 0.0f && wh.y >= 0.0f), "%s", "wh must be > 0.0f.");
-
-            widthHeightInPercents = wh;
-            widthHeightNormalized = widthHeightInPercents / 100.0f;
-            widthHeightInPixels.x = widthHeightNormalized.x * Window::getInstance()->getScreenWidth();
-            widthHeightInPixels.y = widthHeightNormalized.y * Window::getInstance()->getScreenHeight();
-        }
-
-        void setBuffers();
-        void updateBuffersWithPositions();
 
         std::shared_ptr<VertexBuffer> m_vertexPosBuffer;
         std::shared_ptr<VertexBuffer> m_textureCoordsBuffer;
         std::shared_ptr<IndexBuffer> m_indexBuffer;
         std::unique_ptr<VertexArray> m_vertexArray;
         std::shared_ptr<Shader> m_internalShader;
+
+#if defined(ANDROID)
+        // Vertices created as dynamic buffer. Will be updated in updateBuffersWithPositions().
+        std::vector<glm::vec3> m_vertices{glm::vec3(0.0f, 0.0f, 0.0f),
+                                          glm::vec3(0.0f, 0.0f, 0.0f),
+                                          glm::vec3(0.0f, 0.0f, 0.0f),
+                                          glm::vec3(0.0f, 0.0f, 0.0f)};
+
+        std::vector<glm::vec2> m_textureCoords{glm::vec2(0.0f, 1.0f), // Flipped Y for OpenGL.
+                                               glm::vec2(1.0f, 1.0f),
+                                               glm::vec2(1.0f, 0.0f),
+                                               glm::vec2(0.0f, 0.0f)};
+
+        std::vector<uint32_t> m_indices{0,1,2,
+                                        2,3,0};
+#elif defined(APPLE)
+
+#endif
+
+    private:
+        void setPositionInPercents(const glm::vec3& pos);   // Left bottom corner.
+        void setWidthHeightInPercents(const glm::vec2& wh); // Size.
+        void updateBuffersWithPositions();
+
+        glm::vec3 m_positionInPercents; // X,Y in screen percents (0...100), Z in value as is (0...1).
+        glm::vec3 m_positionInPixels; // X,Y in screen resolution, Z in value as is (0...1).
+        glm::vec3 m_positionNormalized; // X,Y in 0...1 range, Z in value as is (0...1).
+
+        glm::vec2 m_widthHeightInPercents; // X,Y in screen percents (0...100).
+        glm::vec2 m_widthHeightInPixels; // X,Y in screen resolution.
+        glm::vec2 m_widthHeightNormalized; // X,Y in 0...1 range.
     };
 }

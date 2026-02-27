@@ -22,7 +22,8 @@ namespace Beryll
          * pos - X,Y in screen percents (0...100), Z in value as is (0...1).
          * scale - texts scale.
          */
-        AndroidGLESGUIText(std::string pText, const glm::vec3& color, const glm::vec3& pos, const float scale);
+        AndroidGLESGUIText(std::string pText,
+                           const glm::vec3& color, const glm::vec3& pos, const float scale);
 
         struct Character
         {
@@ -34,12 +35,6 @@ namespace Beryll
 
         static bool m_initialized;
         static std::map<char, Character> m_characters;
-
-        // Vertices created as dynamic buffer. Will be updated during draw.
-        std::vector<glm::vec3> m_vertices{glm::vec3(0.0f, 0.0f, 0.0f),
-                                          glm::vec3(0.0f, 0.0f, 0.0f),
-                                          glm::vec3(0.0f, 0.0f, 0.0f),
-                                          glm::vec3(0.0f, 0.0f, 0.0f)};
 
         // Vertex and index buffers are in base class.
         // ........

@@ -2,7 +2,7 @@
 
 namespace Beryll
 {
-    DemoImGUI::DemoImGUI()
+    DemoImGUI::DemoImGUI()  : GUIObject(glm::vec3{0.0f}, glm::vec2{0.0f})
     {
 
     }

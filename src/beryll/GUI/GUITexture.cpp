@@ -5,13 +5,9 @@
 namespace Beryll
 {
     GUITexture::GUITexture(const char* texturePath,
-                           const glm::vec3& pos, const glm::vec2& widthHeight)
+                           const glm::vec3& pos, const glm::vec2& widthHeight) : GUIObject(pos, widthHeight)
     {
         BR_ASSERT((texturePath != nullptr && texturePath[0] != '\0'), "%s", "Path to default texture can not be empty.");
-
-        setPositionInPercents(pos);
-        setWidthHeightInPercents(widthHeight);
-        setBuffers();
 
         m_texture = Renderer::createTexture(texturePath, TextureType::DIFFUSE_TEXTURE_MAT_1);
 

@@ -10,6 +10,8 @@ namespace Beryll
     class GUIText : public GUIObject
     {
     public:
+        GUIText() = delete;
+        GUIText(const glm::vec3& pos, const glm::vec2& widthHeight) : GUIObject(pos, widthHeight) {};
         ~GUIText() override {}
 
         /*

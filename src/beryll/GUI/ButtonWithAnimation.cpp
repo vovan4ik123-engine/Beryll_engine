@@ -8,14 +8,11 @@ namespace Beryll
 {
     ButtonWithAnimation::ButtonWithAnimation(const char* texturesPath, const std::vector<const char*> texturesNames,
                                              const float animDurationSec, bool repeatAnimation,
-                                             const glm::vec3& pos, const glm::vec2& widthHeight, bool actRepeat)
+                                             const glm::vec3& pos, const glm::vec2& widthHeight, bool actRepeat) : GUIObject(pos, widthHeight)
     {
         BR_ASSERT((texturesPath != nullptr && texturesPath[0] != '\0'), "%s", "Path to default texture can not be empty.");
         BR_ASSERT((texturesNames.empty() == false), "%s", "No textures names.");
 
-        setPositionInPercents(pos);
-        setWidthHeightInPercents(widthHeight);
-        setBuffers();
         m_actRepeat = actRepeat;
 
         m_animationFrames.reserve(texturesNames.size());

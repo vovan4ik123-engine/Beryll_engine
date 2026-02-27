@@ -1,36 +1,20 @@
 #include "SliderHorizontal.h"
 #include "beryll/core/EventHandler.h"
-#include "MainImGUI.h"
 
 namespace Beryll
 {
-    SliderHorizontal::SliderHorizontal(const std::string& text, const std::string& fontPath, float fontHeight,
-                   float l, float t, float w, float h, float min, float max, bool background, bool bringToFrontOnFocus)
-                   : m_text(text), m_min(min), m_max(max), m_sliderValue(min)
+    SliderHorizontal::SliderHorizontal(const char* sliderTrackTexturePath,
+                                       const char* sliderThumbTexturePath,
+                                       const glm::vec3& pos, const glm::vec2& widthHeight,
+                                       float minValue, float maxValue)
+                                       : GUIObject(pos, widthHeight), m_min(minValue), m_max(maxValue), m_sliderValue(minValue)
     {
-        BR_ASSERT((fontPath.empty() == false && fontHeight > 0.0f), "%s", "fontPath can not be empty and fontHeight must be > 0.0.");
+        BR_ASSERT((sliderTrackTexturePath != nullptr && sliderTrackTexturePath[0] != '\0'), "%s", "Path to slider track can not be empty.");
+        BR_ASSERT((sliderThumbTexturePath != nullptr && sliderThumbTexturePath[0] != '\0'), "%s", "Path to slider thumb can not be empty.");
+        BR_ASSERT((m_min < m_max), "%s", "Slider min value must be less than max value.");
 
-        leftPos = l;
-        topPos = t;
-        width = w;
-        height = h;
 
-        if(!bringToFrontOnFocus)
-        {
-            m_noBackgroundNoFrame = m_noBackgroundNoFrame | ImGuiWindowFlags_NoBringToFrontOnFocus;
-            m_noFrame = m_noFrame | ImGuiWindowFlags_NoBringToFrontOnFocus;
-        }
 
-        if(background)
-            m_flags = m_noFrame;
-        else
-            m_flags = m_noBackgroundNoFrame;
-
-        // text can not be empty because it is ID for slider window.
-        if(m_text.empty())
-            m_text = "##ImGUILibrarySpecificID" + m_IDAsString;
-
-        m_font = MainImGUI::getInstance()->createFont(fontPath, fontHeight);
     }
 
     SliderHorizontal::~SliderHorizontal()
@@ -61,8 +45,12 @@ namespace Beryll
 
         for(Finger& f : fingers)
         {
-            if(f.normalizedPos.x > leftPos && f.normalizedPos.x < leftPos + width &&
-               f.normalizedPos.y > topPos && f.normalizedPos.y < topPos + height)
+            // Flipper Y for opengl.
+            glm::vec2 flippedY = f.normalizedPos;
+            flippedY.y = 1.0f - flippedY.y;
+
+            if(flippedY.x > getPositionNormalized().x && flippedY.x < getPositionNormalized().x + getWidthHeightNormalized().x &&
+               flippedY.y > getPositionNormalized().y && flippedY.y < getPositionNormalized().y + getWidthHeightNormalized().y)
             {
                 // If any finger in slider area.
                 if(f.downEvent && !f.handled)
@@ -75,17 +63,14 @@ namespace Beryll
             // Touched finger still on screen.
             if(m_fingerIDDownEvent != -1 && f.ID == m_fingerIDDownEvent)
             {
-                // Calculate position on slider and set m_sliderValue here because ImGUI ignore screen multitouch.
-                // Next modify ImGUI library:
-                // In method bool ImGui::SliderBehaviorT() in file imgui_widgets.cpp delete if(set_new_value) {...}
-                // Now we calculate slider value. Not ImGUI.
+                // Calculate position on slider
                 float fingerXPos = f.normalizedPos.x;
-                if(fingerXPos <= leftPos)
-                    fingerXPos = leftPos;
-                if(fingerXPos >= leftPos + width)
-                    fingerXPos = leftPos + width;
+                if(fingerXPos <= getPositionNormalized().x)
+                    fingerXPos = getPositionNormalized().x;
+                if(fingerXPos >= getPositionNormalized().x + getWidthHeightNormalized().x)
+                    fingerXPos = getPositionNormalized().x + getWidthHeightNormalized().x;
 
-                float normalizedSliderProgress = (fingerXPos - leftPos) / width;
+                float normalizedSliderProgress = (fingerXPos - getPositionNormalized().x) / getWidthHeightNormalized().x;
                 if(normalizedSliderProgress < 0.0f)
                     normalizedSliderProgress = 0.0f;
                 if(normalizedSliderProgress > 1.0f)
@@ -107,35 +92,6 @@ namespace Beryll
 
     void SliderHorizontal::draw()
     {
-        ImGui::PushStyleColor(ImGuiCol_Text, m_fontColor);
 
-        ImGui::PushStyleColor(ImGuiCol_SliderGrab, m_sliderGrabColor);
-        ImGui::PushStyleColor(ImGuiCol_SliderGrabActive, m_sliderGrabColor);
-
-        ImGui::PushStyleColor(ImGuiCol_WindowBg, m_textBackGroundColor);
-
-        ImGui::PushStyleColor(ImGuiCol_FrameBg, m_dragAreaColor);
-        ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, m_dragAreaColor);
-        ImGui::PushStyleColor(ImGuiCol_FrameBgActive, m_dragAreaColor);
-
-        ImGui::SetNextWindowPos(ImVec2(leftPos * MainImGUI::getInstance()->getGUIWidth(), topPos * MainImGUI::getInstance()->getGUIHeight()));
-
-        ImGui::Begin(m_IDAsString.c_str(), nullptr, m_flags);
-
-        if(m_font)
-            ImGui::PushFont(m_font);
-
-        ImGui::SliderFloat(m_text.c_str(),
-                           ImVec2(width * MainImGUI::getInstance()->getGUIWidth(), height * MainImGUI::getInstance()->getGUIHeight()),
-                           &m_sliderValue,
-                           m_min,
-                           m_max);
-
-        if(m_font)
-            ImGui::PopFont();
-
-        ImGui::End();
-
-        ImGui::PopStyleColor(7);
     }
 }
