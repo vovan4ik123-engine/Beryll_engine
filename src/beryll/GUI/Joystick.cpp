@@ -1,39 +1,33 @@
 #include "Joystick.h"
 #include "beryll/renderer/Renderer.h"
+#include "beryll/renderer/Camera.h"
 #include "beryll/core/EventHandler.h"
-#include "MainImGUI.h"
 
 namespace Beryll
 {
-    Joystick::Joystick(const std::string& defaultTexturePath,
-                       const std::string& touchedTexturePath,
-                       float l, float t, float w, float h, bool bringToFrontOnFocus)
+    Joystick::Joystick(const char*  defaultTexturePath,
+                       const char*  touchedTexturePath,
+                       const glm::vec3& pos, const glm::vec2& widthHeight)
     {
-        BR_ASSERT((defaultTexturePath.empty() == false), "%s", "Path to default texture can not be empty.");
+        BR_ASSERT((defaultTexturePath != nullptr && defaultTexturePath[0] != '\0'), "%s", "Path to default texture can not be empty.");
 
-        leftPos = l;
-        topPos = t;
-        width = w;
-        height = h;
+        setPositionInPercents(pos);
+        setWidthHeightInPercents(widthHeight);
+        setBuffers();
 
-        if(!bringToFrontOnFocus)
-        {
-            m_noBackgroundNoFrame = m_noBackgroundNoFrame | ImGuiWindowFlags_NoBringToFrontOnFocus;
-            m_noFrame = m_noFrame | ImGuiWindowFlags_NoBringToFrontOnFocus;
-        }
+        m_defaultTexture = Renderer::createTexture(defaultTexturePath, TextureType::DIFFUSE_TEXTURE_MAT_1);
 
-        m_defaultTexture = Renderer::createTexture(defaultTexturePath.c_str(), TextureType::DIFFUSE_TEXTURE_MAT_1);
+        if(touchedTexturePath != nullptr && touchedTexturePath[0] != '\0')
+            m_touchedTexture = Renderer::createTexture(touchedTexturePath, TextureType::DIFFUSE_TEXTURE_MAT_1);
 
-        if( !touchedTexturePath.empty())
-            m_touchedTexture = Renderer::createTexture(touchedTexturePath.c_str(), TextureType::DIFFUSE_TEXTURE_MAT_1);
+        m_internalShader = Renderer::createShader(BeryllConstants::GUIElementWithTextureVertexPath.data(),
+                                                  BeryllConstants::GUIElementWithTextureFragmentPath.data());
+        m_internalShader->bind();
+        m_internalShader->activateDiffuseTextureMat1();
+        m_internalShader->unBind();
 
-        const float leftPosPixels = leftPos * MainImGUI::getInstance()->getGUIWidth();
-        const float rightPosPixels = leftPosPixels + (MainImGUI::getInstance()->getGUIWidth() * width);
-        m_joystickOriginInPixels.x = leftPosPixels + ((rightPosPixels - leftPosPixels) * 0.5f);
-
-        const float topPosPixels = topPos * MainImGUI::getInstance()->getGUIHeight();
-        const float bottomPosPixels = topPosPixels + (height * MainImGUI::getInstance()->getGUIHeight());
-        m_joystickOriginInPixels.y = topPosPixels + ((bottomPosPixels - topPosPixels) * 0.5f);
+        m_originNormalized.x = getPositionNormalized().x + (getWidthHeightNormalized().x * 0.5f);
+        m_originNormalized.y = getPositionNormalized().y + (getWidthHeightNormalized().y * 0.5f);
     }
 
     Joystick::~Joystick()
@@ -50,8 +44,12 @@ namespace Beryll
         std::vector<Finger>& fingers = EventHandler::getFingers();
         for(Finger& f : fingers)
         {
-            if(f.normalizedPos.x > leftPos && f.normalizedPos.x < leftPos + width &&
-               f.normalizedPos.y > topPos && f.normalizedPos.y < topPos + height)
+            // Flipper Y for opengl.
+            glm::vec2 flippedY = f.normalizedPos;
+            flippedY.y = 1.0f - flippedY.y;
+
+            if(flippedY.x > getPositionNormalized().x && flippedY.x < getPositionNormalized().x + getWidthHeightNormalized().x &&
+               flippedY.y > getPositionNormalized().y && flippedY.y < getPositionNormalized().y + getWidthHeightNormalized().y)
             {
                 // If any finger in joystick area.
                 if(!f.handled)
@@ -59,11 +57,10 @@ namespace Beryll
 
                 m_touched = true;
 
-                const glm::vec2 touchDistanceFromOriginInPixels = f.ImGuiScreenPos - m_joystickOriginInPixels;
-                if(glm::length(touchDistanceFromOriginInPixels) > 0.001f)
+                const glm::vec2 fingerDir = flippedY - m_originNormalized;
+                if(glm::length(fingerDir) > 0.001f)
                 {
-                    m_touchedDirectionFromOrigin = glm::normalize(touchDistanceFromOriginInPixels);
-                    m_touchedDirectionFromOrigin.y = -m_touchedDirectionFromOrigin.y;
+                    m_touchedDirectionFromOrigin = glm::normalize(fingerDir);
                 }
             }
         }
@@ -76,44 +73,31 @@ namespace Beryll
 
     void Joystick::draw()
     {
-        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
-        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
-        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
-
-        ImGui::SetNextWindowPos(ImVec2(leftPos * MainImGUI::getInstance()->getGUIWidth(), topPos * MainImGUI::getInstance()->getGUIHeight()));
-        ImGui::SetNextWindowSize(ImVec2(0.0f, 0.0f)); // Set next window size. Set axis to 0.0f to force an auto-fit on this axis.
-
-        ImGui::Begin(m_IDAsString.c_str(), nullptr, m_noBackgroundNoFrame);
+        m_internalShader->bind();
+        m_internalShader->setMatrix4x4Float("VPMatrix", Camera::getCameraGUI());
 
         if(m_touched && m_touchedTexture)
-        {
-            ImGui::ImageButton(m_IDAsString.c_str(),
-                               static_cast<ImTextureID>(m_touchedTexture->getID()),
-                               ImVec2(width * MainImGUI::getInstance()->getGUIWidth(), height * MainImGUI::getInstance()->getGUIHeight()));
-        }
+            m_touchedTexture->bind();
         else
-        {
-            ImGui::ImageButton(m_IDAsString.c_str(),
-                               static_cast<ImTextureID>(m_defaultTexture->getID()),
-                               ImVec2(width * MainImGUI::getInstance()->getGUIWidth(), height * MainImGUI::getInstance()->getGUIHeight()));
-        }
+            m_defaultTexture->bind();
 
-        ImGui::End();
-
-        ImGui::PopStyleColor(3);
+        m_vertexArray->bind();
+        m_vertexArray->draw();
     }
 
-    void Joystick::setOrigin(glm::vec2 origInRange0to1)
+    void Joystick::setOrigin(const glm::vec2 origInRange0to1)
     {
-        BR_ASSERT((origInRange0to1.x >= 0.0f &&
-                   origInRange0to1.x <= 1.0f &&
-                   origInRange0to1.y >= 0.0f &&
-                   origInRange0to1.y <= 1.0f ), "%s", "Joystick new origin not correct.");
+        BR_ASSERT((origInRange0to1.x >= 0.0f && origInRange0to1.x <= 1.0f &&
+                   origInRange0to1.y >= 0.0f && origInRange0to1.y <= 1.0f ), "%s", "Joystick new origin not correct.");
 
-        m_joystickOriginInPixels.x = origInRange0to1.x * MainImGUI::getInstance()->getGUIWidth();
-        m_joystickOriginInPixels.y = origInRange0to1.y * MainImGUI::getInstance()->getGUIHeight();
+        m_originNormalized = origInRange0to1;
 
-        leftPos = origInRange0to1.x - (width * 0.5f);
-        topPos = origInRange0to1.y - (height * 0.5f);
+        glm::vec3 newPos = getPositionNormalized();
+        glm::vec2 currentWidthHeight = getWidthHeightNormalized();
+
+        newPos.x = (origInRange0to1.x - (currentWidthHeight.x * 0.5f)) * 100.0f;
+        newPos.y = (origInRange0to1.y - (currentWidthHeight.y * 0.5f)) * 100.0f;
+
+        updatePositionInPercents(newPos);
     }
 }

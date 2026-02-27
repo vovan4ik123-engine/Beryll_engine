@@ -9,6 +9,11 @@ namespace Beryll
     {
     public:
         GUITexture() = delete;
+        /*
+         * texturePath - Cannot be empty.
+         * pos - X,Y in screen percents (0...100), Z in value as is (0...1).
+         * widthHeight - width and height in screen percents (0...100).
+         */
         GUITexture(const char* texturePath,
                    const glm::vec3& pos, const glm::vec2& widthHeight);
         ~GUITexture() override;

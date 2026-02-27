@@ -77,9 +77,7 @@ namespace Beryll
 
         void setPositionInPercents(const glm::vec3& pos) // Left bottom corner.
         {
-            BR_ASSERT((pos.x >= 0.0f && pos.x <= 100.0f &&
-                       pos.y >= 0.0f && pos.y <= 100.0f &&
-                       pos.z >= 0.0f && pos.z <= 1.0f), "%s", "pos must be between 0.0f and 100.0f.");
+            BR_ASSERT((pos.z >= 0.0f && pos.z <= 1.0f), "%s", "pos Z must be between 0 and 1.");
 
             positionInPercents = pos;
 
@@ -99,8 +97,7 @@ namespace Beryll
 
         void setWidthHeightInPercents(const glm::vec2& wh)
         {
-            BR_ASSERT((wh.x >= 0.0f && wh.x <= 100.0f &&
-                       wh.y >= 0.0f && wh.y <= 100.0f), "%s", "wh must be between 0.0f and 100.0f.");
+            BR_ASSERT((wh.x >= 0.0f && wh.y >= 0.0f), "%s", "wh must be > 0.0f.");
 
             widthHeightInPercents = wh;
             widthHeightNormalized = widthHeightInPercents / 100.0f;
@@ -108,25 +105,8 @@ namespace Beryll
             widthHeightInPixels.y = widthHeightNormalized.y * Window::getInstance()->getScreenHeight();
         }
 
-        void updateBuffersWithPositions()
-        {
-            if(m_vertexPosBuffer == nullptr)
-            {
-                BR_ASSERT(false, "%s", "Buffer is nullptr.");
-                return;
-            }
-            // Move coords to GUI screenSpace -1...1.
-            glm::vec3 screenSpacePos = getPositionNormalized();
-            screenSpacePos.x = screenSpacePos.x * 2.0f - 1.0f;
-            screenSpacePos.y = screenSpacePos.y * 2.0f - 1.0f;
-            glm::vec2 WH = getWidthHeightNormalized() * 2.0f;
-            std::vector<glm::vec3> vertices{glm::vec3(screenSpacePos.x,         screenSpacePos.y,        screenSpacePos.z),
-                                            glm::vec3(screenSpacePos.x + WH.x,  screenSpacePos.y,        screenSpacePos.z),
-                                            glm::vec3(screenSpacePos.x + WH.x,  screenSpacePos.y + WH.y, screenSpacePos.z),
-                                            glm::vec3(screenSpacePos.x,         screenSpacePos.y + WH.y, screenSpacePos.z)};
-
-            m_vertexPosBuffer->setDynamicBufferData(vertices, vertices.size());
-        }
+        void setBuffers();
+        void updateBuffersWithPositions();
 
         std::shared_ptr<VertexBuffer> m_vertexPosBuffer;
         std::shared_ptr<VertexBuffer> m_textureCoordsBuffer;

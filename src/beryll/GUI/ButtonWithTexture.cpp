@@ -13,6 +13,7 @@ namespace Beryll
 
         setPositionInPercents(pos);
         setWidthHeightInPercents(widthHeight);
+        setBuffers();
         m_actRepeat = actRepeat;
 
         m_defaultTexture = Renderer::createTexture(defaultTexturePath, TextureType::DIFFUSE_TEXTURE_MAT_1);
@@ -20,40 +21,11 @@ namespace Beryll
         if(touchedTexturePath != nullptr && touchedTexturePath[0] != '\0')
             m_touchedTexture = Renderer::createTexture(touchedTexturePath, TextureType::DIFFUSE_TEXTURE_MAT_1);
 
-#if defined(ANDROID)
-        // Vertices created as dynamic buffer. Will be updated in updateBuffersWithPositions().
-        std::vector<glm::vec3> vertices{glm::vec3(0.0f, 0.0f, 0.0f),
-                                        glm::vec3(0.0f, 0.0f, 0.0f),
-                                        glm::vec3(0.0f, 0.0f, 0.0f),
-                                        glm::vec3(0.0f, 0.0f, 0.0f)};
-
-        std::vector<glm::vec2> textureCoords{glm::vec2(0.0f, 1.0f), // Flipped Y for OpenGL.
-                                             glm::vec2(1.0f, 1.0f),
-                                             glm::vec2(1.0f, 0.0f),
-                                             glm::vec2(0.0f, 0.0f)};
-
-        std::vector<uint32_t> indices{0,1,2,
-                                      2,3,0};
-#elif defined(APPLE)
-
-#endif
-
-        m_vertexPosBuffer = Renderer::createDynamicVertexBuffer(VertexAttribType::FLOAT, VertexAttribSize::THREE, sizeof(glm::vec3) * vertices.size());
-        m_textureCoordsBuffer = Renderer::createStaticVertexBuffer(textureCoords);
-        m_indexBuffer = Renderer::createStaticIndexBuffer(indices);
-
-        m_vertexArray = Renderer::createVertexArray();
-        m_vertexArray->addVertexBuffer(m_vertexPosBuffer);
-        m_vertexArray->addVertexBuffer(m_textureCoordsBuffer);
-        m_vertexArray->setIndexBuffer(m_indexBuffer);
-
         m_internalShader = Renderer::createShader(BeryllConstants::GUIElementWithTextureVertexPath.data(),
                                                   BeryllConstants::GUIElementWithTextureFragmentPath.data());
         m_internalShader->bind();
         m_internalShader->activateDiffuseTextureMat1();
         m_internalShader->unBind();
-
-        updateBuffersWithPositions(); // Only after buffers created.
     }
 
     ButtonWithTexture::~ButtonWithTexture()
@@ -79,7 +51,7 @@ namespace Beryll
                 m_pressed = false;
                 for(const Finger& f : fingers)
                 {
-                    // Flipper Y for opengl
+                    // Flipper Y for opengl.
                     glm::vec2 flippedY = f.normalizedPos;
                     flippedY.y = 1.0f - flippedY.y;
 
@@ -99,7 +71,7 @@ namespace Beryll
             m_touched = false;
             for(Finger& f : fingers)
             {
-                // Flipper Y for opengl
+                // Flipper Y for opengl.
                 glm::vec2 flippedY = f.normalizedPos;
                 flippedY.y = 1.0f - flippedY.y;
 

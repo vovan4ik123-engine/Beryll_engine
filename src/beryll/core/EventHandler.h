@@ -24,18 +24,11 @@ namespace Beryll
 
     struct Finger
     {
-        // Starts from left top corner. Range 0...1.
-        glm::vec2 normalizedPos;
-        // ImGUI recognize screen size different than SDL3 window size.
-        // Use it for positioning ImGUI elements.
-        glm::vec2 ImGuiScreenPos;
-        // Use it for 3D/2D scene actions.
-        glm::vec2 SDL2ScreenPos;
-        // For disable event from handling any more.
-        bool handled;
-        // True if finger was down at this game loop iteration.
-        // Will false in next game loop iteration (reset in loadEvents()).
-        bool downEvent;
+        // Starts from left top corner.
+        glm::vec2 normalizedPos; // Range 0...1.
+        glm::vec2 pixelsPos;    // Range depends on screen resolution.
+        bool handled;   // For disable event from handling any more.
+        bool downEvent; // True if finger was down at this game loop iteration. Will false in next game loop iteration.
         int ID;
     };
 

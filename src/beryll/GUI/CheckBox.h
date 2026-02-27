@@ -8,6 +8,12 @@ namespace Beryll
     {
     public:
         CheckBox() = delete;
+        /*
+         * unMarkedTexturePath - Cannot be empty.
+         * markedTexturePath - Cannot be empty.
+         * pos - X,Y in screen percents (0...100), Z in value as is (0...1).
+         * widthHeight - width and height in screen percents (0...100).
+         */
         CheckBox(const char* unMarkedTexturePath,
                  const char* markedTexturePath,
                  const glm::vec3& pos, const glm::vec2& widthHeight);

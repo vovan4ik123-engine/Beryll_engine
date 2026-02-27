@@ -1,7 +1,6 @@
 #include "EventHandler.h"
 #include "beryll/core/TimeStep.h"
 #include "beryll/core/Window.h"
-#include "beryll/GUI/MainImGUI.h"
 
 namespace Beryll
 {
@@ -89,7 +88,6 @@ namespace Beryll
 //TOUCH EVENT
                 case SDL_EVENT_FINGER_DOWN:
                     m_fingers.emplace_back(Finger{glm::vec2(event.tfinger.x, event.tfinger.y),
-                                                  glm::vec2(event.tfinger.x * MainImGUI::getInstance()->getGUIWidth(), event.tfinger.y * MainImGUI::getInstance()->getGUIHeight()),
                                                   glm::vec2(event.tfinger.x * Window::getInstance()->getScreenWidth(), event.tfinger.y * Window::getInstance()->getScreenHeight()),
                                                   false,
                                                   true,
@@ -116,11 +114,8 @@ namespace Beryll
                             (*it).normalizedPos.x = event.tfinger.x;
                             (*it).normalizedPos.y = event.tfinger.y;
 
-                            (*it).ImGuiScreenPos.x = event.tfinger.x * MainImGUI::getInstance()->getGUIWidth();
-                            (*it).ImGuiScreenPos.y = event.tfinger.y * MainImGUI::getInstance()->getGUIHeight();
-
-                            (*it).SDL2ScreenPos.x = event.tfinger.x * Window::getInstance()->getScreenWidth();
-                            (*it).SDL2ScreenPos.y = event.tfinger.y * Window::getInstance()->getScreenHeight();
+                            (*it).pixelsPos.x = event.tfinger.x * Window::getInstance()->getScreenWidth();
+                            (*it).pixelsPos.y = event.tfinger.y * Window::getInstance()->getScreenHeight();
                         }
                         break;
                     }

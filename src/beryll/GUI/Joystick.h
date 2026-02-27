@@ -14,9 +14,9 @@ namespace Beryll
          * touchedTexturePath - texture shown when touched. Can be empty.
          *                      If empty defaultTexturePath will shown always.
          */
-        Joystick(const std::string& defaultTexturePath,
-                 const std::string& touchedTexturePath,
-                 float l, float t, float w, float h, bool bringToFrontOnFocus = false);
+        Joystick(const char*  defaultTexturePath,
+                 const char*  touchedTexturePath,
+                 const glm::vec3& pos, const glm::vec2& widthHeight);
         ~Joystick() override;
 
         void updateBeforePhysics() override;
@@ -31,12 +31,10 @@ namespace Beryll
             return m_touchedDirectionFromOrigin;
         }
 
-        // origInRange0to1 must be in range 0...1.
-        // Starts from left top screen corner.
-        void setOrigin(glm::vec2 origInRange0to1);
+        void setOrigin(const glm::vec2 origInRange0to1);
 
     private:
-        glm::vec2 m_joystickOriginInPixels{0.0f};
+        glm::vec2 m_originNormalized{0.0f};
         glm::vec2 m_touchedDirectionFromOrigin{0.0f};
         const glm::vec2 m_joystickUp{0.0f, 1.0f};
 
