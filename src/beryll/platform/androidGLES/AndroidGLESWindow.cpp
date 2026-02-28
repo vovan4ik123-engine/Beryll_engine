@@ -87,6 +87,8 @@ namespace Beryll
         else
             m_screenAspectRation = float(m_screenHeight) / float(m_screenWidth);
 
+        BR_ASSERT((m_screenAspectRation >= 1.0f), "%s", "Screen aspect ration must be >= 1.");
+
         currentDisplayID = SDL_GetDisplayForWindow(m_window);
         BR_ASSERT((currentDisplayID != 0), "%s", "Can not find current display ID.");
         currentDisplayOrientation = SDL_GetCurrentDisplayOrientation(currentDisplayID);
@@ -155,6 +157,8 @@ namespace Beryll
             m_screenAspectRation = float(m_screenWidth) / float(m_screenHeight);
         else
             m_screenAspectRation = float(m_screenHeight) / float(m_screenWidth);
+
+        BR_ASSERT((m_screenAspectRation >= 1.0f), "%s", "Screen aspect ration must be >= 1.");
 
         currentDisplayID = SDL_GetDisplayForWindow(m_window);
         BR_ASSERT((currentDisplayID != 0), "%s", "Can not find current display ID.");

@@ -53,9 +53,14 @@ namespace Beryll
 
                 m_touched = true;
 
-                const glm::vec2 fingerDir = flippedY - m_originNormalized;
+                glm::vec2 fingerDir = flippedY - m_originNormalized;
                 if(glm::length(fingerDir) > 0.001f)
                 {
+                    if(Window::getInstance()->getScreenWidth() > Window::getInstance()->getScreenHeight())
+                        fingerDir.x = fingerDir.x * Window::getInstance()->getScreenAspectRation();
+                    else
+                        fingerDir.y = fingerDir.y * Window::getInstance()->getScreenAspectRation();
+
                     m_touchedDirectionFromOrigin = glm::normalize(fingerDir);
                 }
             }
