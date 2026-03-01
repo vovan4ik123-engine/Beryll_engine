@@ -1,6 +1,7 @@
 #include "GUITexture.h"
 #include "beryll/renderer/Renderer.h"
 #include "beryll/renderer/Camera.h"
+#include "beryll/core/EventHandler.h"
 
 namespace Beryll
 {
@@ -25,7 +26,24 @@ namespace Beryll
 
     void GUITexture::updateBeforePhysics()
     {
+        std::vector<Finger>& fingers = EventHandler::getFingers();
+        for(Finger& f : fingers)
+        {
+            // Flipper Y for opengl.
+            glm::vec2 flippedY = f.normalizedPos;
+            flippedY.y = 1.0f - flippedY.y;
 
+            if(flippedY.x > getPositionNormalized().x && flippedY.x < getPositionNormalized().x + getWidthHeightNormalized().x &&
+               flippedY.y > getPositionNormalized().y && flippedY.y < getPositionNormalized().y + getWidthHeightNormalized().y)
+            {
+                // If any finger in button area.
+                if(f.downEvent && !f.handled)
+                {
+                    // Let image consume event if it touched.
+                    f.handled = true;
+                }
+            }
+        }
     }
 
     void GUITexture::updateAfterPhysics()

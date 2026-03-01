@@ -124,7 +124,7 @@ namespace Beryll
             if(toShow.moveSpeed > 0.0f)
                 toShow.origin += toShow.moveDir * (toShow.moveSpeed * Beryll::TimeStep::getTimeStepSec());
 
-            float textureAspectRation = 0;
+            float textureAspectRatio = 0;
             float numberWidth = 0;
             float previousNumbersWidth = 0;
             glm::mat4 scale{1.0f};
@@ -134,8 +134,8 @@ namespace Beryll
             for(const char ch : toShow.numberAsString)
             {
                 int ASCII_charToInt = int(ch) - int('0');
-                textureAspectRation = static_cast<float>(m_textures[ASCII_charToInt]->getWidth()) / static_cast<float>(m_textures[ASCII_charToInt]->getHeight());
-                numberWidth = toShow.height * textureAspectRation;
+                textureAspectRatio = static_cast<float>(m_textures[ASCII_charToInt]->getWidth()) / static_cast<float>(m_textures[ASCII_charToInt]->getHeight());
+                numberWidth = toShow.height * textureAspectRatio;
                 scale = glm::scale(glm::mat4{1.0f}, glm::vec3(0.0f, toShow.height, numberWidth));
                 translate = glm::translate(glm::mat4{1.0f}, toShow.origin + Beryll::Camera::getCameraRightXZ() * (previousNumbersWidth - halfOfTotalWidth));
                 previousNumbersWidth += numberWidth;

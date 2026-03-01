@@ -83,11 +83,11 @@ namespace Beryll
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // Src alpha for src color, 1 - src alpha for destination color.
 
         if(m_screenWidth > m_screenHeight)
-            m_screenAspectRation = float(m_screenWidth) / float(m_screenHeight);
+            m_screenAspectRatio = float(m_screenWidth) / float(m_screenHeight);
         else
-            m_screenAspectRation = float(m_screenHeight) / float(m_screenWidth);
+            m_screenAspectRatio = float(m_screenHeight) / float(m_screenWidth);
 
-        BR_ASSERT((m_screenAspectRation >= 1.0f), "%s", "Screen aspect ration must be >= 1.");
+        BR_ASSERT((m_screenAspectRatio >= 1.0f), "%s", "Screen aspect ration must be >= 1.");
 
         currentDisplayID = SDL_GetDisplayForWindow(m_window);
         BR_ASSERT((currentDisplayID != 0), "%s", "Can not find current display ID.");
@@ -154,11 +154,11 @@ namespace Beryll
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         if(m_screenWidth > m_screenHeight)
-            m_screenAspectRation = float(m_screenWidth) / float(m_screenHeight);
+            m_screenAspectRatio = float(m_screenWidth) / float(m_screenHeight);
         else
-            m_screenAspectRation = float(m_screenHeight) / float(m_screenWidth);
+            m_screenAspectRatio = float(m_screenHeight) / float(m_screenWidth);
 
-        BR_ASSERT((m_screenAspectRation >= 1.0f), "%s", "Screen aspect ration must be >= 1.");
+        BR_ASSERT((m_screenAspectRatio >= 1.0f), "%s", "Screen aspect ration must be >= 1.");
 
         currentDisplayID = SDL_GetDisplayForWindow(m_window);
         BR_ASSERT((currentDisplayID != 0), "%s", "Can not find current display ID.");

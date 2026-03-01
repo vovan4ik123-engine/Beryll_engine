@@ -41,7 +41,7 @@ namespace Beryll
 
         void updateAfterPhysics()
         {
-            for(auto it = layerStack.begin(); it != layerStack.end(); ++it)
+            for(auto it = layerStack.rbegin(); it != layerStack.rend(); ++it)
             {
                 (*it)->updateAfterPhysics();
             }

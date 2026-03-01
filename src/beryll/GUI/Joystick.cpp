@@ -57,9 +57,9 @@ namespace Beryll
                 if(glm::length(fingerDir) > 0.001f)
                 {
                     if(Window::getInstance()->getScreenWidth() > Window::getInstance()->getScreenHeight())
-                        fingerDir.x = fingerDir.x * Window::getInstance()->getScreenAspectRation();
+                        fingerDir.x = fingerDir.x * Window::getInstance()->getScreenAspectRatio();
                     else
-                        fingerDir.y = fingerDir.y * Window::getInstance()->getScreenAspectRation();
+                        fingerDir.y = fingerDir.y * Window::getInstance()->getScreenAspectRatio();
 
                     m_touchedDirectionFromOrigin = glm::normalize(fingerDir);
                 }

@@ -15,6 +15,7 @@ namespace Beryll
 
         m_defaultTexture = Renderer::createTexture(defaultTexturePath, TextureType::DIFFUSE_TEXTURE_MAT_1);
 
+        BR_INFO("touchedTexturePath %s", touchedTexturePath);
         if(touchedTexturePath != nullptr && touchedTexturePath[0] != '\0')
             m_touchedTexture = Renderer::createTexture(touchedTexturePath, TextureType::DIFFUSE_TEXTURE_MAT_1);
 
@@ -75,6 +76,7 @@ namespace Beryll
                 if(flippedY.x > getPositionNormalized().x && flippedY.x < getPositionNormalized().x + getWidthHeightNormalized().x &&
                    flippedY.y > getPositionNormalized().y && flippedY.y < getPositionNormalized().y + getWidthHeightNormalized().y)
                 {
+                    // If any finger in button area.
                     if(f.ID == m_pressedFingerID)
                         m_touched = true;
 

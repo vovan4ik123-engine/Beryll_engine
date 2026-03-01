@@ -23,7 +23,7 @@ namespace Beryll
         int getScreenHeight() override { return m_screenHeight;}
         int getMaxSupportedTextureResolution() override { return m_maxSupportedTextureResolution;}
         int getMaxSupportedViewportResolution() override { return m_maxSupportedViewportResolution;}
-        float getScreenAspectRation() override { return m_screenAspectRation; }
+        float getScreenAspectRatio() override { return m_screenAspectRatio; }
 
         void setClearColor(float r, float g, float b, float a) override { glClearColor(r, g, b, a); }
         void clear() override { glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); } // GL_STENCIL_BUFFER_BIT GL_ACCUM_BUFFER_BIT
@@ -42,6 +42,6 @@ namespace Beryll
         int m_screenHeight = 0;
         int m_maxSupportedTextureResolution = 0;
         int m_maxSupportedViewportResolution = 0;
-        float m_screenAspectRation = 0.0f;
+        float m_screenAspectRatio = 0.0f;
     };
 }

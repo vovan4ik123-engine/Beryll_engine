@@ -101,6 +101,7 @@ namespace Beryll
                 if(flippedY.x > getPositionNormalized().x && flippedY.x < getPositionNormalized().x + getWidthHeightNormalized().x &&
                    flippedY.y > getPositionNormalized().y && flippedY.y < getPositionNormalized().y + getWidthHeightNormalized().y)
                 {
+                    // If any finger in button area.
                     if(f.ID == m_pressedFingerID)
                         m_touched = true;
 
