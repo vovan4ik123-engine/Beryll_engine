@@ -3,7 +3,6 @@
 #include "beryll/renderer/Camera.h"
 #include "beryll/async/AsyncRun.h"
 #include "beryll/utils/CommonUtils.h"
-#include "beryll/GUI/MainImGUI.h"
 #include "beryll/core/TimeStep.h"
 #include "beryll/core/RandomGenerator.h"
 

@@ -3,7 +3,6 @@ SDL_image   3.2.4
 SDL_mixer   3.0.0
 SDL_net     3.0.0
 glm         1.0.3
-ImGUI       1.91.8 - to delete
 assimp      6.0.4
 sqlite      3.50.4
 bullet      3.2.5

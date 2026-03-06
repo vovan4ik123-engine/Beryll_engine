@@ -26,7 +26,6 @@ add_subdirectory(libs/SDL3)
 add_subdirectory(libs/SDL3_image)
 add_subdirectory(libs/SDL3_mixer)
 add_subdirectory(libs/SDL3_net)
-add_subdirectory(libs/imgui)
 add_subdirectory(libs/assimp)
 add_subdirectory(libs/sqlite)
 add_subdirectory(libs/bullet)
@@ -35,7 +34,6 @@ add_subdirectory(libs/freetype)
 if(ANDROID)
     set(AndroidGLES_SRC
             src/beryll/platform/androidGLES/AndroidGLESWindow.cpp
-            src/beryll/platform/androidGLES/AndroidGLESImGUI.cpp
             src/beryll/platform/androidGLES/AndroidGLESBuffer.cpp
             src/beryll/platform/androidGLES/AndroidGLESVertexArray.cpp
             src/beryll/platform/androidGLES/AndroidGLESShader.cpp
@@ -78,8 +76,6 @@ set(Common_SRC
 
         src/beryll/gameObjects/banners/BannerProgressTwoColors.cpp
 
-        src/beryll/GUI/MainImGUI.cpp
-        src/beryll/GUI/DemoImGUI.cpp
         src/beryll/GUI/GUIObject.cpp
         src/beryll/GUI/ButtonWithTexture.cpp
         src/beryll/GUI/ButtonWithAnimation.cpp
@@ -127,7 +123,6 @@ target_link_libraries(Beryll-static #target
                       SDL3_image-static
                       SDL3_mixer-static
                       SDL3_net-static
-                      ImGUI-static
                       assimp-static
                       sqlite3-static
                       bullet-static

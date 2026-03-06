@@ -23,11 +23,6 @@
 #include "glm/ext/quaternion_trigonometric.hpp"
 #include "glm/gtx/rotate_vector.hpp"
 
-#include "imgui/imgui.h"
-#include "imgui/imgui_internal.h"
-#include "imgui/backends/imgui_impl_sdl3.h"
-#include "imgui/backends/imgui_impl_opengl3.h"
-
 #include "assimp/include/assimp/scene.h"
 #include "assimp/include/assimp/Importer.hpp"
 #include "assimp/include/assimp/postprocess.h"

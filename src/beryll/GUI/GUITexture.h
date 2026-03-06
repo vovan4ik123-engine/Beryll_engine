@@ -15,7 +15,7 @@ namespace Beryll
          * widthHeight - width and height in screen percents (0...100).
          */
         GUITexture(const char* texturePath,
-                   const glm::vec3& pos, const glm::vec2& widthHeight);
+                   const glm::vec3& pos, const glm::vec2& widthHeight, bool consumeDownEvent = true);
         ~GUITexture() override;
 
         void updateBeforePhysics() override;
@@ -24,5 +24,6 @@ namespace Beryll
 
     private:
         std::unique_ptr<Texture> m_texture;
+        bool m_consumeEvent;
     };
 }

@@ -67,7 +67,7 @@ namespace Beryll
 
         SDL_DestroySurface(surface);
         m_textures.insert(std::make_pair(m_ID, m_openGLID)); // Add to map.
-        //BR_INFO("%s", "Texture created.");
+        BR_INFO("Texture created. Path %s ID %d", path, *m_openGLID);
     }
 
     AndroidGLESTexture::~AndroidGLESTexture()

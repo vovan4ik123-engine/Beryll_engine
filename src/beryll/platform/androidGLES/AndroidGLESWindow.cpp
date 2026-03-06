@@ -1,6 +1,5 @@
 #include "AndroidGLESWindow.h"
 #include "beryll/core/EventHandler.h"
-#include "beryll/GUI/MainImGUI.h"
 
 namespace Beryll
 {
@@ -174,7 +173,6 @@ namespace Beryll
         {
             EventHandler::resetEvents(EventID::DISPLAY_ORIENTATION_CHANGE);
             //Window::getInstance()->reCreate();
-            //MainImGUI::getInstance()->reCreate();
         }
     }
 }

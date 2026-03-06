@@ -3,7 +3,6 @@
 #include "beryll/core/GameStateMachine.h"
 #include "beryll/core/EventHandler.h"
 #include "beryll/core/SoundsManager.h"
-#include "beryll/GUI/MainImGUI.h"
 #include "beryll/physics/Physics.h"
 #include "beryll/renderer/Camera.h"
 #include "beryll/particleSystem/ParticleSystem.h"
@@ -39,8 +38,6 @@ namespace Beryll
         Window::getInstance()->clear();
         Window::getInstance()->swapWindow();
         Window::getInstance()->reCreate();
-
-        MainImGUI::create();
 
         SoundsManager::create();
 
@@ -99,12 +96,8 @@ namespace Beryll
             if(GameLoop::needDraw)
             {
                 Window::getInstance()->clear();
-                MainImGUI::getInstance()->beginFrame();
-
                 GameStateMachine::draw();
-
-                MainImGUI::getInstance()->endFrame();
-                //Window::getInstance()->finishDraw(); // Very slow. Call only if you have rendering artefacts.
+                //Window::getInstance()->finishDraw(); // Very slow. Uncomment only if you have rendering artefacts.
                 //Window::getInstance()->flushDraw(); // Potentially can be called but not necessary.
                 Window::getInstance()->swapWindow();
             }

@@ -27,8 +27,6 @@
 
 #include "beryll/gameObjects/banners/BannerProgressTwoColors.h"
 
-#include "beryll/GUI/MainImGUI.h"
-#include "beryll/GUI/DemoImGUI.h"
 #include "beryll/GUI/ButtonWithTexture.h"
 #include "beryll/GUI/ButtonWithAnimation.h"
 #include "beryll/GUI/Joystick.h"

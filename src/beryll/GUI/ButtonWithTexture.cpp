@@ -7,11 +7,10 @@ namespace Beryll
 {
     ButtonWithTexture::ButtonWithTexture(const char* defaultTexturePath,
                                          const char* touchedTexturePath,
-                                         const glm::vec3& pos, const glm::vec2& widthHeight, bool actRepeat) : GUIObject(pos, widthHeight)
+                                         const glm::vec3& pos, const glm::vec2& widthHeight, bool actRepeat)
+                                         : GUIObject(pos, widthHeight), m_actRepeat(actRepeat)
     {
         BR_ASSERT((defaultTexturePath != nullptr && defaultTexturePath[0] != '\0'), "%s", "Path to default texture can not be empty.");
-
-        m_actRepeat = actRepeat;
 
         m_defaultTexture = Renderer::createTexture(defaultTexturePath, TextureType::DIFFUSE_TEXTURE_MAT_1);
 
