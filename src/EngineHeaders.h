@@ -31,6 +31,7 @@
 #include "beryll/GUI/ButtonWithAnimation.h"
 #include "beryll/GUI/Joystick.h"
 #include "beryll/GUI/CheckBox.h"
+#include "beryll/GUI/GUIProgressBar.h"
 #include "beryll/GUI/GUIText.h"
 #include "beryll/GUI/GUITexture.h"
 #include "beryll/GUI/SliderHorizontal.h"
