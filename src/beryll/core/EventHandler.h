@@ -24,7 +24,7 @@ namespace Beryll
 
     struct Finger
     {
-        // Starts from left top corner.
+        // Should starts from left bottom corner.
         glm::vec2 normalizedPos; // Range 0...1.
         glm::vec2 pixelsPos;    // Range depends on screen resolution.
         bool handled;   // For disable event from handling any more.

@@ -48,12 +48,8 @@ namespace Beryll
                 m_pressed = false;
                 for(const Finger& f : fingers)
                 {
-                    // Flipper Y for opengl.
-                    glm::vec2 flippedY = f.normalizedPos;
-                    flippedY.y = 1.0f - flippedY.y;
-
-                    if(flippedY.x > getPositionNormalized().x && flippedY.x < getPositionNormalized().x + getWidthHeightNormalized().x &&
-                       flippedY.y > getPositionNormalized().y && flippedY.y < getPositionNormalized().y + getWidthHeightNormalized().y)
+                    if(f.normalizedPos.x > getPositionNormalized().x && f.normalizedPos.x < getPositionNormalized().x + getWidthHeightNormalized().x &&
+                       f.normalizedPos.y > getPositionNormalized().y && f.normalizedPos.y < getPositionNormalized().y + getWidthHeightNormalized().y)
                     {
                         // If any finger in button area.
                         m_pressed = true;
@@ -68,12 +64,8 @@ namespace Beryll
             m_touched = false;
             for(Finger& f : fingers)
             {
-                // Flipper Y for opengl.
-                glm::vec2 flippedY = f.normalizedPos;
-                flippedY.y = 1.0f - flippedY.y;
-
-                if(flippedY.x > getPositionNormalized().x && flippedY.x < getPositionNormalized().x + getWidthHeightNormalized().x &&
-                   flippedY.y > getPositionNormalized().y && flippedY.y < getPositionNormalized().y + getWidthHeightNormalized().y)
+                if(f.normalizedPos.x > getPositionNormalized().x && f.normalizedPos.x < getPositionNormalized().x + getWidthHeightNormalized().x &&
+                   f.normalizedPos.y > getPositionNormalized().y && f.normalizedPos.y < getPositionNormalized().y + getWidthHeightNormalized().y)
                 {
                     // If any finger in button area.
                     if(f.ID == m_pressedFingerID)

@@ -40,12 +40,8 @@ namespace Beryll
         std::vector<Finger>& fingers = EventHandler::getFingers();
         for(Finger& f : fingers)
         {
-            // Flipper Y for opengl.
-            glm::vec2 flippedY = f.normalizedPos;
-            flippedY.y = 1.0f - flippedY.y;
-
-            if(flippedY.x > getPositionNormalized().x && flippedY.x < getPositionNormalized().x + getWidthHeightNormalized().x &&
-               flippedY.y > getPositionNormalized().y && flippedY.y < getPositionNormalized().y + getWidthHeightNormalized().y)
+            if(f.normalizedPos.x > getPositionNormalized().x && f.normalizedPos.x < getPositionNormalized().x + getWidthHeightNormalized().x &&
+               f.normalizedPos.y > getPositionNormalized().y && f.normalizedPos.y < getPositionNormalized().y + getWidthHeightNormalized().y)
             {
                 // If any finger in joystick area.
                 if(!f.handled)
@@ -53,7 +49,7 @@ namespace Beryll
 
                 m_touched = true;
 
-                glm::vec2 fingerDir = flippedY - m_originNormalized;
+                glm::vec2 fingerDir = f.normalizedPos - m_originNormalized;
                 if(glm::length(fingerDir) > 0.001f)
                 {
                     if(Window::getInstance()->getScreenWidth() > Window::getInstance()->getScreenHeight())

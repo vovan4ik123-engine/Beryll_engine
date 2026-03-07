@@ -30,12 +30,8 @@ namespace Beryll
         std::vector<Finger>& fingers = EventHandler::getFingers();
         for(Finger& f : fingers)
         {
-            // Flipper Y for opengl.
-            glm::vec2 flippedY = f.normalizedPos;
-            flippedY.y = 1.0f - flippedY.y;
-
-            if(flippedY.x > getPositionNormalized().x && flippedY.x < getPositionNormalized().x + getWidthHeightNormalized().x &&
-               flippedY.y > getPositionNormalized().y && flippedY.y < getPositionNormalized().y + getWidthHeightNormalized().y)
+            if(f.normalizedPos.x > getPositionNormalized().x && f.normalizedPos.x < getPositionNormalized().x + getWidthHeightNormalized().x &&
+               f.normalizedPos.y > getPositionNormalized().y && f.normalizedPos.y < getPositionNormalized().y + getWidthHeightNormalized().y)
             {
                 // If any finger in button area.
                 if(f.downEvent && !f.handled && m_consumeEvent)

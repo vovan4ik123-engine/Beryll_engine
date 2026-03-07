@@ -86,13 +86,22 @@ namespace Beryll
 
 //TOUCH EVENT
                 case SDL_EVENT_FINGER_DOWN:
-                    m_fingers.emplace_back(Finger{glm::vec2(event.tfinger.x, event.tfinger.y),
-                                                  glm::vec2(event.tfinger.x * Window::getInstance()->getScreenWidth(), event.tfinger.y * Window::getInstance()->getScreenHeight()),
-                                                  false,
-                                                  true,
-                                                  static_cast<int>(event.tfinger.fingerID)});
-                    break;
+                    {
+                        glm::vec2 eventPos = glm::vec2{event.tfinger.x, event.tfinger.y};
+                        //BR_INFO("eventPos X %f eventPos Y %f", eventPos.x, eventPos.y);
+                        #if defined(ANDROID)
+                            eventPos.y = 1.0f - eventPos.y; // Flip Y to starts from left bottom corner. Like in OpenGL.
+                        #elif defined(APPLE)
 
+                        #endif
+
+                        m_fingers.emplace_back(Finger{eventPos,
+                                                      glm::vec2(eventPos.x * Window::getInstance()->getScreenWidth(), eventPos.y * Window::getInstance()->getScreenHeight()),
+                                                      false,
+                                                      true,
+                                                      static_cast<int>(event.tfinger.fingerID)});
+                        break;
+                    }
                 case SDL_EVENT_FINGER_UP:
                     {
                         auto it = std::find_if(m_fingers.begin(), m_fingers.end(), [&event](const Finger& f){ return f.ID == static_cast<int>(event.tfinger.fingerID); });
@@ -108,13 +117,17 @@ namespace Beryll
                         auto it = std::find_if(m_fingers.begin(), m_fingers.end(), [&event](const Finger& f){ return f.ID == static_cast<int>(event.tfinger.fingerID); });
                         if(it != m_fingers.end())
                         {
-                            //BR_INFO("finger X %f finger Y %f", event.tfinger.x, event.tfinger.y);
+                            glm::vec2 eventPos = glm::vec2{event.tfinger.x, event.tfinger.y};
+                            #if defined(ANDROID)
+                                eventPos.y = 1.0f - eventPos.y; // Flip Y to starts from left bottom corner. Like in OpenGL.
+                            #elif defined(APPLE)
 
-                            (*it).normalizedPos.x = event.tfinger.x;
-                            (*it).normalizedPos.y = event.tfinger.y;
+                            #endif
 
-                            (*it).pixelsPos.x = event.tfinger.x * Window::getInstance()->getScreenWidth();
-                            (*it).pixelsPos.y = event.tfinger.y * Window::getInstance()->getScreenHeight();
+                            (*it).normalizedPos = eventPos;
+
+                            (*it).pixelsPos.x = eventPos.x * Window::getInstance()->getScreenWidth();
+                            (*it).pixelsPos.y = eventPos.y * Window::getInstance()->getScreenHeight();
                         }
                         break;
                     }
