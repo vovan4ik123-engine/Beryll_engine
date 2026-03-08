@@ -32,10 +32,10 @@ namespace Beryll
         bool getIsValueChanging() { return m_valueChanging; }
         void setValue(const float val)
         {
-            if(val >= m_min && val <= m_max)
-            {
-                m_sliderValue = val;
-            }
+            m_sliderValue = val;
+            if(m_sliderValue < m_min) m_sliderValue = m_min;
+            if(m_sliderValue > m_max) m_sliderValue = m_max;
+            m_normalizedSliderProgress = (m_sliderValue - m_min) / m_valueRange;
         }
 
     private:
@@ -44,5 +44,17 @@ namespace Beryll
         float m_sliderValue = 0.0f;
         bool m_valueChanging = false;
         long m_fingerIDDownEvent = -1;
+        float m_normalizedSliderProgress = 0.0f;
+        float m_valueRange = 0.0f;
+        bool m_touchedFingerStillOnScreen = false;
+
+        // Vertex and index buffers are in base class.
+        // ........
+        std::unique_ptr<Texture> m_trackTexture;
+        std::unique_ptr<Texture> m_thumbTexture;
+        glm::vec3 m_trackPos{1.0f};
+        glm::vec2 m_trackWidthHeight{1.0f};
+        glm::vec3 m_thumbPos{1.0f};
+        glm::vec2 m_thumbWidthHeight{1.0f};
     };
 }

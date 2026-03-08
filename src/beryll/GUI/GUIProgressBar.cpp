@@ -29,10 +29,7 @@ namespace Beryll
 
     void GUIProgressBar::draw()
     {
-        BR_ASSERT((m_progress0to1 >= 0.0f && m_progress0to1 <= 1.0f), "%s", "Progress must be in range 0...1.");
-
-        BR_INFO("%s", "GUIProgressBar::draw()");
-        // Move coords to GUI screenSpace -1...1.
+        // Move X position to GUI screenSpace -1...1.
         float XPos = getPositionNormalized().x;
         XPos = XPos * 2.0f - 1.0f;
         float W = getWidthHeightNormalized().x * 2.0f;

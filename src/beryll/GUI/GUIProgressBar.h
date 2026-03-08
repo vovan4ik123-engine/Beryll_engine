@@ -33,5 +33,8 @@ namespace Beryll
         float m_progress0to1 = 0.0f; // In range 0...1.
         glm::vec3 m_colorLeft{1.0f, 0.0f, 0.0f};
         glm::vec3 m_colorRight{0.0f, 1.0f, 0.0f};
+
+        // Vertex and index buffers are in base class.
+        // ........
     };
 }

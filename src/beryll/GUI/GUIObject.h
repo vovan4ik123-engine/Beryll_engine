@@ -32,19 +32,21 @@ namespace Beryll
             m_touched = false;
         }
 
-        void updatePositionInPercents(const glm::vec3& pos) // Left bottom corner.
+        void updatePositionInPercents(const glm::vec3& pos, bool updateBuffers = true) // Left bottom corner.
         {
             setPositionInPercents(pos);
-            updateBuffersWithPositions();
+            if(updateBuffers)
+                updateBuffersWithPositions();
         }
         const glm::vec3& getPositionInPercents() const { return m_positionInPercents; }
         const glm::vec3& getPositionInPixels() const { return m_positionInPixels; }
         const glm::vec3& getPositionNormalized() const { return m_positionNormalized; }
 
-        void updateWidthHeightInPercents(const glm::vec2& wh)
+        void updateWidthHeightInPercents(const glm::vec2& wh, bool updateBuffers = true)
         {
             setWidthHeightInPercents(wh);
-            updateBuffersWithPositions();
+            if(updateBuffers)
+                updateBuffersWithPositions();
         }
         const glm::vec2& getWidthHeightInPercents() { return m_widthHeightInPercents; }
         const glm::vec2& getWidthHeightInPixels() { return m_widthHeightInPixels; }

@@ -1,4 +1,6 @@
 #include "SliderHorizontal.h"
+#include "beryll/renderer/Renderer.h"
+#include "beryll/renderer/Camera.h"
 #include "beryll/core/EventHandler.h"
 
 namespace Beryll
@@ -11,10 +13,28 @@ namespace Beryll
     {
         BR_ASSERT((sliderTrackTexturePath != nullptr && sliderTrackTexturePath[0] != '\0'), "%s", "Path to slider track can not be empty.");
         BR_ASSERT((sliderThumbTexturePath != nullptr && sliderThumbTexturePath[0] != '\0'), "%s", "Path to slider thumb can not be empty.");
+        BR_ASSERT((m_min >= 0.0f && m_max >= 0.0f), "%s", "m_min >= 0.0f && m_max >= 0.0f.");
         BR_ASSERT((m_min < m_max), "%s", "Slider min value must be less than max value.");
 
+        m_valueRange = m_max - m_min;
 
+        m_trackTexture = Renderer::createTexture(sliderTrackTexturePath, TextureType::DIFFUSE_TEXTURE_MAT_1);
+        m_thumbTexture = Renderer::createTexture(sliderThumbTexturePath, TextureType::DIFFUSE_TEXTURE_MAT_1);
 
+        m_internalShader = Renderer::createShader(BeryllConstants::GUIElementWithTextureVertexPath.data(),
+                                                  BeryllConstants::GUIElementWithTextureFragmentPath.data());
+        m_internalShader->bind();
+        m_internalShader->activateDiffuseTextureMat1();
+        m_internalShader->unBind();
+
+        m_trackPos = pos;
+        m_trackPos.z = m_trackPos.z - 0.005f; // Make offset between slider track and thumb.
+        m_trackWidthHeight = widthHeight;
+
+        m_thumbWidthHeight = glm::vec2(widthHeight.y * 0.2f, widthHeight.y * 1.4f); // Calc thumb sizes from track height.
+        m_thumbPos = pos;
+        m_thumbPos.x = m_thumbPos.x - (m_thumbWidthHeight.x * 0.5f);
+        m_thumbPos.y = m_thumbPos.y - ((m_thumbWidthHeight.y - widthHeight.y) * 0.5f);
     }
 
     SliderHorizontal::~SliderHorizontal()
@@ -25,23 +45,20 @@ namespace Beryll
     void SliderHorizontal::updateBeforePhysics()
     {
         m_valueChanging = false;
+        m_touchedFingerStillOnScreen = false;
 
         std::vector<Finger>& fingers = EventHandler::getFingers();
 
-        if(m_fingerIDDownEvent != -1)
+        for(Finger& f : fingers)
         {
-            bool touchedFingerStillOnScreen = false;
-            for(Finger& f : fingers)
+            if(m_fingerIDDownEvent == f.ID)
             {
-                if(m_fingerIDDownEvent == f.ID)
-                {
-                    touchedFingerStillOnScreen = true;
-                }
+                m_touchedFingerStillOnScreen = true;
             }
-
-            if(!touchedFingerStillOnScreen)
-                m_fingerIDDownEvent = -1;
         }
+
+        if(!m_touchedFingerStillOnScreen)
+            m_fingerIDDownEvent = -1;
 
         for(Finger& f : fingers)
         {
@@ -52,12 +69,12 @@ namespace Beryll
                 if(f.downEvent && !f.handled)
                 {
                     m_fingerIDDownEvent = f.ID;
+                    m_touchedFingerStillOnScreen = true;
                     f.handled = true;
                 }
             }
 
-            // Touched finger still on screen.
-            if(m_fingerIDDownEvent != -1 && f.ID == m_fingerIDDownEvent)
+            if(m_touchedFingerStillOnScreen && f.ID == m_fingerIDDownEvent)
             {
                 // Calculate position on slider
                 float fingerXPos = f.normalizedPos.x;
@@ -66,14 +83,8 @@ namespace Beryll
                 if(fingerXPos >= getPositionNormalized().x + getWidthHeightNormalized().x)
                     fingerXPos = getPositionNormalized().x + getWidthHeightNormalized().x;
 
-                float normalizedSliderProgress = (fingerXPos - getPositionNormalized().x) / getWidthHeightNormalized().x;
-                if(normalizedSliderProgress < 0.0f)
-                    normalizedSliderProgress = 0.0f;
-                if(normalizedSliderProgress > 1.0f)
-                    normalizedSliderProgress = 1.0f;
-
-                float valueRange = m_max - m_min;
-                m_sliderValue = m_min + (valueRange * normalizedSliderProgress);
+                m_normalizedSliderProgress = (fingerXPos - getPositionNormalized().x) / getWidthHeightNormalized().x;
+                m_sliderValue = m_min + (m_valueRange * m_normalizedSliderProgress);
                 m_valueChanging = true;
 
                 return;
@@ -88,6 +99,22 @@ namespace Beryll
 
     void SliderHorizontal::draw()
     {
+        m_internalShader->bind();
+        m_internalShader->setMatrix4x4Float("VPMatrix", Camera::getCameraGUI());
+        m_vertexArray->bind();
 
+        // Draw thumb first. Be careful, It update position and size which are used in updateBeforePhysics().
+        m_thumbTexture->bind();
+        const float prPerc = getWidthHeightInPercents().x * m_normalizedSliderProgress; // Progress in screen percents.
+        m_thumbPos.x = (m_trackPos.x + prPerc) - (m_thumbWidthHeight.x * 0.5f);
+        updatePositionInPercents(m_thumbPos, false);
+        updateWidthHeightInPercents(m_thumbWidthHeight, true);
+        m_vertexArray->draw();
+
+        // Draw track second. Be careful, It update position and size which are used in updateBeforePhysics().
+        m_trackTexture->bind();
+        updatePositionInPercents(m_trackPos, false);
+        updateWidthHeightInPercents(m_trackWidthHeight, true);
+        m_vertexArray->draw();
     }
 }
