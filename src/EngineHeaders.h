@@ -35,6 +35,7 @@
 #include "beryll/GUI/GUIText.h"
 #include "beryll/GUI/GUITexture.h"
 #include "beryll/GUI/SliderHorizontal.h"
+#include "beryll/GUI/SliderVertical.h"
 #include "beryll/GUI/LoadingScreen.h"
 
 #include "beryll/physics/Physics.h"

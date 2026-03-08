@@ -84,6 +84,7 @@ set(Common_SRC
         src/beryll/GUI/GUIProgressBar.cpp
         src/beryll/GUI/GUITexture.cpp
         src/beryll/GUI/SliderHorizontal.cpp
+        src/beryll/GUI/SliderVertical.cpp
         src/beryll/GUI/LoadingScreen.cpp
 
         src/beryll/dataBase/DataBase.cpp

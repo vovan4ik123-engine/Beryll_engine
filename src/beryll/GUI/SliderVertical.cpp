@@ -1,15 +1,15 @@
-#include "SliderHorizontal.h"
+#include "SliderVertical.h"
 #include "beryll/renderer/Renderer.h"
 #include "beryll/renderer/Camera.h"
 #include "beryll/core/EventHandler.h"
 
 namespace Beryll
 {
-    SliderHorizontal::SliderHorizontal(const char* sliderTrackTexturePath,
-                                       const char* sliderThumbTexturePath,
-                                       const glm::vec3& pos, const glm::vec2& widthHeight,
-                                       float minValue, float maxValue)
-                                       : GUIObject(pos, widthHeight), m_min(minValue), m_max(maxValue), m_sliderValue(minValue)
+    SliderVertical::SliderVertical(const char* sliderTrackTexturePath,
+                                   const char* sliderThumbTexturePath,
+                                   const glm::vec3& pos, const glm::vec2& widthHeight,
+                                   float minValue, float maxValue)
+                                   : GUIObject(pos, widthHeight), m_min(minValue), m_max(maxValue), m_sliderValue(minValue)
     {
         BR_ASSERT((sliderTrackTexturePath != nullptr && sliderTrackTexturePath[0] != '\0'), "%s", "Path to slider track can not be empty.");
         BR_ASSERT((sliderThumbTexturePath != nullptr && sliderThumbTexturePath[0] != '\0'), "%s", "Path to slider thumb can not be empty.");
@@ -32,18 +32,18 @@ namespace Beryll
         m_trackWidthHeight = widthHeight;
 
         const float screenAR = Beryll::Window::getInstance()->getScreenAspectRatio();
-        m_thumbWidthHeight = glm::vec2(widthHeight.y * 0.4f / screenAR, widthHeight.y * 1.4f);
+        m_thumbWidthHeight = glm::vec2(widthHeight.x * 1.4f, widthHeight.x * 0.4f * screenAR);
         m_thumbPos = pos;
-        m_thumbPos.x = m_thumbPos.x - (m_thumbWidthHeight.x * 0.5f);
-        m_thumbPos.y = m_thumbPos.y - ((m_thumbWidthHeight.y - widthHeight.y) * 0.5f);
+        m_thumbPos.x = m_thumbPos.x - ((m_thumbWidthHeight.x - widthHeight.x) * 0.5f);
+        m_thumbPos.y = m_thumbPos.y - (m_thumbWidthHeight.y * 0.5f);
     }
 
-    SliderHorizontal::~SliderHorizontal()
+    SliderVertical::~SliderVertical()
     {
 
     }
 
-    void SliderHorizontal::updateBeforePhysics()
+    void SliderVertical::updateBeforePhysics()
     {
         m_valueChanging = false;
         m_touchedFingerStillOnScreen = false;
@@ -78,13 +78,13 @@ namespace Beryll
             if(m_touchedFingerStillOnScreen && f.ID == m_fingerIDDownEvent)
             {
                 // Calculate position on slider
-                float fingerXPos = f.normalizedPos.x;
-                if(fingerXPos <= getPositionNormalized().x)
-                    fingerXPos = getPositionNormalized().x;
-                if(fingerXPos >= getPositionNormalized().x + getWidthHeightNormalized().x)
-                    fingerXPos = getPositionNormalized().x + getWidthHeightNormalized().x;
+                float fingerYPos = f.normalizedPos.y;
+                if(fingerYPos <= getPositionNormalized().y)
+                    fingerYPos = getPositionNormalized().y;
+                if(fingerYPos >= getPositionNormalized().y + getWidthHeightNormalized().y)
+                    fingerYPos = getPositionNormalized().y + getWidthHeightNormalized().y;
 
-                m_normalizedSliderProgress = (fingerXPos - getPositionNormalized().x) / getWidthHeightNormalized().x;
+                m_normalizedSliderProgress = (fingerYPos - getPositionNormalized().y) / getWidthHeightNormalized().y;
                 m_sliderValue = m_min + (m_valueRange * m_normalizedSliderProgress);
                 m_valueChanging = true;
 
@@ -93,12 +93,12 @@ namespace Beryll
         }
     }
 
-    void SliderHorizontal::updateAfterPhysics()
+    void SliderVertical::updateAfterPhysics()
     {
 
     }
 
-    void SliderHorizontal::draw()
+    void SliderVertical::draw()
     {
         m_internalShader->bind();
         m_internalShader->setMatrix4x4Float("VPMatrix", Camera::getCameraGUI());
@@ -106,8 +106,8 @@ namespace Beryll
 
         // Draw thumb first. Be careful, It update position and size which are used in updateBeforePhysics().
         m_thumbTexture->bind();
-        const float prPerc = getWidthHeightInPercents().x * m_normalizedSliderProgress; // Progress in screen percents.
-        m_thumbPos.x = (m_trackPos.x + prPerc) - (m_thumbWidthHeight.x * 0.5f);
+        const float prPerc = getWidthHeightInPercents().y * m_normalizedSliderProgress; // Progress in screen percents.
+        m_thumbPos.y = (m_trackPos.y + prPerc) - (m_thumbWidthHeight.y * 0.5f);
         updatePositionInPercents(m_thumbPos, false);
         updateWidthHeightInPercents(m_thumbWidthHeight, true);
         m_vertexArray->draw();
