@@ -8,6 +8,7 @@ namespace Beryll
     // Static vertex buffer
     AndroidGLESStaticVertexBuffer::AndroidGLESStaticVertexBuffer(const std::vector<glm::vec2>& data)
     {
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
         glGenBuffers(1, &m_VBO);
         glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
         glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(glm::vec2), data.data(), GL_STATIC_DRAW);
@@ -19,6 +20,7 @@ namespace Beryll
 
     AndroidGLESStaticVertexBuffer::AndroidGLESStaticVertexBuffer(const std::vector<glm::vec3>& data)
     {
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
         glGenBuffers(1, &m_VBO);
         glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
         glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(glm::vec3), data.data(), GL_STATIC_DRAW);
@@ -30,6 +32,7 @@ namespace Beryll
 
     AndroidGLESStaticVertexBuffer::AndroidGLESStaticVertexBuffer(const std::vector<glm::vec4>& data)
     {
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
         glGenBuffers(1, &m_VBO);
         glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
         glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(glm::vec4), data.data(), GL_STATIC_DRAW);
@@ -41,6 +44,7 @@ namespace Beryll
 
     AndroidGLESStaticVertexBuffer::AndroidGLESStaticVertexBuffer(const std::vector<glm::ivec4>& data)
     {
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
         glGenBuffers(1, &m_VBO);
         glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
         glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(glm::ivec4), data.data(), GL_STATIC_DRAW);
@@ -52,6 +56,7 @@ namespace Beryll
 
     AndroidGLESStaticVertexBuffer::AndroidGLESStaticVertexBuffer(const std::vector<glm::mat4>& data)
     {
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
         glGenBuffers(1, &m_VBO);
         glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
         glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(glm::mat4), data.data(), GL_STATIC_DRAW);
@@ -68,6 +73,7 @@ namespace Beryll
 
     void AndroidGLESStaticVertexBuffer::bind()
     {
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
     }
 
@@ -80,6 +86,7 @@ namespace Beryll
     AndroidGLESDynamicVertexBuffer::AndroidGLESDynamicVertexBuffer(VertexAttribType type, VertexAttribSize size, uint32_t maxSizeBytes)
         : m_originalSizeBytes(maxSizeBytes)
     {
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
         glGenBuffers(1, &m_VBO);
         glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
         glBufferData(GL_ARRAY_BUFFER, maxSizeBytes, nullptr, GL_DYNAMIC_DRAW);
@@ -102,6 +109,8 @@ namespace Beryll
         BR_ASSERT((elementsCount * sizeof(glm::vec3) <= m_originalSizeBytes),
                   "%s", "You copy more data than buffer can store");
 
+
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
         glBufferSubData(GL_ARRAY_BUFFER, 0, elementsCount * sizeof(glm::vec3), data.data());
         glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -115,6 +124,7 @@ namespace Beryll
         BR_ASSERT((elementsCount * sizeof(glm::vec4) <= m_originalSizeBytes),
                   "%s", "You copy more data than buffer can store");
 
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
         glBufferSubData(GL_ARRAY_BUFFER, 0, elementsCount * sizeof(glm::vec4), data.data());
         glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -128,6 +138,7 @@ namespace Beryll
         BR_ASSERT((elementsCount * sizeof(glm::mat4) <= m_originalSizeBytes),
                   "%s", "You copy more data than buffer can store");
 
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
         glBufferSubData(GL_ARRAY_BUFFER, 0, elementsCount * sizeof(glm::mat4), data.data());
         glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -135,6 +146,7 @@ namespace Beryll
 
     void AndroidGLESDynamicVertexBuffer::bind()
     {
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
     }
 
@@ -146,6 +158,7 @@ namespace Beryll
     // Index buffer
     AndroidGLESStaticIndexBuffer::AndroidGLESStaticIndexBuffer(const std::vector<uint32_t>& indices) : m_originalCount(indices.size())
     {
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
         glGenBuffers(1, &m_EBO);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint32_t), indices.data(), GL_STATIC_DRAW);
@@ -161,6 +174,7 @@ namespace Beryll
 
     void AndroidGLESStaticIndexBuffer::bind()
     {
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
     }
 
