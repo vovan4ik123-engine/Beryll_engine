@@ -13,11 +13,14 @@ namespace Beryll
     std::map<char, AndroidGLESGUIText::Character> AndroidGLESGUIText::m_characters;
 
     AndroidGLESGUIText::AndroidGLESGUIText(std::string pText,
-                                           const glm::vec3& color, const glm::vec3& pos, const float scale) : GUIText(pos, glm::vec2{1.0f})
+                                           const glm::vec3& color, const glm::vec3& pos, const float height)
+                                           : GUIText(pos, glm::vec2{1.0f})
     {
         text = std::move(pText);
         m_color = color;
-        m_scale = scale;
+        m_currentHeightPixels = Window::getInstance()->getScreenHeight() * 0.2f;
+        m_desiredHeightPixels = (height / 100.0f) * Window::getInstance()->getScreenHeight();
+        m_scale = m_desiredHeightPixels / m_currentHeightPixels;
 
         if(!m_initialized)
         {
@@ -40,7 +43,7 @@ namespace Beryll
                 BR_ASSERT(false, "%s", "ERROR FREETYPE can not load font: fonts/roboto.ttf.");
             }
 
-            FT_Set_Pixel_Sizes(ftFace, 0, 128);
+            FT_Set_Pixel_Sizes(ftFace, 0, FT_UInt(m_currentHeightPixels));
 
             // Disable byte-alignment restriction.
             glPixelStorei(GL_UNPACK_ALIGNMENT, 1);

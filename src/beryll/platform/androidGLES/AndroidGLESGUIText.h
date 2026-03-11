@@ -20,10 +20,10 @@ namespace Beryll
          * pText - text to render.
          * color - color of text.
          * pos - X,Y in screen percents (0...100), Z in value as is (0...1).
-         * scale - texts scale.
+         * height - height of text in screen percents (0...100).
          */
         AndroidGLESGUIText(std::string pText,
-                           const glm::vec3& color, const glm::vec3& pos, const float scale);
+                           const glm::vec3& color, const glm::vec3& pos, const float height);
 
         struct Character
         {
@@ -32,6 +32,10 @@ namespace Beryll
             glm::ivec2   bearing;   // Offset from baseline to left/top of glyph.
             long advance;           // Offset to advance to next glyph.
         };
+
+        float m_currentHeightPixels = 0.0f;
+        float m_desiredHeightPixels = 0.0f;
+        float m_scale = 1.0f;
 
         static bool m_initialized;
         static std::map<char, Character> m_characters;
