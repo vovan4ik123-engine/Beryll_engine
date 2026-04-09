@@ -48,6 +48,8 @@ namespace Beryll
             // Disable byte-alignment restriction.
             glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
+            glActiveTexture(GL_TEXTURE0);
+
             // Create OpenGL textures for each glyph from ASCII table.
             for (unsigned char c = 32; c < 128; c++)
             {
@@ -78,6 +80,7 @@ namespace Beryll
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
                 glBindTexture(GL_TEXTURE_2D, 0);
+                GLESStateVariables::currentDiffuseTextureMat1ID0 = 0;
 
                 // Store character for later use.
                 Character character

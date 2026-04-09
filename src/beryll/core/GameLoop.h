@@ -29,8 +29,6 @@ namespace Beryll
         static float getGPUTime() { return m_GPUTime * 0.001f; } // Draw calls + GPU synchronization. Convert to milliSec.
         static void stopLoop() { m_isRun = false; }
 
-        static bool needDraw;
-
     private:
         friend int ::main(int argc, char* argv[]);
 

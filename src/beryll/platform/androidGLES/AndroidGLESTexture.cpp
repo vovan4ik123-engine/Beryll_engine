@@ -52,6 +52,7 @@ namespace Beryll
 
         BR_ASSERT((surface->w % 4 == 0 && surface->h % 4 == 0), "%s Width and height must be divisible by 4.", m_ID.c_str());
 
+        glActiveTexture(GL_TEXTURE0);
         glGenTextures(1, m_openGLID.get());
         glBindTexture(GL_TEXTURE_2D, *m_openGLID);
 
@@ -64,6 +65,7 @@ namespace Beryll
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
         glBindTexture(GL_TEXTURE_2D, 0);
+        GLESStateVariables::currentDiffuseTextureMat1ID0 = *m_openGLID;
 
         SDL_DestroySurface(surface);
         m_textures.insert(std::make_pair(m_ID, m_openGLID)); // Add to map.

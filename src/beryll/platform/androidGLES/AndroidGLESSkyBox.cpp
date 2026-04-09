@@ -66,6 +66,7 @@ namespace Beryll
         if(SDL_BYTESPERPIXEL(surfaceRight->format) == 4)
             pixelFormat = GL_RGBA;
 
+        glActiveTexture(GL_TEXTURE7);
         glGenTextures(1, &m_openGLID);
         glBindTexture(GL_TEXTURE_CUBE_MAP, m_openGLID);
 
@@ -84,6 +85,7 @@ namespace Beryll
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
         glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+        GLESStateVariables::currentSkyBoxTextureID7 = 0;
 
         SDL_DestroySurface(surfaceRight);
         SDL_DestroySurface(surfaceLeft);

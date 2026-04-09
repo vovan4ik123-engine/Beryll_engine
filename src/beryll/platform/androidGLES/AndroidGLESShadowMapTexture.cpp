@@ -15,6 +15,7 @@ namespace Beryll
     {
         BR_ASSERT((m_mapWidth % 4 == 0 && m_mapHeight % 4 == 0), "%s", "Width and height must be divisible by 4.");
 
+        glActiveTexture(GL_TEXTURE0);
         // Generate texture to store Z values of framebuffer.
         glGenTextures(1, &m_openGLID);
         glBindTexture(GL_TEXTURE_2D ,m_openGLID);
@@ -38,19 +39,15 @@ namespace Beryll
 
         // Attach texture as framebuffer depth buffer.
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_openGLID, 0);
-        glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D ,m_openGLID);
-        GLESStateVariables::currentDiffuseTextureMat1ID0 = m_openGLID;
         glBindFramebuffer(GL_FRAMEBUFFER, m_defaultFBO);
+        glBindTexture(GL_TEXTURE_2D, 0);
+        GLESStateVariables::currentDiffuseTextureMat1ID0 = 0;
 
         m_shaderSimple = Beryll::Renderer::createShader(BeryllConstants::simpleObjShadowMapVertexPath.data(),
                                                         BeryllConstants::simpleObjShadowMapFragmentPath.data());
         m_shaderAnimated = Beryll::Renderer::createShader(BeryllConstants::animatedObjShadowMapVertexPath.data(),
                                                           BeryllConstants::animatedObjShadowMapFragmentPath.data());
-
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, 0);
-        GLESStateVariables::currentDiffuseTextureMat1ID0 = 0;
     }
 
     AndroidGLESShadowMapTexture::~AndroidGLESShadowMapTexture()

@@ -16,7 +16,6 @@
 namespace Beryll
 {
     bool GameLoop::m_isRun = true;
-    bool GameLoop::needDraw = true;
 
     float GameLoop::m_frameStart = 0.0f;
     float GameLoop::m_frameTime = 0.0f;
@@ -93,14 +92,11 @@ namespace Beryll
             m_GPUTimeStart = m_timer.getElapsedMicroSec();
 
         // Draw start.
-            if(GameLoop::needDraw)
-            {
-                Window::getInstance()->clear();
-                GameStateMachine::draw();
-                //Window::getInstance()->finishDraw(); // Very slow. Uncomment only if you have rendering artefacts.
-                //Window::getInstance()->flushDraw(); // Potentially can be called but not necessary.
-                Window::getInstance()->swapWindow();
-            }
+            Window::getInstance()->clear();
+            GameStateMachine::draw();
+            //Window::getInstance()->finishDraw(); // Very slow. Uncomment only if you have rendering artefacts.
+            //Window::getInstance()->flushDraw(); // Potentially can be called but not necessary.
+            Window::getInstance()->swapWindow();
         // Draw finish.
 
             m_GPUTime = m_timer.getElapsedMicroSec() - m_GPUTimeStart;

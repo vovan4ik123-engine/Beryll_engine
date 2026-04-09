@@ -43,7 +43,7 @@ namespace Beryll
         if(it == m_gameStates.end())
         {
             BR_INFO("Push state: %s. States count: %d", gameStateAsString[static_cast<int>(state->ID)].c_str(), m_gameStates.size() + 1);
-            m_gameStates.push_back(state);
+            m_gameStates.push_back(std::move(state));
         }
         else
         {
