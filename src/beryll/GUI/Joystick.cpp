@@ -7,7 +7,8 @@ namespace Beryll
 {
     Joystick::Joystick(const char*  defaultTexturePath,
                        const char*  touchedTexturePath,
-                       const glm::vec3& pos, const glm::vec2& widthHeight) : GUIObject(pos, widthHeight)
+                       const glm::vec3& pos, const glm::vec2& widthHeight, bool consumeDownEvent)
+                       : GUIObject(pos, widthHeight, consumeDownEvent)
     {
         BR_ASSERT((defaultTexturePath != nullptr && defaultTexturePath[0] != '\0'), "%s", "Path to default texture can not be empty.");
 
@@ -44,23 +45,35 @@ namespace Beryll
                f.normalizedPos.y > getPositionNormalized().y && f.normalizedPos.y < getPositionNormalized().y + getWidthHeightNormalized().y)
             {
                 // If any finger in joystick area.
-                if(!f.handled)
-                    f.handled = true;
-
-                m_touched = true;
-
-                glm::vec2 fingerDir = f.normalizedPos - m_originNormalized;
-                if(glm::length(fingerDir) > 0.001f)
+                if(f.downEvent)
                 {
-                    if(Window::getInstance()->getScreenWidth() > Window::getInstance()->getScreenHeight())
-                        fingerDir.x = fingerDir.x * Window::getInstance()->getScreenAspectRatio();
-                    else
-                        fingerDir.y = fingerDir.y * Window::getInstance()->getScreenAspectRatio();
+                    if(pressedFingerID == -100)
+                        pressedFingerID = f.ID;
 
-                    m_touchedDirectionFromOrigin = glm::normalize(fingerDir);
+                    if(m_consumeEvent)
+                        f.downEvent = false;
+                }
+
+                if(pressedFingerID == f.ID)
+                {
+                    m_touched = true;
+
+                    glm::vec2 fingerDir = f.normalizedPos - m_originNormalized;
+                    if(glm::length(fingerDir) > 0.001f)
+                    {
+                        if(Window::getInstance()->getScreenWidth() > Window::getInstance()->getScreenHeight())
+                            fingerDir.x = fingerDir.x * Window::getInstance()->getScreenAspectRatio();
+                        else
+                            fingerDir.y = fingerDir.y * Window::getInstance()->getScreenAspectRatio();
+
+                        m_touchedDirectionFromOrigin = glm::normalize(fingerDir);
+                    }
                 }
             }
         }
+
+        if(!m_touched)
+            pressedFingerID = -100;
     }
 
     void Joystick::updateAfterPhysics()

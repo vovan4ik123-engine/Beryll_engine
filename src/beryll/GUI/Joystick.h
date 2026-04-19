@@ -16,7 +16,7 @@ namespace Beryll
          */
         Joystick(const char*  defaultTexturePath,
                  const char*  touchedTexturePath,
-                 const glm::vec3& pos, const glm::vec2& widthHeight);
+                 const glm::vec3& pos, const glm::vec2& widthHeight, bool consumeDownEvent = true);
         ~Joystick() override;
 
         void updateBeforePhysics() override;

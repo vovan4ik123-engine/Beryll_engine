@@ -7,7 +7,8 @@ namespace Beryll
 {
     CheckBox::CheckBox(const char* unMarkedTexturePath,
                        const char* markedTexturePath,
-                       const glm::vec3& pos, const glm::vec2& widthHeight) : GUIObject(pos, widthHeight)
+                       const glm::vec3& pos, const glm::vec2& widthHeight, bool consumeDownEvent)
+                       : GUIObject(pos, widthHeight, consumeDownEvent)
     {
         BR_ASSERT((unMarkedTexturePath != nullptr && unMarkedTexturePath[0] != '\0'), "%s", "Path to unMarked Texture can not be empty.");
         BR_ASSERT((markedTexturePath != nullptr && markedTexturePath[0] != '\0'), "%s", "Path to marked Texture can not be empty.");
@@ -39,10 +40,8 @@ namespace Beryll
                f.normalizedPos.y > getPositionNormalized().y && f.normalizedPos.y < getPositionNormalized().y + getWidthHeightNormalized().y)
             {
                 // If any finger in checkbox area.
-                if(f.downEvent && !f.handled)
+                if(f.downEvent)
                 {
-                    f.handled = true;
-
                     if(marked)
                     {
                         marked = false;
@@ -55,6 +54,9 @@ namespace Beryll
                         m_marking = true;
                         m_unMarking = false;
                     }
+
+                    if(m_consumeEvent)
+                        f.downEvent = false;
                 }
             }
         }

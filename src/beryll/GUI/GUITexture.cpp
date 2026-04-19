@@ -7,7 +7,7 @@ namespace Beryll
 {
     GUITexture::GUITexture(const char* texturePath,
                            const glm::vec3& pos, const glm::vec2& widthHeight, bool consumeDownEvent)
-                           : GUIObject(pos, widthHeight), m_consumeEvent(consumeDownEvent)
+                           : GUIObject(pos, widthHeight, consumeDownEvent)
     {
         BR_ASSERT((texturePath != nullptr && texturePath[0] != '\0'), "%s", "Path to default texture can not be empty.");
 
@@ -33,12 +33,11 @@ namespace Beryll
             if(f.normalizedPos.x > getPositionNormalized().x && f.normalizedPos.x < getPositionNormalized().x + getWidthHeightNormalized().x &&
                f.normalizedPos.y > getPositionNormalized().y && f.normalizedPos.y < getPositionNormalized().y + getWidthHeightNormalized().y)
             {
-                // If any finger in button area.
-                if(f.downEvent && !f.handled && m_consumeEvent)
+                // If any finger in image area.
+                if(f.downEvent && m_consumeEvent)
                 {
-                    // Let image consume event if allowed.
-                    f.handled = true;
-                    BR_INFO("%s", "image consume event");
+                    f.downEvent = false;
+                    BR_INFO("%s", "Image consume finger down event.");
                 }
             }
         }

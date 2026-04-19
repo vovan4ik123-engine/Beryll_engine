@@ -15,12 +15,14 @@ namespace Beryll
     {
     public:
         GUIObject() = delete;
-        GUIObject(const glm::vec3& pos, const glm::vec2& widthHeight);
+        GUIObject(const glm::vec3& pos, const glm::vec2& widthHeight, bool consumeDownEvent);
         ~GUIObject() override {}
 
         /*
          * Inherited pure virtual methods are here.
          */
+
+        int pressedFingerID = -100;
 
         void enable() { m_isEnabled = true; }
         bool getIsEnabled() { return m_isEnabled; }
@@ -30,6 +32,7 @@ namespace Beryll
             m_isEnabled = false;
             m_pressed = false;
             m_touched = false;
+            pressedFingerID = -100;
         }
 
         void updatePositionInPercents(const glm::vec3& pos, bool updateBuffers = true) // Left bottom corner.
@@ -56,6 +59,7 @@ namespace Beryll
         bool m_isEnabled = true;
         bool m_pressed = false;
         bool m_touched = false;
+        bool m_consumeEvent = true;
 
         std::shared_ptr<VertexBuffer> m_vertexPosBuffer;
         std::shared_ptr<VertexBuffer> m_textureCoordsBuffer;

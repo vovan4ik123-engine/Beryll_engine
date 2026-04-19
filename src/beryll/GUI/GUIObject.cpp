@@ -3,8 +3,10 @@
 
 namespace Beryll
 {
-    GUIObject::GUIObject(const glm::vec3& pos, const glm::vec2& widthHeight)
+    GUIObject::GUIObject(const glm::vec3& pos, const glm::vec2& widthHeight, bool consumeDownEvent)
     {
+        m_consumeEvent = consumeDownEvent;
+
         setPositionInPercents(pos);
         setWidthHeightInPercents(widthHeight);
 

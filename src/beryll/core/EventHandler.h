@@ -27,7 +27,6 @@ namespace Beryll
         // Should starts from left bottom corner.
         glm::vec2 normalizedPos; // Range 0...1.
         glm::vec2 pixelsPos;    // Range depends on screen resolution.
-        bool handled;   // For disable event from handling any more.
         bool downEvent; // True if finger was down at this game loop iteration. Will false in next game loop iteration.
         int ID;
     };
@@ -40,6 +39,7 @@ namespace Beryll
 
         static void loadEvents();
         static void resetEvents(EventID id); // Reset before loadEvents().
+        static void resetFingers() { m_fingers.clear(); }
 
         static bool checkEvent(EventID id) { return m_events[static_cast<int>(id)]; }
 

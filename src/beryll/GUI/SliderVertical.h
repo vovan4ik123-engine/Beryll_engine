@@ -19,7 +19,7 @@ namespace Beryll
         SliderVertical(const char* sliderTrackTexturePath,
                        const char* sliderThumbTexturePath,
                        const glm::vec3& pos, const glm::vec2& widthHeight,
-                       float minValue, float maxValue);
+                       float minValue, float maxValue, bool consumeDownEvent = true);
         ~SliderVertical() override;
 
         void updateBeforePhysics() override;

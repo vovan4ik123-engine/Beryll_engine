@@ -15,7 +15,7 @@ namespace Beryll
          * rightColor
          */
         GUIProgressBar(const glm::vec3& pos, const glm::vec2& widthHeight,
-                       const glm::vec3& leftColor, const glm::vec3& rightColor);
+                       const glm::vec3& leftColor, const glm::vec3& rightColor, bool consumeDownEvent = true);
         ~GUIProgressBar() override;
 
         void updateBeforePhysics() override;

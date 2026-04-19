@@ -11,7 +11,7 @@ namespace Beryll
     {
     public:
         GUIText() = delete;
-        GUIText(const glm::vec3& pos, const glm::vec2& widthHeight) : GUIObject(pos, widthHeight) {};
+        GUIText(const glm::vec3& pos, const glm::vec2& widthHeight, bool consumeDownEvent = true) : GUIObject(pos, widthHeight, consumeDownEvent) {};
         ~GUIText() override {}
 
         /*
@@ -21,7 +21,7 @@ namespace Beryll
         std::string text;
 
     protected:
-        glm::vec3 m_color;
+        glm::vec3 m_color{0.0f};
         float m_scale = 1.0f;
 
     private:

@@ -7,8 +7,8 @@ namespace Beryll
 {
     ButtonWithTexture::ButtonWithTexture(const char* defaultTexturePath,
                                          const char* touchedTexturePath,
-                                         const glm::vec3& pos, const glm::vec2& widthHeight, bool actRepeat)
-                                         : GUIObject(pos, widthHeight), m_actRepeat(actRepeat)
+                                         const glm::vec3& pos, const glm::vec2& widthHeight, bool actRepeat, bool consumeDownEvent)
+                                         : GUIObject(pos, widthHeight, consumeDownEvent), m_actRepeat(actRepeat)
     {
         BR_ASSERT((defaultTexturePath != nullptr && defaultTexturePath[0] != '\0'), "%s", "Path to default texture can not be empty.");
 
@@ -38,7 +38,7 @@ namespace Beryll
         {
             m_pressed = false;
             m_touched = false;
-            m_pressedFingerID = -100;
+            pressedFingerID = -100;
             m_isPressedFingerStillOnScreen = false;
         }
         else
@@ -68,15 +68,17 @@ namespace Beryll
                    f.normalizedPos.y > getPositionNormalized().y && f.normalizedPos.y < getPositionNormalized().y + getWidthHeightNormalized().y)
                 {
                     // If any finger in button area.
-                    if(f.ID == m_pressedFingerID)
+                    if(f.ID == pressedFingerID)
                         m_touched = true;
 
-                    if(f.downEvent && !f.handled)
+                    if(f.downEvent)
                     {
-                        f.handled = true;
                         m_pressed = true;
-                        m_pressedFingerID = f.ID;
+                        pressedFingerID = f.ID;
                         m_isPressedFingerStillOnScreen = true;
+
+                        if(m_consumeEvent)
+                            f.downEvent = false;
                     }
                 }
             }
@@ -84,12 +86,12 @@ namespace Beryll
             m_isPressedFingerStillOnScreen = false;
             for(const Finger& f : fingers)
             {
-                if(f.ID == m_pressedFingerID)
+                if(f.ID == pressedFingerID)
                     m_isPressedFingerStillOnScreen = true;
             }
 
             if(!m_isPressedFingerStillOnScreen)
-                m_pressedFingerID = -100;
+                pressedFingerID = -100;
         }
 
         if(m_pressed && m_action)

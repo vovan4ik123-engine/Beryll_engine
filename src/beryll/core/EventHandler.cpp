@@ -95,9 +95,15 @@ namespace Beryll
 
                         #endif
 
+                        // If finger with this ID already exist that is bug. Remove it.
+                        auto it = std::find_if(m_fingers.begin(), m_fingers.end(), [&event](const Finger& f){ return f.ID == static_cast<int>(event.tfinger.fingerID); });
+                        if(it != m_fingers.end())
+                        {
+                            m_fingers.erase(it);
+                        }
+
                         m_fingers.emplace_back(Finger{eventPos,
                                                       glm::vec2(eventPos.x * Window::getInstance()->getScreenWidth(), eventPos.y * Window::getInstance()->getScreenHeight()),
-                                                      false,
                                                       true,
                                                       static_cast<int>(event.tfinger.fingerID)});
                         break;

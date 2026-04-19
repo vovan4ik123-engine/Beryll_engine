@@ -16,7 +16,7 @@ namespace Beryll
          */
         CheckBox(const char* unMarkedTexturePath,
                  const char* markedTexturePath,
-                 const glm::vec3& pos, const glm::vec2& widthHeight);
+                 const glm::vec3& pos, const glm::vec2& widthHeight, bool consumeDownEvent = true);
         ~CheckBox() override;
 
         void updateBeforePhysics() override;

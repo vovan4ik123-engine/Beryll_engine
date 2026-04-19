@@ -19,7 +19,7 @@ namespace Beryll
          */
         ButtonWithAnimation(const char* texturesPath, const std::vector<const char*> texturesNames,
                             const float animDurationSec, bool repeatAnimation,
-                            const glm::vec3& pos, const glm::vec2& widthHeight, bool actRepeat = false);
+                            const glm::vec3& pos, const glm::vec2& widthHeight, bool actRepeat = false, bool consumeDownEvent = true);
         ~ButtonWithAnimation() override;
 
         void enable(bool restartAnim);
@@ -40,7 +40,6 @@ namespace Beryll
         std::function<void()> m_action;
 
         bool m_actRepeat = false; // If you want m_pressed = true all time during button touched pass actRepeat = true.
-        int m_pressedFingerID = -100;
         bool m_isPressedFingerStillOnScreen = false;
 
         // Vertex and index buffers are in base class.

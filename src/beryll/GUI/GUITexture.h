@@ -24,6 +24,5 @@ namespace Beryll
 
     private:
         std::unique_ptr<Texture> m_texture;
-        bool m_consumeEvent;
     };
 }

@@ -1,12 +1,13 @@
 #include "GUIProgressBar.h"
 #include "beryll/renderer/Renderer.h"
 #include "beryll/renderer/Camera.h"
+#include "beryll/core/EventHandler.h"
 
 namespace Beryll
 {
     GUIProgressBar::GUIProgressBar(const glm::vec3& pos, const glm::vec2& widthHeight,
-                                   const glm::vec3& leftColor, const glm::vec3& rightColor) :
-                                   GUIObject(pos, widthHeight), m_colorLeft(leftColor), m_colorRight(rightColor)
+                                   const glm::vec3& leftColor, const glm::vec3& rightColor, bool consumeDownEvent)
+                                   : GUIObject(pos, widthHeight, consumeDownEvent), m_colorLeft(leftColor), m_colorRight(rightColor)
     {
         m_internalShader = Renderer::createShader(BeryllConstants::GUIProgressBarVertexPath.data(),
                                                   BeryllConstants::GUIProgressBarFragmentPath.data());
@@ -19,7 +20,19 @@ namespace Beryll
 
     void GUIProgressBar::updateBeforePhysics()
     {
-
+        std::vector<Finger>& fingers = EventHandler::getFingers();
+        for(Finger& f : fingers)
+        {
+            if(f.normalizedPos.x > getPositionNormalized().x && f.normalizedPos.x < getPositionNormalized().x + getWidthHeightNormalized().x &&
+               f.normalizedPos.y > getPositionNormalized().y && f.normalizedPos.y < getPositionNormalized().y + getWidthHeightNormalized().y)
+            {
+                // If any finger in bar area.
+                if(f.downEvent && m_consumeEvent)
+                {
+                    f.downEvent = false;
+                }
+            }
+        }
     }
 
     void GUIProgressBar::updateAfterPhysics()
