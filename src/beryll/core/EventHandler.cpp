@@ -85,6 +85,11 @@ namespace Beryll
 //END KEYS
 
 //TOUCH EVENT
+                case SDL_EVENT_FINGER_CANCELED:
+                    {
+                        resetFingers();
+                        break;
+                    }
                 case SDL_EVENT_FINGER_DOWN:
                     {
                         glm::vec2 eventPos = glm::vec2{event.tfinger.x, event.tfinger.y};
@@ -95,11 +100,11 @@ namespace Beryll
 
                         #endif
 
-                        // If finger with this ID already exist that is bug. Remove it.
+                        // That is because bug or error happened. Often because palm touch (wide area touch).
                         auto it = std::find_if(m_fingers.begin(), m_fingers.end(), [&event](const Finger& f){ return f.ID == static_cast<int>(event.tfinger.fingerID); });
                         if(it != m_fingers.end())
                         {
-                            m_fingers.erase(it);
+                            resetFingers();
                         }
 
                         m_fingers.emplace_back(Finger{eventPos,
