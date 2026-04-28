@@ -1,6 +1,7 @@
 #pragma once
 
 #include "SceneObject.h"
+#include "beryll/core/TimeStep.h"
 
 namespace Beryll
 {
@@ -23,7 +24,7 @@ namespace Beryll
 
         uint32_t getBoneCount() { return m_boneCount; }
         const std::vector<BoneMatrix>& getBoneMatrices() { return m_bonesMatrices; }
-        bool getIsOneTimeAnimationFinished() { return !m_playAnimOneTime; }
+        bool getIsOneTimeAnimationFinished() { return (m_playAnimOneTime && m_animStartTimeInSec + m_animTimeInSec < TimeStep::getSecFromStart()); }
 
         void setCurrentAnimationByName(const char* name, bool playOneTime, bool startEvenIfSameAnimPlaying, bool randomizeAnimStartTime = false);
         void setCurrentAnimationByIndex(int index, bool playOneTime, bool startEvenIfSameAnimPlaying, bool randomizeAnimStartTime = false);
@@ -60,8 +61,7 @@ namespace Beryll
         float m_animStartTimeInSec = 0.0f;
         float m_animTimeInSec = 0.0f;
         float m_ticksPerSecond = 0.0f;
-        bool m_playAnimOneTime = false; // Anim will play once and then default anim will start automatically.
-        float m_animOneTimeLastFrameTime = 0.0f; // If anim played once keep time of last frame.
+        bool m_playAnimOneTime = false; // Anim will play once.
 
         void calculateTransforms();
         void readNodeHierarchy(const float animationTime, const aiNode* node, const aiMatrix4x4& parentTransform);

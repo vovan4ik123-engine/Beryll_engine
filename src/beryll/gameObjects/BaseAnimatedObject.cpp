@@ -1,5 +1,4 @@
 #include "BaseAnimatedObject.h"
-#include "beryll/core/TimeStep.h"
 #include "beryll/utils/Quaternion.h"
 #include "beryll/renderer/Camera.h"
 #include "beryll/utils/File.h"
@@ -294,7 +293,7 @@ namespace Beryll
                 BR_INFO("Animation index: %d Name: %s Duration: %f", g, animName.c_str(), m_scene->mAnimations[g]->mDuration);
             }
 
-            m_animStartTimeInSec = std::max(0.0f, TimeStep::getSecFromStart() - (RandomGenerator::getFloat() * 2.0f));
+            m_animStartTimeInSec = TimeStep::getSecFromStart();
 
             m_ticksPerSecond = static_cast<float>(m_scene->mAnimations[0]->mTicksPerSecond);
             if(m_ticksPerSecond == 0.0f)
@@ -379,24 +378,17 @@ namespace Beryll
     
     void BaseAnimatedObject::calculateTransforms()
     {
-        float timeInTicks = (TimeStep::getSecFromStart() - m_animStartTimeInSec) * m_ticksPerSecond;
-        float animTime = std::fmodf(timeInTicks, static_cast<float>(m_scene->mAnimations[m_currentAnimIndex]->mDuration));
+        float allPlayedTimeInTicks = (TimeStep::getSecFromStart() - m_animStartTimeInSec) * m_ticksPerSecond;
+        float animCurrentTimeInTicks = std::fmodf(allPlayedTimeInTicks, static_cast<float>(m_scene->mAnimations[m_currentAnimIndex]->mDuration));
 
-        if(m_playAnimOneTime)
+        if(m_playAnimOneTime &&
+           (allPlayedTimeInTicks >= static_cast<float>(m_scene->mAnimations[m_currentAnimIndex]->mDuration) || m_animStartTimeInSec + m_animTimeInSec < TimeStep::getSecFromStart()))
         {
-            if(animTime > m_animOneTimeLastFrameTime || m_animStartTimeInSec + m_animTimeInSec < TimeStep::getSecFromStart())
-            {
-                m_playAnimOneTime = false;
-                // Prepare default animation.
-                m_currentAnimIndex = m_defaultAnimIndex;
-                m_animStartTimeInSec = TimeStep::getSecFromStart();
-                timeInTicks = 0.0f;
-                animTime = 0.0f;
-            }
+            animCurrentTimeInTicks = static_cast<float>(m_scene->mAnimations[m_currentAnimIndex]->mDuration);
         }
 
         aiMatrix4x4 identity;
-        readNodeHierarchy(animTime, m_scene->mRootNode, identity);
+        readNodeHierarchy(animCurrentTimeInTicks, m_scene->mRootNode, identity);
     }
 
     void BaseAnimatedObject::readNodeHierarchy(const float animationTime, const aiNode* node, const aiMatrix4x4& parentTransform)
@@ -413,7 +405,7 @@ namespace Beryll
             uint32_t currentFrameIndex = 0;
             for(int i = nodeAnim->mNumPositionKeys - 1; i >= 0; --i)
             {
-                if(animationTime > nodeAnim->mPositionKeys[i].mTime || i == 0)
+                if(animationTime >= nodeAnim->mPositionKeys[i].mTime || i == 0)
                 {
                     currentFrameIndex = i;
                     break;
@@ -421,12 +413,17 @@ namespace Beryll
             }
 
             uint32_t nextFrameIndex = currentFrameIndex + 1;
-            if(nextFrameIndex >= nodeAnim->mNumPositionKeys)
-                nextFrameIndex = 0; // Last frame was played, jump to first again.
+            if(nextFrameIndex >= nodeAnim->mNumPositionKeys) // currentFrameIndex is last. No more frames.
+            {
+                nextFrameIndex = 0; // Jump to first frame and repeat animation.
+
+                if(m_playAnimOneTime)
+                    nextFrameIndex = currentFrameIndex; // Dont repeat if play one time. Always keep last frame.
+            }
 
             float currentFrameStartTime = static_cast<float>(nodeAnim->mPositionKeys[currentFrameIndex].mTime);
             float currentFrameEndTime = static_cast<float>(nodeAnim->mPositionKeys[nextFrameIndex].mTime);
-            if(currentFrameStartTime > currentFrameEndTime)
+            if(currentFrameStartTime >= currentFrameEndTime)
                 currentFrameEndTime = static_cast<float>(m_scene->mAnimations[m_currentAnimIndex]->mDuration);
 
             BR_ASSERT((animationTime >= currentFrameStartTime && animationTime <= currentFrameEndTime),
@@ -434,8 +431,9 @@ namespace Beryll
                       animationTime, currentFrameStartTime, currentFrameEndTime);
 
             float deltaTime = currentFrameEndTime - currentFrameStartTime;
-            // factor = how much time passed between current and next frame in range 0...1
-            float factor = (animationTime - static_cast<float>(nodeAnim->mPositionKeys[currentFrameIndex].mTime)) / deltaTime;
+            float factor = 0.0f; // How much time passed between current and next frame in range 0...1.
+            if(deltaTime > 0.0f)
+                factor = (animationTime - static_cast<float>(nodeAnim->mPositionKeys[currentFrameIndex].mTime)) / deltaTime;
 
             aiMatrix4x4 scalingMatr = interpolateScaling(nodeAnim, currentFrameIndex, nextFrameIndex, factor);
             aiMatrix4x4 rotationMatr = interpolateRotation(nodeAnim, currentFrameIndex, nextFrameIndex, factor);
@@ -583,7 +581,8 @@ namespace Beryll
 
     void BaseAnimatedObject::setCurrentAnimationByName(const char* name, bool playOneTime, bool startEvenIfSameAnimPlaying, bool randomizeAnimStartTime)
     {
-        if(m_currentAnimName == name && !startEvenIfSameAnimPlaying) { return; }
+        if(m_currentAnimName == name && !startEvenIfSameAnimPlaying)
+            return;
 
         for(const std::pair<std::string, int>& anim : m_animationNameIndex)
         {
@@ -592,18 +591,12 @@ namespace Beryll
                 m_currentAnimIndex = anim.second;
                 m_currentAnimName = name;
                 m_playAnimOneTime = playOneTime;
-                if(m_playAnimOneTime)
-                {
-                    const aiNodeAnim* nodeAnim = findNodeAnimAny(m_scene->mAnimations[m_currentAnimIndex]);
-                    BR_ASSERT((nodeAnim != nullptr), "%s", "Can not find any node anim.");
-                    BR_ASSERT((nodeAnim->mNumPositionKeys  > 0), "%s", "Node anim does not have keys.");
-                    m_animOneTimeLastFrameTime = nodeAnim->mPositionKeys[nodeAnim->mNumPositionKeys - 1].mTime;
-                }
                 m_animStartTimeInSec = TimeStep::getSecFromStart();
-                if(randomizeAnimStartTime)
-                    m_animStartTimeInSec = std::max(0.0f, TimeStep::getSecFromStart() - (RandomGenerator::getFloat() * 2.0f));
-
                 m_animTimeInSec = static_cast<float>(m_scene->mAnimations[m_currentAnimIndex]->mDuration) / m_ticksPerSecond;
+
+                if(randomizeAnimStartTime)
+                    m_animStartTimeInSec = std::max(0.0f, TimeStep::getSecFromStart() - (RandomGenerator::getFloat() * m_animTimeInSec * 0.99f));
+
                 return;
             }
         }
@@ -615,24 +608,18 @@ namespace Beryll
     {
         BR_ASSERT((index >= 0 && index < m_animationNameIndex.size()), "Animation with index does not exists: %d", index);
 
-        if(m_currentAnimIndex == index && !startEvenIfSameAnimPlaying) { return; }
+        if(m_currentAnimIndex == index && !startEvenIfSameAnimPlaying)
+            return;
 
         if(index >= 0 && index < m_animationNameIndex.size())
         {
             m_currentAnimIndex = index;
             m_playAnimOneTime = playOneTime;
-            if(m_playAnimOneTime)
-            {
-                const aiNodeAnim* nodeAnim = findNodeAnimAny(m_scene->mAnimations[m_currentAnimIndex]);
-                BR_ASSERT((nodeAnim != nullptr), "%s", "Can not find any node anim.");
-                BR_ASSERT((nodeAnim->mNumPositionKeys  > 0), "%s", "Node anim does not have keys.");
-                m_animOneTimeLastFrameTime = nodeAnim->mPositionKeys[nodeAnim->mNumPositionKeys - 1].mTime;
-            }
             m_animStartTimeInSec = TimeStep::getSecFromStart();
-            if(randomizeAnimStartTime)
-                m_animStartTimeInSec = std::max(0.0f, TimeStep::getSecFromStart() - (RandomGenerator::getFloat() * 2.0f));
-
             m_animTimeInSec = static_cast<float>(m_scene->mAnimations[m_currentAnimIndex]->mDuration) / m_ticksPerSecond;
+
+            if(randomizeAnimStartTime)
+                m_animStartTimeInSec = std::max(0.0f, TimeStep::getSecFromStart() - (RandomGenerator::getFloat() * m_animTimeInSec * 0.99f));
         }
     }
 
