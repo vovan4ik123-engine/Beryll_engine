@@ -343,21 +343,12 @@ namespace Beryll
         {
             return m_origin;
         }
-
+        // Only for one thread.
         const glm::vec3 getOriginXZ() const
         {
             return glm::vec3(m_origin.x, 0.0f, m_origin.z);
         }
 
-        // Use it if you call set/get origin from many threads.
-//        glm::vec3 getOriginForMultithreading()
-//        {
-//            float x = m_originX;
-//            float y = m_originY;
-//            float z = m_originZ;
-//
-//            return glm::vec3{x, y, z};
-//        }
         const bool getIsDisabledForEver() const { return m_isDisabledForEver; } // Use it for avoid object updating and drawing.
         const bool getIsEnabledDraw() const { return m_isEnabledDraw; } // Use it for avoid object from drawing.
         const bool getIsEnabledUpdate() const { return m_isEnabledUpdate; } // Use it for avoid object from updating.
@@ -459,7 +450,7 @@ namespace Beryll
     protected:
         //float m_scale = 1.0f; // Unused for now.
 
-        // Total rotation include all rotations:
+        // Total rotation includes all rotations:
         //     loaded with model from Blender exported file,
         //     added by physics simulation,
         //     added by engine methods addToRotation(...).
@@ -467,10 +458,6 @@ namespace Beryll
         // Only sum of rotations added by engine methods addToRotation(...).
         glm::quat m_engineAddedRotation{1.0f, 0.0f, 0.0f, 0.0f};
         glm::vec3 m_origin{0.0f, 0.0f, 0.0f};
-        // std::atomic for synchronization when one thread set origin and other calls getOriginForMultithreading() for same object.
-        //std::atomic<float> m_originX = 0.0f; Assign it in setOrigin()/addToOrigin() if you need getOriginForMultithreading().
-        //std::atomic<float> m_originY = 0.0f;
-        //std::atomic<float> m_originZ = 0.0f;
 
         SceneObjectGroups m_sceneObjectGroup = SceneObjectGroups::NONE; // Any scene object can belong to specific group.
         bool m_isAnimatedObject = false;

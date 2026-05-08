@@ -37,7 +37,7 @@ namespace Beryll
             return;
         }
 
-        // Object is dynamic and active.
+        // Now we know that object is dynamic and active.
 
         m_canStay = false;
         m_bottomCollisionPoint = std::make_pair(glm::vec3(0.0f, std::numeric_limits<float>::max(), 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
@@ -138,8 +138,8 @@ namespace Beryll
         const glm::vec3 checkWallFrom = m_sceneObject->getOrigin();
         const glm::vec3 checkWallTo = checkWallFrom + glm::normalize(moveVectorXZ) * m_sceneObject->getXZRadius() * 2.0f;
         const RayClosestHit checkWall = Physics::castRayClosestHit(checkWallFrom, checkWallTo,
-                                                                    m_sceneObject->getCollisionGroup(),
-                                                                    m_sceneObject->getCollisionMask());
+                                                                   m_sceneObject->getCollisionGroup(),
+                                                                   m_sceneObject->getCollisionMask());
         if(checkWall &&
            BeryllUtils::Common::getAngleInRadians(checkWall.hitNormal, BeryllConstants::worldUp) > walkableFloorAngleRadians)
         {
