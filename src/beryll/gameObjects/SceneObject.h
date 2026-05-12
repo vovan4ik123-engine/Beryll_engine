@@ -9,25 +9,32 @@
 
 namespace Beryll
 {
-    // This enum is game dependent.
-    // When you create game you can add here groups and mark objects with them
-    // then check these groups in game loop for specific actions/rendering.
+    // Create variables with desired names for game in game related files.
+    // Examples: constexpr inline Beryll::SceneObjectGroups SceneGR_PLAYER = Beryll::SceneObjectGroups::GROUP_1;
+    //           constexpr inline Beryll::SceneObjectGroups SceneGR_ENEMY = Beryll::SceneObjectGroups::GROUP_2;
     enum class SceneObjectGroups
     {
         NONE = 0,
-        GROUND = 1,
-        PLAYER = 2,
-        ENEMY = 3,
-        BULLET = 4,
-        STATIC_ENVIRONMENT = 5,
-        DYNAMIC_ENVIRONMENT = 6,
-        BALL = 7,
-        BUILDING = 8,
-        GARBAGE,
-        JUMPPAD,
-        BOSS,
-        ENEMY_SIZE_1,
-        ENEMY_SIZE_2,
+        GROUP_1 = 1,
+        GROUP_2 = 2,
+        GROUP_3 = 3,
+        GROUP_4 = 4,
+        GROUP_5 = 5,
+        GROUP_6 = 6,
+        GROUP_7 = 7,
+        GROUP_8 = 8,
+        GROUP_9 = 9,
+        GROUP_10 = 10,
+        GROUP_11 = 11,
+        GROUP_12 = 12,
+        GROUP_13 = 13,
+        GROUP_14 = 14,
+        GROUP_15 = 15,
+        GROUP_16 = 16,
+        GROUP_17 = 17,
+        GROUP_18 = 18,
+        GROUP_19 = 19,
+        GROUP_20 = 20,
     };
 
     class SceneObject : public GameObject

@@ -33,26 +33,43 @@ namespace Beryll
     // or preventing enemies from being able to pick up power-ups.
     enum class CollisionGroups
     {
-        // Max number of collision groups = 32(including NONE).
-        // Last group is 31(1 << 30).
+        // Max number of collision groups = 32(including NONE). Last group is 31 = 1 << 30.
+        // Create variables with desired names for game in game related files.
+        // Examples: constexpr inline Beryll::CollisionGroups CollGr_PLAYER = Beryll::CollisionGroups::GROUP_1;
+        //           constexpr inline Beryll::CollisionGroups CollGr_STATIC_ENV = Beryll::CollisionGroups::GROUP_2;
         NONE = 0,
-        CAMERA = 1 << 0,
-        STATIC_ENVIRONMENT = 1 << 1,
-        DYNAMIC_ENVIRONMENT = 1 << 2,
-        PLAYER = 1 << 3,
-        PLAYER_BULLET = 1 << 4,
-        BALL = 1 << 5,
+        GROUP_1 = 1 << 0,
+        GROUP_2 = 1 << 1,
+        GROUP_3 = 1 << 2,
+        GROUP_4 = 1 << 3,
+        GROUP_5 = 1 << 4,
+        GROUP_6 = 1 << 5,
+        GROUP_7 = 1 << 6,
+        GROUP_8 = 1 << 7,
+        GROUP_9 = 1 << 8,
+        GROUP_10 = 1 << 9,
+        GROUP_11 = 1 << 10,
+        GROUP_12 = 1 << 11,
+        GROUP_13 = 1 << 12,
+        GROUP_14 = 1 << 13,
+        GROUP_15 = 1 << 14,
+        GROUP_16 = 1 << 15,
+        GROUP_17 = 1 << 16,
+        GROUP_18 = 1 << 17,
+        GROUP_19 = 1 << 18,
+        GROUP_20 = 1 << 19,
+        GROUP_21 = 1 << 20,
+        GROUP_22 = 1 << 21,
+        GROUP_23 = 1 << 22,
+        GROUP_24 = 1 << 23,
+        GROUP_25 = 1 << 24,
+        GROUP_26 = 1 << 25,
+        GROUP_27 = 1 << 26,
+        GROUP_28 = 1 << 27,
+        GROUP_29 = 1 << 28,
+        GROUP_30 = 1 << 29,
 
-        GROUND = 1 << 6,
-        BUILDING = 1 << 7,
-        MOVABLE_ENEMY = 1 << 8,
-        RAY_FOR_ENVIRONMENT = 1 << 9,
-        GARBAGE = 1 << 10,
-        ENEMY_ATTACK = 1 << 11,
-        JUMPPAD = 1 << 12,
-        BOSS = 1 << 13,
-
-        YOU_CAN_COMBINE_GROUPS_WHEN_USE = STATIC_ENVIRONMENT | CAMERA,
+        YOU_CAN_COMBINE_GROUPS_WHEN_USE = GROUP_1 | GROUP_5,
 
         ALL_GROUPS = -1 // All bits = 1.
     };
