@@ -25,6 +25,7 @@ namespace Beryll
         bool getIsCanStay() { return m_canStay; }
         bool getIsMoving() { return m_moving; }
         const glm::vec3& getMoveDir() { return m_moveDir; }
+        const glm::vec3 getMoveDirXZ() { return glm::normalize(glm::vec3{m_moveDir.x, 0.0f, m_moveDir.z}); }
 
         float moveSpeed = 5.0f; // Meters in sec.
         float moveSpeedOnAirFactor = 0.7f;

@@ -20,7 +20,7 @@ namespace Beryll
         {
             m_lastTimeOnGround = TimeStep::getSecFromStart();
             // This controller will apply gravity.
-            Physics::setGravityForObject(m_sceneObject->getID(), glm::vec3(0.0f), false, false);
+            Physics::setGravityForObject(m_sceneObject->getID(), glm::vec3{0.0f}, false, false);
             m_firstUpdate = false;
         }
 
@@ -40,7 +40,7 @@ namespace Beryll
         // Now we know that object is dynamic and active.
 
         m_canStay = false;
-        m_bottomCollisionPoint = std::make_pair(glm::vec3(0.0f, std::numeric_limits<float>::max(), 0.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+        m_bottomCollisionPoint = std::make_pair(glm::vec3{0.0f, std::numeric_limits<float>::max(), 0.0f}, glm::vec3{0.0f, 0.0f, 0.0f});
         m_collidingObjects = Physics::getAllCollisionsForIDWithGroup(m_sceneObject->getID(), m_sceneObject->getCollisionMask());
 
         if(!m_collidingObjects.empty())
@@ -132,7 +132,7 @@ namespace Beryll
         if(!m_canStay)
             moveVectorForDynamic *= moveSpeedOnAirFactor;
 
-        const glm::vec3 moveVectorXZ = glm::vec3(moveVectorForDynamic.x, 0.0f, moveVectorForDynamic.z);
+        const glm::vec3 moveVectorXZ = glm::vec3{moveVectorForDynamic.x, 0.0f, moveVectorForDynamic.z};
 
         // Check wall in move dir.
         const glm::vec3 checkWallFrom = m_sceneObject->getOrigin();

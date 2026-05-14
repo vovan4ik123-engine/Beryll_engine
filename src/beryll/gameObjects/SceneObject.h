@@ -353,7 +353,7 @@ namespace Beryll
         // Only for one thread.
         const glm::vec3 getOriginXZ() const
         {
-            return glm::vec3(m_origin.x, 0.0f, m_origin.z);
+            return glm::vec3{m_origin.x, 0.0f, m_origin.z};
         }
 
         const bool getIsDisabledForEver() const { return m_isDisabledForEver; } // Use it for avoid object updating and drawing.
@@ -368,7 +368,7 @@ namespace Beryll
         const bool getIsAnimatedObject() const { return m_isAnimatedObject; }
         const glm::vec3 getFaceDirXYZ() const
         {
-            return glm::normalize(glm::vec3(m_totalRotation * m_sceneObjectFaceDir));
+            return glm::normalize(glm::vec3{m_totalRotation * m_sceneObjectFaceDir});
         }
         const glm::vec3 getFaceDirXZ() const
         {
@@ -377,7 +377,7 @@ namespace Beryll
         }
         const glm::vec3 getRightDirXYZ() const
         {
-            return glm::normalize(glm::vec3(m_totalRotation * m_sceneObjectRightDir));
+            return glm::normalize(glm::vec3{m_totalRotation * m_sceneObjectRightDir});
         }
         const glm::vec3 getRightDirXZ() const
         {
@@ -386,7 +386,7 @@ namespace Beryll
         }
         const glm::vec3 getUpDirXYZ() const
         {
-            return glm::normalize(glm::vec3(m_totalRotation * m_sceneObjectUpDir));
+            return glm::normalize(glm::vec3{m_totalRotation * m_sceneObjectUpDir});
         }
 
         void enableDraw()

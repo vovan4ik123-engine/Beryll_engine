@@ -64,7 +64,7 @@ namespace BeryllUtils
 
         static glm::vec3 getTranslationFrom4x4Glm(const glm::mat4& matr)
         {
-            return glm::vec3(matr[3][0], matr[3][1], matr[3][2]);
+            return glm::vec3{matr[3][0], matr[3][1], matr[3][2]};
         }
 
         static glm::quat getRotationFrom4x4Glm(const glm::mat4& matr)

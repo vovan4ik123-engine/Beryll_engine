@@ -69,15 +69,15 @@ namespace Beryll
 
 #if defined(ANDROID)
         // Vertices created as dynamic buffer. Will be updated in updateBuffersWithPositions().
-        std::vector<glm::vec3> m_vertices{glm::vec3(0.0f, 0.0f, 0.0f),
-                                          glm::vec3(0.0f, 0.0f, 0.0f),
-                                          glm::vec3(0.0f, 0.0f, 0.0f),
-                                          glm::vec3(0.0f, 0.0f, 0.0f)};
+        std::vector<glm::vec3> m_vertices{glm::vec3{0.0f, 0.0f, 0.0f},
+                                          glm::vec3{0.0f, 0.0f, 0.0f},
+                                          glm::vec3{0.0f, 0.0f, 0.0f},
+                                          glm::vec3{0.0f, 0.0f, 0.0f}};
 
-        std::vector<glm::vec2> m_textureCoords{glm::vec2(0.0f, 1.0f), // Flipped Y for OpenGL.
-                                               glm::vec2(1.0f, 1.0f),
-                                               glm::vec2(1.0f, 0.0f),
-                                               glm::vec2(0.0f, 0.0f)};
+        std::vector<glm::vec2> m_textureCoords{glm::vec2{0.0f, 1.0f}, // Flipped Y for OpenGL.
+                                               glm::vec2{1.0f, 1.0f},
+                                               glm::vec2{1.0f, 0.0f},
+                                               glm::vec2{0.0f, 0.0f}};
 
         std::vector<uint32_t> m_indices{0,1,2,
                                         2,3,0};

@@ -21,15 +21,15 @@ namespace Beryll
         if(m_created) { return; }
 
 #if defined(ANDROID)
-        std::vector<glm::vec3> vertices{glm::vec3(-1.0f, -1.0f, 1.0f),
-                                        glm::vec3( 1.0f, -1.0f, 1.0f),
-                                        glm::vec3( 1.0f,  1.0f, 1.0f),
-                                        glm::vec3(-1.0f,  1.0f, 1.0f)};
+        std::vector<glm::vec3> vertices{glm::vec3{-1.0f, -1.0f, 1.0f},
+                                        glm::vec3{ 1.0f, -1.0f, 1.0f},
+                                        glm::vec3{ 1.0f,  1.0f, 1.0f},
+                                        glm::vec3{-1.0f,  1.0f, 1.0f}};
 
-        std::vector<glm::vec2> textureCoords{glm::vec2(0.0f, 1.0f), // Flipped Y for OpenGL.
-                                             glm::vec2(1.0f, 1.0f),
-                                             glm::vec2(1.0f, 0.0f),
-                                             glm::vec2(0.0f, 0.0f)};
+        std::vector<glm::vec2> textureCoords{glm::vec2{0.0f, 1.0f}, // Flipped Y for OpenGL.
+                                             glm::vec2{1.0f, 1.0f},
+                                             glm::vec2{1.0f, 0.0f},
+                                             glm::vec2{0.0f, 0.0f}};
 
         std::vector<uint32_t> indices{0,1,2,
                                       2,3,0};
