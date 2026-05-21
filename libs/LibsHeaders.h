@@ -22,6 +22,7 @@
 #include "glm/gtx/quaternion.hpp"
 #include "glm/ext/quaternion_trigonometric.hpp"
 #include "glm/gtx/rotate_vector.hpp"
+#include "glm/gtx/norm.hpp"
 
 #include "assimp/include/assimp/scene.h"
 #include "assimp/include/assimp/Importer.hpp"

@@ -23,7 +23,8 @@ namespace Beryll
     float Camera::m_projNearClipPlane = 2.0f;
     float Camera::m_projFarClipPlane = 500.0f;
 
-    float Camera::m_objectsViewDistance = 100.0f;
+    float Camera::m_viewDistance = 100.0f;
+    float Camera::m_viewDistanceSquared = 100.0f * 100.0f;
 
     glm::mat4 Camera::m_viewProjection{1.0f};
     glm::mat4 Camera::m_projection{1.0f};

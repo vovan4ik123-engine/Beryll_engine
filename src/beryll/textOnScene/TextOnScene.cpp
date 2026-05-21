@@ -95,7 +95,7 @@ namespace Beryll
 
         std::sort(m_numbersToShow.begin(), m_numbersToShow.end(), [](const NumberToShow& n1, const NumberToShow& n2)
                   {
-                      return glm::distance(Beryll::Camera::getCameraPos(), n1.origin) > glm::distance(Beryll::Camera::getCameraPos(), n2.origin);
+                      return glm::distance2(Beryll::Camera::getCameraPos(), n1.origin) > glm::distance2(Beryll::Camera::getCameraPos(), n2.origin);
                   });
     }
 

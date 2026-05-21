@@ -50,7 +50,7 @@ namespace Beryll
         {
             BR_ASSERT((!glm::any(glm::isnan(m_cameraPos)) &&
                        !glm::any(glm::isnan(m_cameraFrontPos)) &&
-                       glm::distance(m_cameraPos, m_cameraFrontPos) > 0.001f), "%s", "Camera vectors are NAN or same.");
+                       glm::distance(m_cameraPos, m_cameraFrontPos) > 0.0001f), "%s", "Camera vectors are NAN or same.");
 
             m_cameraDirectionXYZ = glm::normalize(m_cameraFrontPos - m_cameraPos);
             m_cameraDirectionXZ = glm::normalize(glm::vec3(m_cameraDirectionXYZ.x, 0.0f, m_cameraDirectionXYZ.z));
@@ -68,10 +68,10 @@ namespace Beryll
         }
 
         // Check does camera see object or object is out of view.
-        static bool getIsSeeObject(const glm::vec3& objectPos, float fovMultiplier = 1.0f, float maxViewDistance = m_objectsViewDistance)
+        static bool getIsSeeObject(const glm::vec3& objectPos, float fovMultiplier = 1.0f)
         {
             // Check distance.
-            if(glm::distance(m_cameraPos, objectPos) > maxViewDistance) { return false; }
+            if(glm::distance2(m_cameraPos, objectPos) > m_viewDistanceSquared) { return false; }
 
             if(Window::getInstance()->currentDisplayOrientation == SDL_ORIENTATION_LANDSCAPE ||
                Window::getInstance()->currentDisplayOrientation == SDL_ORIENTATION_LANDSCAPE_FLIPPED)
@@ -97,11 +97,6 @@ namespace Beryll
             return true;
         }
 
-        static float getDistanceToObject(const glm::vec3& objectPos) // Check distance between camera and object.
-        {
-            return glm::distance(m_cameraPos, objectPos);
-        }
-
         static void setCameraPos(const glm::vec3& pos) { m_cameraPos = pos; }
         static const glm::vec3& getCameraPos() { return m_cameraPos; }
         static const glm::vec3& getCameraFrontPos() { return m_cameraFrontPos; }
@@ -115,9 +110,13 @@ namespace Beryll
         }
         static void setProjectionNearClipPlane(const float near) { m_projNearClipPlane = near; }
         static void setProjectionFarClipPlane(const float far) { m_projFarClipPlane = far; }
-        static void setObjectsViewDistance(const float viewDistance) { m_objectsViewDistance = viewDistance; }
+        static void setViewDistance(const float viewDistance)
+        {
+            m_viewDistance = viewDistance;
+            m_viewDistanceSquared = viewDistance * viewDistance;
+        }
 
-        static float getObjectsViewDistance() { return m_objectsViewDistance; }
+        static float getViewDistance() { return m_viewDistance; }
         static float getProjectionFarClipPlane() { return m_projFarClipPlane; }
         static const glm::vec3& getCameraFrontDirectionXYZ() { return m_cameraDirectionXYZ; }
         static const glm::vec3& getCameraFrontDirectionXZ() { return m_cameraDirectionXZ; }
@@ -150,7 +149,8 @@ namespace Beryll
         static float m_projNearClipPlane;
         static float m_projFarClipPlane;
 
-        static float m_objectsViewDistance; // For method isSeeObject().
+        static float m_viewDistance;
+        static float m_viewDistanceSquared ; // Squared x = x*x. Used to avoid sqrt() when check distance with glm::distance2.
 
         static glm::mat4 m_viewProjection;
         static glm::mat4 m_projection;
