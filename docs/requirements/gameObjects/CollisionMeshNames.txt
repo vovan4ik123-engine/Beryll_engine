@@ -1,15 +1,20 @@
-Names which must be as a part of colliders name:
+Mesh names determines colliders:
 
-    CollisionConcaveMesh    - concave mesh only for static objects
+    CollisionConcaveMesh    - concave mesh only for static objects.
 
-    CollisionConvexMesh     - convex mesh for static and dynamic objects
-    CollisionBox            - box for static and dynamic objects
-    CollisionSphere         - sphere for static and dynamic objects
-    CollisionCapsule        - capsule for static and dynamic objects
+    CollisionConvexMesh     - convex mesh for static and dynamic objects.
+    CollisionBox            - box for static and dynamic objects.
+    CollisionSphere         - sphere for static and dynamic objects.
+    CollisionCapsule        - capsule for static and dynamic objects.
+    CollisionCylinder       - cylinder for static and dynamic objects.
+                              Originally cylinder should be created in Blender around Z axis.
+                              Next can be rotated.
 
-Colliders names example:
-    Cube1 - model name
-    Cube1CollisionBox - collider name for Cube1
+Mesh name + its collider name examples:
+    Cube1 - graphics mesh name.
+    Cube1CollisionBox - collider mesh name for Cube1.
 
-    Ball1 - model name
-    Ball1CollisionSphere - collider name for Ball1
+    Ball1 - graphics mesh name.
+    Ball1CollisionSphere - collider mesh name for Ball1.
+
+    Both should be exported in one FBX file.
