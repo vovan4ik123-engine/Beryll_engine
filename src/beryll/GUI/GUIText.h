@@ -11,7 +11,7 @@ namespace Beryll
     {
     public:
         GUIText() = delete;
-        GUIText(const glm::vec3& pos, const glm::vec2& widthHeight, bool consumeDownEvent = true) : GUIObject(pos, widthHeight, consumeDownEvent) {};
+        GUIText(const glm::vec3& pos, const glm::vec2& widthHeight, bool consumeDownEvent = true) : GUIObject(pos, widthHeight, true, consumeDownEvent) {};
         ~GUIText() override {}
 
         /*

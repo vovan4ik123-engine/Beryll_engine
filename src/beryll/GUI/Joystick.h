@@ -24,6 +24,7 @@ namespace Beryll
         void draw() override;
 
         bool getIsTouched() { return m_touched; }
+        void setTouchedFingerID(int ID) { m_touchedFingerID = ID; }
 
         // Be careful. Can be {0.0f, 0.0f}. Check length(vec2) > 0.0f.
         glm::vec2 getDirection()

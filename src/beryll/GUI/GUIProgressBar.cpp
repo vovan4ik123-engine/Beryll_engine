@@ -7,7 +7,7 @@ namespace Beryll
 {
     GUIProgressBar::GUIProgressBar(const glm::vec3& pos, const glm::vec2& widthHeight,
                                    const glm::vec3& leftColor, const glm::vec3& rightColor, bool consumeDownEvent)
-                                   : GUIObject(pos, widthHeight, consumeDownEvent), m_colorLeft(leftColor), m_colorRight(rightColor)
+                                   : GUIObject(pos, widthHeight, true, consumeDownEvent), m_colorLeft(leftColor), m_colorRight(rightColor)
     {
         m_internalShader = Renderer::createShader(BeryllConstants::GUIProgressBarVertexPath.data(),
                                                   BeryllConstants::GUIProgressBarFragmentPath.data());

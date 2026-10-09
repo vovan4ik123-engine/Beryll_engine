@@ -15,14 +15,12 @@ namespace Beryll
     {
     public:
         GUIObject() = delete;
-        GUIObject(const glm::vec3& pos, const glm::vec2& widthHeight, bool consumeDownEvent);
+        GUIObject(const glm::vec3& pos, const glm::vec2& widthHeight, bool actOnTouch, bool consumeDownEvent);
         ~GUIObject() override {}
 
         /*
          * Inherited pure virtual methods are here.
          */
-
-        int pressedFingerID = -100;
 
         void enable() { m_isEnabled = true; }
         bool getIsEnabled() { return m_isEnabled; }
@@ -32,7 +30,9 @@ namespace Beryll
             m_isEnabled = false;
             m_pressed = false;
             m_touched = false;
-            pressedFingerID = -100;
+            m_touchedFingerID = -100;
+            m_touchedFingerStillOnScreen = false;
+            m_touchedFingerStillInsideElement = false;
         }
 
         void updatePositionInPercents(const glm::vec3& pos, bool updateBuffers = true) // Left bottom corner.
@@ -59,6 +59,10 @@ namespace Beryll
         bool m_isEnabled = true;
         bool m_pressed = false;
         bool m_touched = false;
+        int m_touchedFingerID = -100;
+        bool m_touchedFingerStillOnScreen = false;
+        bool m_touchedFingerStillInsideElement = false;
+        bool m_actOnTouch = false;
         bool m_consumeEvent = true;
 
         std::shared_ptr<VertexBuffer> m_vertexPosBuffer;
@@ -90,12 +94,12 @@ namespace Beryll
         void setWidthHeightInPercents(const glm::vec2& wh); // Size.
         void updateBuffersWithPositions();
 
-        glm::vec3 m_positionInPercents; // X,Y in screen percents (0...100), Z in value as is (0...1).
-        glm::vec3 m_positionInPixels; // X,Y in screen resolution, Z in value as is (0...1).
-        glm::vec3 m_positionNormalized; // X,Y in 0...1 range, Z in value as is (0...1).
+        glm::vec3 m_positionInPercents{50.0f}; // X,Y in screen percents (0...100), Z in value as is (0...1).
+        glm::vec3 m_positionInPixels{500.0f}; // X,Y in screen resolution, Z in value as is (0...1).
+        glm::vec3 m_positionNormalized{0.5f}; // X,Y in 0...1 range, Z in value as is (0...1).
 
-        glm::vec2 m_widthHeightInPercents; // X,Y in screen percents (0...100).
-        glm::vec2 m_widthHeightInPixels; // X,Y in screen resolution.
-        glm::vec2 m_widthHeightNormalized; // X,Y in 0...1 range.
+        glm::vec2 m_widthHeightInPercents{50.0f}; // X,Y in screen percents (0...100).
+        glm::vec2 m_widthHeightInPixels{500.0f}; // X,Y in screen resolution.
+        glm::vec2 m_widthHeightNormalized{0.5f}; // X,Y in 0...1 range.
     };
 }

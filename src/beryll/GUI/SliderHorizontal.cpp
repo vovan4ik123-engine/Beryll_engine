@@ -9,7 +9,7 @@ namespace Beryll
                                        const char* sliderThumbTexturePath,
                                        const glm::vec3& pos, const glm::vec2& widthHeight,
                                        float minValue, float maxValue, bool consumeDownEvent)
-                                       : GUIObject(pos, widthHeight, consumeDownEvent), m_min(minValue), m_max(maxValue), m_sliderValue(minValue)
+                                       : GUIObject(pos, widthHeight, true, consumeDownEvent), m_min(minValue), m_max(maxValue), m_sliderValue(minValue)
     {
         BR_ASSERT((sliderTrackTexturePath != nullptr && sliderTrackTexturePath[0] != '\0'), "%s", "Path to slider track can not be empty.");
         BR_ASSERT((sliderThumbTexturePath != nullptr && sliderThumbTexturePath[0] != '\0'), "%s", "Path to slider thumb can not be empty.");

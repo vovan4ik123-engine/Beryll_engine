@@ -8,8 +8,8 @@ namespace Beryll
 {
     ButtonWithAnimation::ButtonWithAnimation(const char* texturesPath, const std::vector<const char*> texturesNames,
                                              const float animDurationSec, bool repeatAnimation,
-                                             const glm::vec3& pos, const glm::vec2& widthHeight, bool actRepeat, bool consumeDownEvent)
-                                             : GUIObject(pos, widthHeight, consumeDownEvent), m_actRepeat(actRepeat)
+                                             const glm::vec3& pos, const glm::vec2& widthHeight, bool actOnTouch, bool actRepeat, bool consumeDownEvent)
+                                             : GUIObject(pos, widthHeight, actOnTouch, consumeDownEvent), m_actRepeat(actRepeat)
     {
         BR_ASSERT((texturesPath != nullptr && texturesPath[0] != '\0'), "%s", "Path to default texture can not be empty.");
         BR_ASSERT((texturesNames.empty() == false), "%s", "No textures names.");
@@ -57,71 +57,64 @@ namespace Beryll
 
     void ButtonWithAnimation::updateBeforePhysics()
     {
-        std::vector<Finger>& fingers = EventHandler::getFingers();
-
-        if(fingers.empty())
+        if(m_actRepeat && m_pressed && m_touchedFingerStillOnScreen)
         {
-            m_pressed = false;
-            m_touched = false;
-            pressedFingerID = -100;
-            m_isPressedFingerStillOnScreen = false;
+            m_pressed = true;
+            m_touched = true;
         }
         else
         {
-            if(m_actRepeat && m_pressed)
-            {
-                m_pressed = false;
-                for(const Finger& f : fingers)
-                {
-                    if(f.normalizedPos.x > getPositionNormalized().x && f.normalizedPos.x < getPositionNormalized().x + getWidthHeightNormalized().x &&
-                       f.normalizedPos.y > getPositionNormalized().y && f.normalizedPos.y < getPositionNormalized().y + getWidthHeightNormalized().y)
-                    {
-                        // If any finger in button area.
-                        m_pressed = true;
-                    }
-                }
-            }
-            else
-            {
-                m_pressed = false;
-            }
-
+            m_pressed = false;
             m_touched = false;
-            for(Finger& f : fingers)
-            {
-                if(f.normalizedPos.x > getPositionNormalized().x && f.normalizedPos.x < getPositionNormalized().x + getWidthHeightNormalized().x &&
-                   f.normalizedPos.y > getPositionNormalized().y && f.normalizedPos.y < getPositionNormalized().y + getWidthHeightNormalized().y)
-                {
-                    // If any finger in button area.
-                    if(f.ID == pressedFingerID)
-                        m_touched = true;
-
-                    if(f.downEvent)
-                    {
-                        m_pressed = true;
-                        pressedFingerID = f.ID;
-                        m_isPressedFingerStillOnScreen = true;
-
-                        if(m_consumeEvent)
-                            f.downEvent = false;
-                    }
-                }
-            }
-
-            m_isPressedFingerStillOnScreen = false;
-            for(const Finger& f : fingers)
-            {
-                if(f.ID == pressedFingerID)
-                    m_isPressedFingerStillOnScreen = true;
-            }
-
-            if(!m_isPressedFingerStillOnScreen)
-                pressedFingerID = -100;
         }
 
-        if(m_pressed && m_action)
+        m_touchedFingerStillOnScreen = false;
+        std::vector<Finger>& fingers = EventHandler::getFingers();
+        for(Finger& f : fingers)
         {
-            m_action();
+            if(f.normalizedPos.x > getPositionNormalized().x && f.normalizedPos.x < getPositionNormalized().x + getWidthHeightNormalized().x &&
+               f.normalizedPos.y > getPositionNormalized().y && f.normalizedPos.y < getPositionNormalized().y + getWidthHeightNormalized().y)
+            {
+                // Finger is on screen and inside button area.
+                if(f.downEvent)
+                {
+                    m_touchedFingerID = f.ID;
+
+                    if(m_consumeEvent)
+                        f.downEvent = false;
+
+                    if(m_actOnTouch)
+                        m_pressed = true;
+                }
+
+                if(f.ID == m_touchedFingerID)
+                {
+                    m_touchedFingerStillOnScreen = true;
+                    m_touchedFingerStillInsideElement = true;
+                }
+            }
+            else if(f.ID == m_touchedFingerID)
+            {
+                // Touched finger is on screen but outside button area.
+                m_touchedFingerStillOnScreen = true;
+                m_touchedFingerStillInsideElement = false;
+            }
+        }
+
+        if(m_touchedFingerStillOnScreen && m_touchedFingerStillInsideElement)
+            m_touched = true;
+
+        if(!m_actOnTouch &&
+           !m_touchedFingerStillOnScreen && m_touchedFingerStillInsideElement)
+        {
+            // Touched finger was released when it was inside element.
+            m_pressed = true;
+        }
+
+        if(!m_touchedFingerStillOnScreen)
+        {
+            m_touchedFingerID = -100;
+            m_touchedFingerStillInsideElement = false;
         }
     }
 

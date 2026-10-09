@@ -7,7 +7,7 @@ namespace Beryll
 {
     GUITexture::GUITexture(const char* texturePath,
                            const glm::vec3& pos, const glm::vec2& widthHeight, bool consumeDownEvent)
-                           : GUIObject(pos, widthHeight, consumeDownEvent)
+                           : GUIObject(pos, widthHeight, true, consumeDownEvent)
     {
         BR_ASSERT((texturePath != nullptr && texturePath[0] != '\0'), "%s", "Path to default texture can not be empty.");
 

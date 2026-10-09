@@ -3,12 +3,12 @@
 
 namespace Beryll
 {
-    GUIObject::GUIObject(const glm::vec3& pos, const glm::vec2& widthHeight, bool consumeDownEvent)
+    GUIObject::GUIObject(const glm::vec3& pos, const glm::vec2& widthHeight, bool actOnTouch, bool consumeDownEvent)
     {
-        m_consumeEvent = consumeDownEvent;
-
         setPositionInPercents(pos);
         setWidthHeightInPercents(widthHeight);
+        m_actOnTouch = actOnTouch;
+        m_consumeEvent = consumeDownEvent;
 
         // Create, then update buffers.
         m_vertexPosBuffer = Renderer::createDynamicVertexBuffer(VertexAttribType::FLOAT, VertexAttribSize::THREE, sizeof(glm::vec3) * m_vertices.size());

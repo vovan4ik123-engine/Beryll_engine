@@ -1,5 +1,7 @@
 #pragma once
 
+#include <utility>
+
 #include "GUIObject.h"
 
 namespace Beryll
@@ -13,11 +15,12 @@ namespace Beryll
          * touchedTexturePath - texture shown when touched. Can be empty. If empty defaultTexturePath will shown always.
          * pos - X,Y in screen percents (0...100), Z in value as is (0...1).
          * widthHeight - width and height in screen percents (0...100).
-         * actRepeat - if true button will considered as pressed all frames until finder up.
+         * actOnTouch - if true button considered pressed on finger touch, if false on finger release.
+         * actRepeat - if true button will considered as pressed all frames until finger up.
          */
         ButtonWithTexture(const char* defaultTexturePath,
                           const char* touchedTexturePath,
-                          const glm::vec3& pos, const glm::vec2& widthHeight, bool actRepeat = false, bool consumeDownEvent = true);
+                          const glm::vec3& pos, const glm::vec2& widthHeight, bool actOnTouch = false, bool actRepeat = false, bool consumeDownEvent = true);
         ~ButtonWithTexture() override;
 
         void updateBeforePhysics() override;
@@ -25,17 +28,9 @@ namespace Beryll
         void draw() override;
 
         bool getIsPressed() { return m_pressed; }
-        bool getIsPressedFingerStillOnScreen() { return m_isPressedFingerStillOnScreen; }
-        bool getIsPressedFingerStillOnButton() { return m_touched; }
-
-        void setAction(std::function<void()> fn) { m_action = fn; }
 
     private:
-        // If action is set m_action() will called when pressed.
-        std::function<void()> m_action;
-
-        bool m_actRepeat = false; // If you want m_pressed = true all time during button touched pass actRepeat = true.
-        bool m_isPressedFingerStillOnScreen = false;
+        bool m_actRepeat = false;
 
         // Vertex and index buffers are in base class.
         // ........

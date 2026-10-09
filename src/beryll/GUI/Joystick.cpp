@@ -8,7 +8,7 @@ namespace Beryll
     Joystick::Joystick(const char*  defaultTexturePath,
                        const char*  touchedTexturePath,
                        const glm::vec3& pos, const glm::vec2& widthHeight, bool consumeDownEvent)
-                       : GUIObject(pos, widthHeight, consumeDownEvent)
+                       : GUIObject(pos, widthHeight, true, consumeDownEvent)
     {
         BR_ASSERT((defaultTexturePath != nullptr && defaultTexturePath[0] != '\0'), "%s", "Path to default texture can not be empty.");
 
@@ -47,14 +47,14 @@ namespace Beryll
                 // If any finger in joystick area.
                 if(f.downEvent)
                 {
-                    if(pressedFingerID == -100)
-                        pressedFingerID = f.ID;
+                    if(m_touchedFingerID == -100)
+                        m_touchedFingerID = f.ID;
 
                     if(m_consumeEvent)
                         f.downEvent = false;
                 }
 
-                if(pressedFingerID == f.ID)
+                if(m_touchedFingerID == f.ID)
                 {
                     m_touched = true;
 
@@ -73,7 +73,7 @@ namespace Beryll
         }
 
         if(!m_touched)
-            pressedFingerID = -100;
+            m_touchedFingerID = -100;
     }
 
     void Joystick::updateAfterPhysics()

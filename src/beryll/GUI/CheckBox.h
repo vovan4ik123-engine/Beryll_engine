@@ -27,7 +27,7 @@ namespace Beryll
         bool getIsMarking() { return m_marking; }
         bool getIsUnMarking() { return m_unMarking; }
 
-        void setAction(std::function<void()> fn) { m_action = fn; }
+        void setAction(std::function<void()> fn) { m_action = std::move(fn); }
 
     private:
         // If action is set m_action() will called once when marked.

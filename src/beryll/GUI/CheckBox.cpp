@@ -8,7 +8,7 @@ namespace Beryll
     CheckBox::CheckBox(const char* unMarkedTexturePath,
                        const char* markedTexturePath,
                        const glm::vec3& pos, const glm::vec2& widthHeight, bool consumeDownEvent)
-                       : GUIObject(pos, widthHeight, consumeDownEvent)
+                       : GUIObject(pos, widthHeight, true, consumeDownEvent)
     {
         BR_ASSERT((unMarkedTexturePath != nullptr && unMarkedTexturePath[0] != '\0'), "%s", "Path to unMarked Texture can not be empty.");
         BR_ASSERT((markedTexturePath != nullptr && markedTexturePath[0] != '\0'), "%s", "Path to marked Texture can not be empty.");
