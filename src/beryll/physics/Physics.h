@@ -206,7 +206,7 @@ namespace Beryll
 
         static void setContactSolverIterations(int count)
         {
-            if(count > 0 && count <= 20)
+            if(count > 0 && count <= 30)
                 m_dynamicsWorldMT->getSolverInfo().m_numIterations = count;
         }
 

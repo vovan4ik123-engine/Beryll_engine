@@ -113,8 +113,7 @@ namespace Beryll
         BR_INFO("m_fromOriginToTop: %f, m_fromOriginToBottom: %f, m_XZRadius: %f, m_objectHeight: %f",
                 m_fromOriginToTop, m_fromOriginToBottom, m_XZRadius, m_objectHeight);
 
-        BR_ASSERT((m_fromOriginToBottom > 0.0f && m_fromOriginToTop > 0.0f && m_XZRadius > 0.0f && m_objectHeight > 0.0f),
-                  "%s", "Characters XYZ dimensions are 0.");
+        BR_ASSERT((m_XZRadius > 0.0f || m_objectHeight > 0.0f), "%s", "Objects XYZ dimensions are 0.");
 
         m_collisionFlag = collFlag;
         m_collisionGroup = collGroup;

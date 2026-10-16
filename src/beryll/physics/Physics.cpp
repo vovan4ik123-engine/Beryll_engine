@@ -291,6 +291,7 @@ namespace Beryll
         float xSize = topX - bottomX;
         float ySize = topY - bottomY;
         float zSize = topZ - bottomZ;
+        //BR_INFO("Box xSize %f, ySize %f, zSize %f", xSize, ySize, zSize);
 
         std::shared_ptr<btBoxShape> boxShape = std::make_shared<btBoxShape>(btVector3(xSize / 2.0f, ySize / 2.0f, zSize / 2.0f));
         m_collisionShapes.push_back(boxShape);
