@@ -16,7 +16,7 @@ namespace Beryll
     std::vector<std::unique_ptr<Texture>> TextOnScene::m_textures;
 
     std::vector<NumberToShow> TextOnScene::m_numbersToShow;
-    int TextOnScene::m_maxCountToShow = 7;
+    int TextOnScene::m_maxCountToShow = 10;
 
     void TextOnScene::create()
     {
@@ -65,7 +65,7 @@ namespace Beryll
 
         BR_INFO("m_textures.size() %d", m_textures.size());
 
-        m_numbersToShow.reserve(100);
+        m_numbersToShow.reserve(m_maxCountToShow);
 
         m_created = true;
     }

@@ -33,7 +33,12 @@ namespace Beryll
 
         static void addNumbersToShow(int pNumber, float pHeight, float pLifetime, glm::vec3 pOrigin, glm::vec3 pMoveDir, float pMoveSpeed);
         static void draw();
-        static void setMaxCountToShow(int count) { m_maxCountToShow = count; }
+        static void clear() { m_numbersToShow.clear(); }
+        static void setMaxCountToShow(int count)
+        {
+            m_maxCountToShow = count;
+            m_numbersToShow.reserve(m_maxCountToShow);
+        }
 
     private:
         friend class GameLoop;
