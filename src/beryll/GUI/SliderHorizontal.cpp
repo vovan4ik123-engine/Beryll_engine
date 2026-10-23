@@ -106,7 +106,13 @@ namespace Beryll
         m_internalShader->setMatrix4x4Float("VPMatrix", Camera::getCameraGUI());
         m_vertexArray->bind();
 
-        // Draw thumb first. Be careful, It update position and size which are used in updateBeforePhysics().
+        // Track = background.
+        m_trackTexture->bind();
+        updatePositionInPercents(m_trackPos, false);
+        updateWidthHeightInPercents(m_trackWidthHeight, true);
+        m_vertexArray->draw();
+
+        // Thumb = foreground.
         m_thumbTexture->bind();
         const float prPerc = getWidthHeightInPercents().x * m_normalizedSliderProgress; // Progress in screen percents.
         m_thumbPos.x = (m_trackPos.x + prPerc) - (m_thumbWidthHeight.x * 0.5f);
@@ -114,10 +120,8 @@ namespace Beryll
         updateWidthHeightInPercents(m_thumbWidthHeight, true);
         m_vertexArray->draw();
 
-        // Draw track second. Be careful, It update position and size which are used in updateBeforePhysics().
-        m_trackTexture->bind();
+        // Return slider size and pos = track size and pos.
         updatePositionInPercents(m_trackPos, false);
         updateWidthHeightInPercents(m_trackWidthHeight, true);
-        m_vertexArray->draw();
     }
 }
