@@ -471,7 +471,7 @@ Earcut<N>::findHoleBridge(Node* hole, Node* outerNode) {
     Node* p = outerNode;
     double hx = hole->x;
     double hy = hole->y;
-    double qx = -std::numeric_limits<double>::infinity();
+    double qx = std::numeric_limits<double>::lowest();
     Node* m = nullptr;
 
     // find a segment intersected by a ray from the hole's leftmost Vertex to the left;
@@ -495,8 +495,11 @@ Earcut<N>::findHoleBridge(Node* hole, Node* outerNode) {
     // otherwise choose the Vertex of the minimum angle with the ray as connection Vertex
 
     const Node* stop = m;
-    double tanMin = std::numeric_limits<double>::infinity();
+    double tanMin = std::numeric_limits<double>::max();
     double tanCur = 0;
+    double sin = 1.0;
+    double cos = 1.0;
+    const double cosCheckMinValue = 0.0000001;
 
     p = m;
     double mx = m->x;
@@ -506,7 +509,17 @@ Earcut<N>::findHoleBridge(Node* hole, Node* outerNode) {
         if (hx >= p->x && p->x >= mx && hx != p->x &&
             pointInTriangle(hy < my ? hx : qx, hy, mx, my, hy < my ? qx : hx, hy, p->x, p->y)) {
 
-            tanCur = std::abs(hy - p->y) / (hx - p->x); // tangential
+            sin = std::abs(hy - p->y);
+            cos = hx - p->x;
+            if (std::abs(cos) < cosCheckMinValue) // Avoid division by 0.
+            {
+                const bool sameSign = (sin >= 0.0) == (cos >= 0.0); // Both + or both -.
+                tanCur = sameSign ? std::numeric_limits<double>::max() : std::numeric_limits<double>::lowest();
+            }
+            else
+            {
+                tanCur = sin / cos; // tangential
+            }
 
             if (locallyInside(p, hole) &&
                 (tanCur < tanMin || (tanCur == tanMin && (p->x > m->x || sectorContainsSector(m, p))))) {
