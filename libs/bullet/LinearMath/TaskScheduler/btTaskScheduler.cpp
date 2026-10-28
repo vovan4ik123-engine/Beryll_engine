@@ -6,6 +6,7 @@
 #include <future>
 #include <thread>
 #include <algorithm>
+//#include <android/log.h>
 
 class btTaskSchedulerForBeryll : public btITaskScheduler
 {
@@ -29,67 +30,16 @@ public:
 
     void parallelFor(int iBegin, int iEnd, int grainSize, const btIParallelForBody& body) override
     {
-        int numberElements = iEnd - iBegin;
-
-        if(numberElements < 4 || m_numThreads == 1)
-        {
-            // Run on main thread.
-            body.forLoop(iBegin, iEnd);
-        }
-        else
-        {
-            m_futuresVoid.clear();
-
-            int oneChunkSize = numberElements / m_numThreads;
-            oneChunkSize++; // Make sure (oneChunkSize * m_numThreads) > numberElements.
-
-            for(int i = iBegin; i < iEnd; i += oneChunkSize)
-            {
-                int chunkEnd = std::min(i + oneChunkSize, iEnd);
-
-                m_futuresVoid.emplace_back(std::async(std::launch::async, &btIParallelForBody::forLoop, std::cref(body), i, chunkEnd));
-            }
-
-            // Wait for all threads.
-            for(std::future<void>& ft : m_futuresVoid)
-            {
-                ft.wait();
-            }
-        }
+        //__android_log_print(ANDROID_LOG_DEBUG, "parallel For", "numberElements: %d", iEnd - iBegin);
+        // Run on main thread.
+        body.forLoop(iBegin, iEnd);
     }
 
     float parallelSum(int iBegin, int iEnd, int grainSize, const btIParallelSumBody& body) override
     {
-		float result = 0.0f;
-        int numberElements = iEnd - iBegin;
-
-        if(numberElements < 4 || m_numThreads == 1)
-        {
-            // Run on main thread.
-            return body.sumLoop(iBegin, iEnd);
-        }
-        else
-        {
-            m_futuresFloat.clear();
-
-            int oneChunkSize = numberElements / m_numThreads;
-            oneChunkSize++; // Make sure (oneChunkSize * m_numThreads) > numberElements.
-
-            for(int i = iBegin; i < iEnd; i += oneChunkSize)
-            {
-                int chunkEnd = std::min(i + oneChunkSize, iEnd);
-
-                m_futuresFloat.emplace_back(std::async(std::launch::async, &btIParallelSumBody::sumLoop, std::cref(body), i, chunkEnd));
-            }
-
-            // Wait for all threads.
-            for(std::future<float>& ft : m_futuresFloat)
-            {
-                result += ft.get();
-            }
-        }
-
-        return result;
+        //__android_log_print(ANDROID_LOG_DEBUG, "parallel Sum", "numberElements: %d", iEnd - iBegin);
+        // Run on main thread.
+        return body.sumLoop(iBegin, iEnd);
     }
 
 private:
